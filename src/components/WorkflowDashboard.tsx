@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { CheckCircle, Clock, ExternalLink, AlertCircle, Play, BarChart3 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+import { RequestCheckForm } from "./RequestCheckForm";
 
 type WorkflowStatus = "pending" | "running" | "completed" | "error";
 
@@ -19,6 +20,7 @@ interface WorkflowStep {
 const WorkflowDashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [showRequestForm, setShowRequestForm] = useState(false);
   const [workflows, setWorkflows] = useState<WorkflowStep[]>([
     {
       id: "request-check",
@@ -77,6 +79,11 @@ const WorkflowDashboard = () => {
   };
 
   const handleStartWorkflow = (workflowId: string, n8nUrl?: string) => {
+    if (workflowId === "request-check") {
+      setShowRequestForm(true);
+      return;
+    }
+
     if (n8nUrl) {
       window.open(n8nUrl, "_blank");
     }
@@ -93,6 +100,16 @@ const WorkflowDashboard = () => {
       title: "Workflow Started",
       description: `${workflows.find(w => w.id === workflowId)?.title} workflow has been initiated.`,
     });
+  };
+
+  const handleRequestCheckComplete = () => {
+    setWorkflows(prev => 
+      prev.map(workflow => 
+        workflow.id === "request-check" 
+          ? { ...workflow, status: "completed" }
+          : workflow
+      )
+    );
   };
 
   const handleConfirmCompletion = (workflowId: string) => {
@@ -239,6 +256,12 @@ const WorkflowDashboard = () => {
             </p>
           </Card>
         )}
+
+        <RequestCheckForm
+          open={showRequestForm}
+          onOpenChange={setShowRequestForm}
+          onComplete={handleRequestCheckComplete}
+        />
       </div>
     </div>
   );
