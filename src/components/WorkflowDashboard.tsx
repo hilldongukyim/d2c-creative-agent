@@ -2,7 +2,8 @@ import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Clock, ExternalLink, AlertCircle, Play } from "lucide-react";
+import { CheckCircle, Clock, ExternalLink, AlertCircle, Play, BarChart3 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
 type WorkflowStatus = "pending" | "running" | "completed" | "error";
@@ -16,6 +17,7 @@ interface WorkflowStep {
 }
 
 const WorkflowDashboard = () => {
+  const navigate = useNavigate();
   const { toast } = useToast();
   const [workflows, setWorkflows] = useState<WorkflowStep[]>([
     {
@@ -123,6 +125,18 @@ const WorkflowDashboard = () => {
           <p className="text-xl text-muted-foreground">
             Workflow Management Dashboard
           </p>
+          
+          {/* CTA Button */}
+          <div className="mt-4">
+            <Button 
+              onClick={() => navigate("/tasks")}
+              variant="outline"
+              className="border-primary text-primary hover:bg-primary hover:text-primary-foreground"
+            >
+              <BarChart3 className="h-4 w-4 mr-2" />
+              View All Tasks Overview
+            </Button>
+          </div>
           
           {/* Progress Bar */}
           <div className="w-full bg-workflow-bg rounded-full h-3 mt-6">
