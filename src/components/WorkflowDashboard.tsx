@@ -143,7 +143,7 @@ const WorkflowDashboard = () => {
               key={workflow.id}
               className={`p-6 transition-all duration-300 hover:shadow-card-custom ${
                 index === currentStep ? 'ring-2 ring-primary shadow-workflow' : ''
-              } ${workflow.status === 'completed' ? 'animate-pulse-success' : ''}`}
+              }`}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
