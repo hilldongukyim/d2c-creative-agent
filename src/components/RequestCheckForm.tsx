@@ -73,18 +73,37 @@ export const RequestCheckForm = ({ open, onOpenChange, onComplete }: RequestChec
   const onSubmit = async (data: RequestFormData) => {
     setIsSubmitting(true);
     
-    // Simulate processing
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    toast({
-      title: "Request Submitted",
-      description: "Promotional content request has been submitted successfully.",
-    });
-    
-    setIsSubmitting(false);
-    onComplete();
-    onOpenChange(false);
-    form.reset();
+    try {
+      // Call N8N webhook to start the workflow
+      const response = await fetch("https://dev.eaip.lge.com/n8n/webhook-test/49ce7aff-d534-44ac-9742-21942d154544", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(data),
+      });
+
+      if (response.ok) {
+        toast({
+          title: "Request Submitted",
+          description: "Promotional content request has been submitted and workflow started successfully.",
+        });
+        
+        onComplete();
+        onOpenChange(false);
+        form.reset();
+      } else {
+        throw new Error("Failed to submit request");
+      }
+    } catch (error) {
+      toast({
+        title: "Submission Failed",
+        description: "Failed to submit request. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
