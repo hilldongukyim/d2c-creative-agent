@@ -133,12 +133,21 @@ const WorkflowDashboard = () => {
 
   const handleRequestCheckComplete = () => {
     setWorkflows(prev => 
-      prev.map(workflow => 
-        workflow.id === "request" 
-          ? { ...workflow, status: "completed" }
-          : workflow
-      )
+      prev.map(workflow => {
+        if (workflow.id === "request") {
+          return { ...workflow, status: "completed" };
+        }
+        if (workflow.id === "creation") {
+          return { ...workflow, status: "running" };
+        }
+        return workflow;
+      })
     );
+    
+    toast({
+      title: "Creation Started",
+      description: "Creation workflow has been automatically initiated.",
+    });
   };
 
   const handleWebhookUpdate = (workflowId: string, url: string) => {
