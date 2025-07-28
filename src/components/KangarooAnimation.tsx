@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 
 interface KangarooAnimationProps {
@@ -8,129 +9,170 @@ const artTypes = {
   "kv-creation": {
     title: "Creating Key Visual Design",
     emoji: "🎨",
-    description: "Painting beautiful key visuals...",
-    colors: ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FECA57"]
+    description: "Crafting your visual masterpiece...",
+    colors: ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FECA57"],
+    elements: ["🌟", "✨", "🎯", "🔮", "💫"]
   },
   "size-variation": {
     title: "Crafting Size Variations", 
     emoji: "📐",
-    description: "Resizing and adapting artwork...",
-    colors: ["#A8E6CF", "#FFB3BA", "#FFDFBA", "#BAE1FF", "#C7CEEA"]
+    description: "Resizing with precision...",
+    colors: ["#A8E6CF", "#FFB3BA", "#FFDFBA", "#BAE1FF", "#C7CEEA"],
+    elements: ["📏", "🔧", "⚡", "🎪", "🌈"]
   },
   "get-outputs": {
     title: "Finalizing Masterpiece",
     emoji: "✨",
-    description: "Adding finishing touches...",
-    colors: ["#FFD93D", "#6BCF7F", "#4D96FF", "#FF6B9D", "#C44569"]
+    description: "Adding magical finishing touches...",
+    colors: ["#FFD93D", "#6BCF7F", "#4D96FF", "#FF6B9D", "#C44569"],
+    elements: ["💎", "🎁", "🏆", "🌟", "🎉"]
   }
 };
 
 export const KangarooAnimation = ({ workflowType }: KangarooAnimationProps) => {
   const [currentColorIndex, setCurrentColorIndex] = useState(0);
+  const [particles, setParticles] = useState<Array<{ id: number; x: number; y: number; element: string; delay: number }>>([]);
+  const [creationStage, setCreationStage] = useState(0);
   const artType = artTypes[workflowType];
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const colorInterval = setInterval(() => {
       setCurrentColorIndex((prev) => (prev + 1) % artType.colors.length);
-    }, 800);
+    }, 1000);
 
-    return () => clearInterval(interval);
+    const stageInterval = setInterval(() => {
+      setCreationStage((prev) => (prev + 1) % 4);
+    }, 1500);
+
+    return () => {
+      clearInterval(colorInterval);
+      clearInterval(stageInterval);
+    };
   }, [artType.colors.length]);
 
-  return (
-    <div className="flex flex-col items-center justify-center py-8 space-y-4">
-      {/* Title */}
-      <h3 className="text-lg font-semibold text-foreground flex items-center gap-2">
-        <span className="text-2xl">{artType.emoji}</span>
-        {artType.title}
-      </h3>
-      
-      {/* Kangaroo and Canvas */}
-      <div className="relative">
-        {/* Canvas/Easel */}
-        <div className="relative bg-white border-4 border-gray-300 rounded-lg w-32 h-24 shadow-lg">
-          {/* Animated paint strokes */}
-          <div className="absolute inset-2 overflow-hidden rounded">
-            {Array.from({ length: 5 }).map((_, i) => (
-              <div
-                key={i}
-                className={`absolute w-2 h-2 rounded-full animate-fade-in`}
-                style={{
-                  backgroundColor: artType.colors[currentColorIndex],
-                  left: `${Math.random() * 80}%`,
-                  top: `${Math.random() * 70}%`,
-                  animationDelay: `${i * 0.2}s`,
-                  animationDuration: "0.8s",
-                  animationIterationCount: "infinite"
-                }}
-              />
-            ))}
-            
-            {/* Paint strokes effect */}
-            <div className="absolute inset-0">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <div
-                  key={`stroke-${i}`}
-                  className="absolute h-1 rounded-full animate-scale-in"
-                  style={{
-                    backgroundColor: artType.colors[(currentColorIndex + i) % artType.colors.length],
-                    width: `${20 + Math.random() * 40}%`,
-                    left: `${Math.random() * 60}%`,
-                    top: `${20 + i * 20}%`,
-                    animationDelay: `${i * 0.3}s`,
-                    animationDuration: "1s",
-                    animationIterationCount: "infinite"
-                  }}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
+  useEffect(() => {
+    const particleInterval = setInterval(() => {
+      setParticles(prev => {
+        const newParticles = [...prev];
+        
+        // Add new particle
+        if (newParticles.length < 8) {
+          newParticles.push({
+            id: Date.now() + Math.random(),
+            x: Math.random() * 100,
+            y: Math.random() * 100,
+            element: artType.elements[Math.floor(Math.random() * artType.elements.length)],
+            delay: Math.random() * 2
+          });
+        }
+        
+        // Remove old particles
+        if (newParticles.length > 8) {
+          newParticles.shift();
+        }
+        
+        return newParticles;
+      });
+    }, 800);
 
-        {/* Baby Kangaroo */}
-        <div className="absolute -bottom-6 -right-8 text-4xl animate-bounce">
-          🦘
-        </div>
-        
-        {/* Paint brush in kangaroo's hand */}
+    return () => clearInterval(particleInterval);
+  }, [artType.elements]);
+
+  const getCreationPhase = () => {
+    switch (creationStage) {
+      case 0: return "Ideating...";
+      case 1: return "Sketching...";
+      case 2: return "Coloring...";
+      case 3: return "Perfecting...";
+      default: return "Creating...";
+    }
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-center py-6 space-y-4">
+      {/* Title */}
+      <div className="text-center space-y-2">
+        <h3 className="text-xl font-bold text-foreground flex items-center justify-center gap-2">
+          <span className="text-3xl animate-bounce" style={{ animationDelay: "0.5s" }}>
+            {artType.emoji}
+          </span>
+          {artType.title}
+        </h3>
+        <p className="text-sm text-muted-foreground font-medium">
+          {getCreationPhase()}
+        </p>
+      </div>
+      
+      {/* Main Creation Area */}
+      <div className="relative w-48 h-32 bg-gradient-to-br from-background to-muted rounded-xl border-2 border-border shadow-lg overflow-hidden">
+        {/* Background glow effect */}
         <div 
-          className="absolute -bottom-2 -right-4 text-lg transform rotate-45 animate-pulse"
-          style={{ color: artType.colors[currentColorIndex] }}
-        >
-          🖌️
+          className="absolute inset-0 opacity-20 transition-all duration-1000"
+          style={{
+            background: `radial-gradient(circle at 50% 50%, ${artType.colors[currentColorIndex]}40, transparent 70%)`
+          }}
+        />
+        
+        {/* Floating particles */}
+        {particles.map((particle) => (
+          <div
+            key={particle.id}
+            className="absolute text-lg animate-float"
+            style={{
+              left: `${particle.x}%`,
+              top: `${particle.y}%`,
+              animationDelay: `${particle.delay}s`,
+              animationDuration: "3s"
+            }}
+          >
+            {particle.element}
+          </div>
+        ))}
+        
+        {/* Central creation focus */}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <div 
+            className="w-12 h-12 rounded-full animate-pulse border-4 flex items-center justify-center text-2xl"
+            style={{
+              borderColor: artType.colors[currentColorIndex],
+              backgroundColor: `${artType.colors[currentColorIndex]}20`
+            }}
+          >
+            <span className="animate-spin">⚡</span>
+          </div>
         </div>
         
-        {/* Paint palette */}
-        <div className="absolute -bottom-4 -left-6 bg-white rounded-full p-2 shadow-md border-2 border-gray-200">
-          <div className="flex space-x-1">
-            {artType.colors.map((color, index) => (
-              <div
-                key={index}
-                className={`w-2 h-2 rounded-full transition-all duration-300 ${
-                  index === currentColorIndex ? 'scale-125' : 'scale-100'
-                }`}
-                style={{ backgroundColor: color }}
-              />
-            ))}
-          </div>
+        {/* Progress waves */}
+        <div className="absolute bottom-0 left-0 right-0 h-2 overflow-hidden">
+          <div 
+            className="h-full animate-wave"
+            style={{
+              background: `linear-gradient(90deg, transparent, ${artType.colors[currentColorIndex]}60, transparent)`,
+              width: "200%",
+              transform: "translateX(-50%)"
+            }}
+          />
         </div>
       </div>
 
       {/* Description */}
-      <p className="text-sm text-muted-foreground text-center animate-fade-in">
+      <p className="text-sm text-muted-foreground text-center animate-fade-in italic">
         {artType.description}
       </p>
       
-      {/* Progress dots */}
-      <div className="flex space-x-1">
-        {Array.from({ length: 3 }).map((_, i) => (
+      {/* Animated progress indicator */}
+      <div className="flex items-center space-x-2">
+        {Array.from({ length: 4 }).map((_, i) => (
           <div
             key={i}
-            className={`w-2 h-2 rounded-full transition-all duration-300 ${
-              i === (Math.floor(Date.now() / 500) % 3) 
-                ? 'bg-primary scale-125' 
-                : 'bg-muted'
+            className={`w-2 h-2 rounded-full transition-all duration-500 ${
+              i === creationStage 
+                ? 'scale-150 animate-pulse' 
+                : 'scale-100'
             }`}
+            style={{
+              backgroundColor: i <= creationStage ? artType.colors[currentColorIndex] : '#e5e7eb'
+            }}
           />
         ))}
       </div>
