@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Clock, ExternalLink, AlertCircle, Play, BarChart3 } from "lucide-react";
+import { CheckCircle, Clock, ExternalLink, AlertCircle, Play, BarChart3, Settings } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { RequestCheckForm } from "./RequestCheckForm";
 import { KangarooAnimation } from "./KangarooAnimation";
+import { WebhookSettings } from "./WebhookSettings";
 
 type WorkflowStatus = "pending" | "running" | "completed" | "error";
 
@@ -22,36 +23,66 @@ const WorkflowDashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [showRequestForm, setShowRequestForm] = useState(false);
+  const [showWebhookSettings, setShowWebhookSettings] = useState(false);
+  const [webhooks, setWebhooks] = useState<Record<string, string>>({
+    "kv-creation": "",
+    "size-variation": "",
+    "get-outputs": ""
+  });
+  
   const [workflows, setWorkflows] = useState<WorkflowStep[]>([
     {
       id: "request-check",
       title: "Request",
       description: "Fill out the promotional content request form",
       status: "pending",
-      n8nUrl: "https://your-n8n-instance.com/workflow/request-check"
+      n8nUrl: ""
     },
     {
       id: "kv-creation",
       title: "1st KV Creation",
       description: "Generate the initial key visual design",
       status: "pending",
-      n8nUrl: "https://your-n8n-instance.com/workflow/kv-creation"
+      n8nUrl: ""
     },
     {
       id: "size-variation",
       title: "Size Variation",
       description: "Create different size variations of the content",
       status: "pending",
-      n8nUrl: "https://your-n8n-instance.com/workflow/size-variation"
+      n8nUrl: ""
     },
     {
       id: "get-outputs",
       title: "Get the Outputs",
       description: "Finalize and deliver the promotional materials",
       status: "pending",
-      n8nUrl: "https://your-n8n-instance.com/workflow/get-outputs"
+      n8nUrl: ""
     }
   ]);
+
+  // Webhook listener simulation (in a real app, this would be handled by your backend)
+  useEffect(() => {
+    const handleWebhookMessage = (event: MessageEvent) => {
+      if (event.data.type === 'webhook_received' && event.data.workflowId) {
+        setWorkflows(prev => 
+          prev.map(workflow => 
+            workflow.id === event.data.workflowId 
+              ? { ...workflow, status: "completed" }
+              : workflow
+          )
+        );
+        
+        toast({
+          title: "Workflow Completed",
+          description: `${workflows.find(w => w.id === event.data.workflowId)?.title} has been completed automatically.`,
+        });
+      }
+    };
+
+    window.addEventListener('message', handleWebhookMessage);
+    return () => window.removeEventListener('message', handleWebhookMessage);
+  }, [workflows, toast]);
 
   const getStatusColor = (status: WorkflowStatus) => {
     switch (status) {
@@ -110,19 +141,19 @@ const WorkflowDashboard = () => {
     );
   };
 
-  const handleConfirmCompletion = (workflowId: string) => {
+  const handleWebhookUpdate = (workflowId: string, url: string) => {
+    setWebhooks(prev => ({
+      ...prev,
+      [workflowId]: url
+    }));
+    
     setWorkflows(prev => 
       prev.map(workflow => 
         workflow.id === workflowId 
-          ? { ...workflow, status: "completed" }
+          ? { ...workflow, n8nUrl: url }
           : workflow
       )
     );
-
-    toast({
-      title: "Workflow Confirmed",
-      description: `${workflows.find(w => w.id === workflowId)?.title} has been marked as completed.`,
-    });
   };
 
   const currentStep = workflows.findIndex(w => w.status === "pending" || w.status === "running");
@@ -141,8 +172,8 @@ const WorkflowDashboard = () => {
             Workflow Management Dashboard
           </p>
           
-          {/* CTA Button */}
-          <div className="mt-4">
+          {/* Header Controls */}
+          <div className="flex justify-center gap-4 mt-4">
             <Button 
               onClick={() => navigate("/tasks")}
               variant="outline"
@@ -150,6 +181,14 @@ const WorkflowDashboard = () => {
             >
               <BarChart3 className="h-4 w-4 mr-2" />
               View All Tasks Overview
+            </Button>
+            
+            <Button 
+              onClick={() => setShowWebhookSettings(true)}
+              variant="outline"
+            >
+              <Settings className="h-4 w-4 mr-2" />
+              Webhook Settings
             </Button>
           </div>
           
@@ -231,20 +270,6 @@ const WorkflowDashboard = () => {
                         Start Workflow
                       </Button>
                     )}
-                    
-                    {workflow.status === "running" && (
-                      <Button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleConfirmCompletion(workflow.id);
-                        }}
-                        variant="outline"
-                        className="border-workflow-success text-workflow-success hover:bg-workflow-success hover:text-workflow-success-foreground"
-                      >
-                        <CheckCircle className="h-4 w-4 mr-2" />
-                        Confirm Complete
-                      </Button>
-                    )}
 
                     {workflow.n8nUrl && workflow.id !== "request-check" && workflow.status !== "running" && (
                       <Button 
@@ -283,6 +308,13 @@ const WorkflowDashboard = () => {
           open={showRequestForm}
           onOpenChange={setShowRequestForm}
           onComplete={handleRequestCheckComplete}
+        />
+        
+        <WebhookSettings
+          open={showWebhookSettings}
+          onOpenChange={setShowWebhookSettings}
+          webhooks={webhooks}
+          onWebhookUpdate={handleWebhookUpdate}
         />
       </div>
     </div>
