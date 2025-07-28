@@ -78,7 +78,7 @@ const WorkflowDashboard = () => {
     }
   };
 
-  const handleStartWorkflow = (workflowId: string, n8nUrl?: string) => {
+  const handleWorkflowClick = (workflowId: string, n8nUrl?: string) => {
     if (workflowId === "request-check") {
       setShowRequestForm(true);
       return;
@@ -172,9 +172,10 @@ const WorkflowDashboard = () => {
           {workflows.map((workflow, index) => (
             <Card 
               key={workflow.id}
-              className={`p-6 transition-all duration-300 hover:shadow-card-custom ${
+              className={`p-6 transition-all duration-300 hover:shadow-card-custom cursor-pointer ${
                 index === currentStep ? 'ring-2 ring-primary shadow-workflow' : ''
               }`}
+              onClick={() => workflow.id === "request-check" && workflow.status === "pending" ? handleWorkflowClick(workflow.id, workflow.n8nUrl) : undefined}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
@@ -201,14 +202,19 @@ const WorkflowDashboard = () => {
                   >
                     <span className="flex items-center space-x-1">
                       {getStatusIcon(workflow.status)}
-                      <span className="capitalize">{workflow.status}</span>
+                      <span className="capitalize">
+                        {workflow.status === "completed" && workflow.id === "request-check" ? "Submitted" : workflow.status}
+                      </span>
                     </span>
                   </Badge>
 
                   <div className="flex space-x-2">
-                    {workflow.status === "pending" && (
+                    {workflow.status === "pending" && workflow.id !== "request-check" && (
                       <Button 
-                        onClick={() => handleStartWorkflow(workflow.id, workflow.n8nUrl)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleWorkflowClick(workflow.id, workflow.n8nUrl);
+                        }}
                         className="bg-gradient-workflow hover:opacity-90"
                       >
                         <ExternalLink className="h-4 w-4 mr-2" />
@@ -218,7 +224,10 @@ const WorkflowDashboard = () => {
                     
                     {workflow.status === "running" && (
                       <Button 
-                        onClick={() => handleConfirmCompletion(workflow.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleConfirmCompletion(workflow.id);
+                        }}
                         variant="outline"
                         className="border-workflow-success text-workflow-success hover:bg-workflow-success hover:text-workflow-success-foreground"
                       >
@@ -227,11 +236,14 @@ const WorkflowDashboard = () => {
                       </Button>
                     )}
 
-                    {workflow.n8nUrl && (
+                    {workflow.n8nUrl && workflow.id !== "request-check" && (
                       <Button 
                         variant="ghost" 
                         size="sm"
-                        onClick={() => window.open(workflow.n8nUrl, "_blank")}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          window.open(workflow.n8nUrl, "_blank");
+                        }}
                         className="text-muted-foreground hover:text-foreground"
                       >
                         <ExternalLink className="h-4 w-4" />
