@@ -2,30 +2,44 @@
 import { useEffect, useState } from "react";
 
 interface KangarooAnimationProps {
-  workflowType: "kv-creation" | "size-variation" | "get-outputs";
+  workflowType: "creation" | "ai-enhancement" | "quality-check" | "review" | "get-outputs";
 }
 
 const artTypes = {
-  "kv-creation": {
-    title: "Creating Key Visual Design",
+  "creation": {
+    title: "Creating Promotional Content",
     emoji: "🎨",
-    description: "Crafting your visual masterpiece...",
+    description: "Getting template PSD, replacing images, adding text, and creating variations...",
     colors: ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FECA57"],
     elements: ["🌟", "✨", "🎯", "🔮", "💫"]
   },
-  "size-variation": {
-    title: "Crafting Size Variations", 
-    emoji: "📐",
-    description: "Resizing with precision...",
+  "ai-enhancement": {
+    title: "AI Enhancement", 
+    emoji: "🤖",
+    description: "Applying AI-powered improvements and optimizations...",
     colors: ["#A8E6CF", "#FFB3BA", "#FFDFBA", "#BAE1FF", "#C7CEEA"],
-    elements: ["📏", "🔧", "⚡", "🎪", "🌈"]
+    elements: ["🧠", "⚡", "🔮", "✨", "🌈"]
+  },
+  "quality-check": {
+    title: "Quality Check",
+    emoji: "🔍",
+    description: "Running automated quality assurance and compliance verification...",
+    colors: ["#FF9A9E", "#FECFEF", "#FECFEF", "#A8EDEA", "#FFD3A5"],
+    elements: ["✅", "🔍", "📋", "⚡", "🛡️"]
+  },
+  "review": {
+    title: "Review Phase",
+    emoji: "👀",
+    description: "Preparing outputs for review and feedback...",
+    colors: ["#667eea", "#764ba2", "#f093fb", "#f5576c", "#4facfe"],
+    elements: ["👁️", "📝", "💭", "🎯", "✨"]
   },
   "get-outputs": {
-    title: "Finalizing Masterpiece",
-    emoji: "✨",
-    description: "Adding magical finishing touches...",
+    title: "Finalizing Files",
+    emoji: "📦",
+    description: "Preparing downloads and final deliverables...",
     colors: ["#FFD93D", "#6BCF7F", "#4D96FF", "#FF6B9D", "#C44569"],
-    elements: ["💎", "🎁", "🏆", "🌟", "🎉"]
+    elements: ["💎", "🎁", "🏆", "📁", "🎉"]
   }
 };
 

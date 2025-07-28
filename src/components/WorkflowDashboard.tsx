@@ -32,30 +32,44 @@ const WorkflowDashboard = () => {
   
   const [workflows, setWorkflows] = useState<WorkflowStep[]>([
     {
-      id: "request-check",
+      id: "request",
       title: "Request",
-      description: "Fill out the promotional content request form",
+      description: "Run N8N workflow to read and process the request form",
       status: "pending",
       n8nUrl: ""
     },
     {
-      id: "kv-creation",
-      title: "1st KV Creation",
-      description: "Generate the initial key visual design",
+      id: "creation",
+      title: "Creation",
+      description: "Run N8N workflow to get template PSD, replace images, add text, and create size variations",
       status: "pending",
       n8nUrl: ""
     },
     {
-      id: "size-variation",
-      title: "Size Variation",
-      description: "Create different size variations of the content",
+      id: "ai-enhancement",
+      title: "AI Enhancement",
+      description: "Apply AI-powered improvements and optimizations to the created content",
+      status: "pending",
+      n8nUrl: ""
+    },
+    {
+      id: "quality-check",
+      title: "Quality Check",
+      description: "Automated quality assurance and compliance verification",
+      status: "pending",
+      n8nUrl: ""
+    },
+    {
+      id: "review",
+      title: "Review",
+      description: "See all outputs - review the results and leave comments if anything needs to be fixed",
       status: "pending",
       n8nUrl: ""
     },
     {
       id: "get-outputs",
-      title: "Get the Outputs",
-      description: "Finalize and deliver the promotional materials",
+      title: "Get Outputs",
+      description: "Click to download all the finalized files",
       status: "pending",
       n8nUrl: ""
     }
@@ -111,7 +125,7 @@ const WorkflowDashboard = () => {
   };
 
   const handleWorkflowClick = (workflowId: string, n8nUrl?: string) => {
-    if (workflowId === "request-check") {
+    if (workflowId === "request") {
       setShowRequestForm(true);
       return;
     }
@@ -134,7 +148,7 @@ const WorkflowDashboard = () => {
   const handleRequestCheckComplete = () => {
     setWorkflows(prev => 
       prev.map(workflow => 
-        workflow.id === "request-check" 
+        workflow.id === "request" 
           ? { ...workflow, status: "completed" }
           : workflow
       )
@@ -212,7 +226,7 @@ const WorkflowDashboard = () => {
               className={`p-6 transition-all duration-300 hover:shadow-card-custom cursor-pointer ${
                 index === currentStep ? 'ring-2 ring-primary shadow-workflow' : ''
               }`}
-              onClick={() => workflow.id === "request-check" && workflow.status === "pending" ? handleWorkflowClick(workflow.id, workflow.n8nUrl) : undefined}
+              onClick={() => workflow.id === "request" && workflow.status === "pending" ? handleWorkflowClick(workflow.id, workflow.n8nUrl) : undefined}
             >
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
@@ -233,10 +247,10 @@ const WorkflowDashboard = () => {
                 </div>
 
                 {/* Show Kangaroo Animation when running */}
-                {workflow.status === "running" && workflow.id !== "request-check" && (
+                {workflow.status === "running" && workflow.id !== "request" && (
                   <div className="col-span-2 mt-4">
                     <KangarooAnimation 
-                      workflowType={workflow.id as "kv-creation" | "size-variation" | "get-outputs"} 
+                      workflowType={workflow.id as "creation" | "ai-enhancement" | "quality-check" | "review" | "get-outputs"} 
                     />
                   </div>
                 )}
@@ -252,13 +266,13 @@ const WorkflowDashboard = () => {
                     <span className="flex items-center space-x-1">
                       {getStatusIcon(workflow.status)}
                       <span className="capitalize">
-                        {workflow.status === "completed" && workflow.id === "request-check" ? "Submitted" : workflow.status}
+                        {workflow.status === "completed" && workflow.id === "request" ? "Submitted" : workflow.status}
                       </span>
                     </span>
                   </Badge>
 
                   <div className="flex space-x-2">
-                    {workflow.status === "pending" && workflow.id !== "request-check" && (
+                    {workflow.status === "pending" && workflow.id !== "request" && (
                       <Button 
                         onClick={(e) => {
                           e.stopPropagation();
@@ -271,7 +285,7 @@ const WorkflowDashboard = () => {
                       </Button>
                     )}
 
-                    {workflow.n8nUrl && workflow.id !== "request-check" && workflow.status !== "running" && (
+                    {workflow.n8nUrl && workflow.id !== "request" && workflow.status !== "running" && (
                       <Button 
                         variant="ghost" 
                         size="sm"
