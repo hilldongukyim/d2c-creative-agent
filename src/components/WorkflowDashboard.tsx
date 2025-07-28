@@ -46,20 +46,6 @@ const WorkflowDashboard = () => {
       n8nUrl: ""
     },
     {
-      id: "ai-enhancement",
-      title: "AI Enhancement",
-      description: "Apply AI-powered improvements and optimizations to the created content",
-      status: "pending",
-      n8nUrl: ""
-    },
-    {
-      id: "quality-check",
-      title: "Quality Check",
-      description: "Automated quality assurance and compliance verification",
-      status: "pending",
-      n8nUrl: ""
-    },
-    {
       id: "review",
       title: "Review",
       description: "See all outputs - review the results and leave comments if anything needs to be fixed",
@@ -250,7 +236,7 @@ const WorkflowDashboard = () => {
                 {workflow.status === "running" && workflow.id !== "request" && (
                   <div className="col-span-2 mt-4">
                     <KangarooAnimation 
-                      workflowType={workflow.id as "creation" | "ai-enhancement" | "quality-check" | "review" | "get-outputs"} 
+                      workflowType={workflow.id as "creation" | "review" | "get-outputs"} 
                     />
                   </div>
                 )}

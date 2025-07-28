@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 
 interface KangarooAnimationProps {
-  workflowType: "creation" | "ai-enhancement" | "quality-check" | "review" | "get-outputs";
+  workflowType: "creation" | "review" | "get-outputs";
 }
 
 const artTypes = {
@@ -12,20 +12,6 @@ const artTypes = {
     description: "Getting template PSD, replacing images, adding text, and creating variations...",
     colors: ["#FF6B6B", "#4ECDC4", "#45B7D1", "#96CEB4", "#FECA57"],
     elements: ["🌟", "✨", "🎯", "🔮", "💫"]
-  },
-  "ai-enhancement": {
-    title: "AI Enhancement", 
-    emoji: "🤖",
-    description: "Applying AI-powered improvements and optimizations...",
-    colors: ["#A8E6CF", "#FFB3BA", "#FFDFBA", "#BAE1FF", "#C7CEEA"],
-    elements: ["🧠", "⚡", "🔮", "✨", "🌈"]
-  },
-  "quality-check": {
-    title: "Quality Check",
-    emoji: "🔍",
-    description: "Running automated quality assurance and compliance verification...",
-    colors: ["#FF9A9E", "#FECFEF", "#FECFEF", "#A8EDEA", "#FFD3A5"],
-    elements: ["✅", "🔍", "📋", "⚡", "🛡️"]
   },
   "review": {
     title: "Review Phase",
