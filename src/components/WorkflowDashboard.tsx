@@ -25,8 +25,8 @@ const WorkflowDashboard = () => {
   const [showRequestForm, setShowRequestForm] = useState(false);
   const [showWebhookSettings, setShowWebhookSettings] = useState(false);
   const [webhooks, setWebhooks] = useState<Record<string, string>>({
-    "kv-creation": "",
-    "size-variation": "",
+    "creation": "",
+    "review": "",
     "get-outputs": ""
   });
   

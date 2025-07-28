@@ -15,9 +15,9 @@ interface WebhookSettingsProps {
 }
 
 const workflows = [
-  { id: "kv-creation", title: "1st KV Creation", description: "Generate the initial key visual design" },
-  { id: "size-variation", title: "Size Variation", description: "Create different size variations of the content" },
-  { id: "get-outputs", title: "Get the Outputs", description: "Finalize and deliver the promotional materials" }
+  { id: "creation", title: "Creation", description: "Get template PSD, replace images, add text, and create size variations" },
+  { id: "review", title: "Review", description: "See all outputs - review the results and leave comments if anything needs to be fixed" },
+  { id: "get-outputs", title: "Get Outputs", description: "Click to download all the finalized files" }
 ];
 
 export const WebhookSettings = ({ open, onOpenChange, webhooks, onWebhookUpdate }: WebhookSettingsProps) => {
