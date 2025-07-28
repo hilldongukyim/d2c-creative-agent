@@ -24,8 +24,8 @@ const WorkflowDashboard = () => {
   const [workflows, setWorkflows] = useState<WorkflowStep[]>([
     {
       id: "request-check",
-      title: "Request Check",
-      description: "Validate and review the promotional content request",
+      title: "Request",
+      description: "Fill out the promotional content request form",
       status: "pending",
       n8nUrl: "https://your-n8n-instance.com/workflow/request-check"
     },

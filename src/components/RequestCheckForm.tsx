@@ -7,16 +7,23 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 
 const requestSchema = z.object({
-  email: z.string().email("Please enter a valid email address"),
+  requestorName: z.string().min(1, "Please enter requestor name"),
+  requestorEmail: z.string().email("Please enter a valid email address"),
   country: z.string().min(1, "Please select a country"),
-  title: z.string().min(1, "Please enter a promotion title"),
-  description: z.string().min(10, "Please enter a detailed description (min 10 characters)"),
-  productUrl: z.string().url("Please enter a valid product URL"),
-  lifestyleTheme: z.string().min(1, "Please select a lifestyle theme"),
+  promotionDetail: z.string().min(10, "Please enter promotion details (min 10 characters)"),
+  productA: z.string().url("Please enter a valid Product A URL"),
+  productALifestyle: z.string().min(1, "Please enter Product A lifestyle description"),
+  productB: z.string().optional(),
+  productBLifestyle: z.string().optional(),
+  productC: z.string().optional(),
+  productCLifestyle: z.string().optional(),
+  benefitIcons: z.array(z.string()).max(3, "Maximum 3 benefit icons allowed"),
+  publishingChannels: z.array(z.string()).min(1, "Please select at least one publishing channel"),
 });
 
 type RequestFormData = z.infer<typeof requestSchema>;
@@ -32,10 +39,13 @@ const countries = [
   "Japan", "Australia", "Singapore", "South Korea", "Netherlands"
 ];
 
-const lifestyleThemes = [
-  "Modern & Minimalist", "Urban & Trendy", "Natural & Organic", 
-  "Luxury & Premium", "Family & Lifestyle", "Tech & Innovation",
-  "Health & Wellness", "Adventure & Outdoor"
+const benefitIconOptions = [
+  "Fast Delivery", "Quality Guarantee", "24/7 Support", "Free Shipping",
+  "Money Back", "Eco Friendly", "Premium Quality", "Limited Time"
+];
+
+const publishingChannelOptions = [
+  "LG.COM", "DV360", "Criteo", "PMAX", "Mailing", "Social"
 ];
 
 export const RequestCheckForm = ({ open, onOpenChange, onComplete }: RequestCheckFormProps) => {
@@ -45,24 +55,30 @@ export const RequestCheckForm = ({ open, onOpenChange, onComplete }: RequestChec
   const form = useForm<RequestFormData>({
     resolver: zodResolver(requestSchema),
     defaultValues: {
-      email: "",
+      requestorName: "",
+      requestorEmail: "",
       country: "",
-      title: "",
-      description: "",
-      productUrl: "",
-      lifestyleTheme: "",
+      promotionDetail: "",
+      productA: "",
+      productALifestyle: "",
+      productB: "",
+      productBLifestyle: "",
+      productC: "",
+      productCLifestyle: "",
+      benefitIcons: [],
+      publishingChannels: [],
     },
   });
 
   const onSubmit = async (data: RequestFormData) => {
     setIsSubmitting(true);
     
-    // Simulate checking/processing
+    // Simulate processing
     await new Promise(resolve => setTimeout(resolve, 1500));
     
     toast({
-      title: "Request Check Completed",
-      description: "All information has been validated successfully.",
+      title: "Request Submitted",
+      description: "Promotional content request has been submitted successfully.",
     });
     
     setIsSubmitting(false);
@@ -73,26 +89,42 @@ export const RequestCheckForm = ({ open, onOpenChange, onComplete }: RequestChec
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Request Check - Content Information</DialogTitle>
+          <DialogTitle>Promotional Content Request Form</DialogTitle>
         </DialogHeader>
         
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Requestor's Email Address</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter email address" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <FormField
+                control={form.control}
+                name="requestorName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Requestor Name</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter requestor name" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="requestorEmail"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Requestor Email</FormLabel>
+                    <FormControl>
+                      <Input placeholder="Enter email address" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            </div>
 
             <FormField
               control={form.control}
@@ -121,24 +153,10 @@ export const RequestCheckForm = ({ open, onOpenChange, onComplete }: RequestChec
 
             <FormField
               control={form.control}
-              name="title"
+              name="promotionDetail"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Promotion Title</FormLabel>
-                  <FormControl>
-                    <Input placeholder="Enter promotion title" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="description"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Promotion Description</FormLabel>
+                  <FormLabel>Promotion Detail</FormLabel>
                   <FormControl>
                     <Textarea 
                       placeholder="Enter detailed promotion description"
@@ -151,15 +169,140 @@ export const RequestCheckForm = ({ open, onOpenChange, onComplete }: RequestChec
               )}
             />
 
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Products</h3>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="productA"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Product A URL</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Please copy and paste the PDP url" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="productALifestyle"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Product A - Lifestyle</FormLabel>
+                      <FormControl>
+                        <Input placeholder="e.g., happy businessman in a hotel room working" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="productB"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Product B URL (Optional)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Please copy and paste the PDP url" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="productBLifestyle"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Product B - Lifestyle (Optional)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter lifestyle description" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={form.control}
+                  name="productC"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Product C URL (Optional)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Please copy and paste the PDP url" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={form.control}
+                  name="productCLifestyle"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Product C - Lifestyle (Optional)</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Enter lifestyle description" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+            </div>
+
             <FormField
               control={form.control}
-              name="productUrl"
-              render={({ field }) => (
+              name="benefitIcons"
+              render={() => (
                 <FormItem>
-                  <FormLabel>Product URL</FormLabel>
-                  <FormControl>
-                    <Input placeholder="https://example.com/product" {...field} />
-                  </FormControl>
+                  <FormLabel>Benefit Icon Select (max 3)</FormLabel>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    {benefitIconOptions.map((item) => (
+                      <FormField
+                        key={item}
+                        control={form.control}
+                        name="benefitIcons"
+                        render={({ field }) => {
+                          return (
+                            <FormItem
+                              key={item}
+                              className="flex flex-row items-start space-x-3 space-y-0"
+                            >
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value?.includes(item)}
+                                  onCheckedChange={(checked) => {
+                                    const current = field.value || [];
+                                    if (checked && current.length < 3) {
+                                      field.onChange([...current, item]);
+                                    } else if (!checked) {
+                                      field.onChange(current.filter((value) => value !== item));
+                                    }
+                                  }}
+                                />
+                              </FormControl>
+                              <FormLabel className="text-sm font-normal">
+                                {item}
+                              </FormLabel>
+                            </FormItem>
+                          );
+                        }}
+                      />
+                    ))}
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
@@ -167,24 +310,44 @@ export const RequestCheckForm = ({ open, onOpenChange, onComplete }: RequestChec
 
             <FormField
               control={form.control}
-              name="lifestyleTheme"
-              render={({ field }) => (
+              name="publishingChannels"
+              render={() => (
                 <FormItem>
-                  <FormLabel>Lifestyle Theme</FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select lifestyle theme" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {lifestyleThemes.map((theme) => (
-                        <SelectItem key={theme} value={theme}>
-                          {theme}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormLabel>Publishing Channels Select</FormLabel>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    {publishingChannelOptions.map((item) => (
+                      <FormField
+                        key={item}
+                        control={form.control}
+                        name="publishingChannels"
+                        render={({ field }) => {
+                          return (
+                            <FormItem
+                              key={item}
+                              className="flex flex-row items-start space-x-3 space-y-0"
+                            >
+                              <FormControl>
+                                <Checkbox
+                                  checked={field.value?.includes(item)}
+                                  onCheckedChange={(checked) => {
+                                    const current = field.value || [];
+                                    if (checked) {
+                                      field.onChange([...current, item]);
+                                    } else {
+                                      field.onChange(current.filter((value) => value !== item));
+                                    }
+                                  }}
+                                />
+                              </FormControl>
+                              <FormLabel className="text-sm font-normal">
+                                {item}
+                              </FormLabel>
+                            </FormItem>
+                          );
+                        }}
+                      />
+                    ))}
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
@@ -200,7 +363,7 @@ export const RequestCheckForm = ({ open, onOpenChange, onComplete }: RequestChec
                 Cancel
               </Button>
               <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Checking..." : "Complete Check"}
+                {isSubmitting ? "Submitting..." : "Submit Request"}
               </Button>
             </div>
           </form>
