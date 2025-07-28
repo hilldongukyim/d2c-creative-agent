@@ -6,6 +6,7 @@ import { CheckCircle, Clock, ExternalLink, AlertCircle, Play, BarChart3 } from "
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { RequestCheckForm } from "./RequestCheckForm";
+import { KangarooAnimation } from "./KangarooAnimation";
 
 type WorkflowStatus = "pending" | "running" | "completed" | "error";
 
@@ -84,10 +85,7 @@ const WorkflowDashboard = () => {
       return;
     }
 
-    if (n8nUrl) {
-      window.open(n8nUrl, "_blank");
-    }
-    
+    // For other workflows, just set them to running (no external popup)
     setWorkflows(prev => 
       prev.map(workflow => 
         workflow.id === workflowId 
@@ -195,6 +193,18 @@ const WorkflowDashboard = () => {
                   </div>
                 </div>
 
+                {/* Show Kangaroo Animation when running */}
+                {workflow.status === "running" && workflow.id !== "request-check" && (
+                  <div className="col-span-2 mt-4">
+                    <KangarooAnimation 
+                      workflowType={workflow.id as "kv-creation" | "size-variation" | "get-outputs"} 
+                    />
+                  </div>
+                )}
+              </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex-1" />
                 <div className="flex items-center space-x-4">
                   <Badge 
                     variant="outline" 
@@ -236,7 +246,7 @@ const WorkflowDashboard = () => {
                       </Button>
                     )}
 
-                    {workflow.n8nUrl && workflow.id !== "request-check" && (
+                    {workflow.n8nUrl && workflow.id !== "request-check" && workflow.status !== "running" && (
                       <Button 
                         variant="ghost" 
                         size="sm"
