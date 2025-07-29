@@ -2,7 +2,9 @@ import { useState, useEffect } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle, Clock, ExternalLink, AlertCircle, Play, BarChart3, Settings } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Textarea } from "@/components/ui/textarea";
+import { CheckCircle, Clock, ExternalLink, AlertCircle, Play, BarChart3, Settings, User, Shield, MessageSquare } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { RequestCheckForm } from "./RequestCheckForm";
@@ -10,6 +12,7 @@ import { KangarooAnimation } from "./KangarooAnimation";
 import { WebhookSettings } from "./WebhookSettings";
 
 type WorkflowStatus = "pending" | "running" | "completed" | "error";
+type UserRole = "requestor" | "admin";
 
 interface WorkflowStep {
   id: string;
@@ -17,13 +20,25 @@ interface WorkflowStep {
   description: string;
   status: WorkflowStatus;
   n8nUrl?: string;
+  requiredRole?: UserRole;
+  enabledAfter?: string;
+}
+
+interface ImageComment {
+  id: string;
+  imageId: string;
+  comment: string;
+  timestamp: Date;
 }
 
 const WorkflowDashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [currentUserRole, setCurrentUserRole] = useState<UserRole>("requestor");
   const [showRequestForm, setShowRequestForm] = useState(false);
   const [showWebhookSettings, setShowWebhookSettings] = useState(false);
+  const [imageComments, setImageComments] = useState<ImageComment[]>([]);
+  const [requestorFeedback, setRequestorFeedback] = useState("");
   const [webhooks, setWebhooks] = useState<Record<string, string>>({
     "creation": "",
     "review": "",
@@ -33,30 +48,53 @@ const WorkflowDashboard = () => {
   const [workflows, setWorkflows] = useState<WorkflowStep[]>([
     {
       id: "request",
-      title: "Request",
-      description: "Run N8N workflow to read and process the request form",
+      title: "Submit Request",
+      description: "Submit the request form with project details",
       status: "pending",
+      requiredRole: "requestor",
       n8nUrl: ""
     },
     {
       id: "creation",
       title: "Creation",
-      description: "Run N8N workflow to get template PSD, replace images, add text, and create size variations",
+      description: "Automatically generate content based on the request",
       status: "pending",
+      enabledAfter: "request",
       n8nUrl: ""
     },
     {
-      id: "review",
-      title: "Review",
-      description: "See all outputs - review the results and leave comments if anything needs to be fixed",
+      id: "admin-review",
+      title: "Admin Review",
+      description: "Review and edit the generated content",
       status: "pending",
+      requiredRole: "admin",
+      enabledAfter: "creation",
+      n8nUrl: ""
+    },
+    {
+      id: "requestor-review",
+      title: "Requestor Review",
+      description: "Review the outputs and provide feedback",
+      status: "pending",
+      requiredRole: "requestor",
+      enabledAfter: "admin-review",
       n8nUrl: ""
     },
     {
       id: "get-outputs",
       title: "Get Outputs",
-      description: "Click to download all the finalized files",
+      description: "Download all finalized files",
       status: "pending",
+      enabledAfter: "requestor-review",
+      n8nUrl: ""
+    },
+    {
+      id: "done",
+      title: "Archive",
+      description: "Mark as complete and archive the project",
+      status: "pending",
+      requiredRole: "admin",
+      enabledAfter: "get-outputs",
       n8nUrl: ""
     }
   ]);
@@ -150,6 +188,49 @@ const WorkflowDashboard = () => {
     });
   };
 
+  const handleStepComplete = (stepId: string) => {
+    setWorkflows(prev => {
+      return prev.map(workflow => {
+        if (workflow.id === stepId) {
+          return { ...workflow, status: "completed" };
+        }
+        // Enable next step
+        const nextStep = prev.find(w => w.enabledAfter === stepId);
+        if (nextStep && workflow.id === nextStep.id) {
+          return { ...workflow, status: "pending" };
+        }
+        return workflow;
+      });
+    });
+
+    // Special handling for archiving
+    if (stepId === "done") {
+      toast({
+        title: "Project Archived",
+        description: "Project has been archived and moved to overview.",
+      });
+      // In a real app, this would save to database
+    }
+  };
+
+  const handleRequestorConfirm = () => {
+    handleStepComplete("requestor-review");
+    toast({
+      title: "Review Confirmed",
+      description: "Your feedback has been submitted. Outputs are now ready.",
+    });
+  };
+
+  const addImageComment = (imageId: string, comment: string) => {
+    const newComment: ImageComment = {
+      id: Date.now().toString(),
+      imageId,
+      comment,
+      timestamp: new Date()
+    };
+    setImageComments(prev => [...prev, newComment]);
+  };
+
   const handleWebhookUpdate = (workflowId: string, url: string) => {
     setWebhooks(prev => ({
       ...prev,
@@ -169,9 +250,19 @@ const WorkflowDashboard = () => {
   const completedSteps = workflows.filter(w => w.status === "completed").length;
   const progress = (completedSteps / workflows.length) * 100;
 
+  const getWorkflowsForRole = (role: UserRole) => {
+    return workflows.filter(w => !w.requiredRole || w.requiredRole === role);
+  };
+
+  const isStepEnabled = (workflow: WorkflowStep) => {
+    if (!workflow.enabledAfter) return true;
+    const prerequisite = workflows.find(w => w.id === workflow.enabledAfter);
+    return prerequisite?.status === "completed";
+  };
+
   return (
     <div className="min-h-screen bg-background p-6">
-      <div className="max-w-4xl mx-auto space-y-8">
+      <div className="max-w-6xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center space-y-4">
           <h1 className="text-4xl font-bold text-foreground">
@@ -213,92 +304,189 @@ const WorkflowDashboard = () => {
           </p>
         </div>
 
-        {/* Workflow Steps */}
-        <div className="grid gap-6">
-          {workflows.map((workflow, index) => (
-            <Card 
-              key={workflow.id}
-              className={`p-6 transition-all duration-300 hover:shadow-card-custom cursor-pointer ${
-                index === currentStep ? 'ring-2 ring-primary shadow-workflow' : ''
-              }`}
-              onClick={() => workflow.id === "request" && workflow.status === "pending" ? handleWorkflowClick(workflow.id, workflow.n8nUrl) : undefined}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
-                  <div className="flex items-center justify-center w-12 h-12 rounded-full bg-workflow-bg">
-                    <span className="text-lg font-bold text-foreground">
-                      {index + 1}
-                    </span>
-                  </div>
-                  
-                  <div className="space-y-1">
-                    <h3 className="text-xl font-semibold text-foreground">
-                      {workflow.title}
-                    </h3>
-                    <p className="text-muted-foreground">
-                      {workflow.description}
-                    </p>
-                  </div>
-                </div>
+        {/* Role-based Tabs */}
+        <Tabs value={currentUserRole} onValueChange={(value) => setCurrentUserRole(value as UserRole)} className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="requestor" className="flex items-center gap-2">
+              <User className="h-4 w-4" />
+              Requestor View
+            </TabsTrigger>
+            <TabsTrigger value="admin" className="flex items-center gap-2">
+              <Shield className="h-4 w-4" />
+              Admin View
+            </TabsTrigger>
+          </TabsList>
 
-                {/* Show Kangaroo Animation when running */}
-                {workflow.status === "running" && workflow.id !== "request" && (
-                  <div className="col-span-2 mt-4">
-                    <KangarooAnimation 
-                      workflowType={workflow.id as "creation" | "review" | "get-outputs"} 
-                    />
-                  </div>
-                )}
-              </div>
+          <TabsContent value="requestor" className="space-y-6">
+            <div className="grid gap-6">
+              {getWorkflowsForRole("requestor").map((workflow, index) => (
+                <Card 
+                  key={workflow.id}
+                  className={`p-6 transition-all duration-300 hover:shadow-card-custom ${
+                    !isStepEnabled(workflow) ? 'opacity-50' : 'cursor-pointer'
+                  } ${
+                    workflow.status === "running" ? 'ring-2 ring-primary shadow-workflow' : ''
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex items-center justify-center w-12 h-12 rounded-full bg-workflow-bg">
+                        <span className="text-lg font-bold text-foreground">
+                          {index + 1}
+                        </span>
+                      </div>
+                      
+                      <div className="space-y-1">
+                        <h3 className="text-xl font-semibold text-foreground">
+                          {workflow.title}
+                        </h3>
+                        <p className="text-muted-foreground">
+                          {workflow.description}
+                        </p>
+                      </div>
+                    </div>
 
-              <div className="flex items-center justify-between">
-                <div className="flex-1" />
-                <div className="flex items-center space-x-4">
-                  <Badge 
-                    variant="outline" 
-                    className={`bg-${getStatusColor(workflow.status)} text-${getStatusColor(workflow.status)}-foreground border-${getStatusColor(workflow.status)}`}
-                  >
-                    <span className="flex items-center space-x-1">
-                      {getStatusIcon(workflow.status)}
-                      <span className="capitalize">
-                        {workflow.status === "completed" && workflow.id === "request" ? "Submitted" : workflow.status}
-                      </span>
-                    </span>
-                  </Badge>
-
-                  <div className="flex space-x-2">
-                    {workflow.status === "pending" && workflow.id !== "request" && (
-                      <Button 
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleWorkflowClick(workflow.id, workflow.n8nUrl);
-                        }}
-                        className="bg-gradient-workflow hover:opacity-90"
+                    <div className="flex items-center space-x-4">
+                      <Badge 
+                        variant="outline" 
+                        className={`bg-${getStatusColor(workflow.status)} text-${getStatusColor(workflow.status)}-foreground border-${getStatusColor(workflow.status)}`}
                       >
-                        <ExternalLink className="h-4 w-4 mr-2" />
-                        Start Workflow
-                      </Button>
-                    )}
+                        <span className="flex items-center space-x-1">
+                          {getStatusIcon(workflow.status)}
+                          <span className="capitalize">{workflow.status}</span>
+                        </span>
+                      </Badge>
 
-                    {workflow.n8nUrl && workflow.id !== "request" && workflow.status !== "running" && (
-                      <Button 
-                        variant="ghost" 
-                        size="sm"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          window.open(workflow.n8nUrl, "_blank");
-                        }}
-                        className="text-muted-foreground hover:text-foreground"
-                      >
-                        <ExternalLink className="h-4 w-4" />
-                      </Button>
-                    )}
+                      {workflow.id === "request" && workflow.status === "pending" && (
+                        <Button 
+                          onClick={() => setShowRequestForm(true)}
+                          className="bg-gradient-workflow hover:opacity-90"
+                        >
+                          Submit Request
+                        </Button>
+                      )}
+
+                      {workflow.id === "requestor-review" && workflow.status === "pending" && isStepEnabled(workflow) && (
+                        <div className="space-y-4">
+                          <div className="text-sm text-muted-foreground">
+                            Review the outputs and leave feedback:
+                          </div>
+                          <div className="grid grid-cols-2 gap-4">
+                            {/* Mock images for demonstration */}
+                            {[1, 2, 3, 4].map((imageId) => (
+                              <div key={imageId} className="space-y-2">
+                                <div className="w-full h-32 bg-muted rounded-lg flex items-center justify-center">
+                                  <span className="text-muted-foreground">Image {imageId}</span>
+                                </div>
+                                <Textarea
+                                  placeholder="Leave a comment..."
+                                  className="text-sm"
+                                  onBlur={(e) => {
+                                    if (e.target.value.trim()) {
+                                      addImageComment(imageId.toString(), e.target.value);
+                                      e.target.value = "";
+                                    }
+                                  }}
+                                />
+                              </div>
+                            ))}
+                          </div>
+                          <div className="flex gap-2">
+                            <Button 
+                              onClick={handleRequestorConfirm}
+                              className="bg-gradient-workflow hover:opacity-90"
+                            >
+                              Confirm & Proceed
+                            </Button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   </div>
-                </div>
-              </div>
-            </Card>
-          ))}
-        </div>
+
+                  {workflow.status === "running" && (
+                    <div className="mt-4">
+                      <KangarooAnimation 
+                        workflowType={workflow.id as "creation" | "review" | "get-outputs"} 
+                      />
+                    </div>
+                  )}
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+
+          <TabsContent value="admin" className="space-y-6">
+            <div className="grid gap-6">
+              {getWorkflowsForRole("admin").map((workflow, index) => (
+                <Card 
+                  key={workflow.id}
+                  className={`p-6 transition-all duration-300 hover:shadow-card-custom ${
+                    !isStepEnabled(workflow) ? 'opacity-50' : 'cursor-pointer'
+                  } ${
+                    workflow.status === "running" ? 'ring-2 ring-primary shadow-workflow' : ''
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      <div className="flex items-center justify-center w-12 h-12 rounded-full bg-workflow-bg">
+                        <span className="text-lg font-bold text-foreground">
+                          A{index + 1}
+                        </span>
+                      </div>
+                      
+                      <div className="space-y-1">
+                        <h3 className="text-xl font-semibold text-foreground">
+                          {workflow.title}
+                        </h3>
+                        <p className="text-muted-foreground">
+                          {workflow.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center space-x-4">
+                      <Badge 
+                        variant="outline" 
+                        className={`bg-${getStatusColor(workflow.status)} text-${getStatusColor(workflow.status)}-foreground border-${getStatusColor(workflow.status)}`}
+                      >
+                        <span className="flex items-center space-x-1">
+                          {getStatusIcon(workflow.status)}
+                          <span className="capitalize">{workflow.status}</span>
+                        </span>
+                      </Badge>
+
+                      {workflow.status === "pending" && isStepEnabled(workflow) && (
+                        <Button 
+                          onClick={() => handleStepComplete(workflow.id)}
+                          className="bg-gradient-workflow hover:opacity-90"
+                        >
+                          {workflow.id === "done" ? "Archive Project" : "Complete Review"}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+
+                  {/* Show requestor feedback for admin review */}
+                  {workflow.id === "admin-review" && imageComments.length > 0 && (
+                    <div className="mt-4 p-4 bg-muted rounded-lg">
+                      <h4 className="font-semibold mb-2 flex items-center gap-2">
+                        <MessageSquare className="h-4 w-4" />
+                        Requestor Feedback
+                      </h4>
+                      {imageComments.map((comment) => (
+                        <div key={comment.id} className="text-sm text-muted-foreground mb-2">
+                          <strong>Image {comment.imageId}:</strong> {comment.comment}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </Card>
+              ))}
+            </div>
+          </TabsContent>
+        </Tabs>
+
 
         {/* Summary */}
         {completedSteps === workflows.length && (
