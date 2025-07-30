@@ -248,7 +248,7 @@ export const RequestCheckForm = ({ open, onOpenChange, onComplete }: RequestChec
                               <img
                                 src={layout.image}
                                 alt={`Layout ${layout.id}`}
-                                className="w-full h-32 object-cover rounded-md"
+                                className="w-full h-40 object-contain bg-gray-50 rounded-md"
                               />
                             </label>
                           </div>
