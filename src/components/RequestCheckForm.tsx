@@ -66,6 +66,42 @@ const layoutOptions = [
   {
     id: "layout-4",
     image: "/lovable-uploads/76efa2dd-a233-469b-8c78-0957e563f8a4.png"
+  },
+  {
+    id: "layout-5",
+    image: "/lovable-uploads/eed1f1fe-e428-4edb-9f83-5a2f9807ab4b.png"
+  },
+  {
+    id: "layout-6",
+    image: "/lovable-uploads/78bed169-63a0-4583-b7d3-487b12042967.png"
+  },
+  {
+    id: "layout-7",
+    image: "/lovable-uploads/188b8ae7-841a-454f-9a00-8df0f48c302f.png"
+  },
+  {
+    id: "layout-8",
+    image: "/lovable-uploads/a13866cf-bd0c-4f69-9dab-668567499aa8.png"
+  },
+  {
+    id: "layout-9",
+    image: "/lovable-uploads/d7fddc92-677a-4deb-bb12-371d8ef3a5b4.png"
+  },
+  {
+    id: "layout-10",
+    image: "/lovable-uploads/f20bffa2-6fa6-4b4c-956b-e1d1d2bb3211.png"
+  },
+  {
+    id: "layout-11",
+    image: "/lovable-uploads/0626cb3c-cbe3-4b16-a5f6-29748386fa13.png"
+  },
+  {
+    id: "layout-12",
+    image: "/lovable-uploads/7640c1ee-2cad-4ca5-a843-a4b4a26963d8.png"
+  },
+  {
+    id: "layout-13",
+    image: "/lovable-uploads/5aa33b89-f85e-4af6-a279-0f8704318530.png"
   }
 ];
 
