@@ -53,27 +53,19 @@ const publishingChannelOptions = [
 const layoutOptions = [
   {
     id: "layout-1",
-    name: "Layout 1 - Product Focus",
-    image: "/lovable-uploads/f516db70-16a5-4cc3-8f56-93713ad30446.png",
-    description: "Square product image with round lifestyle image"
+    image: "/lovable-uploads/f516db70-16a5-4cc3-8f56-93713ad30446.png"
   },
   {
     id: "layout-2", 
-    name: "Layout 2 - Balanced",
-    image: "/lovable-uploads/31a71a4e-1b8e-4d7a-b07d-5bd6df9f624a.png",
-    description: "Two square images side by side"
+    image: "/lovable-uploads/31a71a4e-1b8e-4d7a-b07d-5bd6df9f624a.png"
   },
   {
     id: "layout-3",
-    name: "Layout 3 - Lifestyle Focus", 
-    image: "/lovable-uploads/eae203d0-da2f-4151-bab3-31c8af63e40e.png",
-    description: "Round product image with large round lifestyle image"
+    image: "/lovable-uploads/eae203d0-da2f-4151-bab3-31c8af63e40e.png"
   },
   {
     id: "layout-4",
-    name: "Layout 4 - Creative",
-    image: "/lovable-uploads/76efa2dd-a233-469b-8c78-0957e563f8a4.png", 
-    description: "Round product image with curved lifestyle image"
+    image: "/lovable-uploads/76efa2dd-a233-469b-8c78-0957e563f8a4.png"
   }
 ];
 
@@ -251,19 +243,13 @@ export const RequestCheckForm = ({ open, onOpenChange, onComplete }: RequestChec
                             />
                             <label
                               htmlFor={layout.id}
-                              className="cursor-pointer block border-2 border-muted rounded-lg p-4 hover:border-primary peer-checked:border-primary transition-colors"
+                              className="cursor-pointer block border-2 border-muted rounded-lg p-2 hover:border-primary peer-checked:border-primary transition-colors"
                             >
-                              <div className="space-y-3">
-                                <img
-                                  src={layout.image}
-                                  alt={layout.name}
-                                  className="w-full h-48 object-cover rounded-md"
-                                />
-                                <div>
-                                  <h4 className="font-medium">{layout.name}</h4>
-                                  <p className="text-sm text-muted-foreground">{layout.description}</p>
-                                </div>
-                              </div>
+                              <img
+                                src={layout.image}
+                                alt={`Layout ${layout.id}`}
+                                className="w-full h-32 object-cover rounded-md"
+                              />
                             </label>
                           </div>
                         ))}
