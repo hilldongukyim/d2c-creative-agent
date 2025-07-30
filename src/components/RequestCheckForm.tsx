@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useToast } from "@/hooks/use-toast";
 
@@ -16,6 +17,7 @@ const requestSchema = z.object({
   requestorEmail: z.string().email("Please enter a valid email address"),
   country: z.string().min(1, "Please select a country"),
   promotionDetail: z.string().min(10, "Please enter promotion details (min 10 characters)"),
+  layoutSelection: z.string().min(1, "Please select a layout"),
   productA: z.string().url("Please enter a valid Product A URL"),
   productALifestyle: z.string().min(1, "Please enter Product A lifestyle description"),
   productB: z.string().optional(),
@@ -48,6 +50,33 @@ const publishingChannelOptions = [
   "LG.COM", "DV360", "Criteo", "PMAX", "Mailing", "Social"
 ];
 
+const layoutOptions = [
+  {
+    id: "layout-1",
+    name: "Layout 1 - Product Focus",
+    image: "/lovable-uploads/f516db70-16a5-4cc3-8f56-93713ad30446.png",
+    description: "Square product image with round lifestyle image"
+  },
+  {
+    id: "layout-2", 
+    name: "Layout 2 - Balanced",
+    image: "/lovable-uploads/31a71a4e-1b8e-4d7a-b07d-5bd6df9f624a.png",
+    description: "Two square images side by side"
+  },
+  {
+    id: "layout-3",
+    name: "Layout 3 - Lifestyle Focus", 
+    image: "/lovable-uploads/eae203d0-da2f-4151-bab3-31c8af63e40e.png",
+    description: "Round product image with large round lifestyle image"
+  },
+  {
+    id: "layout-4",
+    name: "Layout 4 - Creative",
+    image: "/lovable-uploads/76efa2dd-a233-469b-8c78-0957e563f8a4.png", 
+    description: "Round product image with curved lifestyle image"
+  }
+];
+
 export const RequestCheckForm = ({ open, onOpenChange, onComplete }: RequestCheckFormProps) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -59,6 +88,7 @@ export const RequestCheckForm = ({ open, onOpenChange, onComplete }: RequestChec
       requestorEmail: "",
       country: "",
       promotionDetail: "",
+      layoutSelection: "",
       productA: "",
       productALifestyle: "",
       productB: "",
@@ -197,6 +227,48 @@ export const RequestCheckForm = ({ open, onOpenChange, onComplete }: RequestChec
                       className="min-h-[100px]"
                       {...field} 
                     />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
+            <FormField
+              control={form.control}
+              name="layoutSelection"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Layout Selection</FormLabel>
+                  <FormControl>
+                    <RadioGroup onValueChange={field.onChange} defaultValue={field.value}>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        {layoutOptions.map((layout) => (
+                          <div key={layout.id} className="relative">
+                            <RadioGroupItem
+                              value={layout.id}
+                              id={layout.id}
+                              className="peer sr-only"
+                            />
+                            <label
+                              htmlFor={layout.id}
+                              className="cursor-pointer block border-2 border-muted rounded-lg p-4 hover:border-primary peer-checked:border-primary transition-colors"
+                            >
+                              <div className="space-y-3">
+                                <img
+                                  src={layout.image}
+                                  alt={layout.name}
+                                  className="w-full h-48 object-cover rounded-md"
+                                />
+                                <div>
+                                  <h4 className="font-medium">{layout.name}</h4>
+                                  <p className="text-sm text-muted-foreground">{layout.description}</p>
+                                </div>
+                              </div>
+                            </label>
+                          </div>
+                        ))}
+                      </div>
+                    </RadioGroup>
                   </FormControl>
                   <FormMessage />
                 </FormItem>
