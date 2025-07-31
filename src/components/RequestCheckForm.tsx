@@ -136,8 +136,10 @@ export const RequestCheckForm = ({ open, onOpenChange, onComplete }: RequestChec
       
       // Call N8N webhook to start the workflow
       const response = await fetch("https://dev.eaip.lge.com/n8n/webhook/this", {
-        method: "GET",
-        
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
         body: JSON.stringify(data),
       });
 
