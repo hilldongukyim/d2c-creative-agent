@@ -135,7 +135,7 @@ export const RequestCheckForm = ({ open, onOpenChange, onComplete }: RequestChec
       console.log("Submitting form data:", data);
       
       // Call N8N webhook to start the workflow
-      const response = await fetch("https://dev.eaip.lge.com/n8n/webhook/this", {
+      const response = await fetch("https://dev.eaip.lge.com/n8n/webhook-test/this", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
