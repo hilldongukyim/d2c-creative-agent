@@ -38,7 +38,7 @@ interface RequestCheckFormProps {
 
 const countries = [
   "United States", "Canada", "United Kingdom", "Germany", "France", 
-  "Japan", "Australia", "Singapore", "South Korea", "Netherlands"
+  "Japan", "Australia", "Singapore", "South Korea", "Netherlands", "Thailand"
 ];
 
 const benefitIconOptions = [
@@ -137,11 +137,7 @@ export const RequestCheckForm = ({ open, onOpenChange, onComplete }: RequestChec
       // Call N8N webhook to start the workflow
       const response = await fetch("https://dev.eaip.lge.com/n8n/webhook/this", {
         method: "GET",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-        },
+        
         body: JSON.stringify(data),
       });
 
