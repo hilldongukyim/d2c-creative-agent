@@ -30,6 +30,7 @@ const PTOGallery = () => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionStatus, setSubmissionStatus] = useState<'success' | 'failure' | null>(null);
   const [showEnergyLabelHelp, setShowEnergyLabelHelp] = useState(false);
+  const [urlValidationError, setUrlValidationError] = useState<string | null>(null);
   const conversationRef = useRef<HTMLDivElement>(null);
 
   const energyLabels = [
@@ -155,6 +156,14 @@ const PTOGallery = () => {
   const handleInputSubmit = () => {
     const currentConversation = conversations[currentStep];
     if (currentConversation.field) {
+      // URL validation for product URLs
+      if ((currentConversation.field === 'mainProductUrl' || currentConversation.field === 'secondProductUrl') && 
+          !userInput.startsWith('https://www.lg.com/')) {
+        setUrlValidationError('Please make sure you provided a valid LG product URL that starts with "https://www.lg.com/"');
+        return;
+      }
+      
+      setUrlValidationError(null);
       setFormData(prev => ({
         ...prev,
         [currentConversation.field]: userInput
@@ -315,24 +324,31 @@ const PTOGallery = () => {
                           </div>
                         )}
                       </div>
-                    ) : (
-                      <div className="flex gap-2">
-                        <Input
-                          value={userInput}
-                          onChange={(e) => setUserInput(e.target.value)}
-                          placeholder="Type your answer..."
-                          onKeyDown={(e) => e.key === 'Enter' && userInput.trim() && handleInputSubmit()}
-                          className="flex-1"
-                        />
-                        <Button
-                          onClick={handleInputSubmit}
-                          disabled={!userInput.trim()}
-                          size="icon"
-                        >
-                          <Send className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    )}
+                     ) : (
+                       <div className="space-y-2">
+                         <div className="flex gap-2">
+                           <Input
+                             value={userInput}
+                             onChange={(e) => setUserInput(e.target.value)}
+                             placeholder="Type your answer..."
+                             onKeyDown={(e) => e.key === 'Enter' && userInput.trim() && handleInputSubmit()}
+                             className="flex-1"
+                           />
+                           <Button
+                             onClick={handleInputSubmit}
+                             disabled={!userInput.trim()}
+                             size="icon"
+                           >
+                             <Send className="h-4 w-4" />
+                           </Button>
+                         </div>
+                         {urlValidationError && (
+                           <div className="bg-red-50 dark:bg-red-950/30 rounded-lg p-3">
+                             <p className="text-sm text-red-600 dark:text-red-400">{urlValidationError}</p>
+                           </div>
+                         )}
+                       </div>
+                     )}
                   </div>
                 )}
 
