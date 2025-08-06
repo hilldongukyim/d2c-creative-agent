@@ -217,8 +217,12 @@ const PTOGallery = () => {
         <div className="bg-card rounded-xl shadow-lg p-6 min-h-[500px] relative z-10">
           {/* Ben's Profile */}
           <div className="flex items-center gap-4 mb-6 pb-4 border-b border-border">
-            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-blue-400/50">
-              <img src={benProfile} alt="Ben" className="w-full h-full object-cover" />
+            <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-blue-400/50">
+              <img 
+                src={benProfile} 
+                alt="Ben" 
+                className="w-full h-full object-cover object-center scale-110 brightness-125" 
+              />
             </div>
             <div>
               <h3 className="font-semibold text-lg">Ben</h3>
