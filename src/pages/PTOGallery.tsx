@@ -139,12 +139,9 @@ const PTOGallery = () => {
   // Auto-scroll effect
   useEffect(() => {
     if (conversationRef.current) {
-      conversationRef.current.scrollIntoView({ 
-        behavior: 'smooth', 
-        block: 'end' 
-      });
+      conversationRef.current.scrollTop = conversationRef.current.scrollHeight;
     }
-  }, [currentStep]);
+  }, [currentStep, showEnergyLabelHelp, urlValidationError]);
 
   // Auto-proceed for Ben's messages
   useEffect(() => {
@@ -297,7 +294,7 @@ const PTOGallery = () => {
           </Button>
         </div>
 
-        <div className="bg-card rounded-xl shadow-lg p-6 min-h-[500px] relative z-10">
+        <div className="bg-card rounded-xl shadow-lg p-6 h-[600px] flex flex-col relative z-10">
           {/* Ben's Profile */}
           <div className="flex items-center gap-4 mb-6 pb-4 border-b border-border">
             <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-blue-400/50">
@@ -314,7 +311,7 @@ const PTOGallery = () => {
           </div>
 
           {/* Conversation Flow */}
-          <div ref={conversationRef} className="space-y-6">
+          <div ref={conversationRef} className="flex-1 overflow-y-auto space-y-6 pr-2" style={{ scrollBehavior: 'smooth' }}>
             {conversations.slice(0, currentStep + 1).map((conv, index) => (
               <div 
                 key={index}
