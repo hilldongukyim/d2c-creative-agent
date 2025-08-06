@@ -15,6 +15,14 @@ interface FormData {
   secondProductEnergyLabel: string;
 }
 
+interface ConversationItem {
+  type: string;
+  content: string;
+  field?: string;
+  exampleUrl?: string;
+  showUrl?: boolean;
+}
+
 const PTOGallery = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
@@ -31,7 +39,27 @@ const PTOGallery = () => {
   const [submissionStatus, setSubmissionStatus] = useState<'success' | 'failure' | null>(null);
   const [showEnergyLabelHelp, setShowEnergyLabelHelp] = useState(false);
   const [urlValidationError, setUrlValidationError] = useState<string | null>(null);
+  const [isEuropeanCountry, setIsEuropeanCountry] = useState<boolean | null>(null);
   const conversationRef = useRef<HTMLDivElement>(null);
+
+  // European countries (in various languages)
+  const europeanCountries = [
+    // English
+    'albania', 'andorra', 'armenia', 'austria', 'azerbaijan', 'belarus', 'belgium', 'bosnia and herzegovina', 
+    'bulgaria', 'croatia', 'cyprus', 'czech republic', 'denmark', 'estonia', 'finland', 'france', 'georgia', 
+    'germany', 'greece', 'hungary', 'iceland', 'ireland', 'italy', 'kazakhstan', 'kosovo', 'latvia', 
+    'liechtenstein', 'lithuania', 'luxembourg', 'malta', 'moldova', 'monaco', 'montenegro', 'netherlands', 
+    'north macedonia', 'norway', 'poland', 'portugal', 'romania', 'russia', 'san marino', 'serbia', 
+    'slovakia', 'slovenia', 'spain', 'sweden', 'switzerland', 'turkey', 'ukraine', 'united kingdom', 'uk', 'vatican city',
+    // Korean
+    '독일', '프랑스', '이탈리아', '스페인', '네덜란드', '벨기에', '오스트리아', '스위스', '포르투갈', '그리스', 
+    '폴란드', '체코', '헝가리', '슬로바키아', '슬로베니아', '크로아티아', '루마니아', '불가리아', '덴마크', 
+    '스웨덴', '핀란드', '노르웨이', '아이슬란드', '아일랜드', '영국', '룩셈부르크', '몰타', '키프로스',
+    // Spanish  
+    'alemania', 'francia', 'italia', 'españa', 'países bajos', 'bélgica', 'austria', 'suiza', 'portugal', 
+    'grecia', 'polonia', 'república checa', 'hungría', 'eslovaquia', 'eslovenia', 'croacia', 'rumania', 
+    'bulgaria', 'dinamarca', 'suecia', 'finlandia', 'noruega', 'islandia', 'irlanda', 'reino unido'
+  ];
 
   const energyLabels = [
     'A+++D_D', 'A+++D_C', 'A+++D_B', 'A+++D_A+++', 'A+++D_A++', 'A+++D_A+', 'A+++D_A',
@@ -39,57 +67,74 @@ const PTOGallery = () => {
     'A+F_F', 'A+F_E', 'A+F_D', 'A+F_C', 'A+F_B', 'A+F_A+', 'A+F_A'
   ];
 
-  const conversations = [
-    {
-      type: 'ben-message',
-      content: "Hello! I'm Ben 🐕 I'll help you create a PTO gallery. Let me ask you a few questions to build the perfect gallery for you! 😊"
-    },
-    {
-      type: 'ben-question',
-      content: "First, could you please provide your email address?",
-      field: 'email'
-    },
-    {
-      type: 'ben-message',
-      content: "Awesome! I'll remember this email and send you the gallery once it's completed! 😊"
-    },
-    {
-      type: 'ben-question',
-      content: "Which country are you responsible for?",
-      field: 'country'
-    },
-    {
-      type: 'ben-message',
-      content: "Perfect! I'll create a gallery tailored for that region."
-    },
-    {
-      type: 'ben-question',
-      content: "Please paste the product detail page URL for the main model (the product that will be displayed on the left side of the gallery).",
-      field: 'mainProductUrl',
-      exampleUrl: "https://www.lg.com/es/tv-y-barras-de-sonido/oled-evo/oled83c5elb-esb/"
-    },
-    {
-      type: 'ben-energy-label',
-      content: "It seems you're accessing from Europe, so an energy label is mandatory for the product. Please choose the appropriate energy label:",
-      field: 'mainProductEnergyLabel',
-      showUrl: true
-    },
-    {
+  // Dynamic conversations based on European country check
+  const getFilteredConversations = (): ConversationItem[] => {
+    const baseConversations: ConversationItem[] = [
+      {
+        type: 'ben-message',
+        content: "Hello! I'm Ben 🐕 I'll help you create a PTO gallery. Let me ask you a few questions to build the perfect gallery for you! 😊"
+      },
+      {
+        type: 'ben-question',
+        content: "First, could you please provide your email address?",
+        field: 'email'
+      },
+      {
+        type: 'ben-message',
+        content: "Awesome! I'll remember this email and send you the gallery once it's completed! 😊"
+      },
+      {
+        type: 'ben-question',
+        content: "Which country are you responsible for?",
+        field: 'country'
+      },
+      {
+        type: 'ben-message',
+        content: "Perfect! I'll create a gallery tailored for that region."
+      },
+      {
+        type: 'ben-question',
+        content: "Please paste the product detail page URL for the main model (the product that will be displayed on the left side of the gallery).",
+        field: 'mainProductUrl',
+        exampleUrl: "https://www.lg.com/es/tv-y-barras-de-sonido/oled-evo/oled83c5elb-esb/"
+      }
+    ];
+
+    // Add energy label questions only for European countries
+    if (isEuropeanCountry === true) {
+      baseConversations.push({
+        type: 'ben-energy-label',
+        content: "It seems you're accessing from Europe, so an energy label is mandatory for the product. Please choose the appropriate energy label:",
+        field: 'mainProductEnergyLabel',
+        showUrl: true
+      });
+    }
+
+    baseConversations.push({
       type: 'ben-question',
       content: "Now please paste the product detail page URL for the second product (which will be positioned on the right side)!",
       field: 'secondProductUrl'
-    },
-    {
-      type: 'ben-energy-label',
-      content: "Please also select an energy label for this product:",
-      field: 'secondProductEnergyLabel',
-      showUrl: true
-    },
-    {
+    });
+
+    // Add second energy label question only for European countries
+    if (isEuropeanCountry === true) {
+      baseConversations.push({
+        type: 'ben-energy-label',
+        content: "Please also select an energy label for this product:",
+        field: 'secondProductEnergyLabel',
+        showUrl: true
+      });
+    }
+
+    baseConversations.push({
       type: 'ben-completion',
       content: "Everything is ready! Click the Submit button and you'll receive the gallery via email in a few minutes. I'll get to work now! 🐕💻"
-    }
-  ];
+    });
+
+    return baseConversations;
+  };
+
+  const conversations = getFilteredConversations();
 
   // Auto-scroll effect
   useEffect(() => {
@@ -156,6 +201,15 @@ const PTOGallery = () => {
   const handleInputSubmit = () => {
     const currentConversation = conversations[currentStep];
     if (currentConversation.field) {
+      // Check if country is European when country field is submitted
+      if (currentConversation.field === 'country') {
+        const isEuropean = europeanCountries.some(country => 
+          userInput.toLowerCase().includes(country.toLowerCase()) || 
+          country.toLowerCase().includes(userInput.toLowerCase())
+        );
+        setIsEuropeanCountry(isEuropean);
+      }
+      
       // URL validation for product URLs
       if ((currentConversation.field === 'mainProductUrl' || currentConversation.field === 'secondProductUrl') && 
           !userInput.startsWith('https://www.lg.com/')) {
