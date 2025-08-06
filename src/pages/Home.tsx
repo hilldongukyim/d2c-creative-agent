@@ -65,7 +65,7 @@ const Home = () => {
                 <img 
                   src={aliceProfile} 
                   alt="Alice - Promotional Content Creator"
-                  className="w-full h-full object-cover object-[center_40%] scale-120 group-hover:scale-135 transition-transform duration-500 brightness-125"
+                  className="w-full h-full object-cover object-[center_40%] scale-130 group-hover:scale-145 transition-transform duration-500 brightness-125"
                 />
               </div>
               <div className="absolute inset-0 rounded-full bg-gradient-to-t from-purple-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
