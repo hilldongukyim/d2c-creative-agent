@@ -49,7 +49,7 @@ const Home = () => {
             Choose Your AI Agent
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Meet Alice and Ben, your specialized AI agents ready to help with your creative projects
+            Meet Alice and Ben, <p>your specialized AI agents ready to help with your creative projects</p>
           </p>
         </div>
 
