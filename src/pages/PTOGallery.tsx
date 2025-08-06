@@ -29,6 +29,7 @@ const PTOGallery = () => {
   const [userInput, setUserInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionStatus, setSubmissionStatus] = useState<'success' | 'failure' | null>(null);
+  const [showEnergyLabelHelp, setShowEnergyLabelHelp] = useState(false);
   const conversationRef = useRef<HTMLDivElement>(null);
 
   const energyLabels = [
@@ -111,6 +112,18 @@ const PTOGallery = () => {
       return () => clearTimeout(timer);
     }
   }, [currentStep, conversations.length]);
+
+  // Energy label help timer
+  useEffect(() => {
+    const currentConversation = conversations[currentStep];
+    if (currentConversation?.type === 'ben-energy-label') {
+      setShowEnergyLabelHelp(false);
+      const timer = setTimeout(() => {
+        setShowEnergyLabelHelp(true);
+      }, 10000);
+      return () => clearTimeout(timer);
+    }
+  }, [currentStep, conversations]);
 
   const handleNext = () => {
     if (currentStep < conversations.length - 1) {
@@ -243,18 +256,29 @@ const PTOGallery = () => {
                 {index === currentStep && isQuestion && (
                   <div className="mt-4 animate-fade-in">
                     {conv.type === 'ben-energy-label' ? (
-                      <div className="grid grid-cols-5 gap-2">
-                        {energyLabels.map((label) => (
-                          <Button
-                            key={label}
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEnergyLabelSelect(label)}
-                            className="hover:bg-blue-50 hover:border-blue-300"
-                          >
-                            {label}
-                          </Button>
-                        ))}
+                      <div className="space-y-4">
+                        <div className="grid grid-cols-5 gap-2">
+                          {energyLabels.map((label) => (
+                            <Button
+                              key={label}
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEnergyLabelSelect(label)}
+                              className="hover:bg-blue-50 hover:border-blue-300"
+                            >
+                              {label}
+                            </Button>
+                          ))}
+                        </div>
+                        {showEnergyLabelHelp && (
+                          <div className="flex gap-3 mt-4 animate-fade-in">
+                            <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-3 max-w-[80%]">
+                              <p className="text-sm text-muted-foreground">
+                                If you're not sure, you can find the energy label by visiting the product URL you provided above.
+                              </p>
+                            </div>
+                          </div>
+                        )}
                       </div>
                     ) : (
                       <div className="flex gap-2">
