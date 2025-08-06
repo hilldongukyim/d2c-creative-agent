@@ -154,7 +154,7 @@ const PTOGallery = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-300 via-sky-200 to-sky-100 p-6 relative overflow-hidden">
       {/* Flying Bone Animation */}
-      {[...Array(12)].map((_, i) => (
+      {[...Array(6)].map((_, i) => (
         <div
           key={i}
           className="absolute opacity-40 animate-[float_20s_linear_infinite] pointer-events-none z-0"
