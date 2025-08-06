@@ -188,9 +188,6 @@ const PTOGallery = () => {
               >
                 {/* Ben's Message */}
                 <div className="flex gap-3 mb-4">
-                  <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
-                    <span className="text-blue-600 text-sm font-medium">B</span>
-                  </div>
                   <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-3 max-w-[80%]">
                     <p className="text-sm whitespace-pre-line">{conv.content}</p>
                     {conv.exampleUrl && (
@@ -246,12 +243,9 @@ const PTOGallery = () => {
 
                 {/* User Response Display */}
                 {index < currentStep && conv.field && formData[conv.field as keyof FormData] && (
-                  <div className="flex gap-3 justify-end mb-2">
+                  <div className="flex justify-end mb-2">
                     <div className="bg-primary text-primary-foreground rounded-lg p-3 max-w-[80%]">
                       <p className="text-sm">{formData[conv.field as keyof FormData]}</p>
-                    </div>
-                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center flex-shrink-0">
-                      <span className="text-primary text-sm font-medium">U</span>
                     </div>
                   </div>
                 )}
