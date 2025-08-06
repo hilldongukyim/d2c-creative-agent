@@ -31,7 +31,11 @@ const PTOGallery = () => {
   const [submissionStatus, setSubmissionStatus] = useState<'success' | 'failure' | null>(null);
   const conversationRef = useRef<HTMLDivElement>(null);
 
-  const energyLabels = ['A+++', 'A++', 'A+', 'A', 'B', 'C', 'D', 'E', 'F', 'G'];
+  const energyLabels = [
+    'A+++D_D', 'A+++D_C', 'A+++D_B', 'A+++D_A+++', 'A+++D_A++', 'A+++D_A+', 'A+++D_A',
+    'AG_G', 'AG_F', 'AG_E', 'AG_D', 'AG_C', 'AG_B', 'AG_A',
+    'A+F_F', 'A+F_E', 'A+F_D', 'A+F_C', 'A+F_B', 'A+F_A+', 'A+F_A'
+  ];
 
   const conversations = [
     {
