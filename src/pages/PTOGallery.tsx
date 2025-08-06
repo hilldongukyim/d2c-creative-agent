@@ -58,8 +58,9 @@ const PTOGallery = () => {
     },
     {
       type: 'ben-question',
-      content: "Please paste the product detail page URL for the main model (the product that will be displayed on the left side of the gallery).\nFor example: https://www.lg.com/es/tv-y-barras-de-sonido/oled-evo/oled83c5elb-esb/",
-      field: 'mainProductUrl'
+      content: "Please paste the product detail page URL for the main model (the product that will be displayed on the left side of the gallery).",
+      field: 'mainProductUrl',
+      exampleUrl: "https://www.lg.com/es/tv-y-barras-de-sonido/oled-evo/oled83c5elb-esb/"
     },
     {
       type: 'ben-energy-label',
@@ -192,6 +193,11 @@ const PTOGallery = () => {
                   </div>
                   <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-3 max-w-[80%]">
                     <p className="text-sm whitespace-pre-line">{conv.content}</p>
+                    {conv.exampleUrl && (
+                      <div className="mt-2 text-xs text-muted-foreground opacity-70 font-mono bg-muted/30 px-2 py-1 rounded">
+                        For example: {conv.exampleUrl}
+                      </div>
+                    )}
                     {conv.showUrl && conv.field && formData[conv.field as keyof FormData] && (
                       <div className="mt-2 p-2 bg-background rounded text-xs text-muted-foreground">
                         URL: {formData[conv.field as keyof FormData]}
