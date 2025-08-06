@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import benProfile from "@/assets/ben-profile.jpg";
 
 interface FormData {
@@ -29,59 +29,70 @@ const PTOGallery = () => {
   const [userInput, setUserInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionStatus, setSubmissionStatus] = useState<'success' | 'failure' | null>(null);
+  const conversationRef = useRef<HTMLDivElement>(null);
 
   const energyLabels = ['A+++', 'A++', 'A+', 'A', 'B', 'C', 'D', 'E', 'F', 'G'];
 
   const conversations = [
     {
       type: 'ben-message',
-      content: "안녕하세요! 저는 Ben이에요. PTO 갤러리 제작을 도와드릴게요. 몇 가지 질문을 통해 완벽한 갤러리를 만들어드리겠습니다! 😊"
+      content: "Hello! I'm Ben 🐕 I'll help you create a PTO gallery. Let me ask you a few questions to build the perfect gallery for you! 😊"
     },
     {
       type: 'ben-question',
-      content: "먼저 요청하시는 분의 이메일 주소를 알려주세요.",
+      content: "First, could you please provide your email address?",
       field: 'email'
     },
     {
       type: 'ben-message',
-      content: "네, 감사합니다! 이메일로 완성된 갤러리를 보내드릴게요."
+      content: "Great! I'll send the completed gallery to your email."
     },
     {
       type: 'ben-question',
-      content: "어느 국가를 담당하고 계신가요?",
+      content: "Which country are you responsible for?",
       field: 'country'
     },
     {
       type: 'ben-message',
-      content: "좋습니다! 해당 지역에 맞는 갤러리를 제작해드릴게요."
+      content: "Perfect! I'll create a gallery tailored for that region."
     },
     {
       type: 'ben-question',
-      content: "갤러리의 메인 모델(가장 좌측에 표시될 제품)의 상세페이지 URL을 붙여넣어주세요.\n예: https://www.lg.com/es/tv-y-barras-de-sonido/oled-evo/oled83c5elb-esb/",
+      content: "Please paste the product detail page URL for the main model (the product that will be displayed on the left side of the gallery).\nFor example: https://www.lg.com/es/tv-y-barras-de-sonido/oled-evo/oled83c5elb-esb/",
       field: 'mainProductUrl'
     },
     {
       type: 'ben-energy-label',
-      content: "유럽에서 접속하신 것 같은데, 제품에 대한 에너지라벨이 필수로 들어가야 합니다. 어떤 에너지라벨을 선택하시겠어요?",
+      content: "It seems you're accessing from Europe, so an energy label is mandatory for the product. Please choose the appropriate energy label:",
       field: 'mainProductEnergyLabel',
       showUrl: true
     },
     {
       type: 'ben-question',
-      content: "이번엔 오른쪽에 위치할 두 번째 제품의 상세페이지 URL도 붙여넣어주세요!",
+      content: "Now please paste the product detail page URL for the second product (which will be positioned on the right side)!",
       field: 'secondProductUrl'
     },
     {
       type: 'ben-energy-label',
-      content: "이 제품도 에너지라벨을 선택해주세요.",
+      content: "Please also select an energy label for this product:",
       field: 'secondProductEnergyLabel',
       showUrl: true
     },
     {
       type: 'ben-completion',
-      content: "모든 준비가 완료되었습니다! 이제 Submit 버튼을 누르면 몇 분 뒤에 이메일로 받아보실 수 있습니다. 그동안 전 잠시 작업하고 올게요! 🐕💻"
+      content: "Everything is ready! Click the Submit button and you'll receive the gallery via email in a few minutes. I'll get to work now! 🐕💻"
     }
   ];
+
+  // Auto-scroll effect
+  useEffect(() => {
+    if (conversationRef.current) {
+      conversationRef.current.scrollIntoView({ 
+        behavior: 'smooth', 
+        block: 'end' 
+      });
+    }
+  }, [currentStep]);
 
   const handleNext = () => {
     if (currentStep < conversations.length - 1) {
@@ -153,7 +164,7 @@ const PTOGallery = () => {
           </div>
 
           {/* Conversation Flow */}
-          <div className="space-y-6">
+          <div ref={conversationRef} className="space-y-6">
             {conversations.slice(0, currentStep + 1).map((conv, index) => (
               <div 
                 key={index}
@@ -198,7 +209,7 @@ const PTOGallery = () => {
                         <Input
                           value={userInput}
                           onChange={(e) => setUserInput(e.target.value)}
-                          placeholder="답변을 입력하세요..."
+                          placeholder="Type your answer..."
                           onKeyDown={(e) => e.key === 'Enter' && userInput.trim() && handleInputSubmit()}
                           className="flex-1"
                         />
@@ -242,25 +253,25 @@ const PTOGallery = () => {
                     <div className="w-24 h-24 bg-blue-100 dark:bg-blue-950/30 rounded-full flex items-center justify-center animate-pulse">
                       <span className="text-2xl">🐕💻</span>
                     </div>
-                    <p className="text-sm text-muted-foreground">Ben이 갤러리를 제작하고 있습니다...</p>
+                    <p className="text-sm text-muted-foreground">Ben is creating your gallery...</p>
                   </div>
                 )}
 
                 {submissionStatus === 'success' && (
                   <div className="text-center space-y-2">
                     <div className="text-4xl">✅</div>
-                    <p className="font-medium text-green-600">성공적으로 전송되었습니다!</p>
-                    <p className="text-sm text-muted-foreground">요청하신 메일함을 확인해보세요.</p>
+                    <p className="font-medium text-green-600">Successfully sent!</p>
+                    <p className="text-sm text-muted-foreground">Please check your email inbox.</p>
                   </div>
                 )}
 
                 {submissionStatus === 'failure' && (
                   <div className="text-center space-y-2">
                     <div className="text-4xl">❌</div>
-                    <p className="font-medium text-red-600">뭔가 이상합니다...</p>
-                    <p className="text-sm text-muted-foreground">다시 시도해주세요.</p>
+                    <p className="font-medium text-red-600">Something went wrong...</p>
+                    <p className="text-sm text-muted-foreground">Please try again.</p>
                     <Button onClick={() => setSubmissionStatus(null)} variant="outline">
-                      다시 시도
+                      Try Again
                     </Button>
                   </div>
                 )}
@@ -271,7 +282,7 @@ const PTOGallery = () => {
             {currentStep < conversations.length - 1 && !isQuestion && (
               <div className="text-center animate-fade-in">
                 <Button onClick={handleNext} variant="ghost" size="sm">
-                  계속하기 →
+                  Continue →
                 </Button>
               </div>
             )}
