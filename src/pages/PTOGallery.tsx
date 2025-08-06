@@ -221,7 +221,7 @@ const PTOGallery = () => {
               <img 
                 src={benProfile} 
                 alt="Ben" 
-                className="w-full h-full object-cover object-[center_30%] scale-150 brightness-125" 
+                className="w-full h-full object-cover object-[center_45%] scale-150 brightness-125" 
               />
             </div>
             <div>
