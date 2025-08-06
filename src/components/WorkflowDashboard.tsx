@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle, Clock, ExternalLink, AlertCircle, Play, BarChart3, Settings, User, Shield, MessageSquare } from "lucide-react";
+import { CheckCircle, Clock, ExternalLink, AlertCircle, Play, BarChart3, Settings, User, Shield, MessageSquare, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { RequestCheckForm } from "./RequestCheckForm";
@@ -265,6 +265,17 @@ const WorkflowDashboard = () => {
       <div className="max-w-6xl mx-auto space-y-8">
         {/* Header */}
         <div className="text-center space-y-4">
+          <div className="flex justify-between items-start mb-6">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate("/")}
+              className="mb-4"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Home
+            </Button>
+            <div></div>
+          </div>
           <h1 className="text-4xl font-bold text-foreground">
             Promotional Content Creation
           </h1>
