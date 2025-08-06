@@ -5,6 +5,8 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import TaskOverview from "./pages/TaskOverview";
+import PromotionalWorkflow from "./pages/PromotionalWorkflow";
+import PTOGallery from "./pages/PTOGallery";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -17,6 +19,8 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Index />} />
+          <Route path="/promotional" element={<PromotionalWorkflow />} />
+          <Route path="/pto-gallery" element={<PTOGallery />} />
           <Route path="/tasks" element={<TaskOverview />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

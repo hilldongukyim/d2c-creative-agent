@@ -1,7 +1,7 @@
-import WorkflowDashboard from "@/components/WorkflowDashboard";
+import Home from "./Home";
 
 const Index = () => {
-  return <WorkflowDashboard />;
+  return <Home />;
 };
 
 export default Index;
