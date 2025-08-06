@@ -154,18 +154,23 @@ const PTOGallery = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-300 via-sky-200 to-sky-100 p-6 relative overflow-hidden">
       {/* Flying Bone Animation */}
-      {[...Array(8)].map((_, i) => (
+      {[...Array(12)].map((_, i) => (
         <div
           key={i}
-          className="absolute text-lg opacity-60 animate-[float_20s_linear_infinite] pointer-events-none"
+          className="absolute opacity-40 animate-[float_20s_linear_infinite] pointer-events-none z-0"
           style={{
             left: `${Math.random() * 100}%`,
             top: `${Math.random() * 100}%`,
             animationDelay: `${Math.random() * 20}s`,
-            animationDuration: `${15 + Math.random() * 10}s`
+            animationDuration: `${15 + Math.random() * 10}s`,
+            transform: `rotate(${Math.random() * 360}deg) scale(${0.8 + Math.random() * 0.6})`
           }}
         >
-          🦴
+          <img 
+            src="/lovable-uploads/415ec45d-2d61-453f-b33b-4ba46b9561ad.png" 
+            alt="floating bone" 
+            className="w-12 h-12 animate-[spin_30s_linear_infinite]"
+          />
         </div>
       ))}
       <div className="max-w-2xl mx-auto">
@@ -180,7 +185,7 @@ const PTOGallery = () => {
           </Button>
         </div>
 
-        <div className="bg-card rounded-xl shadow-lg p-6 min-h-[500px]">
+        <div className="bg-card rounded-xl shadow-lg p-6 min-h-[500px] relative z-10">
           {/* Ben's Profile */}
           <div className="flex items-center gap-4 mb-6 pb-4 border-b border-border">
             <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-blue-400/50">
