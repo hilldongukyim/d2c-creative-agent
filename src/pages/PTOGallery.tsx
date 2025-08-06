@@ -94,6 +94,19 @@ const PTOGallery = () => {
     }
   }, [currentStep]);
 
+  // Auto-proceed for Ben's messages
+  useEffect(() => {
+    const currentConversation = conversations[currentStep];
+    if (currentConversation && 
+        currentConversation.type === 'ben-message' && 
+        currentStep < conversations.length - 1) {
+      const timer = setTimeout(() => {
+        setCurrentStep(prev => prev + 1);
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
+  }, [currentStep, conversations.length]);
+
   const handleNext = () => {
     if (currentStep < conversations.length - 1) {
       setCurrentStep(prev => prev + 1);
@@ -278,14 +291,6 @@ const PTOGallery = () => {
               </div>
             )}
 
-            {/* Continue Button for non-question messages */}
-            {currentStep < conversations.length - 1 && !isQuestion && (
-              <div className="text-center animate-fade-in">
-                <Button onClick={handleNext} variant="ghost" size="sm">
-                  Continue →
-                </Button>
-              </div>
-            )}
           </div>
         </div>
       </div>
