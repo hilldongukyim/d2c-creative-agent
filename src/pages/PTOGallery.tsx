@@ -3,7 +3,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 const benProfile = "/lovable-uploads/df1c4dd4-a06d-4d9c-981e-4463ad0b08dc.png";
 
 interface FormData {
@@ -148,22 +148,34 @@ const PTOGallery = () => {
     setIsSubmitting(false);
   };
 
+  // Fixed bones animation positions to prevent re-rendering
+  const bonePositions = useMemo(() => 
+    [...Array(6)].map(() => ({
+      left: Math.random() * 100,
+      top: Math.random() * 100,
+      delay: Math.random() * 20,
+      duration: 15 + Math.random() * 10,
+      rotation: Math.random() * 360,
+      scale: 0.8 + Math.random() * 0.6
+    })), []
+  );
+
   const currentConversation = conversations[currentStep];
   const isQuestion = currentConversation?.type.includes('question') || currentConversation?.type.includes('energy-label');
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-sky-300 via-sky-200 to-sky-100 p-6 relative overflow-hidden">
       {/* Flying Bone Animation */}
-      {[...Array(6)].map((_, i) => (
+      {bonePositions.map((bone, i) => (
         <div
           key={i}
           className="absolute opacity-40 animate-[float_20s_linear_infinite] pointer-events-none z-0"
           style={{
-            left: `${Math.random() * 100}%`,
-            top: `${Math.random() * 100}%`,
-            animationDelay: `${Math.random() * 20}s`,
-            animationDuration: `${15 + Math.random() * 10}s`,
-            transform: `rotate(${Math.random() * 360}deg) scale(${0.8 + Math.random() * 0.6})`
+            left: `${bone.left}%`,
+            top: `${bone.top}%`,
+            animationDelay: `${bone.delay}s`,
+            animationDuration: `${bone.duration}s`,
+            transform: `rotate(${bone.rotation}deg) scale(${bone.scale})`
           }}
         >
           <img 
