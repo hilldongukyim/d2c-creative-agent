@@ -113,7 +113,7 @@ const PTOGallery = () => {
     }
   }, [currentStep, conversations.length]);
 
-  // Energy label help timer
+  // Energy label help timer - only for clicks, not mouse movement
   useEffect(() => {
     const currentConversation = conversations[currentStep];
     if (currentConversation?.type === 'ben-energy-label') {
@@ -121,7 +121,19 @@ const PTOGallery = () => {
       const timer = setTimeout(() => {
         setShowEnergyLabelHelp(true);
       }, 10000);
-      return () => clearTimeout(timer);
+      
+      // Reset timer on any click
+      const handleClick = () => {
+        setShowEnergyLabelHelp(false);
+        clearTimeout(timer);
+      };
+      
+      document.addEventListener('click', handleClick);
+      
+      return () => {
+        clearTimeout(timer);
+        document.removeEventListener('click', handleClick);
+      };
     }
   }, [currentStep, conversations]);
 
@@ -277,9 +289,9 @@ const PTOGallery = () => {
                         {showEnergyLabelHelp && (
                           <div className="flex gap-3 mt-4 animate-fade-in">
                             <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-3 max-w-[80%]">
-                              <p className="text-sm text-muted-foreground">
-                                If you're not sure, you can find the energy label by visiting the product URL you provided above.
-                              </p>
+                               <p className="text-sm text-muted-foreground">
+                                 If you're not sure which one to choose, please check the URL you provided above again. You'll be able to see the energy label there!
+                               </p>
                             </div>
                           </div>
                         )}
