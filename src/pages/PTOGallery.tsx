@@ -49,7 +49,7 @@ const PTOGallery = () => {
     },
     {
       type: 'ben-message',
-      content: "Great! I'll send the completed gallery to your email."
+      content: "좋아! 너가 제공한 이 이메일 기억해뒀다가 이따가 갤러리 완성하면 보내줄게! 😊"
     },
     {
       type: 'ben-question',
