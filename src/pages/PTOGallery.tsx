@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Send } from "lucide-react";
+import { ArrowLeft, Send, Undo2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef, useMemo } from "react";
 const benProfile = "/lovable-uploads/df1c4dd4-a06d-4d9c-981e-4463ad0b08dc.png";
@@ -144,6 +144,14 @@ const PTOGallery = () => {
     }
   };
 
+  const handleGoBack = () => {
+    if (currentStep > 0) {
+      setCurrentStep(prev => prev - 1);
+      setUserInput('');
+      setShowEnergyLabelHelp(false);
+    }
+  };
+
   const handleInputSubmit = () => {
     const currentConversation = conversations[currentStep];
     if (currentConversation.field) {
@@ -252,7 +260,7 @@ const PTOGallery = () => {
                 }`}
               >
                 {/* Ben's Message */}
-                <div className="flex gap-3 mb-4">
+                <div className="flex gap-3 mb-4 items-start">
                   <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-3 max-w-[80%]">
                     <p className="text-sm whitespace-pre-line">{conv.content}</p>
                     {conv.exampleUrl && (
@@ -266,6 +274,17 @@ const PTOGallery = () => {
                       </div>
                     )}
                   </div>
+                  {/* Go Back Button */}
+                  {index > 0 && index === currentStep && (
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={handleGoBack}
+                      className="text-muted-foreground hover:text-foreground p-1 h-6 w-6"
+                    >
+                      <Undo2 className="h-3 w-3" />
+                    </Button>
+                  )}
                 </div>
 
                 {/* User Input Area */}
