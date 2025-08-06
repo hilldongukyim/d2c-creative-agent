@@ -49,7 +49,7 @@ const PTOGallery = () => {
     },
     {
       type: 'ben-message',
-      content: "좋아! 너가 제공한 이 이메일 기억해뒀다가 이따가 갤러리 완성하면 보내줄게! 😊"
+      content: "Awesome! I'll remember this email and send you the gallery once it's completed! 😊"
     },
     {
       type: 'ben-question',
@@ -168,7 +168,7 @@ const PTOGallery = () => {
   const isQuestion = currentConversation?.type.includes('question') || currentConversation?.type.includes('energy-label');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-sky-300 via-sky-200 to-sky-100 p-6 relative overflow-hidden">
+    <div className="min-h-screen bg-black p-6 relative overflow-hidden">
       {/* Flying Bone Animation */}
       {bonePositions.map((bone, i) => (
         <div
