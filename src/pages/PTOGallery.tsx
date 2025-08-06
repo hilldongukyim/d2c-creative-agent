@@ -280,7 +280,7 @@ const PTOGallery = () => {
                               variant="outline"
                               size="sm"
                               onClick={() => handleEnergyLabelSelect(label)}
-                              className="hover:bg-blue-50 hover:border-blue-300"
+                              className="hover:bg-blue-50 hover:border-blue-300 hover:text-red-500"
                             >
                               {label}
                             </Button>
