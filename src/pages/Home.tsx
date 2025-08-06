@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useRef } from "react";
 import aliceProfile from "@/assets/alice-profile.jpg";
-import benProfile from "@/assets/ben-profile.jpg";
+const benProfile = "/lovable-uploads/df1c4dd4-a06d-4d9c-981e-4463ad0b08dc.png";
 
 const Home = () => {
   const navigate = useNavigate();
