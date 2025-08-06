@@ -49,7 +49,7 @@ const Home = () => {
             Choose Your AI Agent
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Meet Alice and Ben, <p>your specialized AI agents ready to help with your creative projects</p>
+            Meet Alice and Ben, your specialized AI agents<p>ready to help with your creative projects</p>
           </p>
         </div>
 
@@ -78,9 +78,9 @@ const Home = () => {
                   Promotional Content Creator
                 </p>
                 <div className="space-y-2 text-sm text-muted-foreground max-w-xs mx-auto">
-                  <p>• Workflow Management Expert</p>
-                  <p>• Content Strategy Specialist</p>
-                  <p>• Campaign Optimization</p>
+                  <p>• Create with Brand Template</p>
+                  <p>• Promotion Copy Writing</p>
+                  <p>• Size Variation</p>
                 </div>
               </div>
             </div>
@@ -107,11 +107,11 @@ const Home = () => {
                   Ben
                 </h2>
                 <p className="text-lg text-muted-foreground font-medium">
-                  PTO Gallery Creator
+                  PTO Model Image Creator
                 </p>
                 <div className="space-y-2 text-sm text-muted-foreground max-w-xs mx-auto">
-                  <p>• AI Image Generation</p>
-                  <p>• PTO Model Specialist</p>
+                  <p>• </p>
+                  <p>• Layout Specialist</p>
                   <p>• Gallery Optimization</p>
                 </div>
               </div>
