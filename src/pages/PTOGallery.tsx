@@ -347,59 +347,14 @@ const PTOGallery = () => {
                   )}
                 </div>
 
-                {/* User Input Area */}
-                {index === currentStep && isQuestion && (
-                  <div className="mt-4 animate-fade-in">
-                    {conv.type === 'ben-energy-label' ? (
-                      <div className="space-y-4">
-                        <div className="grid grid-cols-5 gap-2">
-                          {energyLabels.map((label) => (
-                            <Button
-                              key={label}
-                              variant="outline"
-                              size="sm"
-                              onClick={() => handleEnergyLabelSelect(label)}
-                              className="hover:bg-blue-50 hover:border-blue-300 hover:text-red-500"
-                            >
-                              {label}
-                            </Button>
-                          ))}
-                        </div>
-                        {showEnergyLabelHelp && (
-                          <div className="flex gap-3 mt-4 animate-fade-in">
-                            <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-3 max-w-[80%]">
-                               <p className="text-sm text-muted-foreground">
-                                 If you're not sure which one to choose, please check the URL you provided above again. You'll be able to see the energy label there!
-                               </p>
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                     ) : (
-                       <div className="space-y-2">
-                         <div className="flex gap-2">
-                           <Input
-                             value={userInput}
-                             onChange={(e) => setUserInput(e.target.value)}
-                             placeholder="Type your answer..."
-                             onKeyDown={(e) => e.key === 'Enter' && userInput.trim() && handleInputSubmit()}
-                             className="flex-1"
-                           />
-                           <Button
-                             onClick={handleInputSubmit}
-                             disabled={!userInput.trim()}
-                             size="icon"
-                           >
-                             <Send className="h-4 w-4" />
-                           </Button>
-                         </div>
-                         {urlValidationError && (
-                           <div className="bg-red-50 dark:bg-red-950/30 rounded-lg p-3">
-                             <p className="text-sm text-red-600 dark:text-red-400">{urlValidationError}</p>
-                           </div>
-                         )}
-                       </div>
-                     )}
+                {/* Show energy label help for current step */}
+                {index === currentStep && conv.type === 'ben-energy-label' && showEnergyLabelHelp && (
+                  <div className="flex gap-3 mt-4 animate-fade-in">
+                    <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-3 max-w-[80%]">
+                      <p className="text-sm text-muted-foreground">
+                        If you're not sure which one to choose, please check the URL you provided above again. You'll be able to see the energy label there!
+                      </p>
+                    </div>
                   </div>
                 )}
 
@@ -454,6 +409,51 @@ const PTOGallery = () => {
             )}
 
           </div>
+          
+          {/* Fixed Input Area at Bottom */}
+          {isQuestion && (
+            <div className="mt-4 pt-4 border-t border-border animate-fade-in">
+              {currentConversation?.type === 'ben-energy-label' ? (
+                <div className="grid grid-cols-5 gap-2">
+                  {energyLabels.map((label) => (
+                    <Button
+                      key={label}
+                      variant="outline"
+                      size="sm"
+                      onClick={() => handleEnergyLabelSelect(label)}
+                      className="hover:bg-blue-50 hover:border-blue-300 hover:text-red-500"
+                    >
+                      {label}
+                    </Button>
+                  ))}
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  <div className="flex gap-2">
+                    <Input
+                      value={userInput}
+                      onChange={(e) => setUserInput(e.target.value)}
+                      placeholder="Type your answer..."
+                      onKeyDown={(e) => e.key === 'Enter' && userInput.trim() && handleInputSubmit()}
+                      className="flex-1"
+                    />
+                    <Button
+                      onClick={handleInputSubmit}
+                      disabled={!userInput.trim()}
+                      size="icon"
+                    >
+                      <Send className="h-4 w-4" />
+                    </Button>
+                  </div>
+                  {urlValidationError && (
+                    <div className="bg-red-50 dark:bg-red-950/30 rounded-lg p-3">
+                      <p className="text-sm text-red-600 dark:text-red-400">{urlValidationError}</p>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
