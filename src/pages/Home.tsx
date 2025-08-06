@@ -97,7 +97,7 @@ const Home = () => {
                 <img 
                   src={benProfile} 
                   alt="Ben - PTO Gallery Creator"
-                  className="w-full h-full object-cover object-[center_60%] scale-125 group-hover:scale-140 transition-transform duration-500 brightness-125"
+                  className="w-full h-full object-cover object-center scale-110 group-hover:scale-125 transition-transform duration-500 brightness-125"
                 />
               </div>
               <div className="absolute inset-0 rounded-full bg-gradient-to-t from-blue-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
