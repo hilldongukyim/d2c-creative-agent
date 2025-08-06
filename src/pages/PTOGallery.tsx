@@ -4,7 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { ArrowLeft, Send } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
-import benProfile from "@/assets/ben-profile.jpg";
+const benProfile = "/lovable-uploads/df1c4dd4-a06d-4d9c-981e-4463ad0b08dc.png";
 
 interface FormData {
   email: string;
@@ -152,7 +152,22 @@ const PTOGallery = () => {
   const isQuestion = currentConversation?.type.includes('question') || currentConversation?.type.includes('energy-label');
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 p-6">
+    <div className="min-h-screen bg-gradient-to-br from-sky-300 via-sky-200 to-sky-100 p-6 relative overflow-hidden">
+      {/* Flying Bone Animation */}
+      {[...Array(8)].map((_, i) => (
+        <div
+          key={i}
+          className="absolute text-lg opacity-60 animate-[float_20s_linear_infinite] pointer-events-none"
+          style={{
+            left: `${Math.random() * 100}%`,
+            top: `${Math.random() * 100}%`,
+            animationDelay: `${Math.random() * 20}s`,
+            animationDuration: `${15 + Math.random() * 10}s`
+          }}
+        >
+          🦴
+        </div>
+      ))}
       <div className="max-w-2xl mx-auto">
         <div className="mb-6">
           <Button 
