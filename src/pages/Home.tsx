@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useState, useRef } from "react";
-import aliceProfile from "@/assets/alice-profile.jpg";
+const aliceProfile = "/lovable-uploads/133e7f94-0f16-4d49-b353-1590cee0f3a9.png";
 const benProfile = "/lovable-uploads/df1c4dd4-a06d-4d9c-981e-4463ad0b08dc.png";
 
 const Home = () => {
@@ -65,7 +65,7 @@ const Home = () => {
                 <img 
                   src={aliceProfile} 
                   alt="Alice - Promotional Content Creator"
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                  className="w-full h-full object-cover object-[center_40%] scale-120 group-hover:scale-135 transition-transform duration-500 brightness-125"
                 />
               </div>
               <div className="absolute inset-0 rounded-full bg-gradient-to-t from-purple-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
