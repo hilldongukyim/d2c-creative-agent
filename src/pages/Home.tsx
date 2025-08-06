@@ -1,81 +1,111 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { Briefcase, Image } from "lucide-react";
+import { useState } from "react";
+import aliceProfile from "@/assets/alice-profile.jpg";
+import benProfile from "@/assets/ben-profile.jpg";
 
 const Home = () => {
   const navigate = useNavigate();
+  const [expandingAgent, setExpandingAgent] = useState<string | null>(null);
+
+  const handleAgentClick = (agent: string, route: string) => {
+    setExpandingAgent(agent);
+    setTimeout(() => {
+      navigate(route);
+    }, 800);
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 p-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="text-center mb-12 pt-12">
-          <h1 className="text-4xl font-bold text-foreground mb-4">
-            AI Agent Selection
+    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 p-6 relative overflow-hidden">
+      {/* Expanding circle animation */}
+      {expandingAgent && (
+        <div 
+          className={`fixed inset-0 z-50 pointer-events-none ${
+            expandingAgent === 'alice' ? 'bg-purple-500' : 'bg-blue-500'
+          } rounded-full transform -translate-x-1/2 -translate-y-1/2 animate-[expand_0.8s_ease-out_forwards]`}
+          style={{
+            left: '25%',
+            top: '50%',
+            width: '0px',
+            height: '0px',
+          }}
+        />
+      )}
+      
+      <div className="max-w-6xl mx-auto relative z-10">
+        <div className="text-center mb-16 pt-8">
+          <h1 className="text-5xl font-bold text-foreground mb-6">
+            Choose Your AI Agent
           </h1>
-          <p className="text-xl text-muted-foreground">
-            Choose your specialized AI agent for your creative needs
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            Meet Alice and Ben, your specialized AI companions ready to help with your creative projects
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
-          {/* Promotional Content Agent */}
-          <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/50">
-            <CardHeader className="text-center pb-4">
-              <div className="mx-auto mb-4 p-4 bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                <Briefcase className="h-8 w-8 text-primary" />
+        <div className="grid lg:grid-cols-2 gap-12 items-center">
+          {/* Alice - Promotional Content Creator */}
+          <div 
+            className="group cursor-pointer transition-all duration-500 hover:scale-105"
+            onClick={() => handleAgentClick('alice', '/promotional')}
+          >
+            <div className="relative">
+              <div className="w-64 h-64 mx-auto rounded-full overflow-hidden border-4 border-purple-400/30 group-hover:border-purple-400/70 transition-all duration-300 shadow-lg group-hover:shadow-purple-400/25">
+                <img 
+                  src={aliceProfile} 
+                  alt="Alice - Promotional Content Creator"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
               </div>
-              <CardTitle className="text-2xl">Promotional Content Creator</CardTitle>
-              <CardDescription className="text-base">
-                Create compelling promotional materials with AI-powered workflow management
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="text-center">
-              <ul className="text-sm text-muted-foreground mb-6 space-y-2">
-                <li>• Multi-step workflow management</li>
-                <li>• Content review and approval</li>
-                <li>• Webhook integration support</li>
-                <li>• Collaborative feedback system</li>
-              </ul>
-              <Button 
-                onClick={() => navigate("/promotional")}
-                className="w-full"
-                size="lg"
-              >
-                Start Promotional Workflow
-              </Button>
-            </CardContent>
-          </Card>
+              <div className="absolute inset-0 rounded-full bg-gradient-to-t from-purple-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              
+              <div className="text-center mt-6 space-y-3">
+                <h2 className="text-3xl font-bold text-foreground group-hover:text-purple-400 transition-colors">
+                  Alice
+                </h2>
+                <p className="text-lg text-muted-foreground font-medium">
+                  Promotional Content Creator
+                </p>
+                <div className="space-y-2 text-sm text-muted-foreground max-w-xs mx-auto">
+                  <p>• Workflow Management Expert</p>
+                  <p>• Content Strategy Specialist</p>
+                  <p>• Campaign Optimization</p>
+                </div>
+              </div>
+            </div>
+          </div>
 
-          {/* PTO Gallery Agent */}
-          <Card className="group hover:shadow-lg transition-all duration-300 border-2 hover:border-primary/50">
-            <CardHeader className="text-center pb-4">
-              <div className="mx-auto mb-4 p-4 bg-primary/10 rounded-full w-16 h-16 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                <Image className="h-8 w-8 text-primary" />
+          {/* Ben - PTO Gallery Creator */}
+          <div 
+            className="group cursor-pointer transition-all duration-500 hover:scale-105"
+            onClick={() => handleAgentClick('ben', '/pto-gallery')}
+          >
+            <div className="relative">
+              <div className="w-64 h-64 mx-auto rounded-full overflow-hidden border-4 border-blue-400/30 group-hover:border-blue-400/70 transition-all duration-300 shadow-lg group-hover:shadow-blue-400/25">
+                <img 
+                  src={benProfile} 
+                  alt="Ben - PTO Gallery Creator"
+                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                />
               </div>
-              <CardTitle className="text-2xl">PTO Gallery Creator</CardTitle>
-              <CardDescription className="text-base">
-                Generate stunning gallery images using advanced PTO modeling techniques
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="text-center">
-              <ul className="text-sm text-muted-foreground mb-6 space-y-2">
-                <li>• AI-powered image generation</li>
-                <li>• PTO model optimization</li>
-                <li>• Gallery management tools</li>
-                <li>• High-quality output formats</li>
-              </ul>
-              <Button 
-                onClick={() => navigate("/pto-gallery")}
-                className="w-full"
-                size="lg"
-              >
-                Create PTO Gallery
-              </Button>
-            </CardContent>
-          </Card>
+              <div className="absolute inset-0 rounded-full bg-gradient-to-t from-blue-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              
+              <div className="text-center mt-6 space-y-3">
+                <h2 className="text-3xl font-bold text-foreground group-hover:text-blue-400 transition-colors">
+                  Ben
+                </h2>
+                <p className="text-lg text-muted-foreground font-medium">
+                  PTO Gallery Creator
+                </p>
+                <div className="space-y-2 text-sm text-muted-foreground max-w-xs mx-auto">
+                  <p>• AI Image Generation</p>
+                  <p>• PTO Model Specialist</p>
+                  <p>• Gallery Optimization</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
+
     </div>
   );
 };

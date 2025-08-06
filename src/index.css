@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes expand {
+  0% {
+    width: 0px;
+    height: 0px;
+  }
+  100% {
+    width: 200vmax;
+    height: 200vmax;
+  }
+}
+
 /* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
 All colors MUST be HSL.
 */
