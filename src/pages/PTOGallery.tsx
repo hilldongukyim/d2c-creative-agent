@@ -233,17 +233,15 @@ const PTOGallery = () => {
     setIsSubmitting(true);
     
     try {
+      const formDataToSend = new FormData();
+      formDataToSend.append('email', formData.email);
+      formDataToSend.append('productAUrl', formData.mainProductUrl);
+      formDataToSend.append('productBUrl', formData.secondProductUrl);
+
       const response = await fetch(webhookUrl, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
         mode: "no-cors",
-        body: JSON.stringify({
-          email: formData.email,
-          productAUrl: formData.mainProductUrl,
-          productBUrl: formData.secondProductUrl
-        }),
+        body: formDataToSend,
       });
 
       // no-cors 모드에서는 응답을 읽을 수 없으므로 성공으로 간주
