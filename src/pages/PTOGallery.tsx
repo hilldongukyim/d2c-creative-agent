@@ -9,7 +9,6 @@ const benProfile = "/lovable-uploads/df1c4dd4-a06d-4d9c-981e-4463ad0b08dc.png";
 
 interface FormData {
   email: string;
-  country: string;
   mainProductUrl: string;
   secondProductUrl: string;
   mainEnergyLabel?: string;
@@ -29,7 +28,6 @@ const PTOGallery = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<FormData>({
     email: '',
-    country: '',
     mainProductUrl: '',
     secondProductUrl: ''
   });
@@ -108,11 +106,6 @@ const PTOGallery = () => {
     {
       type: 'ben-message',
       content: "Awesome! I'll remember this ID and send you the gallery once it's completed! 😊"
-    },
-    {
-      type: 'ben-question',
-      content: "Which country is this gallery for?",
-      field: 'country'
     },
     {
       type: 'ben-question',
@@ -244,7 +237,6 @@ const PTOGallery = () => {
     try {
       const formDataToSend = new FormData();
       formDataToSend.append('email', formData.email);
-      formDataToSend.append('country', formData.country);
       formDataToSend.append('productAUrl', formData.mainProductUrl);
       formDataToSend.append('productBUrl', formData.secondProductUrl);
 

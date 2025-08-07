@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 
 interface FormData {
   email: string;
-  country: string;
   mainProductUrl: string;
   secondProductUrl: string;
   mainEnergyLabel?: string;
@@ -26,7 +25,6 @@ const ConfirmationWithScreenshots = ({
       <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-4 max-w-[95%] w-full">
         <div className="space-y-3 text-sm">
           <div><strong>EP ID:</strong> {formData.email}</div>
-          <div><strong>Country:</strong> {formData.country}</div>
           <div><strong>Main Product URL:</strong> {formData.mainProductUrl}</div>
           <div><strong>Main Product's energy Label:</strong> {formData.mainEnergyLabel || 'Not provided'}</div>
           <div><strong>Second Product URL:</strong> {formData.secondProductUrl}</div>
