@@ -116,8 +116,7 @@ const Home = () => {
                   PTO Model Image Creator
                 </p>
                 <div className="space-y-2 text-sm text-muted-foreground max-w-xs mx-auto">
-                  <p>• </p>
-                  <p>• Layout Specialist</p>
+                  <p>• Create PTO Model Images</p>
                   <p>• Gallery Optimization</p>
                 </div>
               </div>
