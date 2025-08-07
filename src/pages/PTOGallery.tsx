@@ -40,6 +40,7 @@ const PTOGallery = () => {
   const [showEnergyLabelHelp, setShowEnergyLabelHelp] = useState(false);
   const [urlValidationError, setUrlValidationError] = useState<string | null>(null);
   const [isEuropeanCountry, setIsEuropeanCountry] = useState<boolean | null>(null);
+  const [webhookUrl, setWebhookUrl] = useState('');
   const conversationRef = useRef<HTMLDivElement>(null);
 
   // European countries (in various languages)
@@ -235,14 +236,34 @@ const PTOGallery = () => {
   };
 
   const handleSubmit = async () => {
+    if (!webhookUrl) {
+      setSubmissionStatus('failure');
+      return;
+    }
+
     setIsSubmitting(true);
-    // Simulate API call
-    await new Promise(resolve => setTimeout(resolve, 3000));
     
-    // Simulate random success/failure
-    const success = Math.random() > 0.3;
-    setSubmissionStatus(success ? 'success' : 'failure');
-    setIsSubmitting(false);
+    try {
+      const response = await fetch(webhookUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        mode: "no-cors",
+        body: JSON.stringify({
+          ...formData,
+          timestamp: new Date().toISOString(),
+          triggered_from: window.location.origin,
+        }),
+      });
+
+      setSubmissionStatus('success');
+    } catch (error) {
+      console.error("Error sending to n8n webhook:", error);
+      setSubmissionStatus('failure');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   // Fixed bones animation positions to prevent re-rendering
@@ -373,9 +394,17 @@ const PTOGallery = () => {
             {currentStep === conversations.length - 1 && (
               <div className="text-center space-y-4 animate-fade-in">
                 {!isSubmitting && !submissionStatus && (
-                  <Button onClick={handleSubmit} size="lg" className="w-full">
-                    Submit Gallery Request
-                  </Button>
+                  <div className="space-y-3">
+                    <Input
+                      value={webhookUrl}
+                      onChange={(e) => setWebhookUrl(e.target.value)}
+                      placeholder="Enter your n8n webhook URL..."
+                      className="text-sm"
+                    />
+                    <Button onClick={handleSubmit} size="lg" className="w-full" disabled={!webhookUrl}>
+                      Submit Gallery Request
+                    </Button>
+                  </div>
                 )}
 
                 {isSubmitting && (
