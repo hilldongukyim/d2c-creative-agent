@@ -387,7 +387,7 @@ const PTOGallery = () => {
                         </Button>
                         <Button 
                           size="sm"
-                          onClick={handleNext}
+                          onClick={handleSubmit}
                           className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white"
                         >
                           Confirm & Proceed
@@ -408,50 +408,78 @@ const PTOGallery = () => {
               </div>
             ))}
 
-            {/* Completion Actions */}
-            {currentStep === conversations.length - 1 && (
+            {/* Ben Working Animation */}
+            {isSubmitting && (
               <div className="text-center space-y-4 animate-fade-in">
-                {!isSubmitting && !submissionStatus && (
-                  <div className="space-y-3">
-                    <Input
-                      value={webhookUrl}
-                      onChange={(e) => setWebhookUrl(e.target.value)}
-                      placeholder="Enter your n8n webhook URL..."
-                      className="text-sm"
-                    />
-                    <Button onClick={handleSubmit} size="lg" className="w-full bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white" disabled={!webhookUrl}>
-                      Start Work
-                    </Button>
-                  </div>
-                )}
-
-                {isSubmitting && (
-                  <div className="flex flex-col items-center space-y-4">
-                    <div className="w-24 h-24 bg-blue-100 dark:bg-blue-950/30 rounded-full flex items-center justify-center animate-pulse">
-                      <span className="text-2xl">🐕💻</span>
+                <div className="w-40 h-40 mx-auto relative">
+                  {/* Circular Chat Background */}
+                  <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-950/50 dark:to-purple-950/50 rounded-full flex items-center justify-center animate-pulse border-4 border-blue-200 dark:border-blue-800/50">
+                    {/* Ben's Image */}
+                    <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white dark:border-gray-800 shadow-lg animate-[bounce_2s_ease-in-out_infinite]">
+                      <img 
+                        src={benProfile} 
+                        alt="Ben working" 
+                        className="w-full h-full object-cover object-[center_60%] scale-150 brightness-125" 
+                      />
                     </div>
-                    <p className="text-sm text-muted-foreground">Ben is starting work on your gallery...</p>
+                    {/* Working Indicator */}
+                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full animate-ping"></div>
+                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-xs">💻</span>
+                    </div>
                   </div>
-                )}
+                </div>
+                <div className="space-y-2">
+                  <p className="font-medium text-lg">Ben이 열심히 작업중입니다! 🐕💻</p>
+                  <p className="text-sm text-muted-foreground">곧 받을 수 있도록 하겠습니다.</p>
+                  <p className="text-sm text-muted-foreground">현재 창은 이제 닫으시면 됩니다.</p>
+                  <p className="text-xs text-muted-foreground mt-4">
+                    혹시 5분 안에 메일을 못 받으셨다면<br/>
+                    <span className="font-medium text-blue-600">donguk.yim@lge.com</span>을 찾아주세요.
+                  </p>
+                </div>
+              </div>
+            )}
 
-                {submissionStatus === 'success' && (
-                  <div className="text-center space-y-2">
-                    <div className="text-4xl">✅</div>
-                    <p className="font-medium text-green-600">Perfect! Ben has started working!</p>
-                    <p className="text-sm text-muted-foreground">You'll receive your PTO gallery via email shortly.</p>
+            {submissionStatus === 'success' && (
+              <div className="text-center space-y-4 animate-fade-in">
+                <div className="w-40 h-40 mx-auto relative">
+                  {/* Circular Chat Background */}
+                  <div className="w-full h-full bg-gradient-to-br from-green-100 to-blue-100 dark:from-green-950/50 dark:to-blue-950/50 rounded-full flex items-center justify-center border-4 border-green-200 dark:border-green-800/50">
+                    {/* Ben's Image */}
+                    <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white dark:border-gray-800 shadow-lg">
+                      <img 
+                        src={benProfile} 
+                        alt="Ben completed" 
+                        className="w-full h-full object-cover object-[center_60%] scale-150 brightness-125" 
+                      />
+                    </div>
+                    {/* Success Indicator */}
+                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
+                      <span className="text-white text-lg">✅</span>
+                    </div>
                   </div>
-                )}
+                </div>
+                <div className="space-y-2">
+                  <p className="font-medium text-lg text-green-600">Perfect! Ben이 작업을 시작했습니다!</p>
+                  <p className="text-sm text-muted-foreground">곧 받을 수 있도록 하겠습니다.</p>
+                  <p className="text-sm text-muted-foreground">현재 창은 이제 닫으시면 됩니다.</p>
+                  <p className="text-xs text-muted-foreground mt-4">
+                    혹시 5분 안에 메일을 못 받으셨다면<br/>
+                    <span className="font-medium text-blue-600">donguk.yim@lge.com</span>을 찾아주세요.
+                  </p>
+                </div>
+              </div>
+            )}
 
-                {submissionStatus === 'failure' && (
-                  <div className="text-center space-y-2">
-                    <div className="text-4xl">❌</div>
-                    <p className="font-medium text-red-600">Something went wrong...</p>
-                    <p className="text-sm text-muted-foreground">Please try again.</p>
-                    <Button onClick={() => setSubmissionStatus(null)} variant="outline">
-                      Try Again
-                    </Button>
-                  </div>
-                )}
+            {submissionStatus === 'failure' && (
+              <div className="text-center space-y-2">
+                <div className="text-4xl">❌</div>
+                <p className="font-medium text-red-600">Something went wrong...</p>
+                <p className="text-sm text-muted-foreground">Please try again.</p>
+                <Button onClick={() => setSubmissionStatus(null)} variant="outline">
+                  Try Again
+                </Button>
               </div>
             )}
 
