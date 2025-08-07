@@ -240,9 +240,9 @@ const PTOGallery = () => {
         },
         mode: "no-cors",
         body: JSON.stringify({
-          ...formData,
-          timestamp: new Date().toISOString(),
-          triggered_from: window.location.origin,
+          email: formData.email,
+          mainProductUrl: formData.mainProductUrl,
+          secondProductUrl: formData.secondProductUrl,
         }),
       });
 
