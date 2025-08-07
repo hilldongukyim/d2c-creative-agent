@@ -2,7 +2,6 @@ import { useNavigate } from "react-router-dom";
 import { useState, useRef } from "react";
 const aliceProfile = "/lovable-uploads/e1676369-5523-42da-a372-dcedff449611.png";
 const benProfile = "/lovable-uploads/df1c4dd4-a06d-4d9c-981e-4463ad0b08dc.png";
-import benVideo from "../assets/ben-video.mp4";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -96,7 +95,7 @@ const Home = () => {
             <div className="relative">
               <div className="w-64 h-64 mx-auto rounded-full overflow-hidden shadow-lg group-hover:shadow-blue-400/25 transition-all duration-300">
                 <video
-                  src={benVideo}
+                  src="/ben-video.mp4"
                   className="w-full h-full object-cover scale-110 brightness-125"
                   autoPlay
                   muted
