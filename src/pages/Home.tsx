@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useRef } from "react";
 const aliceProfile = "/lovable-uploads/e1676369-5523-42da-a372-dcedff449611.png";
 const benProfile = "/lovable-uploads/df1c4dd4-a06d-4d9c-981e-4463ad0b08dc.png";
+import benVideo from "../assets/ben-video.mp4";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -93,11 +94,19 @@ const Home = () => {
             onClick={() => handleAgentClick('ben', '/pto-gallery', benRef)}
           >
             <div className="relative">
-              <div className="w-64 h-64 mx-auto rounded-full overflow-hidden shadow-lg group-hover:shadow-blue-400/25 transition-all duration-300">
+              <div className="w-64 h-64 mx-auto rounded-full overflow-hidden shadow-lg group-hover:shadow-blue-400/25 transition-all duration-300 relative">
                 <img 
                   src={benProfile} 
                   alt="Ben - PTO Gallery Creator"
-                  className="w-full h-full object-cover object-center scale-110 group-hover:scale-150 transition-transform duration-300 ease-in-out brightness-125"
+                  className="w-full h-full object-cover object-center scale-110 transition-opacity duration-300 ease-in-out brightness-125 group-hover:opacity-0"
+                />
+                <video
+                  src={benVideo}
+                  className="absolute inset-0 w-full h-full object-cover scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
                 />
               </div>
               <div className="absolute inset-0 rounded-full bg-gradient-to-t from-blue-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
