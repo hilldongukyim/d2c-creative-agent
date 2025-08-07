@@ -62,10 +62,13 @@ const Home = () => {
           >
             <div className="relative">
               <div className="w-64 h-64 mx-auto rounded-full overflow-hidden shadow-lg group-hover:shadow-purple-400/25 transition-all duration-300">
-                <img 
-                  src={aliceProfile} 
-                  alt="Alice - Promotional Content Creator"
-                  className="w-full h-full object-cover object-[center_40%] scale-130 group-hover:scale-150 transition-transform duration-300 ease-in-out brightness-110"
+                <video
+                  src="/alice-video.mp4"
+                  className="w-full h-full object-cover scale-110 brightness-125"
+                  autoPlay
+                  muted
+                  loop
+                  playsInline
                 />
               </div>
               <div className="absolute inset-0 rounded-full bg-gradient-to-t from-purple-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -95,7 +98,7 @@ const Home = () => {
             <div className="relative">
               <div className="w-64 h-64 mx-auto rounded-full overflow-hidden shadow-lg group-hover:shadow-blue-400/25 transition-all duration-300">
                 <video
-                  src="/ben-video.mp4"
+                  src="/ben-video-new.mp4"
                   className="w-full h-full object-cover scale-110 brightness-125"
                   autoPlay
                   muted
