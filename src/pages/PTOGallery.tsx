@@ -496,15 +496,24 @@ const PTOGallery = () => {
                  <div className="space-y-2">
                    <div className="flex gap-2">
                      <div className="flex-1 relative">
-                       <Input
-                         value={userInput}
-                         onChange={(e) => setUserInput(e.target.value)}
-                         placeholder="Enter your ID"
-                         onKeyDown={(e) => e.key === 'Enter' && userInput.trim() && handleInputSubmit()}
-                         className="pr-20"
-                       />
-                       <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground text-sm">
-                         @lge.com
+                       <div className="relative">
+                         <Input
+                           value={userInput}
+                           onChange={(e) => setUserInput(e.target.value)}
+                           placeholder="Enter your ID"
+                           onKeyDown={(e) => e.key === 'Enter' && userInput.trim() && handleInputSubmit()}
+                           className="pr-2"
+                           style={{ paddingRight: '80px' }}
+                         />
+                         <div 
+                           className="absolute top-1/2 transform -translate-y-1/2 text-muted-foreground text-sm pointer-events-none"
+                           style={{ 
+                             left: `${Math.max(12 + (userInput.length * 8), 12)}px`,
+                             transition: 'left 0.1s ease'
+                           }}
+                         >
+                           @lge.com
+                         </div>
                        </div>
                      </div>
                      <Button
