@@ -105,7 +105,7 @@ const PTOGallery = () => {
       },
       {
         type: 'ben-question',
-        content: "First, could you please provide your email address?",
+        content: "First, could you please provide your LGEP ID?",
         field: 'email'
       },
       {
@@ -500,7 +500,7 @@ const PTOGallery = () => {
                          <Input
                            value={userInput}
                            onChange={(e) => setUserInput(e.target.value)}
-                           placeholder="Enter your ID"
+                           placeholder=""
                            onKeyDown={(e) => e.key === 'Enter' && userInput.trim() && handleInputSubmit()}
                            className="pr-2"
                            style={{ paddingRight: '80px' }}
