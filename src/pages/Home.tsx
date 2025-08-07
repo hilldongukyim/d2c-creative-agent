@@ -61,7 +61,7 @@ const Home = () => {
             onClick={() => handleAgentClick('alice', '/promotional', aliceRef)}
           >
             <div className="relative">
-              <div className="w-64 h-64 mx-auto rounded-full overflow-hidden border-4 border-white group-hover:border-white transition-all duration-300 shadow-lg group-hover:shadow-purple-400/25">
+              <div className="w-64 h-64 mx-auto rounded-full overflow-hidden shadow-lg group-hover:shadow-purple-400/25 transition-all duration-300">
                 <img 
                   src={aliceProfile} 
                   alt="Alice - Promotional Content Creator"
@@ -93,7 +93,7 @@ const Home = () => {
             onClick={() => handleAgentClick('ben', '/pto-gallery', benRef)}
           >
             <div className="relative">
-              <div className="w-64 h-64 mx-auto rounded-full overflow-hidden border-4 border-white group-hover:border-white transition-all duration-300 shadow-lg group-hover:shadow-blue-400/25">
+              <div className="w-64 h-64 mx-auto rounded-full overflow-hidden shadow-lg group-hover:shadow-blue-400/25 transition-all duration-300">
                 <img 
                   src={benProfile} 
                   alt="Ben - PTO Gallery Creator"
