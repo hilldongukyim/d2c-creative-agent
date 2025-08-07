@@ -244,10 +244,18 @@ const PTOGallery = () => {
       }
       
       setUrlValidationError(null);
-      setFormData(prev => ({
-        ...prev,
-        [currentConversation.field]: userInput
-      }));
+      // Handle email input specially
+      if (currentConversation.field === 'email') {
+        setFormData(prev => ({
+          ...prev,
+          email: userInput + '@lge.com'
+        }));
+      } else {
+        setFormData(prev => ({
+          ...prev,
+          [currentConversation.field]: userInput
+        }));
+      }
     }
     setTimeout(handleNext, 300);
   };
@@ -484,31 +492,60 @@ const PTOGallery = () => {
                     </Button>
                   ))}
                 </div>
-              ) : (
-                <div className="space-y-2">
-                  <div className="flex gap-2">
-                    <Input
-                      value={userInput}
-                      onChange={(e) => setUserInput(e.target.value)}
-                      placeholder="Type your answer..."
-                      onKeyDown={(e) => e.key === 'Enter' && userInput.trim() && handleInputSubmit()}
-                      className="flex-1"
-                    />
-                    <Button
-                      onClick={handleInputSubmit}
-                      disabled={!userInput.trim()}
-                      size="icon"
-                    >
-                      <Send className="h-4 w-4" />
-                    </Button>
+               ) : currentConversation?.field === 'email' ? (
+                 <div className="space-y-2">
+                   <div className="flex gap-2">
+                     <div className="flex-1 relative">
+                       <Input
+                         value={userInput}
+                         onChange={(e) => setUserInput(e.target.value)}
+                         placeholder="Enter your ID"
+                         onKeyDown={(e) => e.key === 'Enter' && userInput.trim() && handleInputSubmit()}
+                         className="pr-20"
+                       />
+                       <div className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground text-sm">
+                         @lge.com
+                       </div>
+                     </div>
+                     <Button
+                       onClick={handleInputSubmit}
+                       disabled={!userInput.trim()}
+                       size="icon"
+                     >
+                       <Send className="h-4 w-4" />
+                     </Button>
+                   </div>
+                   {urlValidationError && (
+                     <div className="bg-red-50 dark:bg-red-950/30 rounded-lg p-3">
+                       <p className="text-sm text-red-600 dark:text-red-400">{urlValidationError}</p>
+                     </div>
+                   )}
+                 </div>
+               ) : (
+                 <div className="space-y-2">
+                   <div className="flex gap-2">
+                     <Input
+                       value={userInput}
+                       onChange={(e) => setUserInput(e.target.value)}
+                       placeholder="Type your answer..."
+                       onKeyDown={(e) => e.key === 'Enter' && userInput.trim() && handleInputSubmit()}
+                       className="flex-1"
+                     />
+                     <Button
+                       onClick={handleInputSubmit}
+                       disabled={!userInput.trim()}
+                       size="icon"
+                     >
+                       <Send className="h-4 w-4" />
+                     </Button>
+                   </div>
+                   {urlValidationError && (
+                     <div className="bg-red-50 dark:bg-red-950/30 rounded-lg p-3">
+                       <p className="text-sm text-red-600 dark:text-red-400">{urlValidationError}</p>
+                     </div>
+                   )}
                   </div>
-                  {urlValidationError && (
-                    <div className="bg-red-50 dark:bg-red-950/30 rounded-lg p-3">
-                      <p className="text-sm text-red-600 dark:text-red-400">{urlValidationError}</p>
-                    </div>
-                  )}
-                </div>
-              )}
+                )}
             </div>
           )}
         </div>
