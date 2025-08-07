@@ -335,7 +335,7 @@ const PTOGallery = () => {
               <img 
                 src={benProfileSmall}
                 alt="Ben" 
-                className="w-full h-full object-cover object-[center_60%] scale-150 brightness-125" 
+                className="w-full h-full object-cover object-[center_75%] scale-150 brightness-125"
               />
             </div>
             <div>
