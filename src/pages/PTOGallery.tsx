@@ -258,44 +258,21 @@ const PTOGallery = () => {
     }
   };
 
-  // Fixed bones animation positions to prevent re-rendering
-  const bonePositions = useMemo(() => 
-    [...Array(6)].map(() => ({
-      left: Math.random() * 100,
-      top: Math.random() * 100,
-      delay: Math.random() * 20,
-      duration: 15 + Math.random() * 10,
-      rotation: Math.random() * 360,
-      scale: 0.8 + Math.random() * 0.6
-    })), []
-  );
 
   const currentConversation = conversations[currentStep];
   const isQuestion = currentConversation?.type.includes('question');
   const isConfirmation = currentConversation?.type === 'ben-confirmation';
 
   return (
-    <div className="min-h-screen bg-black p-6 relative overflow-hidden">
-      {/* Flying Bone Animation */}
-      {bonePositions.map((bone, i) => (
-        <div
-          key={i}
-          className="absolute opacity-40 animate-[float_20s_linear_infinite] pointer-events-none z-0"
-          style={{
-            left: `${bone.left}%`,
-            top: `${bone.top}%`,
-            animationDelay: `${bone.delay}s`,
-            animationDuration: `${bone.duration}s`,
-            transform: `rotate(${bone.rotation}deg) scale(${bone.scale})`
-          }}
-        >
-          <img 
-            src="/lovable-uploads/415ec45d-2d61-453f-b33b-4ba46b9561ad.png" 
-            alt="floating bone" 
-            className="w-12 h-12 animate-[spin_30s_linear_infinite]"
-          />
-        </div>
-      ))}
+    <div 
+      className="min-h-screen p-6 relative overflow-hidden"
+      style={{
+        backgroundImage: `url(/lovable-uploads/b863cf96-c87e-4a11-a6ac-ea2f2e1381bb.png)`,
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat'
+      }}
+    >
       <div className="max-w-2xl mx-auto">
         <div className="mb-6">
           <Button 
