@@ -265,12 +265,67 @@ const PTOGallery = () => {
     <div 
       className="min-h-screen p-6 relative overflow-hidden"
       style={{
-        backgroundImage: `url(/lovable-uploads/b863cf96-c87e-4a11-a6ac-ea2f2e1381bb.png)`,
-        backgroundSize: 'cover',
-        backgroundPosition: 'center',
-        backgroundRepeat: 'no-repeat'
+        background: 'linear-gradient(135deg, #87CEEB 0%, #E0F6FF 25%, #B0E0E6 50%, #87CEFA 75%, #98D8E8 100%)',
       }}
     >
+      {/* Floating Bones Animation */}
+      {Array.from({ length: 6 }).map((_, i) => (
+        <div
+          key={i}
+          className="absolute animate-pulse"
+          style={{
+            left: `${Math.random() * 90}%`,
+            top: `${Math.random() * 80 + 10}%`,
+            animationDelay: `${Math.random() * 3}s`,
+            animationDuration: `${3 + Math.random() * 2}s`,
+            animation: `float-bone-${i} ${4 + Math.random() * 3}s ease-in-out infinite`,
+          }}
+        >
+          <span 
+            className="text-4xl opacity-70 drop-shadow-lg transform hover:scale-110 transition-transform"
+            style={{
+              filter: 'sepia(30%) hue-rotate(200deg) brightness(0.9)',
+              transform: `rotate(${Math.random() * 360}deg)`,
+            }}
+          >
+            🦴
+          </span>
+        </div>
+      ))}
+      
+      <style dangerouslySetInnerHTML={{
+        __html: `
+          @keyframes float-bone-0 {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-20px) rotate(90deg); }
+            50% { transform: translateY(0px) rotate(180deg); }
+            75% { transform: translateY(-15px) rotate(270deg); }
+          }
+          @keyframes float-bone-1 {
+            0%, 100% { transform: translateX(0px) rotate(45deg); }
+            33% { transform: translateX(30px) rotate(135deg); }
+            66% { transform: translateX(-20px) rotate(225deg); }
+          }
+          @keyframes float-bone-2 {
+            0%, 100% { transform: translateY(0px) translateX(0px) rotate(90deg); }
+            50% { transform: translateY(-25px) translateX(25px) rotate(270deg); }
+          }
+          @keyframes float-bone-3 {
+            0%, 100% { transform: translateY(0px) rotate(180deg); }
+            25% { transform: translateY(20px) rotate(270deg); }
+            75% { transform: translateY(-10px) rotate(90deg); }
+          }
+          @keyframes float-bone-4 {
+            0%, 100% { transform: translateX(0px) translateY(0px) rotate(315deg); }
+            50% { transform: translateX(-30px) translateY(15px) rotate(135deg); }
+          }
+          @keyframes float-bone-5 {
+            0%, 100% { transform: translateY(0px) rotate(225deg); }
+            33% { transform: translateY(-30px) rotate(45deg); }
+            66% { transform: translateY(10px) rotate(135deg); }
+          }
+        `
+      }} />
       <div className="max-w-2xl mx-auto">
         <div className="mb-6">
           <Button 
