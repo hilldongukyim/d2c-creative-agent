@@ -59,7 +59,35 @@ const PTOGallery = () => {
     // Spanish  
     'alemania', 'francia', 'italia', 'españa', 'países bajos', 'bélgica', 'austria', 'suiza', 'portugal', 
     'grecia', 'polonia', 'república checa', 'hungría', 'eslovaquia', 'eslovenia', 'croacia', 'rumania', 
-    'bulgaria', 'dinamarca', 'suecia', 'finlandia', 'noruega', 'islandia', 'irlanda', 'reino unido'
+    'bulgaria', 'dinamarca', 'suecia', 'finlandia', 'noruega', 'islandia', 'irlanda', 'reino unido',
+    // French
+    'allemagne', 'france', 'italie', 'espagne', 'pays-bas', 'belgique', 'autriche', 'suisse', 'portugal', 
+    'grèce', 'pologne', 'république tchèque', 'hongrie', 'slovaquie', 'slovénie', 'croatie', 'roumanie', 
+    'bulgarie', 'danemark', 'suède', 'finlande', 'norvège', 'islande', 'irlande', 'royaume-uni',
+    // German
+    'deutschland', 'frankreich', 'italien', 'spanien', 'niederlande', 'belgien', 'österreich', 'schweiz', 
+    'portugal', 'griechenland', 'polen', 'tschechien', 'ungarn', 'slowakei', 'slowenien', 'kroatien', 
+    'rumänien', 'bulgarien', 'dänemark', 'schweden', 'finnland', 'norwegen', 'island', 'irland', 'vereinigtes königreich',
+    // Italian
+    'germania', 'francia', 'italia', 'spagna', 'paesi bassi', 'belgio', 'austria', 'svizzera', 'portogallo', 
+    'grecia', 'polonia', 'repubblica ceca', 'ungheria', 'slovacchia', 'slovenia', 'croazia', 'romania', 
+    'bulgaria', 'danimarca', 'svezia', 'finlandia', 'norvegia', 'islanda', 'irlanda', 'regno unito',
+    // Dutch
+    'duitsland', 'frankrijk', 'italië', 'spanje', 'nederland', 'belgië', 'oostenrijk', 'zwitserland', 
+    'portugal', 'griekenland', 'polen', 'tsjechië', 'hongarije', 'slowakije', 'slovenië', 'kroatië', 
+    'roemenië', 'bulgarije', 'denemarken', 'zweden', 'finland', 'noorwegen', 'ijsland', 'ierland', 'verenigd koninkrijk',
+    // Portuguese
+    'alemanha', 'frança', 'itália', 'espanha', 'países baixos', 'bélgica', 'áustria', 'suíça', 'portugal', 
+    'grécia', 'polónia', 'república checa', 'hungria', 'eslováquia', 'eslovénia', 'croácia', 'roménia', 
+    'bulgária', 'dinamarca', 'suécia', 'finlândia', 'noruega', 'islândia', 'irlanda', 'reino unido',
+    // Polish
+    'niemcy', 'francja', 'włochy', 'hiszpania', 'holandia', 'belgia', 'austria', 'szwajcaria', 'portugalia', 
+    'grecja', 'polska', 'czechy', 'węgry', 'słowacja', 'słowenia', 'chorwacja', 'rumunia', 'bułgaria', 
+    'dania', 'szwecja', 'finlandia', 'norwegia', 'islandia', 'irlandia', 'wielka brytania',
+    // Czech
+    'německo', 'francie', 'itálie', 'španělsko', 'nizozemsko', 'belgie', 'rakousko', 'švýcarsko', 'portugalsko', 
+    'řecko', 'polsko', 'česko', 'maďarsko', 'slovensko', 'slovinsko', 'chorvatsko', 'rumunsko', 'bulharsko', 
+    'dánsko', 'švédsko', 'finsko', 'norsko', 'island', 'irsko', 'spojené království'
   ];
 
   const energyLabels = [
