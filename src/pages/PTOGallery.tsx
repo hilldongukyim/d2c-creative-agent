@@ -226,8 +226,7 @@ const PTOGallery = () => {
   };
 
   const handleSubmit = async () => {
-    if (!webhookUrl) {
-      setSubmissionStatus('failure');
+    if (!webhookUrl || isSubmitting) {
       return;
     }
 
@@ -247,11 +246,14 @@ const PTOGallery = () => {
         }),
       });
 
-      setSubmissionStatus('success');
+      // no-cors 모드에서는 응답을 읽을 수 없으므로 성공으로 간주
+      setTimeout(() => {
+        setSubmissionStatus('success');
+        setIsSubmitting(false);
+      }, 2000);
     } catch (error) {
       console.error("Error sending to n8n webhook:", error);
       setSubmissionStatus('failure');
-    } finally {
       setIsSubmitting(false);
     }
   };
