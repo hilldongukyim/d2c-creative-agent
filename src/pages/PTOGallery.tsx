@@ -1,15 +1,21 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Send, Undo2 } from "lucide-react";
+import { ArrowLeft, Send, Undo2, Camera, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef, useMemo } from "react";
+import ConfirmationWithScreenshots from "@/components/ConfirmationWithScreenshots";
 const benProfile = "/lovable-uploads/df1c4dd4-a06d-4d9c-981e-4463ad0b08dc.png";
 
 interface FormData {
   email: string;
+  country: string;
   mainProductUrl: string;
   secondProductUrl: string;
+  screenshots?: {
+    mainProductUrl?: string;
+    secondProductUrl?: string;
+  };
 }
 
 interface ConversationItem {
@@ -25,8 +31,10 @@ const PTOGallery = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<FormData>({
     email: '',
+    country: '',
     mainProductUrl: '',
-    secondProductUrl: ''
+    secondProductUrl: '',
+    screenshots: {}
   });
   const [userInput, setUserInput] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -90,7 +98,6 @@ const PTOGallery = () => {
     'A+F_F', 'A+F_E', 'A+F_D', 'A+F_C', 'A+F_B', 'A+F_A+', 'A+F_A'
   ];
 
-  // Conversations without country and energy label questions
   const conversations: ConversationItem[] = [
     {
       type: 'ben-message',
@@ -98,12 +105,17 @@ const PTOGallery = () => {
     },
     {
       type: 'ben-question',
-      content: "First, could you please provide your LGEP ID?",
+      content: "First, could you please provide your EP ID?",
       field: 'email'
     },
     {
       type: 'ben-message',
-      content: "Awesome! I'll remember this email and send you the gallery once it's completed! 😊"
+      content: "Awesome! I'll remember this ID and send you the gallery once it's completed! 😊"
+    },
+    {
+      type: 'ben-question',
+      content: "Which country is this gallery for?",
+      field: 'country'
     },
     {
       type: 'ben-question',
@@ -118,7 +130,7 @@ const PTOGallery = () => {
     },
     {
       type: 'ben-confirmation',
-      content: "Let me confirm your information before we proceed:"
+      content: "Let me take screenshots of the product pages and confirm everything with you:"
     },
     {
       type: 'ben-completion',
@@ -235,6 +247,7 @@ const PTOGallery = () => {
     try {
       const formDataToSend = new FormData();
       formDataToSend.append('email', formData.email);
+      formDataToSend.append('country', formData.country);
       formDataToSend.append('productAUrl', formData.mainProductUrl);
       formDataToSend.append('productBUrl', formData.secondProductUrl);
 
@@ -360,9 +373,9 @@ const PTOGallery = () => {
                         For example: {conv.exampleUrl}
                       </div>
                     )}
-                    {conv.showUrl && conv.field && formData[conv.field as keyof FormData] && (
+                    {conv.showUrl && conv.field && formData[conv.field as keyof FormData] && typeof formData[conv.field as keyof FormData] === 'string' && (
                       <div className="mt-2 p-2 bg-background rounded text-xs text-muted-foreground">
-                        URL: {formData[conv.field as keyof FormData]}
+                        URL: {formData[conv.field as keyof FormData] as string}
                       </div>
                     )}
                   </div>
@@ -380,43 +393,21 @@ const PTOGallery = () => {
                   )}
                 </div>
 
-                {/* Show confirmation summary */}
+                {/* Show confirmation summary with screenshots */}
                 {index === currentStep && conv.type === 'ben-confirmation' && (
-                  <div className="flex gap-3 mt-4 animate-fade-in">
-                    <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-3 max-w-[90%]">
-                      <div className="space-y-2 text-sm">
-                        <div><strong>Email:</strong> {formData.email}</div>
-                        <div><strong>Main Product URL:</strong> {formData.mainProductUrl}</div>
-                        <div><strong>Second Product URL:</strong> {formData.secondProductUrl}</div>
-                      </div>
-                      <p className="text-sm text-muted-foreground mt-3">
-                        Is this information correct? Please confirm to proceed.
-                      </p>
-                      <div className="flex gap-2 mt-4">
-                        <Button 
-                          variant="outline"
-                          size="sm"
-                          onClick={handleGoBack}
-                        >
-                          Edit Information
-                        </Button>
-                        <Button 
-                          size="sm"
-                          onClick={handleSubmit}
-                          className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white"
-                        >
-                          Confirm & Proceed
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
+                  <ConfirmationWithScreenshots 
+                    formData={formData}
+                    setFormData={setFormData}
+                    onGoBack={handleGoBack}
+                    onSubmit={handleSubmit}
+                  />
                 )}
 
                 {/* User Response Display */}
-                {index < currentStep && conv.field && formData[conv.field as keyof FormData] && (
+                {index < currentStep && conv.field && formData[conv.field as keyof FormData] && typeof formData[conv.field as keyof FormData] === 'string' && (
                   <div className="flex justify-end mb-2">
                     <div className="bg-primary text-primary-foreground rounded-lg p-3 max-w-[80%]">
-                      <p className="text-sm">{formData[conv.field as keyof FormData]}</p>
+                      <p className="text-sm">{formData[conv.field as keyof FormData] as string}</p>
                     </div>
                   </div>
                 )}
