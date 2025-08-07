@@ -476,12 +476,13 @@ const PTOGallery = () => {
 
             {submissionStatus === 'failure' && (
               <div className="text-center space-y-2">
-                <div className="text-4xl">❌</div>
-                <p className="font-medium text-red-600">Something went wrong...</p>
-                <p className="text-sm text-muted-foreground">Please try again.</p>
-                <Button onClick={() => setSubmissionStatus(null)} variant="outline">
-                  Try Again
-                </Button>
+                <div className="text-4xl">⚠️</div>
+                <p className="font-medium text-orange-600">시스템상 오류가 발생했습니다</p>
+                <p className="text-sm text-muted-foreground">오류를 전송했으니 곧 조치가 될 예정입니다.</p>
+                <p className="text-xs text-muted-foreground mt-4">
+                  혹시 5분 안에 메일을 못 받으셨다면<br/>
+                  <span className="font-medium text-blue-600">donguk.yim@lge.com</span>을 찾아주세요.
+                </p>
               </div>
             )}
 
