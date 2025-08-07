@@ -328,12 +328,13 @@ const PTOGallery = () => {
                   {/* Go Back Button */}
                   {index > 0 && index === currentStep && (
                     <Button
-                      variant="ghost"
+                      variant="outline"
                       size="sm"
                       onClick={handleGoBack}
-                      className="text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 p-2"
+                      className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 border-gray-300 px-3 py-1.5 text-xs font-medium shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
                     >
-                      <Undo2 className="h-4 w-4" />
+                      <Undo2 className="h-3 w-3 mr-1" />
+                      Edit
                     </Button>
                   )}
                 </div>
