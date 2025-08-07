@@ -346,16 +346,22 @@ const PTOGallery = () => {
                       </div>
                     )}
                   </div>
-                  {/* Go Back Button */}
+                  {/* Go Back Button - Enhanced visibility */}
                   {index > 0 && index === currentStep && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleGoBack}
-                      className="text-muted-foreground hover:text-foreground p-1 h-6 w-6"
-                    >
-                      <Undo2 className="h-3 w-3" />
-                    </Button>
+                    <div className="flex flex-col items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleGoBack}
+                        className="text-blue-600 hover:text-blue-700 hover:bg-blue-50 border-blue-300 px-3 py-1 text-xs font-medium"
+                      >
+                        <Undo2 className="h-3 w-3 mr-1" />
+                        Edit
+                      </Button>
+                      <span className="text-xs text-muted-foreground text-center leading-tight">
+                        Want to modify?<br/>Click to re-enter
+                      </span>
+                    </div>
                   )}
                 </div>
 
