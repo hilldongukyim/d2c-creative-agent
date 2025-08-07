@@ -5,7 +5,7 @@ import { ArrowLeft, Send, Undo2, Camera, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef, useMemo } from "react";
 import ConfirmationWithScreenshots from "@/components/ConfirmationWithScreenshots";
-const benProfileSmall = "/lovable-uploads/df1c4dd4-a06d-4d9c-981e-4463ad0b08dc.png";
+const benProfile = "/lovable-uploads/df1c4dd4-a06d-4d9c-981e-4463ad0b08dc.png";
 
 interface FormData {
   email: string;
@@ -333,9 +333,9 @@ const PTOGallery = () => {
           <div className="flex items-center gap-4 mb-6 pb-4 border-b border-border">
             <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-blue-400/50">
               <img 
-                src={benProfileSmall}
+                src={benProfile} 
                 alt="Ben" 
-                className="w-full h-full object-cover object-[center_75%] scale-150 brightness-125"
+                className="w-full h-full object-cover object-[center_60%] scale-150 brightness-125" 
               />
             </div>
             <div>
@@ -412,7 +412,7 @@ const PTOGallery = () => {
                     {/* Ben's Image */}
                     <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white dark:border-gray-800 shadow-lg animate-[bounce_2s_ease-in-out_infinite]">
                       <img 
-                        src={benProfileSmall}
+                        src={benProfile} 
                         alt="Ben working" 
                         className="w-full h-full object-cover object-[center_60%] scale-150 brightness-125" 
                       />
@@ -444,7 +444,7 @@ const PTOGallery = () => {
                     {/* Ben's Image */}
                     <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white dark:border-gray-800 shadow-lg">
                       <img 
-                        src={benProfileSmall} 
+                        src={benProfile} 
                         alt="Ben completed" 
                         className="w-full h-full object-cover object-[center_60%] scale-150 brightness-125" 
                       />
