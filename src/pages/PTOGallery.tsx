@@ -28,7 +28,7 @@ const PTOGallery = () => {
     mainProductUrl: '',
     secondProductUrl: ''
   });
-  const [userInput, setUserInput] = useState();
+  const [userInput, setUserInput] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionStatus, setSubmissionStatus] = useState<'success' | 'failure' | null>(null);
   const [showEnergyLabelHelp, setShowEnergyLabelHelp] = useState(false);
@@ -192,7 +192,7 @@ const PTOGallery = () => {
     if (currentConversation.field) {
       // URL validation for product URLs
       if ((currentConversation.field === 'mainProductUrl' || currentConversation.field === 'secondProductUrl') && 
-          !userInput.startsWith('https://www.lg.com/')) {
+          !userInput?.startsWith('https://www.lg.com/')) {
         setUrlValidationError('Please make sure you provided a valid LG product URL that starts with "https://www.lg.com/"');
         return;
       }
@@ -240,9 +240,9 @@ const PTOGallery = () => {
         },
         mode: "no-cors",
         body: JSON.stringify({
-          ...formData,
-          timestamp: new Date().toISOString(),
-          triggered_from: window.location.origin,
+          email: formData.email,
+          productAUrl: formData.mainProductUrl,
+          productBUrl: formData.secondProductUrl
         }),
       });
 
@@ -470,16 +470,16 @@ const PTOGallery = () => {
                        <div className="relative">
                          <Input
                            value={userInput}
-                           onChange={(e) => setUserInput(e.target.value)}
-                           placeholder=""
-                           onKeyDown={(e) => e.key === 'Enter' && userInput.trim() && handleInputSubmit()}
+                            onChange={(e) => setUserInput(e.target.value)}
+                            placeholder=""
+                            onKeyDown={(e) => e.key === 'Enter' && userInput?.trim() && handleInputSubmit()}
                            className="pr-2"
                            style={{ paddingRight: '80px' }}
                          />
                          <div 
                            className="absolute top-1/2 transform -translate-y-1/2 text-muted-foreground text-sm pointer-events-none"
-                           style={{ 
-                             left: `${Math.max(12 + (userInput.length * 8), 12)}px`,
+                            style={{ 
+                              left: `${Math.max(12 + ((userInput?.length || 0) * 8), 12)}px`,
                              transition: 'left 0.1s ease'
                            }}
                          >
@@ -489,7 +489,7 @@ const PTOGallery = () => {
                      </div>
                      <Button
                        onClick={handleInputSubmit}
-                       disabled={!userInput.trim()}
+                        disabled={!userInput?.trim()}
                        size="icon"
                      >
                        <Send className="h-4 w-4" />
@@ -506,14 +506,14 @@ const PTOGallery = () => {
                    <div className="flex gap-2">
                      <Input
                        value={userInput}
-                       onChange={(e) => setUserInput(e.target.value)}
-                       placeholder="Type your answer..."
-                       onKeyDown={(e) => e.key === 'Enter' && userInput.trim() && handleInputSubmit()}
+                        onChange={(e) => setUserInput(e.target.value)}
+                        placeholder="Type your answer..."
+                        onKeyDown={(e) => e.key === 'Enter' && userInput?.trim() && handleInputSubmit()}
                        className="flex-1"
                      />
                      <Button
                        onClick={handleInputSubmit}
-                       disabled={!userInput.trim()}
+                       disabled={!userInput?.trim()}
                        size="icon"
                      >
                        <Send className="h-4 w-4" />
