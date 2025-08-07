@@ -269,28 +269,42 @@ const PTOGallery = () => {
       }}
     >
       {/* Floating Bones Animation */}
-      {Array.from({ length: 6 }).map((_, i) => (
-        <div
-          key={i}
-          className="absolute pointer-events-none"
-          style={{
-            left: `${Math.random() * 85}%`,
-            top: `${Math.random() * 75 + 10}%`,
-            animationDelay: `${Math.random() * 5}s`,
-            animation: `rotate-bone ${8 + Math.random() * 4}s linear infinite`,
-          }}
-        >
-          <img 
-            src="/lovable-uploads/d6c1b95e-92d1-4bc6-9b97-f953009e73e3.png"
-            alt="Floating bone"
-            className="w-12 h-12 opacity-60 drop-shadow-lg pointer-events-none select-none"
-            style={{
-              filter: 'brightness(0.95) contrast(1.1)',
-            }}
-            draggable={false}
-          />
-        </div>
-      ))}
+      {useMemo(() => 
+        Array.from({ length: 6 }).map((_, i) => {
+          const positions = [
+            { left: '15%', top: '20%' },
+            { left: '75%', top: '15%' },
+            { left: '25%', top: '65%' },
+            { left: '85%', top: '70%' },
+            { left: '10%', top: '80%' },
+            { left: '60%', top: '35%' }
+          ];
+          
+          return (
+            <div
+              key={i}
+              className="absolute pointer-events-none"
+              style={{
+                left: positions[i].left,
+                top: positions[i].top,
+                animationDelay: `${i * 1.5}s`,
+                animation: `rotate-bone ${10 + i * 2}s linear infinite`,
+              }}
+            >
+              <img 
+                src="/lovable-uploads/d6c1b95e-92d1-4bc6-9b97-f953009e73e3.png"
+                alt="Floating bone"
+                className="w-12 h-12 opacity-60 drop-shadow-lg pointer-events-none select-none"
+                style={{
+                  filter: 'brightness(0.95) contrast(1.1)',
+                  transform: `scale(${0.8 + (i % 3) * 0.2})`,
+                }}
+                draggable={false}
+              />
+            </div>
+          );
+        }), []
+      )}
       
       <style dangerouslySetInnerHTML={{
         __html: `
