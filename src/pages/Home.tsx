@@ -94,15 +94,10 @@ const Home = () => {
             onClick={() => handleAgentClick('ben', '/pto-gallery', benRef)}
           >
             <div className="relative">
-              <div className="w-64 h-64 mx-auto rounded-full overflow-hidden shadow-lg group-hover:shadow-blue-400/25 transition-all duration-300 relative">
-                <img 
-                  src={benProfile} 
-                  alt="Ben - PTO Gallery Creator"
-                  className="w-full h-full object-cover object-center scale-110 transition-opacity duration-300 ease-in-out brightness-125 group-hover:opacity-0"
-                />
+              <div className="w-64 h-64 mx-auto rounded-full overflow-hidden shadow-lg group-hover:shadow-blue-400/25 transition-all duration-300">
                 <video
                   src={benVideo}
-                  className="absolute inset-0 w-full h-full object-cover scale-110 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                  className="w-full h-full object-cover scale-110 brightness-125"
                   autoPlay
                   muted
                   loop
