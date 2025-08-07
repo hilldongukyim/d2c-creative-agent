@@ -12,10 +12,8 @@ interface FormData {
   country: string;
   mainProductUrl: string;
   secondProductUrl: string;
-  screenshots?: {
-    mainProductUrl?: string;
-    secondProductUrl?: string;
-  };
+  mainEnergyLabel?: string;
+  secondEnergyLabel?: string;
 }
 
 interface ConversationItem {
@@ -33,8 +31,7 @@ const PTOGallery = () => {
     email: '',
     country: '',
     mainProductUrl: '',
-    secondProductUrl: '',
-    screenshots: {}
+    secondProductUrl: ''
   });
   const [userInput, setUserInput] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -130,7 +127,7 @@ const PTOGallery = () => {
     },
     {
       type: 'ben-confirmation',
-      content: "Let me take screenshots of the product pages and confirm everything with you:"
+      content: "Let me confirm your information before we proceed:"
     },
     {
       type: 'ben-completion',
