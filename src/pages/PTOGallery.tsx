@@ -241,8 +241,10 @@ const PTOGallery = () => {
         mode: "no-cors",
         body: JSON.stringify({
           email: formData.email,
-          mainProductUrl: formData.mainProductUrl,
-          secondProductUrl: formData.secondProductUrl,
+          productAUrl: formData.mainProductUrl,
+          productAEnergyLabel: "",
+          productBUrl: formData.secondProductUrl,
+          productBEnergyLabel: "",
         }),
       });
 
