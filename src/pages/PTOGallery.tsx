@@ -432,12 +432,12 @@ const PTOGallery = () => {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <p className="font-medium text-lg">Ben이 열심히 작업중입니다! 🐕💻</p>
-                  <p className="text-sm text-muted-foreground">곧 받을 수 있도록 하겠습니다.</p>
-                  <p className="text-sm text-muted-foreground">현재 창은 이제 닫으시면 됩니다.</p>
+                  <p className="font-medium text-lg">Ben is working hard! 🐕💻</p>
+                  <p className="text-sm text-muted-foreground">You will receive it soon.</p>
+                  <p className="text-sm text-muted-foreground">You can close this window now.</p>
                   <p className="text-xs text-muted-foreground mt-4">
-                    혹시 5분 안에 메일을 못 받으셨다면<br/>
-                    <span className="font-medium text-blue-600">donguk.yim@lge.com</span>을 찾아주세요.
+                    If you don't receive the email within 5 minutes,<br/>
+                    please contact <span className="font-medium text-blue-600">donguk.yim@lge.com</span>
                   </p>
                 </div>
               </div>
@@ -463,12 +463,12 @@ const PTOGallery = () => {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <p className="font-medium text-lg text-green-600">Perfect! Ben이 작업을 시작했습니다!</p>
-                  <p className="text-sm text-muted-foreground">곧 받을 수 있도록 하겠습니다.</p>
-                  <p className="text-sm text-muted-foreground">현재 창은 이제 닫으시면 됩니다.</p>
+                  <p className="font-medium text-lg text-green-600">Perfect! Ben has started working!</p>
+                  <p className="text-sm text-muted-foreground">You will receive it soon.</p>
+                  <p className="text-sm text-muted-foreground">You can close this window now.</p>
                   <p className="text-xs text-muted-foreground mt-4">
-                    혹시 5분 안에 메일을 못 받으셨다면<br/>
-                    <span className="font-medium text-blue-600">donguk.yim@lge.com</span>을 찾아주세요.
+                    If you don't receive the email within 5 minutes,<br/>
+                    please contact <span className="font-medium text-blue-600">donguk.yim@lge.com</span>
                   </p>
                 </div>
               </div>
@@ -477,11 +477,11 @@ const PTOGallery = () => {
             {submissionStatus === 'failure' && (
               <div className="text-center space-y-2">
                 <div className="text-4xl">⚠️</div>
-                <p className="font-medium text-orange-600">시스템상 오류가 발생했습니다</p>
-                <p className="text-sm text-muted-foreground">오류를 전송했으니 곧 조치가 될 예정입니다.</p>
+                <p className="font-medium text-orange-600">A system error has occurred</p>
+                <p className="text-sm text-muted-foreground">The error has been reported and will be resolved soon.</p>
                 <p className="text-xs text-muted-foreground mt-4">
-                  혹시 5분 안에 메일을 못 받으셨다면<br/>
-                  <span className="font-medium text-blue-600">donguk.yim@lge.com</span>을 찾아주세요.
+                  If you don't receive the email within 5 minutes,<br/>
+                  please contact <span className="font-medium text-blue-600">donguk.yim@lge.com</span>
                 </p>
               </div>
             )}
