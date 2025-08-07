@@ -242,9 +242,7 @@ const PTOGallery = () => {
         body: JSON.stringify({
           email: formData.email,
           productAUrl: formData.mainProductUrl,
-          productAEnergyLabel: "",
           productBUrl: formData.secondProductUrl,
-          productBEnergyLabel: "",
         }),
       });
 
