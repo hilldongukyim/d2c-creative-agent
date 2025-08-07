@@ -28,13 +28,9 @@ const ConfirmationWithScreenshots = ({
           <div><strong>EP ID:</strong> {formData.email}</div>
           <div><strong>Country:</strong> {formData.country}</div>
           <div><strong>Main Product URL:</strong> {formData.mainProductUrl}</div>
-          {formData.mainEnergyLabel && (
-            <div><strong>Main Product Energy Label:</strong> {formData.mainEnergyLabel}</div>
-          )}
+          <div><strong>Main Product's energy Label:</strong> {formData.mainEnergyLabel || 'Not provided'}</div>
           <div><strong>Second Product URL:</strong> {formData.secondProductUrl}</div>
-          {formData.secondEnergyLabel && (
-            <div><strong>Second Product Energy Label:</strong> {formData.secondEnergyLabel}</div>
-          )}
+          <div><strong>Second product url's energy label:</strong> {formData.secondEnergyLabel || 'Not provided'}</div>
         </div>
 
         <p className="text-sm text-muted-foreground mt-4">
