@@ -270,52 +270,6 @@ const PTOGallery = () => {
         background: 'linear-gradient(135deg, #87CEEB 0%, #E0F6FF 25%, #B0E0E6 50%, #87CEFA 75%, #98D8E8 100%)',
       }}
     >
-      {/* Floating Bones Animation */}
-      {useMemo(() => 
-        Array.from({ length: 6 }).map((_, i) => {
-          const positions = [
-            { left: '15%', top: '20%' },
-            { left: '75%', top: '15%' },
-            { left: '25%', top: '65%' },
-            { left: '85%', top: '70%' },
-            { left: '10%', top: '80%' },
-            { left: '60%', top: '35%' }
-          ];
-          
-          return (
-            <div
-              key={i}
-              className="absolute pointer-events-none"
-              style={{
-                left: positions[i].left,
-                top: positions[i].top,
-                animationDelay: `${i * 1.5}s`,
-                animation: `rotate-bone ${10 + i * 2}s linear infinite`,
-              }}
-            >
-              <img 
-                src="/lovable-uploads/d6c1b95e-92d1-4bc6-9b97-f953009e73e3.png"
-                alt="Floating bone"
-                className="w-12 h-12 opacity-60 drop-shadow-lg pointer-events-none select-none"
-                style={{
-                  filter: 'brightness(0.95) contrast(1.1)',
-                  transform: `scale(${0.8 + (i % 3) * 0.2})`,
-                }}
-                draggable={false}
-              />
-            </div>
-          );
-        }), []
-      )}
-      
-      <style dangerouslySetInnerHTML={{
-        __html: `
-          @keyframes rotate-bone {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-          }
-        `
-      }} />
       <div className="max-w-2xl mx-auto">
         <div className="mb-6">
           <Button 
