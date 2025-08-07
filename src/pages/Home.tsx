@@ -64,7 +64,7 @@ const Home = () => {
               <div className="w-64 h-64 mx-auto rounded-full overflow-hidden shadow-lg group-hover:shadow-purple-400/25 transition-all duration-300">
                 <video
                   src="/alice-video.mp4"
-                  className="w-full h-full object-cover scale-110 brightness-75"
+                  className="w-full h-full object-cover scale-110 brightness-100"
                   autoPlay
                   muted
                   loop
