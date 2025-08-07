@@ -28,7 +28,7 @@ const PTOGallery = () => {
     mainProductUrl: '',
     secondProductUrl: ''
   });
-  const [userInput, setUserInput] = useState('');
+  const [userInput, setUserInput] = useState();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionStatus, setSubmissionStatus] = useState<'success' | 'failure' | null>(null);
   const [showEnergyLabelHelp, setShowEnergyLabelHelp] = useState(false);
@@ -240,9 +240,9 @@ const PTOGallery = () => {
         },
         mode: "no-cors",
         body: JSON.stringify({
-          email: formData.email,
-          productAUrl: formData.mainProductUrl,
-          productBUrl: formData.secondProductUrl,
+          ...formData,
+          timestamp: new Date().toISOString(),
+          triggered_from: window.location.origin,
         }),
       });
 
