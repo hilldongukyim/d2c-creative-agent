@@ -8,11 +8,8 @@ const benProfile = "/lovable-uploads/df1c4dd4-a06d-4d9c-981e-4463ad0b08dc.png";
 
 interface FormData {
   email: string;
-  country: string;
   mainProductUrl: string;
-  mainProductEnergyLabel: string;
   secondProductUrl: string;
-  secondProductEnergyLabel: string;
 }
 
 interface ConversationItem {
@@ -28,11 +25,8 @@ const PTOGallery = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<FormData>({
     email: '',
-    country: '',
     mainProductUrl: '',
-    mainProductEnergyLabel: '',
-    secondProductUrl: '',
-    secondProductEnergyLabel: ''
+    secondProductUrl: ''
   });
   const [userInput, setUserInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -96,74 +90,43 @@ const PTOGallery = () => {
     'A+F_F', 'A+F_E', 'A+F_D', 'A+F_C', 'A+F_B', 'A+F_A+', 'A+F_A'
   ];
 
-  // Dynamic conversations based on European country check
-  const getFilteredConversations = (): ConversationItem[] => {
-    const baseConversations: ConversationItem[] = [
-      {
-        type: 'ben-message',
-        content: "Hello! I'm Ben 🐕 I'll help you create a PTO gallery. Let me ask you a few questions to build the perfect gallery for you! 😊"
-      },
-      {
-        type: 'ben-question',
-        content: "First, could you please provide your LGEP ID?",
-        field: 'email'
-      },
-      {
-        type: 'ben-message',
-        content: "Awesome! I'll remember this email and send you the gallery once it's completed! 😊"
-      },
-      {
-        type: 'ben-question',
-        content: "Which country are you responsible for?",
-        field: 'country'
-      },
-      {
-        type: 'ben-message',
-        content: "Perfect! I'll create a gallery tailored for that region."
-      },
-      {
-        type: 'ben-question',
-        content: "Please paste the product detail page URL for the main model (the product that will be displayed on the left side of the gallery).",
-        field: 'mainProductUrl',
-        exampleUrl: "https://www.lg.com/es/tv-y-barras-de-sonido/oled-evo/oled83c5elb-esb/"
-      }
-    ];
-
-    // Add energy label questions only for European countries
-    if (isEuropeanCountry === true) {
-      baseConversations.push({
-        type: 'ben-energy-label',
-        content: "It seems you're accessing from Europe, so an energy label is mandatory for the product. Please choose the appropriate energy label:",
-        field: 'mainProductEnergyLabel',
-        showUrl: true
-      });
-    }
-
-    baseConversations.push({
+  // Conversations without country and energy label questions
+  const conversations: ConversationItem[] = [
+    {
+      type: 'ben-message',
+      content: "Hello! I'm Ben 🐕 I'll help you create a PTO gallery. Let me ask you a few questions to build the perfect gallery for you! 😊"
+    },
+    {
+      type: 'ben-question',
+      content: "First, could you please provide your LGEP ID?",
+      field: 'email'
+    },
+    {
+      type: 'ben-message',
+      content: "Awesome! I'll remember this email and send you the gallery once it's completed! 😊"
+    },
+    {
+      type: 'ben-question',
+      content: "Please paste the product detail page URL for the main model (the product that will be displayed on the left side of the gallery).",
+      field: 'mainProductUrl',
+      exampleUrl: "https://www.lg.com/es/tv-y-barras-de-sonido/oled-evo/oled83c5elb-esb/"
+    },
+    {
       type: 'ben-question',
       content: "Now please paste the product detail page URL for the second product (which will be positioned on the right side)!",
       field: 'secondProductUrl'
-    });
-
-    // Add second energy label question only for European countries
-    if (isEuropeanCountry === true) {
-      baseConversations.push({
-        type: 'ben-energy-label',
-        content: "Please also select an energy label for this product:",
-        field: 'secondProductEnergyLabel',
-        showUrl: true
-      });
-    }
-
-    baseConversations.push({
+    },
+    {
+      type: 'ben-confirmation',
+      content: "Let me confirm your information before we proceed:"
+    },
+    {
       type: 'ben-completion',
-      content: "Everything is ready! Click the Submit button and you'll receive the gallery via email in a few minutes. I'll get to work now! 🐕💻"
-    });
+      content: "Perfect! I'll start working on your gallery right away! 🐕💻"
+    }
+  ];
 
-    return baseConversations;
-  };
-
-  const conversations = getFilteredConversations();
+  
 
   // Auto-scroll effect
   useEffect(() => {
@@ -227,15 +190,6 @@ const PTOGallery = () => {
   const handleInputSubmit = () => {
     const currentConversation = conversations[currentStep];
     if (currentConversation.field) {
-      // Check if country is European when country field is submitted
-      if (currentConversation.field === 'country') {
-        const isEuropean = europeanCountries.some(country => 
-          userInput.toLowerCase().includes(country.toLowerCase()) || 
-          country.toLowerCase().includes(userInput.toLowerCase())
-        );
-        setIsEuropeanCountry(isEuropean);
-      }
-      
       // URL validation for product URLs
       if ((currentConversation.field === 'mainProductUrl' || currentConversation.field === 'secondProductUrl') && 
           !userInput.startsWith('https://www.lg.com/')) {
@@ -315,7 +269,8 @@ const PTOGallery = () => {
   );
 
   const currentConversation = conversations[currentStep];
-  const isQuestion = currentConversation?.type.includes('question') || currentConversation?.type.includes('energy-label');
+  const isQuestion = currentConversation?.type.includes('question');
+  const isConfirmation = currentConversation?.type === 'ben-confirmation';
 
   return (
     <div className="min-h-screen bg-black p-6 relative overflow-hidden">
@@ -404,13 +359,34 @@ const PTOGallery = () => {
                   )}
                 </div>
 
-                {/* Show energy label help for current step */}
-                {index === currentStep && conv.type === 'ben-energy-label' && showEnergyLabelHelp && (
+                {/* Show confirmation summary */}
+                {index === currentStep && conv.type === 'ben-confirmation' && (
                   <div className="flex gap-3 mt-4 animate-fade-in">
-                    <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-3 max-w-[80%]">
-                      <p className="text-sm text-muted-foreground">
-                        If you're not sure which one to choose, please check the URL you provided above again. You'll be able to see the energy label there!
+                    <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-3 max-w-[90%]">
+                      <div className="space-y-2 text-sm">
+                        <div><strong>Email:</strong> {formData.email}</div>
+                        <div><strong>Main Product URL:</strong> {formData.mainProductUrl}</div>
+                        <div><strong>Second Product URL:</strong> {formData.secondProductUrl}</div>
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-3">
+                        Is this information correct? Please confirm to proceed.
                       </p>
+                      <div className="flex gap-2 mt-4">
+                        <Button 
+                          variant="outline"
+                          size="sm"
+                          onClick={handleGoBack}
+                        >
+                          Edit Information
+                        </Button>
+                        <Button 
+                          size="sm"
+                          onClick={handleNext}
+                          className="bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 text-white"
+                        >
+                          Confirm & Proceed
+                        </Button>
+                      </div>
                     </div>
                   </div>
                 )}
@@ -437,8 +413,8 @@ const PTOGallery = () => {
                       placeholder="Enter your n8n webhook URL..."
                       className="text-sm"
                     />
-                    <Button onClick={handleSubmit} size="lg" className="w-full" disabled={!webhookUrl}>
-                      Submit Gallery Request
+                    <Button onClick={handleSubmit} size="lg" className="w-full bg-gradient-to-r from-green-500 to-blue-600 hover:from-green-600 hover:to-blue-700 text-white" disabled={!webhookUrl}>
+                      Start Work
                     </Button>
                   </div>
                 )}
@@ -448,15 +424,15 @@ const PTOGallery = () => {
                     <div className="w-24 h-24 bg-blue-100 dark:bg-blue-950/30 rounded-full flex items-center justify-center animate-pulse">
                       <span className="text-2xl">🐕💻</span>
                     </div>
-                    <p className="text-sm text-muted-foreground">Ben is creating your gallery...</p>
+                    <p className="text-sm text-muted-foreground">Ben is starting work on your gallery...</p>
                   </div>
                 )}
 
                 {submissionStatus === 'success' && (
                   <div className="text-center space-y-2">
                     <div className="text-4xl">✅</div>
-                    <p className="font-medium text-green-600">Successfully sent!</p>
-                    <p className="text-sm text-muted-foreground">Please check your email inbox.</p>
+                    <p className="font-medium text-green-600">Perfect! Ben has started working!</p>
+                    <p className="text-sm text-muted-foreground">You'll receive your PTO gallery via email shortly.</p>
                   </div>
                 )}
 
@@ -478,21 +454,7 @@ const PTOGallery = () => {
           {/* Fixed Input Area at Bottom */}
           {isQuestion && (
             <div className="mt-4 pt-4 border-t border-border animate-fade-in">
-              {currentConversation?.type === 'ben-energy-label' ? (
-                <div className="grid grid-cols-5 gap-2">
-                  {energyLabels.map((label) => (
-                    <Button
-                      key={label}
-                      variant="outline"
-                      size="sm"
-                      onClick={() => handleEnergyLabelSelect(label)}
-                      className="hover:bg-blue-50 hover:border-blue-300 hover:text-red-500"
-                    >
-                      {label}
-                    </Button>
-                  ))}
-                </div>
-               ) : currentConversation?.field === 'email' ? (
+              {currentConversation?.field === 'email' ? (
                  <div className="space-y-2">
                    <div className="flex gap-2">
                      <div className="flex-1 relative">
