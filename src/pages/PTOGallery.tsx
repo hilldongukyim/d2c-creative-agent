@@ -272,57 +272,31 @@ const PTOGallery = () => {
       {Array.from({ length: 6 }).map((_, i) => (
         <div
           key={i}
-          className="absolute animate-pulse"
+          className="absolute pointer-events-none"
           style={{
-            left: `${Math.random() * 90}%`,
-            top: `${Math.random() * 80 + 10}%`,
-            animationDelay: `${Math.random() * 3}s`,
-            animationDuration: `${3 + Math.random() * 2}s`,
-            animation: `float-bone-${i} ${4 + Math.random() * 3}s ease-in-out infinite`,
+            left: `${Math.random() * 85}%`,
+            top: `${Math.random() * 75 + 10}%`,
+            animationDelay: `${Math.random() * 5}s`,
+            animation: `rotate-bone ${8 + Math.random() * 4}s linear infinite`,
           }}
         >
-          <span 
-            className="text-4xl opacity-70 drop-shadow-lg transform hover:scale-110 transition-transform"
+          <img 
+            src="/lovable-uploads/d6c1b95e-92d1-4bc6-9b97-f953009e73e3.png"
+            alt="Floating bone"
+            className="w-12 h-12 opacity-60 drop-shadow-lg pointer-events-none select-none"
             style={{
-              filter: 'sepia(30%) hue-rotate(200deg) brightness(0.9)',
-              transform: `rotate(${Math.random() * 360}deg)`,
+              filter: 'brightness(0.95) contrast(1.1)',
             }}
-          >
-            🦴
-          </span>
+            draggable={false}
+          />
         </div>
       ))}
       
       <style dangerouslySetInnerHTML={{
         __html: `
-          @keyframes float-bone-0 {
-            0%, 100% { transform: translateY(0px) rotate(0deg); }
-            25% { transform: translateY(-20px) rotate(90deg); }
-            50% { transform: translateY(0px) rotate(180deg); }
-            75% { transform: translateY(-15px) rotate(270deg); }
-          }
-          @keyframes float-bone-1 {
-            0%, 100% { transform: translateX(0px) rotate(45deg); }
-            33% { transform: translateX(30px) rotate(135deg); }
-            66% { transform: translateX(-20px) rotate(225deg); }
-          }
-          @keyframes float-bone-2 {
-            0%, 100% { transform: translateY(0px) translateX(0px) rotate(90deg); }
-            50% { transform: translateY(-25px) translateX(25px) rotate(270deg); }
-          }
-          @keyframes float-bone-3 {
-            0%, 100% { transform: translateY(0px) rotate(180deg); }
-            25% { transform: translateY(20px) rotate(270deg); }
-            75% { transform: translateY(-10px) rotate(90deg); }
-          }
-          @keyframes float-bone-4 {
-            0%, 100% { transform: translateX(0px) translateY(0px) rotate(315deg); }
-            50% { transform: translateX(-30px) translateY(15px) rotate(135deg); }
-          }
-          @keyframes float-bone-5 {
-            0%, 100% { transform: translateY(0px) rotate(225deg); }
-            33% { transform: translateY(-30px) rotate(45deg); }
-            66% { transform: translateY(10px) rotate(135deg); }
+          @keyframes rotate-bone {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
           }
         `
       }} />
