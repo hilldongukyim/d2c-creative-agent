@@ -26,9 +26,7 @@ const ConfirmationWithScreenshots = ({
         <div className="space-y-3 text-sm">
           <div><strong>EP ID:</strong> {formData.email}</div>
           <div><strong>Main Product URL:</strong> {formData.mainProductUrl}</div>
-          <div><strong>Main Product's energy Label:</strong> {formData.mainEnergyLabel || 'Not provided'}</div>
           <div><strong>Second Product URL:</strong> {formData.secondProductUrl}</div>
-          <div><strong>Second product url's energy label:</strong> {formData.secondEnergyLabel || 'Not provided'}</div>
         </div>
 
         <p className="text-sm text-muted-foreground mt-4">
