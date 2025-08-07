@@ -97,13 +97,10 @@ const Home = () => {
           >
             <div className="relative">
               <div className="w-64 h-64 mx-auto rounded-full overflow-hidden shadow-lg group-hover:shadow-blue-400/25 transition-all duration-300">
-                <video
-                  src="/ben-video-new.mp4"
+                <img
+                  src={benProfile}
+                  alt="Ben profile"
                   className="w-full h-full object-cover object-[center_20%] scale-105 brightness-125"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
                 />
               </div>
               <div className="absolute inset-0 rounded-full bg-gradient-to-t from-blue-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
