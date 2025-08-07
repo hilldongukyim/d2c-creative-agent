@@ -31,7 +31,7 @@ const Home = () => {
       {expandingAgent && (
         <div 
           className={`fixed z-50 pointer-events-none ${
-            expandingAgent === 'alice' ? 'bg-purple-500' : 'bg-blue-500'
+            expandingAgent === 'alice' ? 'bg-purple-300' : 'bg-sky-300'
           } rounded-full animate-[expand_0.8s_ease-out_forwards]`}
           style={{
             left: clickPosition.x,
@@ -61,7 +61,7 @@ const Home = () => {
             onClick={() => handleAgentClick('alice', '/promotional', aliceRef)}
           >
             <div className="relative">
-              <div className="w-64 h-64 mx-auto rounded-full overflow-hidden border-4 border-purple-400/30 group-hover:border-purple-400/70 transition-all duration-300 shadow-lg group-hover:shadow-purple-400/25">
+              <div className="w-64 h-64 mx-auto rounded-full overflow-hidden border-4 border-white group-hover:border-white transition-all duration-300 shadow-lg group-hover:shadow-purple-400/25">
                 <img 
                   src={aliceProfile} 
                   alt="Alice - Promotional Content Creator"
@@ -93,7 +93,7 @@ const Home = () => {
             onClick={() => handleAgentClick('ben', '/pto-gallery', benRef)}
           >
             <div className="relative">
-              <div className="w-64 h-64 mx-auto rounded-full overflow-hidden border-4 border-blue-400/30 group-hover:border-blue-400/70 transition-all duration-300 shadow-lg group-hover:shadow-blue-400/25">
+              <div className="w-64 h-64 mx-auto rounded-full overflow-hidden border-4 border-white group-hover:border-white transition-all duration-300 shadow-lg group-hover:shadow-blue-400/25">
                 <img 
                   src={benProfile} 
                   alt="Ben - PTO Gallery Creator"
