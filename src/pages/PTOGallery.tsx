@@ -312,19 +312,21 @@ const PTOGallery = () => {
           </div>
         </div>
       )}
-      <div className="max-w-2xl mx-auto">
-        <div className="mb-6">
-          <Button 
-            variant="ghost" 
-            onClick={() => navigate("/")}
-            className="mb-4 text-gray-400 hover:text-gray-300"
-          >
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Home
-          </Button>
-        </div>
+      {/* Chat container - hidden when video is shown */}
+      {!showVideo && (
+        <div className="max-w-2xl mx-auto">
+          <div className="mb-6">
+            <Button 
+              variant="ghost" 
+              onClick={() => navigate("/")}
+              className="mb-4 text-gray-400 hover:text-gray-300"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back to Home
+            </Button>
+          </div>
 
-        <div className="bg-card rounded-xl shadow-lg p-6 h-[600px] flex flex-col relative z-10">
+          <div className="bg-card rounded-xl shadow-lg p-6 h-[600px] flex flex-col relative z-10">
           {/* Ben's Profile */}
           <div className="flex items-center gap-4 mb-6 pb-4 border-b border-border">
             <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-blue-400/50">
@@ -546,7 +548,7 @@ const PTOGallery = () => {
             </div>
           )}
         </div>
-      </div>
+      )}
     </div>
   );
 };
