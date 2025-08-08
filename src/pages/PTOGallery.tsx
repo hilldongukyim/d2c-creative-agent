@@ -101,7 +101,7 @@ const PTOGallery = () => {
     },
     {
       type: 'ben-question',
-      content: "First, could you please provide your EP ID?",
+      content: "First, could you please provide your information?",
       field: 'email'
     },
     {
