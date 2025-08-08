@@ -466,20 +466,26 @@ const PTOGallery = () => {
               <div className="mt-4 flex gap-2">
                 {currentConversation.field === 'email' ? (
                   <div className="flex-1 relative">
-                    <Input
-                      value={userInput}
-                      onChange={(e) => setUserInput(e.target.value)}
-                      placeholder="Enter your EP ID"
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && userInput.trim()) {
-                          handleInputSubmit();
-                        }
-                      }}
-                      className="pr-20"
-                    />
-                    <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground pointer-events-none">
-                      @lge.com
-                    </span>
+                    <div className="relative flex items-center">
+                      <Input
+                        value={userInput}
+                        onChange={(e) => setUserInput(e.target.value)}
+                        placeholder="Enter your EP ID"
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && userInput.trim()) {
+                            handleInputSubmit();
+                          }
+                        }}
+                        className="pr-2"
+                        style={{ paddingRight: `${(userInput.length ? userInput.length * 8 : 0) + 80}px` }}
+                      />
+                      <span 
+                        className="absolute text-muted-foreground pointer-events-none"
+                        style={{ left: `${userInput.length * 8 + 12}px`, top: '50%', transform: 'translateY(-50%)' }}
+                      >
+                        @lge.com
+                      </span>
+                    </div>
                   </div>
                 ) : (
                   <Input
