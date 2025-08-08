@@ -242,19 +242,21 @@ const PTOGallery = () => {
 
       const response = await fetch(webhookUrl, {
         method: "POST",
-        mode: "no-cors",
         body: formDataToSend,
       });
 
-      // no-cors 모드에서는 응답을 읽을 수 없으므로 성공으로 간주
-      setTimeout(() => {
-        setSubmissionStatus('success');
-        setIsSubmitting(false);
-        // 2초 후 비디오 표시
+      if (response.ok) {
         setTimeout(() => {
-          setShowVideo(true);
+          setSubmissionStatus('success');
+          setIsSubmitting(false);
+          // 2초 후 비디오 표시
+          setTimeout(() => {
+            setShowVideo(true);
+          }, 2000);
         }, 2000);
-      }, 2000);
+      } else {
+        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+      }
     } catch (error) {
       console.error("Error sending to n8n webhook:", error);
       setSubmissionStatus('failure');
@@ -448,8 +450,15 @@ const PTOGallery = () => {
                       <span className="text-2xl">❌</span>
                     </div>
                   </div>
-                  <p className="text-lg font-medium text-red-600 dark:text-red-400">Oops! Something went wrong</p>
-                  <p className="text-sm text-muted-foreground">Please try again or contact support.</p>
+                  <p className="text-lg font-medium text-red-600 dark:text-red-400">Transmission failed</p>
+                  <p className="text-sm text-muted-foreground">Please try again.</p>
+                  <Button 
+                    onClick={() => setSubmissionStatus(null)}
+                    size="sm"
+                    className="mt-2"
+                  >
+                    Try Again
+                  </Button>
                 </div>
               )}
             </div>
