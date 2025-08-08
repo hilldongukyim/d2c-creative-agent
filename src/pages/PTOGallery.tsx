@@ -298,7 +298,7 @@ const PTOGallery = () => {
       style={{
         backgroundImage: 'url(/lovable-uploads/20982fa7-9d41-44d2-8548-90d303e9474a.png)',
         backgroundSize: 'cover',
-        backgroundPosition: '80% center',
+        backgroundPosition: '90% center',
         backgroundRepeat: 'no-repeat',
       }}
     >
