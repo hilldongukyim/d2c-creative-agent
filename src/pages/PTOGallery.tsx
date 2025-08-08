@@ -296,7 +296,10 @@ const PTOGallery = () => {
     <div 
       className="min-h-screen p-6 relative overflow-hidden"
       style={{
-        background: 'linear-gradient(135deg, #87CEEB 0%, #E0F6FF 25%, #B0E0E6 50%, #87CEFA 75%, #98D8E8 100%)',
+        backgroundImage: 'url(/lovable-uploads/535b910d-712f-4c89-9ad2-55054489bcee.png)',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        backgroundRepeat: 'no-repeat',
       }}
     >
       <div className="max-w-2xl mx-auto">
