@@ -297,7 +297,7 @@ const PTOGallery = () => {
       className="min-h-screen p-6 relative overflow-hidden"
       style={{
         backgroundImage: 'url(/lovable-uploads/486a0909-b1cd-4891-9d37-db02a935a89f.png)',
-        backgroundSize: '80%',
+        backgroundSize: 'cover',
         backgroundPosition: '90% center',
         backgroundRepeat: 'no-repeat',
       }}
