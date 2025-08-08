@@ -130,7 +130,6 @@ const PTOGallery = () => {
   ];
 
   
-
   // Auto-scroll effect
   useEffect(() => {
     if (conversationRef.current) {
@@ -312,6 +311,7 @@ const PTOGallery = () => {
           </div>
         </div>
       )}
+
       {/* Chat container - hidden when video is shown */}
       {!showVideo && (
         <div className="max-w-2xl mx-auto">
@@ -327,226 +327,165 @@ const PTOGallery = () => {
           </div>
 
           <div className="bg-card rounded-xl shadow-lg p-6 h-[600px] flex flex-col relative z-10">
-          {/* Ben's Profile */}
-          <div className="flex items-center gap-4 mb-6 pb-4 border-b border-border">
-            <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-blue-400/50">
-              <img 
-                src={benProfile} 
-                alt="Ben" 
-                className="w-full h-full object-cover object-[center_60%] scale-150 brightness-125" 
-              />
+            {/* Ben's Profile */}
+            <div className="flex items-center gap-4 mb-6 pb-4 border-b border-border">
+              <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-blue-400/50">
+                <img 
+                  src={benProfile} 
+                  alt="Ben" 
+                  className="w-full h-full object-cover object-[center_60%] scale-150 brightness-125" 
+                />
+              </div>
+              <div>
+                <h3 className="font-semibold text-lg">Ben</h3>
+                <p className="text-sm text-muted-foreground">PTO Gallery Creator</p>
+              </div>
             </div>
-            <div>
-              <h3 className="font-semibold text-lg">Ben</h3>
-              <p className="text-sm text-muted-foreground">PTO Gallery Creator</p>
-            </div>
-          </div>
 
-          {/* Conversation Flow */}
-          <div ref={conversationRef} className="flex-1 overflow-y-auto space-y-6 pr-2" style={{ scrollBehavior: 'smooth' }}>
-            {conversations.slice(0, currentStep + 1).map((conv, index) => (
-              <div 
-                key={index}
-                className={`transition-all duration-500 ${
-                  index === currentStep ? 'animate-fade-in' : ''
-                }`}
-              >
-                {/* Ben's Message */}
-                <div className="flex gap-3 mb-4 items-start">
-                  <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-3 max-w-[80%]">
-                    <p className="text-sm whitespace-pre-line">{conv.content}</p>
-                    {conv.exampleUrl && (
-                      <div className="mt-2 text-xs text-muted-foreground opacity-70 font-mono bg-muted/30 px-2 py-1 rounded">
-                        For example: {conv.exampleUrl}
-                      </div>
-                    )}
-                    {conv.showUrl && conv.field && formData[conv.field as keyof FormData] && typeof formData[conv.field as keyof FormData] === 'string' && (
-                      <div className="mt-2 p-2 bg-background rounded text-xs text-muted-foreground">
-                        URL: {formData[conv.field as keyof FormData] as string}
-                      </div>
+            {/* Conversation Flow */}
+            <div ref={conversationRef} className="flex-1 overflow-y-auto space-y-6 pr-2" style={{ scrollBehavior: 'smooth' }}>
+              {conversations.slice(0, currentStep + 1).map((conv, index) => (
+                <div 
+                  key={index}
+                  className={`transition-all duration-500 ${
+                    index === currentStep ? 'animate-fade-in' : ''
+                  }`}
+                >
+                  {/* Ben's Message */}
+                  <div className="flex gap-3 mb-4 items-start">
+                    <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-3 max-w-[80%]">
+                      <p className="text-sm whitespace-pre-line">{conv.content}</p>
+                      {conv.exampleUrl && (
+                        <div className="mt-2 text-xs text-muted-foreground opacity-70 font-mono bg-muted/30 px-2 py-1 rounded">
+                          For example: {conv.exampleUrl}
+                        </div>
+                      )}
+                      {conv.showUrl && conv.field && formData[conv.field as keyof FormData] && typeof formData[conv.field as keyof FormData] === 'string' && (
+                        <div className="mt-2 p-2 bg-background rounded text-xs text-muted-foreground">
+                          URL: {formData[conv.field as keyof FormData] as string}
+                        </div>
+                      )}
+                    </div>
+                    {/* Go Back Button */}
+                    {index > 0 && index === currentStep && (
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={handleGoBack}
+                        className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 border-gray-300 px-3 py-1.5 text-xs font-medium shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
+                      >
+                        <Undo2 className="h-3 w-3 mr-1" />
+                        Edit
+                      </Button>
                     )}
                   </div>
-                  {/* Go Back Button */}
-                  {index > 0 && index === currentStep && (
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      onClick={handleGoBack}
-                      className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 border-gray-300 px-3 py-1.5 text-xs font-medium shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
-                    >
-                      <Undo2 className="h-3 w-3 mr-1" />
-                      Edit
-                    </Button>
+
+                  {/* Show confirmation summary with screenshots */}
+                  {index === currentStep && conv.type === 'ben-confirmation' && (
+                    <ConfirmationWithScreenshots 
+                      formData={formData}
+                      setFormData={setFormData}
+                      onGoBack={handleGoBack}
+                      onSubmit={handleSubmit}
+                    />
+                  )}
+
+                  {/* User Response Display */}
+                  {index < currentStep && conv.field && formData[conv.field as keyof FormData] && typeof formData[conv.field as keyof FormData] === 'string' && (
+                    <div className="flex justify-end mb-2">
+                      <div className="bg-primary text-primary-foreground rounded-lg p-3 max-w-[80%]">
+                        <p className="text-sm">{formData[conv.field as keyof FormData] as string}</p>
+                      </div>
+                    </div>
                   )}
                 </div>
+              ))}
 
-                {/* Show confirmation summary with screenshots */}
-                {index === currentStep && conv.type === 'ben-confirmation' && (
-                  <ConfirmationWithScreenshots 
-                    formData={formData}
-                    setFormData={setFormData}
-                    onGoBack={handleGoBack}
-                    onSubmit={handleSubmit}
-                  />
-                )}
-
-                {/* User Response Display */}
-                {index < currentStep && conv.field && formData[conv.field as keyof FormData] && typeof formData[conv.field as keyof FormData] === 'string' && (
-                  <div className="flex justify-end mb-2">
-                    <div className="bg-primary text-primary-foreground rounded-lg p-3 max-w-[80%]">
-                      <p className="text-sm">{formData[conv.field as keyof FormData] as string}</p>
+              {/* Ben Working Animation */}
+              {isSubmitting && (
+                <div className="text-center space-y-4 animate-fade-in">
+                  <div className="w-40 h-40 mx-auto relative">
+                    {/* Circular Chat Background */}
+                    <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-950/50 dark:to-purple-950/50 rounded-full flex items-center justify-center animate-pulse border-4 border-blue-200 dark:border-blue-800/50">
+                      {/* Ben's Image */}
+                      <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white dark:border-gray-800 shadow-lg animate-[bounce_2s_ease-in-out_infinite]">
+                        <img 
+                          src={benProfile} 
+                          alt="Ben working" 
+                          className="w-full h-full object-cover object-[center_60%] scale-150 brightness-125" 
+                        />
+                      </div>
+                      {/* Working Indicator */}
+                      <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full animate-ping"></div>
+                      <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+                        <span className="text-white text-xs">💻</span>
+                      </div>
                     </div>
                   </div>
-                )}
-              </div>
-            ))}
+                  <p className="text-lg font-medium text-primary">I'm working on your request...</p>
+                  <p className="text-sm text-muted-foreground">This should only take a moment!</p>
+                </div>
+              )}
 
-            {/* Ben Working Animation */}
-            {isSubmitting && (
-              <div className="text-center space-y-4 animate-fade-in">
-                <div className="w-40 h-40 mx-auto relative">
-                  {/* Circular Chat Background */}
-                  <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-950/50 dark:to-purple-950/50 rounded-full flex items-center justify-center animate-pulse border-4 border-blue-200 dark:border-blue-800/50">
-                    {/* Ben's Image */}
-                    <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white dark:border-gray-800 shadow-lg animate-[bounce_2s_ease-in-out_infinite]">
-                      <img 
-                        src={benProfile} 
-                        alt="Ben working" 
-                        className="w-full h-full object-cover object-[center_60%] scale-150 brightness-125" 
-                      />
-                    </div>
-                    {/* Working Indicator */}
-                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full animate-ping"></div>
-                    <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                      <span className="text-white text-xs">💻</span>
+              {/* Success Animation */}
+              {submissionStatus === 'success' && !showVideo && (
+                <div className="text-center space-y-4 animate-fade-in">
+                  <div className="w-24 h-24 mx-auto">
+                    <div className="w-full h-full bg-green-100 dark:bg-green-950/30 rounded-full flex items-center justify-center border-4 border-green-200 dark:border-green-800/50">
+                      <Check className="w-12 h-12 text-green-600 dark:text-green-400" />
                     </div>
                   </div>
+                  <p className="text-lg font-medium text-green-600 dark:text-green-400">Success!</p>
+                  <p className="text-sm text-muted-foreground">Your request has been submitted successfully.</p>
                 </div>
-                <div className="space-y-2">
-                  <p className="font-medium text-lg">Ben is working hard! 🐕💻</p>
-                  <p className="text-sm text-muted-foreground">You will receive it soon.</p>
-                  <p className="text-sm text-muted-foreground">You can close this window now.</p>
-                  <p className="text-xs text-muted-foreground mt-4">
-                    If you don't receive the email within 5 minutes,<br/>
-                    please contact <span className="font-medium text-blue-600">donguk.yim@lge.com</span>
-                  </p>
-                </div>
-              </div>
-            )}
+              )}
 
-            {submissionStatus === 'success' && (
-              <div className="text-center space-y-4 animate-fade-in">
-                <div className="w-40 h-40 mx-auto relative">
-                  {/* Circular Chat Background */}
-                  <div className="w-full h-full bg-gradient-to-br from-green-100 to-blue-100 dark:from-green-950/50 dark:to-blue-950/50 rounded-full flex items-center justify-center border-4 border-green-200 dark:border-green-800/50">
-                    {/* Ben's Image */}
-                    <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white dark:border-gray-800 shadow-lg">
-                      <img 
-                        src={benProfile} 
-                        alt="Ben completed" 
-                        className="w-full h-full object-cover object-[center_60%] scale-150 brightness-125" 
-                      />
-                    </div>
-                    {/* Success Indicator */}
-                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-green-500 rounded-full flex items-center justify-center">
-                      <span className="text-white text-lg">✅</span>
+              {/* Error State */}
+              {submissionStatus === 'failure' && (
+                <div className="text-center space-y-4 animate-fade-in">
+                  <div className="w-24 h-24 mx-auto">
+                    <div className="w-full h-full bg-red-100 dark:bg-red-950/30 rounded-full flex items-center justify-center border-4 border-red-200 dark:border-red-800/50">
+                      <span className="text-2xl">❌</span>
                     </div>
                   </div>
+                  <p className="text-lg font-medium text-red-600 dark:text-red-400">Oops! Something went wrong</p>
+                  <p className="text-sm text-muted-foreground">Please try again or contact support.</p>
                 </div>
-                <div className="space-y-2">
-                  <p className="font-medium text-lg text-green-600">Perfect! Ben has started working!</p>
-                  <p className="text-sm text-muted-foreground">You will receive it soon.</p>
-                  <p className="text-sm text-muted-foreground">You can close this window now.</p>
-                  <p className="text-xs text-muted-foreground mt-4">
-                    If you don't receive the email within 5 minutes,<br/>
-                    please contact <span className="font-medium text-blue-600">donguk.yim@lge.com</span>
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {submissionStatus === 'failure' && (
-              <div className="text-center space-y-2">
-                <div className="text-4xl">⚠️</div>
-                <p className="font-medium text-orange-600">A system error has occurred</p>
-                <p className="text-sm text-muted-foreground">The error has been reported and will be resolved soon.</p>
-                <p className="text-xs text-muted-foreground mt-4">
-                  If you don't receive the email within 5 minutes,<br/>
-                  please contact <span className="font-medium text-blue-600">donguk.yim@lge.com</span>
-                </p>
-              </div>
-            )}
-
-          </div>
-          
-          {/* Fixed Input Area at Bottom */}
-          {isQuestion && (
-            <div className="mt-4 pt-4 border-t border-border animate-fade-in">
-              {currentConversation?.field === 'email' ? (
-                 <div className="space-y-2">
-                   <div className="flex gap-2">
-                     <div className="flex-1 relative">
-                       <div className="relative">
-                         <Input
-                           value={userInput}
-                            onChange={(e) => setUserInput(e.target.value)}
-                            placeholder=""
-                            onKeyDown={(e) => e.key === 'Enter' && userInput?.trim() && handleInputSubmit()}
-                           className="pr-2"
-                           style={{ paddingRight: '80px' }}
-                         />
-                         <div 
-                           className="absolute top-1/2 transform -translate-y-1/2 text-muted-foreground text-sm pointer-events-none"
-                            style={{ 
-                              left: `${Math.max(12 + ((userInput?.length || 0) * 8), 12)}px`,
-                             transition: 'left 0.1s ease'
-                           }}
-                         >
-                           @lge.com
-                         </div>
-                       </div>
-                     </div>
-                     <Button
-                       onClick={handleInputSubmit}
-                        disabled={!userInput?.trim()}
-                       size="icon"
-                     >
-                       <Send className="h-4 w-4" />
-                     </Button>
-                   </div>
-                   {urlValidationError && (
-                     <div className="bg-red-50 dark:bg-red-950/30 rounded-lg p-3">
-                       <p className="text-sm text-red-600 dark:text-red-400">{urlValidationError}</p>
-                     </div>
-                   )}
-                 </div>
-               ) : (
-                 <div className="space-y-2">
-                   <div className="flex gap-2">
-                     <Input
-                       value={userInput}
-                        onChange={(e) => setUserInput(e.target.value)}
-                        placeholder="Type your answer..."
-                        onKeyDown={(e) => e.key === 'Enter' && userInput?.trim() && handleInputSubmit()}
-                       className="flex-1"
-                     />
-                     <Button
-                       onClick={handleInputSubmit}
-                       disabled={!userInput?.trim()}
-                       size="icon"
-                     >
-                       <Send className="h-4 w-4" />
-                     </Button>
-                   </div>
-                   {urlValidationError && (
-                     <div className="bg-red-50 dark:bg-red-950/30 rounded-lg p-3">
-                       <p className="text-sm text-red-600 dark:text-red-400">{urlValidationError}</p>
-                     </div>
-                   )}
-                  </div>
-                )}
+              )}
             </div>
-          )}
+
+            {/* URL Validation Error */}
+            {urlValidationError && (
+              <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800/50 rounded-lg">
+                <p className="text-sm text-red-700 dark:text-red-400">{urlValidationError}</p>
+              </div>
+            )}
+
+            {/* Input Area */}
+            {isQuestion && !isSubmitting && !submissionStatus && (
+              <div className="mt-4 flex gap-2">
+                <Input
+                  value={userInput}
+                  onChange={(e) => setUserInput(e.target.value)}
+                  placeholder={`Enter your ${currentConversation.field === 'email' ? 'EP ID' : currentConversation.field === 'mainProductUrl' || currentConversation.field === 'secondProductUrl' ? 'product URL' : 'response'}...`}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && userInput.trim()) {
+                      handleInputSubmit();
+                    }
+                  }}
+                  className="flex-1"
+                />
+                <Button 
+                  onClick={handleInputSubmit}
+                  disabled={!userInput.trim()}
+                  size="icon"
+                  className="shrink-0"
+                >
+                  <Send className="h-4 w-4" />
+                </Button>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
