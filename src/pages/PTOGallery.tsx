@@ -34,6 +34,7 @@ const PTOGallery = () => {
   const [userInput, setUserInput] = useState<string>('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionStatus, setSubmissionStatus] = useState<'success' | 'failure' | null>(null);
+  const [showVideo, setShowVideo] = useState(false);
   const [showEnergyLabelHelp, setShowEnergyLabelHelp] = useState(false);
   const [urlValidationError, setUrlValidationError] = useState<string | null>(null);
   const [isEuropeanCountry, setIsEuropeanCountry] = useState<boolean | null>(null);
@@ -250,6 +251,10 @@ const PTOGallery = () => {
       setTimeout(() => {
         setSubmissionStatus('success');
         setIsSubmitting(false);
+        // 2초 후 비디오 표시
+        setTimeout(() => {
+          setShowVideo(true);
+        }, 2000);
       }, 2000);
     } catch (error) {
       console.error("Error sending to n8n webhook:", error);
@@ -262,6 +267,30 @@ const PTOGallery = () => {
   const currentConversation = conversations[currentStep];
   const isQuestion = currentConversation?.type.includes('question');
   const isConfirmation = currentConversation?.type === 'ben-confirmation';
+
+  if (showVideo) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-black relative">
+        <video
+          src="/completion-video.mp4"
+          autoPlay
+          loop
+          muted
+          className="w-full h-full object-cover absolute inset-0"
+        />
+        <div className="absolute inset-0 bg-black/20" />
+        <div className="relative z-10 text-center text-white space-y-4 p-8">
+          <h1 className="text-4xl font-bold mb-4">Perfect! I just started working!</h1>
+          <p className="text-xl mb-2">You will receive it soon.</p>
+          <p className="text-xl mb-8">You can close this window now.</p>
+          <p className="text-lg">
+            If you don't receive the email within 10 minutes,<br/>
+            please contact <span className="font-bold">donguk.yim@lge.com</span>. He will assist you.
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div 
