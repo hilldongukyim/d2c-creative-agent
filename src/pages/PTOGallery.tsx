@@ -470,7 +470,7 @@ const PTOGallery = () => {
                       <Input
                         value={userInput}
                         onChange={(e) => setUserInput(e.target.value)}
-                        placeholder="Enter your EP ID"
+                        placeholder="  "
                         onKeyDown={(e) => {
                           if (e.key === 'Enter' && userInput.trim()) {
                             handleInputSubmit();
