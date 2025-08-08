@@ -296,7 +296,7 @@ const PTOGallery = () => {
     <div 
       className="min-h-screen p-6 relative overflow-hidden"
       style={{
-        backgroundImage: 'url(/lovable-uploads/98c39541-6950-461b-a1b0-0247044ee38e.png)',
+        backgroundImage: 'url(/lovable-uploads/486a0909-b1cd-4891-9d37-db02a935a89f.png)',
         backgroundSize: '80%',
         backgroundPosition: '90% center',
         backgroundRepeat: 'no-repeat',
