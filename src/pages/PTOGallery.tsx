@@ -270,23 +270,43 @@ const PTOGallery = () => {
 
   if (showVideo) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-black relative">
-        <video
-          src="/completion-video.mp4"
-          autoPlay
-          loop
-          muted
-          className="w-full h-full object-cover absolute inset-0"
-        />
-        <div className="absolute inset-0 bg-black/20" />
+      <div 
+        className="min-h-screen flex flex-col items-center justify-center relative"
+        style={{
+          backgroundImage: 'url(/lovable-uploads/486a0909-b1cd-4891-9d37-db02a935a89f.png)',
+          backgroundSize: 'cover',
+          backgroundPosition: '90% center',
+          backgroundRepeat: 'no-repeat',
+        }}
+      >
+        {/* Circular video overlay */}
+        <div className="absolute top-8 right-8 w-32 h-32 rounded-full overflow-hidden border-4 border-white shadow-lg z-20">
+          <video
+            src="/completion-video.mp4"
+            autoPlay
+            loop
+            muted
+            className="w-full h-full object-cover"
+          />
+        </div>
+        
+        <div className="absolute inset-0 bg-black/40" />
         <div className="relative z-10 text-center text-white space-y-4 p-8">
           <h1 className="text-4xl font-bold mb-4">Perfect! I just started working!</h1>
           <p className="text-xl mb-2">You will receive it soon.</p>
           <p className="text-xl mb-8">You can close this window now.</p>
-          <p className="text-lg">
+          <p className="text-lg mb-8">
             If you don't receive the email within 10 minutes,<br/>
             please contact <span className="font-bold">donguk.yim@lge.com</span>. He will assist you.
           </p>
+          
+          {/* CTA Button for new image request */}
+          <Button 
+            className="bg-primary text-primary-foreground hover:bg-primary/90 px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+            onClick={() => window.location.reload()}
+          >
+            신청하기
+          </Button>
         </div>
       </div>
     );
