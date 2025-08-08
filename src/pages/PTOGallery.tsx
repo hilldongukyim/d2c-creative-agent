@@ -464,17 +464,36 @@ const PTOGallery = () => {
             {/* Input Area */}
             {isQuestion && !isSubmitting && !submissionStatus && (
               <div className="mt-4 flex gap-2">
-                <Input
-                  value={userInput}
-                  onChange={(e) => setUserInput(e.target.value)}
-                  placeholder={`Enter your ${currentConversation.field === 'email' ? 'EP ID' : currentConversation.field === 'mainProductUrl' || currentConversation.field === 'secondProductUrl' ? 'product URL' : 'response'}...`}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && userInput.trim()) {
-                      handleInputSubmit();
-                    }
-                  }}
-                  className="flex-1"
-                />
+                {currentConversation.field === 'email' ? (
+                  <div className="flex-1 relative">
+                    <Input
+                      value={userInput}
+                      onChange={(e) => setUserInput(e.target.value)}
+                      placeholder="Enter your EP ID"
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && userInput.trim()) {
+                          handleInputSubmit();
+                        }
+                      }}
+                      className="pr-20"
+                    />
+                    <span className="absolute right-3 top-1/2 transform -translate-y-1/2 text-muted-foreground pointer-events-none">
+                      @lge.com
+                    </span>
+                  </div>
+                ) : (
+                  <Input
+                    value={userInput}
+                    onChange={(e) => setUserInput(e.target.value)}
+                    placeholder={`Enter your ${currentConversation.field === 'mainProductUrl' || currentConversation.field === 'secondProductUrl' ? 'product URL' : 'response'}...`}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && userInput.trim()) {
+                        handleInputSubmit();
+                      }
+                    }}
+                    className="flex-1"
+                  />
+                )}
                 <Button 
                   onClick={handleInputSubmit}
                   disabled={!userInput.trim()}
