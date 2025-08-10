@@ -122,6 +122,52 @@ const Home = () => {
               </div>
             </div>
           </div>
+
+          {/* Placeholder - New AI Agent 1 (Coming Soon) */}
+          <div className="group transition-all duration-500 opacity-90">
+            <div className="relative">
+              <div className="w-64 h-64 mx-auto rounded-full overflow-hidden shadow-lg transition-all duration-300">
+                <img
+                  src="/placeholder.svg"
+                  alt="Coming soon AI agent placeholder"
+                  className="w-full h-full object-contain bg-secondary/30"
+                  loading="lazy"
+                />
+              </div>
+              <div className="absolute inset-0 rounded-full bg-gradient-to-t from-muted/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="text-center mt-6 space-y-3">
+                <h2 className="text-3xl font-bold text-foreground">Coming Soon</h2>
+                <p className="text-lg text-muted-foreground font-medium">New AI Agent</p>
+                <div className="space-y-2 text-sm text-muted-foreground max-w-xs mx-auto">
+                  <p>• Specialized Capabilities</p>
+                  <p>• Seamless Workflow</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Placeholder - New AI Agent 2 (Coming Soon) */}
+          <div className="group transition-all duration-500 opacity-90">
+            <div className="relative">
+              <div className="w-64 h-64 mx-auto rounded-full overflow-hidden shadow-lg transition-all duration-300">
+                <img
+                  src="/placeholder.svg"
+                  alt="Coming soon AI agent placeholder"
+                  className="w-full h-full object-contain bg-secondary/30"
+                  loading="lazy"
+                />
+              </div>
+              <div className="absolute inset-0 rounded-full bg-gradient-to-t from-muted/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="text-center mt-6 space-y-3">
+                <h2 className="text-3xl font-bold text-foreground">Coming Soon</h2>
+                <p className="text-lg text-muted-foreground font-medium">New AI Agent</p>
+                <div className="space-y-2 text-sm text-muted-foreground max-w-xs mx-auto">
+                  <p>• Powerful Tools</p>
+                  <p>• Smart Automation</p>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 
