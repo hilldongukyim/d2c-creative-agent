@@ -1,14 +1,10 @@
 import { useNavigate } from "react-router-dom";
-import { useState, useRef, useEffect } from "react";
+import { useEffect } from "react";
 const aliceProfile = "/lovable-uploads/e1676369-5523-42da-a372-dcedff449611.png";
 const benProfile = "/lovable-uploads/df1c4dd4-a06d-4d9c-981e-4463ad0b08dc.png";
 
 const Home = () => {
   const navigate = useNavigate();
-  const [expandingAgent, setExpandingAgent] = useState<string | null>(null);
-  const [clickPosition, setClickPosition] = useState({ x: 0, y: 0 });
-  const aliceRef = useRef<HTMLDivElement>(null);
-  const benRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     document.title = "AI Agent Org Chart | Marketing, Platform, Data";
@@ -23,38 +19,13 @@ const Home = () => {
     meta.content = desc;
   }, []);
 
-  const handleAgentClick = (agent: string, route: string, ref: React.RefObject<HTMLDivElement>) => {
-    if (ref.current) {
-      const rect = ref.current.getBoundingClientRect();
-      const centerX = rect.left + rect.width / 2;
-      const centerY = rect.top + rect.height / 2;
-      
-      setClickPosition({ x: centerX, y: centerY });
-      setExpandingAgent(agent);
-      
-      setTimeout(() => {
-        navigate(route);
-      }, 800);
-    }
+  const handleAgentClick = (_agent: string, route: string) => {
+    navigate(route);
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 p-6 relative overflow-hidden">
       {/* Expanding circle animation */}
-      {expandingAgent && (
-        <div 
-          className={`fixed z-50 pointer-events-none ${
-            expandingAgent === 'alice' ? 'bg-[hsl(var(--agent-accent))]' : 'bg-sky-300'
-          } rounded-full animate-[expand_0.8s_ease-out_forwards]`}
-          style={{
-            left: clickPosition.x,
-            top: clickPosition.y,
-            width: '0px',
-            height: '0px',
-            transform: 'translate(-50%, -50%)',
-          }}
-        />
-      )}
       
       <div className="max-w-6xl mx-auto relative z-10">
         <header className="text-center mb-12 pt-8">
@@ -92,13 +63,22 @@ const Home = () => {
                 </div>
                 <div className="mt-3 space-y-3">
                   <div
-                    ref={aliceRef}
-                    onClick={() => handleAgentClick('alice', '/promotional', aliceRef)}
+                    onClick={() => handleAgentClick('alice', '/promotional')}
                     className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-[hsl(var(--agent-accent))]"
                     aria-label="Open Yumi promotional workflow"
                   >
                     <div className="flex items-center gap-3">
-                      <img src={aliceProfile} alt="Yumi profile image" className="h-16 w-16 rounded-full object-cover ring-2 ring-[hsl(var(--agent-accent))] ring-offset-2 ring-offset-card" loading="lazy" />
+                      <div className="relative h-16 w-16 rounded-full overflow-hidden ring-2 ring-[hsl(var(--agent-accent))] ring-offset-2 ring-offset-card transition-transform duration-200 group-hover:scale-110">
+                        <img src={aliceProfile} alt="Yumi profile image" className="h-full w-full object-cover" loading="lazy" />
+                        <video
+                          src="/alice-video.mp4"
+                          className="absolute inset-0 h-full w-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                          muted
+                          loop
+                          playsInline
+                          preload="metadata"
+                        />
+                      </div>
                       <div>
                         <div className="font-semibold text-foreground group-hover:text-[hsl(var(--agent-accent))]">Yumi</div>
                         <div className="text-xs text-muted-foreground">Multi Agent</div>
@@ -126,13 +106,22 @@ const Home = () => {
                 </div>
                 <div className="mt-3 space-y-3">
                   <div
-                    ref={benRef}
-                    onClick={() => handleAgentClick('ben', '/pto-gallery', benRef)}
+                    onClick={() => handleAgentClick('ben', '/pto-gallery')}
                     className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-sky-300"
                     aria-label="Open Ben PTO gallery workflow"
                   >
                     <div className="flex items-center gap-3">
-                      <img src={benProfile} alt="Ben profile image" className="h-16 w-16 rounded-full object-cover ring-2 ring-accent ring-offset-2 ring-offset-card" loading="lazy" />
+                      <div className="relative h-16 w-16 rounded-full overflow-hidden ring-2 ring-accent ring-offset-2 ring-offset-card transition-transform duration-200 group-hover:scale-110">
+                        <img src={benProfile} alt="Ben profile image" className="h-full w-full object-cover" loading="lazy" />
+                        <video
+                          src="/ben-video.mp4"
+                          className="absolute inset-0 h-full w-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                          muted
+                          loop
+                          playsInline
+                          preload="metadata"
+                        />
+                      </div>
                       <div>
                         <div className="font-semibold text-foreground group-hover:text-sky-400">Ben</div>
                         <div className="text-xs text-muted-foreground">Multi Agent</div>
