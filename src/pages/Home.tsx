@@ -31,7 +31,7 @@ const Home = () => {
       {expandingAgent && (
         <div 
           className={`fixed z-50 pointer-events-none ${
-            expandingAgent === 'alice' ? 'bg-purple-300' : 'bg-sky-300'
+            expandingAgent === 'alice' ? 'bg-[hsl(var(--agent-accent))]' : 'bg-sky-300'
           } rounded-full animate-[expand_0.8s_ease-out_forwards]`}
           style={{
             left: clickPosition.x,
@@ -71,11 +71,11 @@ const Home = () => {
                   playsInline
                 />
               </div>
-              <div className="absolute inset-0 rounded-full bg-gradient-to-t from-purple-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <div className="absolute inset-0 rounded-full bg-gradient-to-t from-[hsl(var(--agent-accent))]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               
               <div className="text-center mt-6 space-y-3">
                 <h2 className="text-3xl font-bold text-foreground group-hover:text-purple-400 transition-colors">
-                  Alice
+                  Yumi
                 </h2>
                 <p className="text-lg text-muted-foreground font-medium">
                   Promotional Content Creator
