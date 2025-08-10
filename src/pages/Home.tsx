@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 const aliceProfile = "/lovable-uploads/e1676369-5523-42da-a372-dcedff449611.png";
 const benProfile = "/lovable-uploads/df1c4dd4-a06d-4d9c-981e-4463ad0b08dc.png";
 
@@ -9,6 +9,19 @@ const Home = () => {
   const [clickPosition, setClickPosition] = useState({ x: 0, y: 0 });
   const aliceRef = useRef<HTMLDivElement>(null);
   const benRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    document.title = "AI Agent Org Chart | Marketing, Platform, Data";
+    const desc =
+      "Org chart of AI agents: Super, Multi (Yumi, Ben), and Sub agents across Marketing, Platform, Data.";
+    let meta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
+    if (!meta) {
+      meta = document.createElement('meta');
+      meta.name = 'description';
+      document.head.appendChild(meta);
+    }
+    meta.content = desc;
+  }, []);
 
   const handleAgentClick = (agent: string, route: string, ref: React.RefObject<HTMLDivElement>) => {
     if (ref.current) {
@@ -44,130 +57,251 @@ const Home = () => {
       )}
       
       <div className="max-w-6xl mx-auto relative z-10">
-        <div className="text-center mb-16 pt-8">
-          <h1 className="text-5xl font-bold text-foreground mb-6">
-            Choose Your AI Agent
+        <header className="text-center mb-12 pt-8">
+          <h1 className="text-5xl font-bold text-foreground mb-4">
+            AI Agent Org Chart
           </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Meet Alice and Ben, your specialized AI agents<p>ready to help with your creative projects</p>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            Super, Multi, and Sub Agents organized by Marketing, Platform, and Data. Yumi and Ben are active; others are Hiring.
           </p>
+        </header>
+        <section className="flex justify-center mb-6">
+          <div className="rounded-xl border bg-card p-6 shadow-sm text-center">
+            <div className="text-sm text-muted-foreground">Super Agent</div>
+            <div className="text-2xl font-semibold text-foreground">Project Orchestrator</div>
+            <p className="text-sm text-muted-foreground mt-2">Assigns tasks and coordinates teams</p>
+          </div>
+        </section>
+        <div className="flex justify-center -mt-2 mb-8" aria-hidden>
+          <div className="h-8 w-0.5 bg-muted" />
         </div>
 
-        <div className="grid lg:grid-cols-2 gap-12 items-center">
-          {/* Alice - Promotional Content Creator */}
-          <div 
-            ref={aliceRef}
-            className="group cursor-pointer transition-all duration-500 hover:scale-105"
-            onClick={() => handleAgentClick('alice', '/promotional', aliceRef)}
-          >
-            <div className="relative">
-              <div className="w-64 h-64 mx-auto rounded-full overflow-hidden shadow-lg group-hover:shadow-purple-400/25 transition-all duration-300">
-                <video
-                  src="/alice-video.mp4"
-                  className="w-full h-full object-cover scale-110 brightness-105"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                />
-              </div>
-              <div className="absolute inset-0 rounded-full bg-gradient-to-t from-[hsl(var(--agent-accent))]/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              
-              <div className="text-center mt-6 space-y-3">
-                <h2 className="text-3xl font-bold text-foreground group-hover:text-purple-400 transition-colors">
-                  Yumi
-                </h2>
-                <p className="text-lg text-muted-foreground font-medium">
-                  Promotional Content Creator
-                </p>
-                <div className="space-y-2 text-sm text-muted-foreground max-w-xs mx-auto">
-                  <p>• Create with Brand Template</p>
-                  <p>• Promotion Copy Writing</p>
-                  <p>• Size Variation</p>
+        <div className="grid gap-8 lg:grid-cols-3">
+          {/* Marketing Org */}
+          <article className="rounded-xl border bg-card p-5 shadow-sm">
+            <header className="mb-4">
+              <h2 className="text-2xl font-semibold text-foreground">Marketing</h2>
+              <p className="text-sm text-muted-foreground">Promotion & Gallery Teams</p>
+            </header>
+            <section className="space-y-4">
+              {/* Promotion Team - Yumi (Multi Agent) */}
+              <div className="rounded-lg border bg-background/50 p-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-medium text-foreground">Promotion Team</h3>
+                  <span className="text-xs text-muted-foreground">Multi Agent</span>
+                </div>
+                <div className="mt-3 space-y-3">
+                  <div
+                    ref={aliceRef}
+                    onClick={() => handleAgentClick('alice', '/promotional', aliceRef)}
+                    className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-[hsl(var(--agent-accent))]"
+                    aria-label="Open Yumi promotional workflow"
+                  >
+                    <div className="flex items-center gap-3">
+                      <img src={aliceProfile} alt="Yumi profile image" className="h-10 w-10 rounded-full object-cover" loading="lazy" />
+                      <div>
+                        <div className="font-semibold text-foreground group-hover:text-[hsl(var(--agent-accent))]">Yumi</div>
+                        <div className="text-xs text-muted-foreground">Multi Agent</div>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Additional Sub Agent - Hiring */}
+                  <div className="rounded-md border p-3">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground">AI</div>
+                      <div>
+                        <div className="font-medium text-foreground">Hiring</div>
+                        <div className="text-xs text-muted-foreground">Sub Agent</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
 
-          {/* Ben - PTO Gallery Creator */}
-          <div 
-            ref={benRef}
-            className="group cursor-pointer transition-all duration-500 hover:scale-105"
-            onClick={() => handleAgentClick('ben', '/pto-gallery', benRef)}
-          >
-            <div className="relative">
-              <div className="w-64 h-64 mx-auto rounded-full overflow-hidden shadow-lg group-hover:shadow-blue-400/25 transition-all duration-300">
-                <video
-                  src="/ben-video-new.mp4"
-                  className="w-full h-full object-cover object-[center_20%] scale-105 brightness-125"
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                />
-              </div>
-              <div className="absolute inset-0 rounded-full bg-gradient-to-t from-blue-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              
-              <div className="text-center mt-6 space-y-3">
-                <h2 className="text-3xl font-bold text-foreground group-hover:text-blue-400 transition-colors">
-                  Ben
-                </h2>
-                <p className="text-lg text-muted-foreground font-medium">
-                  PTO Model Image Creator
-                </p>
-                <div className="space-y-2 text-sm text-muted-foreground max-w-xs mx-auto">
-                  <p>• Create PTO Model Images</p>
-                  <p>• Gallery Optimization</p>
+              {/* Gallery Images Team - Ben (Multi Agent) */}
+              <div className="rounded-lg border bg-background/50 p-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-medium text-foreground">Gallery Images Team</h3>
+                  <span className="text-xs text-muted-foreground">Multi Agent</span>
+                </div>
+                <div className="mt-3 space-y-3">
+                  <div
+                    ref={benRef}
+                    onClick={() => handleAgentClick('ben', '/pto-gallery', benRef)}
+                    className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-sky-300"
+                    aria-label="Open Ben PTO gallery workflow"
+                  >
+                    <div className="flex items-center gap-3">
+                      <img src={benProfile} alt="Ben profile image" className="h-10 w-10 rounded-full object-cover" loading="lazy" />
+                      <div>
+                        <div className="font-semibold text-foreground group-hover:text-sky-400">Ben</div>
+                        <div className="text-xs text-muted-foreground">Multi Agent</div>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Additional Sub Agent - Hiring */}
+                  <div className="rounded-md border p-3">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground">AI</div>
+                      <div>
+                        <div className="font-medium text-foreground">Hiring</div>
+                        <div className="text-xs text-muted-foreground">Sub Agent</div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
-          </div>
 
-          {/* Placeholder - New AI Agent 1 (Coming Soon) */}
-          <div className="group transition-all duration-500 opacity-90">
-            <div className="relative">
-              <div className="w-64 h-64 mx-auto rounded-full overflow-hidden shadow-lg transition-all duration-300">
-                <img
-                  src="/placeholder.svg"
-                  alt="Coming soon AI agent placeholder"
-                  className="w-full h-full object-contain bg-secondary/30"
-                  loading="lazy"
-                />
-              </div>
-              <div className="absolute inset-0 rounded-full bg-gradient-to-t from-muted/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="text-center mt-6 space-y-3">
-                <h2 className="text-3xl font-bold text-foreground">Coming Soon</h2>
-                <p className="text-lg text-muted-foreground font-medium">New AI Agent</p>
-                <div className="space-y-2 text-sm text-muted-foreground max-w-xs mx-auto">
-                  <p>• Specialized Capabilities</p>
-                  <p>• Seamless Workflow</p>
+              {/* Social Media Team - Sub Agents (Hiring) */}
+              <div className="rounded-lg border bg-background/50 p-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-medium text-foreground">Social Media Team</h3>
+                  <span className="text-xs text-muted-foreground">Sub Agents</span>
+                </div>
+                <div className="mt-3 grid grid-cols-1 gap-3">
+                  {[1,2].map((i) => (
+                    <div key={`mkt-social-${i}`} className="rounded-md border p-3">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground">AI</div>
+                        <div>
+                          <div className="font-medium text-foreground">Hiring</div>
+                          <div className="text-xs text-muted-foreground">Sub Agent</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            </div>
-          </div>
 
-          {/* Placeholder - New AI Agent 2 (Coming Soon) */}
-          <div className="group transition-all duration-500 opacity-90">
-            <div className="relative">
-              <div className="w-64 h-64 mx-auto rounded-full overflow-hidden shadow-lg transition-all duration-300">
-                <img
-                  src="/placeholder.svg"
-                  alt="Coming soon AI agent placeholder"
-                  className="w-full h-full object-contain bg-secondary/30"
-                  loading="lazy"
-                />
-              </div>
-              <div className="absolute inset-0 rounded-full bg-gradient-to-t from-muted/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="text-center mt-6 space-y-3">
-                <h2 className="text-3xl font-bold text-foreground">Coming Soon</h2>
-                <p className="text-lg text-muted-foreground font-medium">New AI Agent</p>
-                <div className="space-y-2 text-sm text-muted-foreground max-w-xs mx-auto">
-                  <p>• Powerful Tools</p>
-                  <p>• Smart Automation</p>
+              {/* Email Campaign Team - Sub Agents (Hiring) */}
+              <div className="rounded-lg border bg-background/50 p-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-medium text-foreground">Email Campaign Team</h3>
+                  <span className="text-xs text-muted-foreground">Sub Agents</span>
+                </div>
+                <div className="mt-3 grid grid-cols-1 gap-3">
+                  {[1,2].map((i) => (
+                    <div key={`mkt-email-${i}`} className="rounded-md border p-3">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground">AI</div>
+                        <div>
+                          <div className="font-medium text-foreground">Hiring</div>
+                          <div className="text-xs text-muted-foreground">Sub Agent</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
                 </div>
               </div>
-            </div>
-          </div>
+            </section>
+          </article>
+
+          {/* Platform Org */}
+          <article className="rounded-xl border bg-card p-5 shadow-sm">
+            <header className="mb-4">
+              <h2 className="text-2xl font-semibold text-foreground">Platform</h2>
+              <p className="text-sm text-muted-foreground">Infrastructure & Automation</p>
+            </header>
+            <section className="space-y-4">
+              {/* Integration Team */}
+              <div className="rounded-lg border bg-background/50 p-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-medium text-foreground">Integration Team</h3>
+                  <span className="text-xs text-muted-foreground">Multi & Sub</span>
+                </div>
+                <div className="mt-3 grid grid-cols-1 gap-3">
+                  {/* Multi Agent - Hiring */}
+                  <div className="rounded-md border p-3">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground">AI</div>
+                      <div>
+                        <div className="font-medium text-foreground">Hiring</div>
+                        <div className="text-xs text-muted-foreground">Multi Agent</div>
+                      </div>
+                    </div>
+                  </div>
+                  {/* Sub Agent - Hiring */}
+                  <div className="rounded-md border p-3">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground">AI</div>
+                      <div>
+                        <div className="font-medium text-foreground">Hiring</div>
+                        <div className="text-xs text-muted-foreground">Sub Agent</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Automation Team */}
+              <div className="rounded-lg border bg-background/50 p-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-medium text-foreground">Automation Team</h3>
+                  <span className="text-xs text-muted-foreground">Sub Agents</span>
+                </div>
+                <div className="mt-3 grid grid-cols-1 gap-3">
+                  {[1,2].map((i) => (
+                    <div key={`plat-auto-${i}`} className="rounded-md border p-3">
+                      <div className="flex items-center gap-3">
+                        <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground">AI</div>
+                        <div>
+                          <div className="font-medium text-foreground">Hiring</div>
+                          <div className="text-xs text-muted-foreground">Sub Agent</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </section>
+          </article>
+
+          {/* Data Org */}
+          <article className="rounded-xl border bg-card p-5 shadow-sm">
+            <header className="mb-4">
+              <h2 className="text-2xl font-semibold text-foreground">Data</h2>
+              <p className="text-sm text-muted-foreground">Ingestion & Analytics</p>
+            </header>
+            <section className="space-y-4">
+              {/* Data Ingestion Team */}
+              <div className="rounded-lg border bg-background/50 p-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-medium text-foreground">Data Ingestion Team</h3>
+                  <span className="text-xs text-muted-foreground">Sub Agent</span>
+                </div>
+                <div className="mt-3 grid grid-cols-1 gap-3">
+                  <div className="rounded-md border p-3">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground">AI</div>
+                      <div>
+                        <div className="font-medium text-foreground">Hiring</div>
+                        <div className="text-xs text-muted-foreground">Sub Agent</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Analytics Team */}
+              <div className="rounded-lg border bg-background/50 p-4">
+                <div className="flex items-center justify-between">
+                  <h3 className="font-medium text-foreground">Analytics Team</h3>
+                  <span className="text-xs text-muted-foreground">Multi Agent</span>
+                </div>
+                <div className="mt-3 grid grid-cols-1 gap-3">
+                  <div className="rounded-md border p-3">
+                    <div className="flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground">AI</div>
+                      <div>
+                        <div className="font-medium text-foreground">Hiring</div>
+                        <div className="text-xs text-muted-foreground">Multi Agent</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </article>
         </div>
       </div>
 
