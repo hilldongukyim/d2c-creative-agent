@@ -98,7 +98,7 @@ const Home = () => {
                     aria-label="Open Yumi promotional workflow"
                   >
                     <div className="flex items-center gap-3">
-                      <img src={aliceProfile} alt="Yumi profile image" className="h-10 w-10 rounded-full object-cover" loading="lazy" />
+                      <img src={aliceProfile} alt="Yumi profile image" className="h-16 w-16 rounded-full object-cover ring-2 ring-[hsl(var(--agent-accent))] ring-offset-2 ring-offset-card" loading="lazy" />
                       <div>
                         <div className="font-semibold text-foreground group-hover:text-[hsl(var(--agent-accent))]">Yumi</div>
                         <div className="text-xs text-muted-foreground">Multi Agent</div>
@@ -132,7 +132,7 @@ const Home = () => {
                     aria-label="Open Ben PTO gallery workflow"
                   >
                     <div className="flex items-center gap-3">
-                      <img src={benProfile} alt="Ben profile image" className="h-10 w-10 rounded-full object-cover" loading="lazy" />
+                      <img src={benProfile} alt="Ben profile image" className="h-16 w-16 rounded-full object-cover ring-2 ring-accent ring-offset-2 ring-offset-card" loading="lazy" />
                       <div>
                         <div className="font-semibold text-foreground group-hover:text-sky-400">Ben</div>
                         <div className="text-xs text-muted-foreground">Multi Agent</div>
