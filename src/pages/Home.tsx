@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import OrgChart from "../components/OrgChart";
 import FunctionMap from "../components/FunctionMap";
-const aliceProfile = "/lovable-uploads/e1676369-5523-42da-a372-dcedff449611.png";
+const aliceProfile = "/lovable-uploads/d004c9d6-0491-459c-8639-7730374641aa.png";
 const benProfile = "/lovable-uploads/df1c4dd4-a06d-4d9c-981e-4463ad0b08dc.png";
 
 const Home = () => {
