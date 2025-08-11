@@ -4,9 +4,10 @@ type ProfileMap = { yumi: string; ben: string };
 
 type FunctionMapProps = {
   profiles: ProfileMap;
+  onProfileClick?: (name: string) => void;
 };
 
-const FunctionMap: React.FC<FunctionMapProps> = ({ profiles }) => {
+const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick }) => {
   const groups = [
     {
       title: "DAM",
@@ -64,13 +65,19 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles }) => {
             </header>
             <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
               {group.items.map((item) => (
-                <div key={`${group.title}-${item.name}`} className="flex flex-col items-center text-center">
-                  <div className="relative h-16 w-16 md:h-20 md:w-20 rounded-full overflow-hidden ring-1 ring-muted-foreground/20">
+                <div
+                  key={`${group.title}-${item.name}`}
+                  className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1"
+                  onClick={() => onProfileClick?.(item.name)}
+                  role="button"
+                  tabIndex={0}
+                >
+                  <div className="relative h-20 w-20 md:h-24 md:w-24 rounded-full overflow-hidden ring-1 ring-muted-foreground/20">
                     {item.imageSrc ? (
                       <img
                         src={item.imageSrc}
                         alt={`${item.name} profile image`}
-                        className="h-full w-full object-cover"
+                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
                         loading="lazy"
                       />
                     ) : (

@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Separator } from "@/components/ui/separator";
+import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import OrgChart from "../components/OrgChart";
 import FunctionMap from "../components/FunctionMap";
 const aliceProfile = "/lovable-uploads/d004c9d6-0491-459c-8639-7730374641aa.png";
@@ -8,11 +9,12 @@ const benProfile = "/lovable-uploads/df1c4dd4-a06d-4d9c-981e-4463ad0b08dc.png";
 
 const Home = () => {
   const navigate = useNavigate();
-
+  const [comingSoonOpen, setComingSoonOpen] = useState(false);
+  const [selectedName, setSelectedName] = useState<string | null>(null);
   useEffect(() => {
-    const title = "AI Agent Hierarchy & Functional Capabilities";
+    const title = "Meet our AI Agents — 내부 업무를 돕는 지능형 팀";
     const desc =
-      "Explore our AI agent hierarchy and functional capabilities—clear structure and powerful teamwork.";
+      "AI Agents가 내부 임직원의 업무를 보조하고 가속합니다. 명확한 구조와 협업으로 더 빠르고 정확한 결과를 만듭니다.";
 
     // Title & meta description
     document.title = title;
@@ -53,7 +55,20 @@ const Home = () => {
   }, []);
 
   const handleAgentClick = (_agent: string, route: string) => {
-    navigate(route);
+    if (route) {
+      navigate(route);
+    } else {
+      setSelectedName(_agent);
+      setComingSoonOpen(true);
+    }
+  };
+
+  const handleProfileClick = (name: string) => {
+    const lower = name.toLowerCase();
+    if (lower === "yumi") return navigate("/promotional");
+    if (lower === "ben") return navigate("/pto-gallery");
+    setSelectedName(name);
+    setComingSoonOpen(true);
   };
 
   return (
@@ -62,10 +77,10 @@ const Home = () => {
       <div className="max-w-6xl mx-auto relative z-10">
         <header className="text-center mb-12 pt-8">
           <h1 className="text-5xl font-bold text-foreground mb-4">
-            Engineered for Impact. Built with Intelligence.
+            Meet our AI Agents
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Welcome to the home of our AI Agents. Discover a team designed for clarity, collaboration, and exceptional results.
+            내부 임직원의 업무를 돕고 가속하는 지능형 에이전트 팀입니다. 명확한 구조와 협업으로 더 빠르고 정확한 결과를 만들어냅니다.
           </p>
         </header>
         <section className="flex justify-center mb-6">
@@ -94,10 +109,24 @@ const Home = () => {
             <h2 className="text-3xl font-semibold text-foreground">Functional Capabilities: What Our Agents Do</h2>
             <p className="text-sm text-muted-foreground">See how agents across all departments converge on shared objectives. This map highlights the unified functions of our team, providing a clear picture of their collective power.</p>
           </header>
-          <FunctionMap profiles={{ yumi: aliceProfile, ben: benProfile }} />
+          <FunctionMap profiles={{ yumi: aliceProfile, ben: benProfile }} onProfileClick={handleProfileClick} />
         </section>
       </div>
 
+      {/* Coming Soon Modal */}
+      <AlertDialog open={comingSoonOpen} onOpenChange={setComingSoonOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Coming soon</AlertDialogTitle>
+            <AlertDialogDescription>
+              {selectedName ? `${selectedName} 기능은 곧 제공될 예정입니다.` : "해당 기능은 곧 제공될 예정입니다."}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction autoFocus>확인</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

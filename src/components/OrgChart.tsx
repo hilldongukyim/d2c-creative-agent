@@ -28,27 +28,19 @@ const OrgChart: React.FC<OrgChartProps> = ({ profiles, onAgentClick }) => {
                 aria-label="Open Yumi promotional workflow"
               >
                 <div className="flex items-center gap-3">
-                  <div className="relative h-16 w-16 rounded-full overflow-hidden ring-2 ring-[hsl(var(--agent-accent))] ring-offset-2 ring-offset-card transition-transform duration-200 group-hover:scale-110">
+                  <div className="relative h-20 w-20 rounded-full overflow-hidden ring-2 ring-[hsl(var(--agent-accent))] ring-offset-2 ring-offset-card transition-transform duration-200 group-hover:scale-110">
                     <img src={profiles.yumi} alt="Yumi profile image" className="h-full w-full object-cover" loading="lazy" />
-                    <video
-                      src="/alice-video.mp4"
-                      className="absolute inset-0 h-full w-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                      muted
-                      loop
-                      playsInline
-                      preload="metadata"
-                    />
                   </div>
                   <div>
                     <div className="font-semibold text-foreground group-hover:text-[hsl(var(--agent-accent))]">Yumi</div>
-                    <div className="text-xs text-muted-foreground">Multi Agent</div>
+                    <div className="text-sm text-muted-foreground">Multi Agent</div>
                   </div>
                 </div>
               </div>
               {/* Additional Sub Agent - Hiring */}
-              <div className="rounded-md border p-3">
+              <div onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-muted-foreground/30">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground">AI</div>
+                  <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground transition-transform duration-200 group-hover:scale-110">AI</div>
                   <div>
                     <div className="font-medium text-foreground">Hiring</div>
                     <div className="text-xs text-muted-foreground">Sub Agent</div>
@@ -71,27 +63,19 @@ const OrgChart: React.FC<OrgChartProps> = ({ profiles, onAgentClick }) => {
                 aria-label="Open Ben PTO gallery workflow"
               >
                 <div className="flex items-center gap-3">
-                  <div className="relative h-16 w-16 rounded-full overflow-hidden ring-2 ring-accent ring-offset-2 ring-offset-card transition-transform duration-200 group-hover:scale-110">
+                  <div className="relative h-20 w-20 rounded-full overflow-hidden ring-2 ring-accent ring-offset-2 ring-offset-card transition-transform duration-200 group-hover:scale-110">
                     <img src={profiles.ben} alt="Ben profile image" className="h-full w-full object-cover" loading="lazy" />
-                    <video
-                      src="/ben-video.mp4"
-                      className="absolute inset-0 h-full w-full object-cover opacity-0 group-hover:opacity-100 transition-opacity duration-200"
-                      muted
-                      loop
-                      playsInline
-                      preload="metadata"
-                    />
                   </div>
                   <div>
                     <div className="font-semibold text-foreground group-hover:text-sky-400">Ben</div>
-                    <div className="text-xs text-muted-foreground">Multi Agent</div>
+                    <div className="text-sm text-muted-foreground">Multi Agent</div>
                   </div>
                 </div>
               </div>
               {/* Additional Sub Agent - Hiring */}
-              <div className="rounded-md border p-3">
+              <div onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-muted-foreground/30">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground">AI</div>
+                  <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground transition-transform duration-200 group-hover:scale-110">AI</div>
                   <div>
                     <div className="font-medium text-foreground">Hiring</div>
                     <div className="text-xs text-muted-foreground">Sub Agent</div>
@@ -109,9 +93,9 @@ const OrgChart: React.FC<OrgChartProps> = ({ profiles, onAgentClick }) => {
             </div>
             <div className="mt-3 grid grid-cols-1 gap-3">
               {[1,2].map((i) => (
-                <div key={`mkt-social-${i}`} className="rounded-md border p-3">
+                <div onClick={() => onAgentClick('AI', '')} key={`mkt-social-${i}`} className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-muted-foreground/30">
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground">AI</div>
+                    <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground transition-transform duration-200 group-hover:scale-110">AI</div>
                     <div>
                       <div className="font-medium text-foreground">Hiring</div>
                       <div className="text-xs text-muted-foreground">Sub Agent</div>
@@ -130,9 +114,9 @@ const OrgChart: React.FC<OrgChartProps> = ({ profiles, onAgentClick }) => {
             </div>
             <div className="mt-3 grid grid-cols-1 gap-3">
               {[1,2].map((i) => (
-                <div key={`mkt-email-${i}`} className="rounded-md border p-3">
+                <div onClick={() => onAgentClick('AI', '')} key={`mkt-email-${i}`} className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-muted-foreground/30">
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground">AI</div>
+                    <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground transition-transform duration-200 group-hover:scale-110">AI</div>
                     <div>
                       <div className="font-medium text-foreground">Hiring</div>
                       <div className="text-xs text-muted-foreground">Sub Agent</div>
@@ -160,9 +144,9 @@ const OrgChart: React.FC<OrgChartProps> = ({ profiles, onAgentClick }) => {
             </div>
             <div className="mt-3 grid grid-cols-1 gap-3">
               {/* Multi Agent - Hiring */}
-              <div className="rounded-md border p-3">
+              <div onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-muted-foreground/30">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground">AI</div>
+                  <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground transition-transform duration-200 group-hover:scale-110">AI</div>
                   <div>
                     <div className="font-medium text-foreground">Hiring</div>
                     <div className="text-xs text-muted-foreground">Multi Agent</div>
@@ -170,9 +154,9 @@ const OrgChart: React.FC<OrgChartProps> = ({ profiles, onAgentClick }) => {
                 </div>
               </div>
               {/* Sub Agent - Hiring */}
-              <div className="rounded-md border p-3">
+              <div onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-muted-foreground/30">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground">AI</div>
+                  <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground transition-transform duration-200 group-hover:scale-110">AI</div>
                   <div>
                     <div className="font-medium text-foreground">Hiring</div>
                     <div className="text-xs text-muted-foreground">Sub Agent</div>
@@ -190,9 +174,9 @@ const OrgChart: React.FC<OrgChartProps> = ({ profiles, onAgentClick }) => {
             </div>
             <div className="mt-3 grid grid-cols-1 gap-3">
               {[1,2].map((i) => (
-                <div key={`plat-auto-${i}`} className="rounded-md border p-3">
+                <div onClick={() => onAgentClick('AI', '')} key={`plat-auto-${i}`} className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-muted-foreground/30">
                   <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground">AI</div>
+                    <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground transition-transform duration-200 group-hover:scale-110">AI</div>
                     <div>
                       <div className="font-medium text-foreground">Hiring</div>
                       <div className="text-xs text-muted-foreground">Sub Agent</div>
@@ -219,9 +203,9 @@ const OrgChart: React.FC<OrgChartProps> = ({ profiles, onAgentClick }) => {
               <span className="text-xs text-muted-foreground">Sub Agent</span>
             </div>
             <div className="mt-3 grid grid-cols-1 gap-3">
-              <div className="rounded-md border p-3">
+              <div onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-muted-foreground/30">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground">AI</div>
+                  <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground transition-transform duration-200 group-hover:scale-110">AI</div>
                   <div>
                     <div className="font-medium text-foreground">Hiring</div>
                     <div className="text-xs text-muted-foreground">Sub Agent</div>
@@ -238,9 +222,9 @@ const OrgChart: React.FC<OrgChartProps> = ({ profiles, onAgentClick }) => {
               <span className="text-xs text-muted-foreground">Multi Agent</span>
             </div>
             <div className="mt-3 grid grid-cols-1 gap-3">
-              <div className="rounded-md border p-3">
+              <div onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-muted-foreground/30">
                 <div className="flex items-center gap-3">
-                  <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground">AI</div>
+                  <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground transition-transform duration-200 group-hover:scale-110">AI</div>
                   <div>
                     <div className="font-medium text-foreground">Hiring</div>
                     <div className="text-xs text-muted-foreground">Multi Agent</div>
