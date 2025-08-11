@@ -2,13 +2,18 @@ import React from "react";
 
 type ProfileMap = { yumi: string; ben: string };
 
+type ProfileItem = { name: string; role: string; imageSrc: string };
+type Group =
+  | { title: string; items: ProfileItem[] }
+  | { title: string; sections: { subtitle: string; items: ProfileItem[] }[] };
+
 type FunctionMapProps = {
   profiles: ProfileMap;
   onProfileClick?: (name: string) => void;
 };
 
 const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick }) => {
-  const groups = [
+  const groups: Group[] = [
     {
       title: "DAM",
       items: [
@@ -19,14 +24,27 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick }) =
       ],
     },
     {
-      title: "Promotion Content",
-      items: [
-        { name: "Yumi", role: "El-Form Designer", imageSrc: profiles.yumi },
-        { name: "Carmen", role: "Coordinator", imageSrc: "/lovable-uploads/c67db3d8-8cdc-426a-80e4-b8e7b6bf4604.png" },
-        { name: "Pip", role: "Designer", imageSrc: "/lovable-uploads/cf830101-de14-48d2-a5f5-23a3f692a0f0.png" },
-        { name: "Juno", role: "Criteo Variation", imageSrc: "/lovable-uploads/0984d14e-1c85-48e9-9be5-953e3bc72d9a.png" },
-        { name: "Luna", role: "DV360 Variation", imageSrc: "/lovable-uploads/09ed6890-8a71-43b1-9f99-2029d69c3e6c.png" },
-        { name: "Fern", role: "Other Variation", imageSrc: "/lovable-uploads/66fb2463-85b8-437c-9a16-afdb1c8b3861.png" },
+      title: "Promotion",
+      sections: [
+        {
+          subtitle: "Promotion Initiatives",
+          items: [
+            { name: "Boris", role: "Promotion Initiator", imageSrc: "/lovable-uploads/a3da050e-3de8-404c-8ab2-868f2e319ec8.png" },
+            { name: "Ollie", role: "Sales Analyst", imageSrc: "/lovable-uploads/a2300ba9-4de6-4adc-88fd-b80baa1bdff7.png" },
+            { name: "Ravi", role: "Promotion Configurator", imageSrc: "/lovable-uploads/d18ff2c4-e8c7-4c44-b38c-74bb66e23393.png" },
+          ],
+        },
+        {
+          subtitle: "Content Creation",
+          items: [
+            { name: "Yumi", role: "El-Form Designer", imageSrc: profiles.yumi },
+            { name: "Carmen", role: "Coordinator", imageSrc: "/lovable-uploads/c67db3d8-8cdc-426a-80e4-b8e7b6bf4604.png" },
+            { name: "Pip", role: "Designer", imageSrc: "/lovable-uploads/cf830101-de14-48d2-a5f5-23a3f692a0f0.png" },
+            { name: "Juno", role: "Criteo Variation", imageSrc: "/lovable-uploads/0984d14e-1c85-48e9-9be5-953e3bc72d9a.png" },
+            { name: "Luna", role: "DV360 Variation", imageSrc: "/lovable-uploads/09ed6890-8a71-43b1-9f99-2029d69c3e6c.png" },
+            { name: "Fern", role: "Other Variation", imageSrc: "/lovable-uploads/66fb2463-85b8-437c-9a16-afdb1c8b3861.png" },
+          ],
+        },
       ],
     },
     {
@@ -34,14 +52,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick }) =
       items: [
         { name: "Tango", role: "Gallery Resizing", imageSrc: "/lovable-uploads/c2f987d1-fdfb-4948-b854-092b9abd9f8c.png" },
         { name: "Ben", role: "PTO Image Creator", imageSrc: profiles.ben },
-      ],
-    },
-    {
-      title: "Promotion",
-      items: [
-        { name: "Boris", role: "Promotion Initiator", imageSrc: "/lovable-uploads/a3da050e-3de8-404c-8ab2-868f2e319ec8.png" },
-        { name: "Ollie", role: "Sales Analyst", imageSrc: "/lovable-uploads/a2300ba9-4de6-4adc-88fd-b80baa1bdff7.png" },
-        { name: "Ravi", role: "Promotion Configurator", imageSrc: "/lovable-uploads/d18ff2c4-e8c7-4c44-b38c-74bb66e23393.png" },
       ],
     },
     {
@@ -63,36 +73,78 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick }) =
             <header className="mb-4">
               <h3 className="text-lg font-semibold text-foreground">{group.title}</h3>
             </header>
-            <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
-              {group.items.map((item) => (
-                <div
-                  key={`${group.title}-${item.name}`}
-                  className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1"
-                  onClick={() => onProfileClick?.(item.name)}
-                  role="button"
-                  tabIndex={0}
-                >
-                  <div className="relative h-20 w-20 md:h-24 md:w-24 rounded-full overflow-hidden ring-1 ring-muted-foreground/20">
-                    {item.imageSrc ? (
-                      <img
-                        src={item.imageSrc}
-                        alt={`${item.name} profile image`}
-                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
-                        loading="lazy"
-                      />
-                    ) : (
-                      <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
-                        {item.name.charAt(0)}
-                      </div>
-                    )}
+            {"sections" in group ? (
+              <>
+                {group.sections.map((section) => (
+                  <div key={section.subtitle} className="mb-5 last:mb-0">
+                    <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+                      {section.subtitle}
+                    </h4>
+                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                      {section.items.map((item) => (
+                        <div
+                          key={`${group.title}-${section.subtitle}-${item.name}`}
+                          className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1"
+                          onClick={() => onProfileClick?.(item.name)}
+                          role="button"
+                          tabIndex={0}
+                        >
+                          <div className="relative h-20 w-20 md:h-24 md:w-24 rounded-full overflow-hidden ring-1 ring-muted-foreground/20">
+                            {item.imageSrc ? (
+                              <img
+                                src={item.imageSrc}
+                                alt={`${item.name} profile image`}
+                                className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                loading="lazy"
+                              />
+                            ) : (
+                              <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
+                                {item.name.charAt(0)}
+                              </div>
+                            )}
+                          </div>
+                          <div className="mt-2">
+                            <div className="text-sm font-medium text-foreground">{item.name}</div>
+                            <div className="text-xs text-muted-foreground">{item.role}</div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div className="mt-2">
-                    <div className="text-sm font-medium text-foreground">{item.name}</div>
-                    <div className="text-xs text-muted-foreground">{item.role}</div>
+                ))}
+              </>
+            ) : (
+              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                {group.items.map((item) => (
+                  <div
+                    key={`${group.title}-${item.name}`}
+                    className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1"
+                    onClick={() => onProfileClick?.(item.name)}
+                    role="button"
+                    tabIndex={0}
+                  >
+                    <div className="relative h-20 w-20 md:h-24 md:w-24 rounded-full overflow-hidden ring-1 ring-muted-foreground/20">
+                      {item.imageSrc ? (
+                        <img
+                          src={item.imageSrc}
+                          alt={`${item.name} profile image`}
+                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                          loading="lazy"
+                        />
+                      ) : (
+                        <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
+                          {item.name.charAt(0)}
+                        </div>
+                      )}
+                    </div>
+                    <div className="mt-2">
+                      <div className="text-sm font-medium text-foreground">{item.name}</div>
+                      <div className="text-xs text-muted-foreground">{item.role}</div>
+                    </div>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </article>
         ))}
       </div>
