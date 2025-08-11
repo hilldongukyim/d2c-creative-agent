@@ -13,7 +13,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles }) => {
       items: [
         { name: "Candy", role: "Coordinator", imageSrc: "/lovable-uploads/12ea1acb-6641-4e73-85ef-14b102b12d30.png" },
         { name: "Maya", role: "Account Create", imageSrc: "/lovable-uploads/d67ab42c-85c8-480e-b65e-66a15abe8586.png" },
-        { name: "Theo", role: "Account Delete" },
+        { name: "Theo", role: "Account Delete", imageSrc: "/lovable-uploads/2e6d7b60-abc9-4051-a585-fad42800aabb.png" },
         { name: "Fiona", role: "Communication" },
       ],
     },
