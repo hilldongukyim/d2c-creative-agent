@@ -31,7 +31,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles }) => {
     {
       title: "Gallery Image",
       items: [
-        { name: "Tango", role: "Gallery Resizing" },
+        { name: "Tango", role: "Gallery Resizing", imageSrc: "/lovable-uploads/c2f987d1-fdfb-4948-b854-092b9abd9f8c.png" },
         { name: "Ben", role: "PTO Image Creator", imageSrc: profiles.ben },
       ],
     },
