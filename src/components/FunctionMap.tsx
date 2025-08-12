@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 
 type ProfileMap = { yumi: string; ben: string };
 
@@ -10,9 +10,10 @@ type Group =
 type FunctionMapProps = {
   profiles: ProfileMap;
   onProfileClick?: (name: string) => void;
+  highlightName?: string;
 };
 
-const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick }) => {
+const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, highlightName }) => {
   const groups: Group[] = [
     {
       title: "DAM",
@@ -63,10 +64,24 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick }) =
         { name: "Noa", role: "Copy Writing", imageSrc: "/lovable-uploads/0fbe5af8-19f4-4ff0-8c9f-3f1a2c010572.png" },
       ],
     },
-  ];
+];
+
+  const containerRef = useRef<HTMLElement | null>(null);
+  useEffect(() => {
+    if (!highlightName) return;
+    const selector = `[data-profile-name="${highlightName.toLowerCase()}"]`;
+    const el = containerRef.current?.querySelector(selector);
+    if (el instanceof HTMLElement) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el.classList.add('pulse', 'bg-muted/40');
+      window.setTimeout(() => {
+        el.classList.remove('pulse', 'bg-muted/40');
+      }, 1500);
+    }
+  }, [highlightName]);
 
   return (
-    <section aria-label="Agent functions map" className="space-y-6">
+    <section ref={containerRef} aria-label="Agent functions map" className="space-y-6">
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {groups.map((group) => (
           <article key={group.title} className="rounded-xl border bg-card p-5 shadow-sm">
@@ -84,12 +99,13 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick }) =
                       {section.items.map((item) => (
                         <div
                           key={`${group.title}-${section.subtitle}-${item.name}`}
+                          data-profile-name={item.name.toLowerCase()}
                           className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1"
                           onClick={() => onProfileClick?.(item.name)}
                           role="button"
                           tabIndex={0}
                         >
-                          <div className="relative h-20 w-20 md:h-24 md:w-24 rounded-full overflow-hidden ring-1 ring-muted-foreground/20">
+                          <div className="relative h-20 w-20 md:h-24 md:w-24 rounded-full overflow-hidden">
                             {item.imageSrc ? (
                               <img
                                 src={item.imageSrc}
@@ -118,12 +134,13 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick }) =
                 {group.items.map((item) => (
                   <div
                     key={`${group.title}-${item.name}`}
+                    data-profile-name={item.name.toLowerCase()}
                     className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1"
                     onClick={() => onProfileClick?.(item.name)}
                     role="button"
                     tabIndex={0}
                   >
-                    <div className="relative h-20 w-20 md:h-24 md:w-24 rounded-full overflow-hidden ring-1 ring-muted-foreground/20">
+                    <div className="relative h-20 w-20 md:h-24 md:w-24 rounded-full overflow-hidden">
                       {item.imageSrc ? (
                         <img
                           src={item.imageSrc}

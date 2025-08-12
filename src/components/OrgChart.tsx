@@ -13,7 +13,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
       <section aria-labelledby="org-leader">
         <div className="flex justify-center">
           <article className="rounded-xl border bg-card p-5 shadow-sm flex items-center gap-4">
-            <div className="relative h-16 w-16 rounded-full overflow-hidden ring-2 ring-accent ring-offset-2 ring-offset-card">
+            <div className="relative h-16 w-16 rounded-full overflow-hidden">
               <img
                 src={leader.image}
                 alt={`${leader.name} profile image`}
@@ -43,12 +43,12 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
           <section aria-labelledby="marketing-lead" className="mb-4">
             <div className="text-sm text-muted-foreground mb-2">Team Lead</div>
             <div
-              onClick={() => onAgentClick('alice', '/promotional')}
+              onClick={() => onAgentClick('Yumi', '')}
               className="group cursor-pointer rounded-md p-3 transition hover:bg-muted/30"
               aria-label="Open Yumi promotional workflow"
             >
               <div className="flex items-center gap-3">
-                <div className="relative h-16 w-16 rounded-full overflow-hidden ring-2 ring-accent ring-offset-2 ring-offset-card transition-transform duration-200 group-hover:scale-110">
+                <div className="relative h-16 w-16 rounded-full overflow-hidden transition-transform duration-200 group-hover:scale-110">
                   <img src={profiles.yumi} alt="Yumi profile image" className="h-full w-full object-cover" loading="lazy" />
                 </div>
                 <div>
@@ -62,12 +62,12 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
           {/* Team Members */}
           <section aria-label="Team Members" className="space-y-3">
             <div
-              onClick={() => onAgentClick('ben', '/pto-gallery')}
+              onClick={() => onAgentClick('Ben', '')}
               className="group cursor-pointer rounded-md p-3 transition hover:bg-muted/30"
               aria-label="Open Ben PTO gallery workflow"
             >
               <div className="flex items-center gap-3">
-                <div className="relative h-14 w-14 rounded-full overflow-hidden ring-2 ring-muted ring-offset-2 ring-offset-card transition-transform duration-200 group-hover:scale-110">
+                <div className="relative h-14 w-14 rounded-full overflow-hidden transition-transform duration-200 group-hover:scale-110">
                   <img src={profiles.ben} alt="Ben profile image" className="h-full w-full object-cover" loading="lazy" />
                 </div>
                 <div>

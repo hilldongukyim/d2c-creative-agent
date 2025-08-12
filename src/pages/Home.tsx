@@ -14,6 +14,7 @@ const Home = () => {
   const navigate = useNavigate();
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
   const [selectedName, setSelectedName] = useState<string | null>(null);
+  const [highlightName, setHighlightName] = useState<string | null>(null);
   useEffect(() => {
     const title = "Meet our AI Agents — 내부 업무를 돕는 지능형 팀";
     const desc = "Intelligent AI agents that accelerate internal work through clear structure and collaboration, delivering faster, more accurate results."
@@ -59,10 +60,16 @@ const Home = () => {
   const handleAgentClick = (_agent: string, route: string) => {
     if (route) {
       navigate(route);
-    } else {
-      setSelectedName(_agent);
-      setComingSoonOpen(true);
+      return;
     }
+    const name = _agent.toLowerCase();
+    if (name === "yumi" || name === "ben") {
+      setHighlightName(_agent);
+      setComingSoonOpen(false);
+      return;
+    }
+    setSelectedName(_agent);
+    setComingSoonOpen(true);
   };
 
   const handleProfileClick = (name: string) => {
@@ -102,7 +109,7 @@ const Home = () => {
             <p className="text-sm text-muted-foreground">Browse projects by function, pick what you need, and launch tasks through the assigned agents. Click any card to open the workflow instantly.</p>
           </header>
           <ContactOrder agents={[{ name: "Yumi", image: aliceProfile }, { name: "Ben", image: benProfile }]} ariaLabel="Suggested contact order" />
-          <FunctionMap profiles={{ yumi: aliceProfile, ben: benProfile }} onProfileClick={handleProfileClick} />
+          <FunctionMap profiles={{ yumi: aliceProfile, ben: benProfile }} onProfileClick={handleProfileClick} highlightName={highlightName ?? undefined} />
         </section>
       </div>
 
