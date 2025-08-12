@@ -22,7 +22,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
               />
             </div>
             <div>
-              <div className="text-xs text-muted-foreground">조직장</div>
+              <div className="text-xs text-muted-foreground">Leader</div>
               <h3 id="org-leader" className="text-xl font-semibold text-foreground">
                 {leader.name}
               </h3>
@@ -41,7 +41,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
 
           {/* Team Lead */}
           <section aria-labelledby="marketing-lead" className="mb-4">
-            <div className="text-sm text-muted-foreground mb-2">팀장</div>
+            <div className="text-sm text-muted-foreground mb-2">Team Lead</div>
             <div
               onClick={() => onAgentClick('alice', '/promotional')}
               className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-accent/50"
@@ -60,7 +60,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
           </section>
 
           {/* Team Members */}
-          <section aria-label="팀원" className="space-y-3">
+          <section aria-label="Team Members" className="space-y-3">
             <div
               onClick={() => onAgentClick('ben', '/pto-gallery')}
               className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-accent/30"
@@ -99,7 +99,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
 
           {/* Team Lead */}
           <section aria-labelledby="platform-lead" className="mb-4">
-            <div className="text-sm text-muted-foreground mb-2">팀장</div>
+            <div className="text-sm text-muted-foreground mb-2">Team Lead</div>
             <div onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-muted-foreground/30">
               <div className="flex items-center gap-3">
                 <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground transition-transform duration-200 group-hover:scale-110">AI</div>
@@ -112,7 +112,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
           </section>
 
           {/* Team Members */}
-          <section aria-label="팀원" className="space-y-3">
+          <section aria-label="Team Members" className="space-y-3">
             <div onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-muted-foreground/30">
               <div className="flex items-center gap-3">
                 <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground transition-transform duration-200 group-hover:scale-110">AI</div>
@@ -153,7 +153,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
 
           {/* Team Lead */}
           <section aria-labelledby="data-lead" className="mb-4">
-            <div className="text-sm text-muted-foreground mb-2">팀장</div>
+            <div className="text-sm text-muted-foreground mb-2">Team Lead</div>
             <div onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-muted-foreground/30">
               <div className="flex items-center gap-3">
                 <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground transition-transform duration-200 group-hover:scale-110">AI</div>
@@ -166,7 +166,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
           </section>
 
           {/* Team Members */}
-          <section aria-label="팀원" className="space-y-3">
+          <section aria-label="Team Members" className="space-y-3">
             <div onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-muted-foreground/30">
               <div className="flex items-center gap-3">
                 <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground transition-transform duration-200 group-hover:scale-110">AI</div>
