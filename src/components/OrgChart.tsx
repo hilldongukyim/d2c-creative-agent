@@ -8,7 +8,7 @@ export type OrgChartProps = {
 
 const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) => {
   return (
-    <section aria-label="Organization chart" className="rounded-2xl border bg-card p-6 shadow-sm space-y-6">
+    <section aria-label="Organization chart" className="rounded-2xl border bg-card p-6 shadow-sm space-y-5 max-w-4xl mx-auto">
       {/* Leader (조직장) */}
       <section aria-labelledby="org-leader">
         <div className="flex justify-center">
@@ -32,9 +32,9 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
       </section>
 
       {/* Departments */}
-      <div className="grid lg:grid-cols-3 gap-y-5 gap-x-3 md:gap-x-4">
+      <div className="grid lg:grid-cols-3 gap-y-4 gap-x-1 md:gap-x-2">
         {/* Marketing */}
-        <article className="rounded-xl bg-muted/20 p-4">
+        <article className="rounded-xl bg-muted/20 p-3">
           <header className="mb-3">
             <h2 className="text-xl font-semibold text-foreground">Marketing</h2>
           </header>
@@ -92,7 +92,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
         </article>
 
         {/* Platform */}
-        <article className="rounded-xl bg-muted/20 p-4">
+        <article className="rounded-xl bg-muted/20 p-3">
           <header className="mb-3">
             <h2 className="text-xl font-semibold text-foreground">Platform</h2>
           </header>
@@ -146,7 +146,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
         </article>
 
         {/* Data */}
-        <article className="rounded-xl bg-muted/20 p-4">
+        <article className="rounded-xl bg-muted/20 p-3">
           <header className="mb-3">
             <h2 className="text-xl font-semibold text-foreground">Data</h2>
           </header>
