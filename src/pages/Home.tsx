@@ -88,9 +88,8 @@ const Home = () => {
 <section className="mb-8">
           <header className="text-center mb-6">
             <h2 className="text-3xl font-semibold text-foreground"> Org Chart</h2>
-            <p className="text-sm text-muted-foreground">A clear view of our operational structure. Each agent plays a distinct role, from strategic oversight to granular execution, forming a cohesive and powerful team.</p>
           </header>
-          <OrgChart profiles={{ yumi: aliceProfile, ben: benProfile }} onAgentClick={handleAgentClick} />
+          <OrgChart leader={{ name: "Sungwoo", image: leaderProfile }} profiles={{ yumi: aliceProfile, ben: benProfile }} onAgentClick={handleAgentClick} />
         </section>
 
         <section className="mt-8 flex justify-center">
