@@ -2,7 +2,7 @@ import React from "react";
 
 export type OrgChartProps = {
   leader: { name: string; image: string };
-  profiles: { yumi: string; ben: string };
+  profiles: { yumi: string; ben: string; carmen?: string };
   onAgentClick: (agent: string, route: string) => void;
   damProfiles?: { name: string; image: string }[];
 };
@@ -44,16 +44,16 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick, dam
           <section aria-labelledby="marketing-lead" className="mb-3">
             <div className="text-sm text-muted-foreground mb-2">Team Lead</div>
             <div
-              onClick={() => onAgentClick('Yumi', '')}
+              onClick={() => onAgentClick('Carmen', '')}
               className="group cursor-pointer rounded-md p-2 transition hover:bg-muted/30"
-              aria-label="Open Yumi promotional workflow"
+              aria-label="Open Carmen profile in functions"
             >
               <div className="flex items-center gap-2">
                 <div className="relative h-16 w-16 rounded-full overflow-hidden transition-transform duration-200 group-hover:scale-110">
-                  <img src={profiles.yumi} alt="Yumi profile image" className="h-full w-full object-cover" loading="lazy" />
+                  <img src={profiles.carmen ?? "/lovable-uploads/c67db3d8-8cdc-426a-80e4-b8e7b6bf4604.png"} alt="Carmen profile image" className="h-full w-full object-cover" loading="lazy" />
                 </div>
                 <div>
-                  <div className="font-semibold text-foreground group-hover:text-accent-foreground">Yumi</div>
+                  <div className="font-semibold text-foreground group-hover:text-accent-foreground">Carmen</div>
                   <div className="text-xs text-muted-foreground">Promotion Lead</div>
                 </div>
               </div>

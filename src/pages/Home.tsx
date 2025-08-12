@@ -63,7 +63,7 @@ const Home = () => {
       return;
     }
     const name = _agent.toLowerCase();
-    const highlightable = new Set(["yumi", "ben", "candy", "maya", "theo", "fiona"]);
+    const highlightable = new Set(["yumi", "ben", "carmen", "candy", "maya", "theo", "fiona"]);
     if (highlightable.has(name)) {
       setHighlightName(_agent);
       setComingSoonOpen(false);
