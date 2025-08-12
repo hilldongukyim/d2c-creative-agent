@@ -32,7 +32,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
       </section>
 
       {/* Departments */}
-      <div className="grid gap-5 lg:grid-cols-3">
+      <div className="grid lg:grid-cols-3 gap-y-5 gap-x-3 md:gap-x-4">
         {/* Marketing */}
         <article className="rounded-xl bg-muted/20 p-4">
           <header className="mb-3">
