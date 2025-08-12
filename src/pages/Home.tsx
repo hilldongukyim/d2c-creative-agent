@@ -97,8 +97,8 @@ const Home = () => {
 
         <section className="mt-12">
           <header className="mb-6 text-center">
-            <h2 className="text-3xl font-semibold text-foreground">Functional Capabilities: What Our Agents Do</h2>
-            <p className="text-sm text-muted-foreground">See how agents across all departments converge on shared objectives. This map highlights the unified functions of our team, providing a clear picture of their collective power.</p>
+            <h2 className="text-3xl font-semibold text-foreground">Find Projects by Function and Start Work via Agents</h2>
+            <p className="text-sm text-muted-foreground">Browse projects by function, pick what you need, and launch tasks through the assigned agents. Click any card to open the workflow instantly.</p>
           </header>
           <FunctionMap profiles={{ yumi: aliceProfile, ben: benProfile }} onProfileClick={handleProfileClick} />
         </section>
