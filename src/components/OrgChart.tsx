@@ -64,7 +64,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick, dam
           <section aria-label="Team Members" className="space-y-2 order-3">
             <div
               onClick={() => onAgentClick('Ben', '')}
-              className="group cursor-pointer rounded-md p-2 transition hover:bg-muted/30"
+              className="hidden group cursor-pointer rounded-md p-2 transition hover:bg-muted/30"
               aria-label="Open Ben PTO gallery workflow"
             >
               <div className="flex items-center gap-2">
