@@ -1,11 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Separator } from "@/components/ui/separator";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import OrgChart from "../components/OrgChart";
 import FunctionMap from "../components/FunctionMap";
 const aliceProfile = "/lovable-uploads/d004c9d6-0491-459c-8639-7730374641aa.png";
 const benProfile = "/lovable-uploads/df1c4dd4-a06d-4d9c-981e-4463ad0b08dc.png";
+const leaderProfile = "/lovable-uploads/b9d1ddf6-1b17-41b4-9233-91642568cd3c.png";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -82,16 +84,6 @@ const Home = () => {
             An intelligent agent team that helps and accelerates the work of internal employees. Through clear structure and collaboration, we deliver faster, more accurate results.
           </p>
         </header>
-        <section className="flex justify-center mb-6">
-          <div className="rounded-xl border bg-card p-6 shadow-sm text-center">
-            <div className="text-sm text-muted-foreground">Super Agent</div>
-            <div className="text-2xl font-semibold text-foreground">Project Orchestrator</div>
-            <p className="text-sm text-muted-foreground mt-2">Assigns tasks and coordinates teams</p>
-          </div>
-        </section>
-        <div className="flex justify-center -mt-2 mb-8" aria-hidden>
-          <div className="h-8 w-0.5 bg-muted" />
-        </div>
 
 <section className="mb-8">
           <header className="text-center mb-6">
@@ -99,6 +91,22 @@ const Home = () => {
             <p className="text-sm text-muted-foreground">A clear view of our operational structure. Each agent plays a distinct role, from strategic oversight to granular execution, forming a cohesive and powerful team.</p>
           </header>
           <OrgChart profiles={{ yumi: aliceProfile, ben: benProfile }} onAgentClick={handleAgentClick} />
+        </section>
+
+        <section className="mt-8 flex justify-center">
+          <article className="rounded-xl border bg-card p-6 shadow-sm max-w-md w-full">
+            <div className="flex items-center gap-4">
+              <Avatar className="h-14 w-14">
+                <AvatarImage src={leaderProfile} alt="Sungwoo - Super Agent profile" />
+                <AvatarFallback>SW</AvatarFallback>
+              </Avatar>
+              <div className="text-left">
+                <div className="text-sm text-muted-foreground">Super Agent</div>
+                <div className="text-2xl font-semibold text-foreground">Sungwoo</div>
+                <p className="text-sm text-muted-foreground mt-1">Project Orchestrator — assigns tasks and coordinates teams</p>
+              </div>
+            </div>
+          </article>
         </section>
 
         <Separator className="my-12" />
