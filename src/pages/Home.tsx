@@ -5,6 +5,7 @@ import { Separator } from "@/components/ui/separator";
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import OrgChart from "../components/OrgChart";
 import FunctionMap from "../components/FunctionMap";
+import ContactOrder from "../components/ContactOrder";
 const aliceProfile = "/lovable-uploads/d004c9d6-0491-459c-8639-7730374641aa.png";
 const benProfile = "/lovable-uploads/df1c4dd4-a06d-4d9c-981e-4463ad0b08dc.png";
 const leaderProfile = "/lovable-uploads/b9d1ddf6-1b17-41b4-9233-91642568cd3c.png";
@@ -100,6 +101,7 @@ const Home = () => {
             <h2 className="text-3xl font-semibold text-foreground">Find Projects by Function and Start Work via Agents</h2>
             <p className="text-sm text-muted-foreground">Browse projects by function, pick what you need, and launch tasks through the assigned agents. Click any card to open the workflow instantly.</p>
           </header>
+          <ContactOrder agents={[{ name: "Yumi", image: aliceProfile }, { name: "Ben", image: benProfile }]} ariaLabel="Suggested contact order" />
           <FunctionMap profiles={{ yumi: aliceProfile, ben: benProfile }} onProfileClick={handleProfileClick} />
         </section>
       </div>
