@@ -44,7 +44,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
             <div className="text-sm text-muted-foreground mb-2">Team Lead</div>
             <div
               onClick={() => onAgentClick('alice', '/promotional')}
-              className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-accent/50"
+              className="group cursor-pointer rounded-md p-3 transition hover:bg-muted/30"
               aria-label="Open Yumi promotional workflow"
             >
               <div className="flex items-center gap-3">
@@ -63,7 +63,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
           <section aria-label="Team Members" className="space-y-3">
             <div
               onClick={() => onAgentClick('ben', '/pto-gallery')}
-              className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-accent/30"
+              className="group cursor-pointer rounded-md p-3 transition hover:bg-muted/30"
               aria-label="Open Ben PTO gallery workflow"
             >
               <div className="flex items-center gap-3">
@@ -78,7 +78,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
             </div>
 
             {[1,2,3].map((i) => (
-              <div key={`mkt-member-${i}`} onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-muted-foreground/30">
+              <div key={`mkt-member-${i}`} onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md p-3 transition hover:bg-muted/30">
                 <div className="flex items-center gap-3">
                   <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground transition-transform duration-200 group-hover:scale-110">AI</div>
                   <div>
@@ -100,7 +100,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
           {/* Team Lead */}
           <section aria-labelledby="platform-lead" className="mb-4">
             <div className="text-sm text-muted-foreground mb-2">Team Lead</div>
-            <div onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-muted-foreground/30">
+            <div onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md p-3 transition hover:bg-muted/30">
               <div className="flex items-center gap-3">
                 <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground transition-transform duration-200 group-hover:scale-110">AI</div>
                 <div>
@@ -113,7 +113,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
 
           {/* Team Members */}
           <section aria-label="Team Members" className="space-y-3">
-            <div onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-muted-foreground/30">
+            <div onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md p-3 transition hover:bg-muted/30">
               <div className="flex items-center gap-3">
                 <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground transition-transform duration-200 group-hover:scale-110">AI</div>
                 <div>
@@ -122,7 +122,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
                 </div>
               </div>
             </div>
-            <div onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-muted-foreground/30">
+            <div onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md p-3 transition hover:bg-muted/30">
               <div className="flex items-center gap-3">
                 <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground transition-transform duration-200 group-hover:scale-110">AI</div>
                 <div>
@@ -132,7 +132,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
               </div>
             </div>
             {[1,2].map((i) => (
-              <div key={`plat-auto-${i}`} onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-muted-foreground/30">
+              <div key={`plat-auto-${i}`} onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md p-3 transition hover:bg-muted/30">
                 <div className="flex items-center gap-3">
                   <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground transition-transform duration-200 group-hover:scale-110">AI</div>
                   <div>
@@ -154,7 +154,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
           {/* Team Lead */}
           <section aria-labelledby="data-lead" className="mb-4">
             <div className="text-sm text-muted-foreground mb-2">Team Lead</div>
-            <div onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-muted-foreground/30">
+            <div onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md p-3 transition hover:bg-muted/30">
               <div className="flex items-center gap-3">
                 <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground transition-transform duration-200 group-hover:scale-110">AI</div>
                 <div>
@@ -167,7 +167,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
 
           {/* Team Members */}
           <section aria-label="Team Members" className="space-y-3">
-            <div onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-muted-foreground/30">
+            <div onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md p-3 transition hover:bg-muted/30">
               <div className="flex items-center gap-3">
                 <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground transition-transform duration-200 group-hover:scale-110">AI</div>
                 <div>
@@ -176,7 +176,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
                 </div>
               </div>
             </div>
-            <div onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md border p-3 transition hover:ring-2 hover:ring-muted-foreground/30">
+            <div onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md p-3 transition hover:bg-muted/30">
               <div className="flex items-center gap-3">
                 <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground transition-transform duration-200 group-hover:scale-110">AI</div>
                 <div>
