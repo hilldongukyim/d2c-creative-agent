@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import OrgChart from "../components/OrgChart";
 import FunctionMap from "../components/FunctionMap";
@@ -92,21 +92,6 @@ const Home = () => {
           <OrgChart leader={{ name: "Sungwoo", image: leaderProfile }} profiles={{ yumi: aliceProfile, ben: benProfile }} onAgentClick={handleAgentClick} />
         </section>
 
-        <section className="mt-8 flex justify-center">
-          <article className="rounded-xl border bg-card p-6 shadow-sm max-w-md w-full">
-            <div className="flex items-center gap-4">
-              <Avatar className="h-14 w-14">
-                <AvatarImage src={leaderProfile} alt="Sungwoo - Super Agent profile" />
-                <AvatarFallback>SW</AvatarFallback>
-              </Avatar>
-              <div className="text-left">
-                <div className="text-sm text-muted-foreground">Super Agent</div>
-                <div className="text-2xl font-semibold text-foreground">Sungwoo</div>
-                <p className="text-sm text-muted-foreground mt-1">Project Orchestrator — assigns tasks and coordinates teams</p>
-              </div>
-            </div>
-          </article>
-        </section>
 
         <Separator className="my-12" />
 
