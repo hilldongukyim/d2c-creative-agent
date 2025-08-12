@@ -108,7 +108,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick, dam
                       </div>
                       <div>
                         <div className="font-medium text-foreground">{p.name}</div>
-                        <div className="text-xs text-muted-foreground">DAM Project</div>
+                        
                       </div>
                     </div>
                   </div>
