@@ -93,7 +93,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick, dam
 
           {damProfiles.length > 0 && (
             <section aria-label="DAM Project" className="mt-2">
-              <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">DAM</div>
+              
               <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                 {damProfiles.map((p) => (
                   <div
