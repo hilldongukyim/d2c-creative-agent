@@ -8,11 +8,11 @@ export type OrgChartProps = {
 
 const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) => {
   return (
-    <div className="space-y-6">
+    <section aria-label="Organization chart" className="rounded-2xl border bg-card p-6 shadow-sm space-y-6">
       {/* Leader (조직장) */}
       <section aria-labelledby="org-leader">
         <div className="flex justify-center">
-          <article className="rounded-xl border bg-card p-5 shadow-sm flex items-center gap-4">
+          <article className="rounded-xl bg-transparent p-0 flex items-center gap-4">
             <div className="relative h-16 w-16 rounded-full overflow-hidden">
               <img
                 src={leader.image}
@@ -32,22 +32,22 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
       </section>
 
       {/* Departments */}
-      <div className="grid gap-8 lg:grid-cols-3">
+      <div className="grid gap-5 lg:grid-cols-3">
         {/* Marketing */}
-        <article className="rounded-xl border bg-card p-5 shadow-sm">
-          <header className="mb-4">
-            <h2 className="text-2xl font-semibold text-foreground">Marketing</h2>
+        <article className="rounded-xl bg-muted/20 p-4">
+          <header className="mb-3">
+            <h2 className="text-xl font-semibold text-foreground">Marketing</h2>
           </header>
 
           {/* Team Lead */}
-          <section aria-labelledby="marketing-lead" className="mb-4">
+          <section aria-labelledby="marketing-lead" className="mb-3">
             <div className="text-sm text-muted-foreground mb-2">Team Lead</div>
             <div
               onClick={() => onAgentClick('Yumi', '')}
-              className="group cursor-pointer rounded-md p-3 transition hover:bg-muted/30"
+              className="group cursor-pointer rounded-md p-2 transition hover:bg-muted/30"
               aria-label="Open Yumi promotional workflow"
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <div className="relative h-16 w-16 rounded-full overflow-hidden transition-transform duration-200 group-hover:scale-110">
                   <img src={profiles.yumi} alt="Yumi profile image" className="h-full w-full object-cover" loading="lazy" />
                 </div>
@@ -60,13 +60,13 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
           </section>
 
           {/* Team Members */}
-          <section aria-label="Team Members" className="space-y-3">
+          <section aria-label="Team Members" className="space-y-2">
             <div
               onClick={() => onAgentClick('Ben', '')}
-              className="group cursor-pointer rounded-md p-3 transition hover:bg-muted/30"
+              className="group cursor-pointer rounded-md p-2 transition hover:bg-muted/30"
               aria-label="Open Ben PTO gallery workflow"
             >
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-2">
                 <div className="relative h-14 w-14 rounded-full overflow-hidden transition-transform duration-200 group-hover:scale-110">
                   <img src={profiles.ben} alt="Ben profile image" className="h-full w-full object-cover" loading="lazy" />
                 </div>
@@ -78,8 +78,8 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
             </div>
 
             {[1,2,3].map((i) => (
-              <div key={`mkt-member-${i}`} onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md p-3 transition hover:bg-muted/30">
-                <div className="flex items-center gap-3">
+              <div key={`mkt-member-${i}`} onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md p-2 transition hover:bg-muted/30">
+                <div className="flex items-center gap-2">
                   <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground transition-transform duration-200 group-hover:scale-110">AI</div>
                   <div>
                     <div className="font-medium text-foreground">Hiring</div>
@@ -92,13 +92,13 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
         </article>
 
         {/* Platform */}
-        <article className="rounded-xl border bg-card p-5 shadow-sm">
-          <header className="mb-4">
-            <h2 className="text-2xl font-semibold text-foreground">Platform</h2>
+        <article className="rounded-xl bg-muted/20 p-4">
+          <header className="mb-3">
+            <h2 className="text-xl font-semibold text-foreground">Platform</h2>
           </header>
 
           {/* Team Lead */}
-          <section aria-labelledby="platform-lead" className="mb-4">
+          <section aria-labelledby="platform-lead" className="mb-3">
             <div className="text-sm text-muted-foreground mb-2">Team Lead</div>
             <div onClick={() => onAgentClick('AI', '')} className="group cursor-pointer rounded-md p-3 transition hover:bg-muted/30">
               <div className="flex items-center gap-3">
@@ -146,9 +146,9 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
         </article>
 
         {/* Data */}
-        <article className="rounded-xl border bg-card p-5 shadow-sm">
-          <header className="mb-4">
-            <h2 className="text-2xl font-semibold text-foreground">Data</h2>
+        <article className="rounded-xl bg-muted/20 p-4">
+          <header className="mb-3">
+            <h2 className="text-xl font-semibold text-foreground">Data</h2>
           </header>
 
           {/* Team Lead */}
@@ -188,7 +188,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
           </section>
         </article>
       </div>
-    </div>
+    </section>
   );
 };
 
