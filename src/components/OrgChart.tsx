@@ -35,7 +35,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick, dam
       {/* Departments */}
       <div className="grid lg:grid-cols-3 gap-y-4 gap-x-1 md:gap-x-2">
         {/* Marketing */}
-        <article className="rounded-xl bg-muted/20 p-3">
+        <article className="rounded-xl bg-muted/20 p-3 flex flex-col">
           <header className="mb-3">
             <h2 className="text-xl font-semibold text-foreground">Marketing</h2>
           </header>
@@ -61,7 +61,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick, dam
           </section>
 
           {/* Team Members */}
-          <section aria-label="Team Members" className="space-y-2">
+          <section aria-label="Team Members" className="space-y-2 order-3">
             <div
               onClick={() => onAgentClick('Ben', '')}
               className="group cursor-pointer rounded-md p-2 transition hover:bg-muted/30"
