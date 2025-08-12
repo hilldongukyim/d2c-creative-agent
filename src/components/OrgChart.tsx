@@ -4,9 +4,10 @@ export type OrgChartProps = {
   leader: { name: string; image: string };
   profiles: { yumi: string; ben: string };
   onAgentClick: (agent: string, route: string) => void;
+  damProfiles?: { name: string; image: string }[];
 };
 
-const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) => {
+const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick, damProfiles = [] }) => {
   return (
     <section aria-label="Organization chart" className="rounded-2xl border bg-card p-6 shadow-sm space-y-5 max-w-4xl mx-auto">
       {/* Leader (조직장) */}
@@ -89,6 +90,32 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick }) =
               </div>
             ))}
           </section>
+
+          {damProfiles.length > 0 && (
+            <section aria-label="DAM Project" className="mt-2">
+              <div className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground mb-1">DAM</div>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {damProfiles.map((p) => (
+                  <div
+                    key={`dam-${p.name}`}
+                    onClick={() => onAgentClick(p.name, '')}
+                    className="group cursor-pointer rounded-md p-2 transition hover:bg-muted/30"
+                    aria-label={`Open ${p.name} profile`}
+                  >
+                    <div className="flex items-center gap-2">
+                      <div className="relative h-12 w-12 rounded-full overflow-hidden transition-transform duration-200 group-hover:scale-110">
+                        <img src={p.image} alt={`${p.name} profile image`} className="h-full w-full object-cover" loading="lazy" />
+                      </div>
+                      <div>
+                        <div className="font-medium text-foreground">{p.name}</div>
+                        <div className="text-xs text-muted-foreground">DAM Project</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </section>
+          )}
         </article>
 
         {/* Platform */}
