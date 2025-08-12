@@ -169,6 +169,33 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick, dam
                 </div>
               </div>
             ))}
+            <div onClick={() => onAgentClick('Boris', '')} className="group cursor-pointer rounded-md p-3 transition hover:bg-muted/30">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground transition-transform duration-200 group-hover:scale-110">B</div>
+                <div>
+                  <div className="font-medium text-foreground">Boris</div>
+                  <div className="text-xs text-muted-foreground">Platform</div>
+                </div>
+              </div>
+            </div>
+            <div onClick={() => onAgentClick('Ollie', '')} className="group cursor-pointer rounded-md p-3 transition hover:bg-muted/30">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground transition-transform duration-200 group-hover:scale-110">O</div>
+                <div>
+                  <div className="font-medium text-foreground">Ollie</div>
+                  <div className="text-xs text-muted-foreground">Platform</div>
+                </div>
+              </div>
+            </div>
+            <div onClick={() => onAgentClick('Ravi', '')} className="group cursor-pointer rounded-md p-3 transition hover:bg-muted/30">
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center text-xs text-muted-foreground transition-transform duration-200 group-hover:scale-110">R</div>
+                <div>
+                  <div className="font-medium text-foreground">Ravi</div>
+                  <div className="text-xs text-muted-foreground">Platform</div>
+                </div>
+              </div>
+            </div>
           </section>
         </article>
 
