@@ -13,8 +13,7 @@ const Home = () => {
   const [selectedName, setSelectedName] = useState<string | null>(null);
   useEffect(() => {
     const title = "Meet our AI Agents — 내부 업무를 돕는 지능형 팀";
-    const desc =
-      "AI Agents가 내부 임직원의 업무를 보조하고 가속합니다. 명확한 구조와 협업으로 더 빠르고 정확한 결과를 만듭니다.";
+    const desc = "Intelligent AI agents that accelerate internal work through clear structure and collaboration, delivering faster, more accurate results."
 
     // Title & meta description
     document.title = title;
@@ -80,7 +79,7 @@ const Home = () => {
             Meet our AI Agents
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            내부 임직원의 업무를 돕고 가속하는 지능형 에이전트 팀입니다. 명확한 구조와 협업으로 더 빠르고 정확한 결과를 만들어냅니다.
+            An intelligent agent team that helps and accelerates the work of internal employees. Through clear structure and collaboration, we deliver faster, more accurate results.
           </p>
         </header>
         <section className="flex justify-center mb-6">
