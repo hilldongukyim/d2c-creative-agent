@@ -35,6 +35,65 @@ const CoverPage = () => {
       {/* Background decoration */}
       <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-secondary/5" />
       
+      {/* Crew Videos - randomly positioned */}
+      <div className="absolute inset-0 pointer-events-none">
+        {/* Video 1 - Top left */}
+        <div className="absolute top-16 left-16 w-32 h-20 bg-gradient-to-br from-purple-500/20 to-pink-500/20 rounded-xl border border-white/10 backdrop-blur-sm">
+          <div className="w-full h-full rounded-xl bg-black/20 flex items-center justify-center">
+            <div className="text-white/60 text-xs">Coming Soon</div>
+          </div>
+        </div>
+
+        {/* Video 2 - Top right */}
+        <div className="absolute top-24 right-20 w-28 h-36 bg-gradient-to-br from-blue-500/20 to-cyan-500/20 rounded-xl border border-white/10 backdrop-blur-sm">
+          <div className="w-full h-full rounded-xl bg-black/20 flex items-center justify-center">
+            <div className="text-white/60 text-xs">Coming Soon</div>
+          </div>
+        </div>
+
+        {/* Video 3 - Middle left */}
+        <div className="absolute top-1/2 left-8 w-24 h-32 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-xl border border-white/10 backdrop-blur-sm transform -translate-y-1/2">
+          <div className="w-full h-full rounded-xl bg-black/20 flex items-center justify-center">
+            <div className="text-white/60 text-xs">Coming Soon</div>
+          </div>
+        </div>
+
+        {/* Video 4 - Middle right */}
+        <div className="absolute top-1/2 right-12 w-36 h-24 bg-gradient-to-br from-orange-500/20 to-red-500/20 rounded-xl border border-white/10 backdrop-blur-sm transform -translate-y-1/2">
+          <div className="w-full h-full rounded-xl bg-black/20 flex items-center justify-center">
+            <div className="text-white/60 text-xs">Coming Soon</div>
+          </div>
+        </div>
+
+        {/* Video 5 - Bottom left */}
+        <div className="absolute bottom-20 left-24 w-28 h-28 bg-gradient-to-br from-yellow-500/20 to-amber-500/20 rounded-xl border border-white/10 backdrop-blur-sm">
+          <div className="w-full h-full rounded-xl bg-black/20 flex items-center justify-center">
+            <div className="text-white/60 text-xs">Coming Soon</div>
+          </div>
+        </div>
+
+        {/* Video 6 - Bottom right */}
+        <div className="absolute bottom-16 right-16 w-32 h-20 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-xl border border-white/10 backdrop-blur-sm">
+          <div className="w-full h-full rounded-xl bg-black/20 flex items-center justify-center">
+            <div className="text-white/60 text-xs">Coming Soon</div>
+          </div>
+        </div>
+
+        {/* Video 7 - Top center offset */}
+        <div className="absolute top-12 left-1/3 w-20 h-24 bg-gradient-to-br from-rose-500/20 to-pink-500/20 rounded-xl border border-white/10 backdrop-blur-sm">
+          <div className="w-full h-full rounded-xl bg-black/20 flex items-center justify-center">
+            <div className="text-white/60 text-xs">Coming Soon</div>
+          </div>
+        </div>
+
+        {/* Video 8 - Bottom center offset */}
+        <div className="absolute bottom-12 right-1/3 w-24 h-20 bg-gradient-to-br from-teal-500/20 to-blue-500/20 rounded-xl border border-white/10 backdrop-blur-sm">
+          <div className="w-full h-full rounded-xl bg-black/20 flex items-center justify-center">
+            <div className="text-white/60 text-xs">Coming Soon</div>
+          </div>
+        </div>
+      </div>
+      
       {/* Main content */}
       <div className="text-center space-y-8 z-10 max-w-4xl mx-auto px-6">
         {/* Title */}
