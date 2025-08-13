@@ -100,6 +100,46 @@ const Home = () => {
 
         <Separator className="my-12" />
 
+        {/* Ready Crew Section */}
+        <section className="mb-12">
+          <header className="mb-8 text-center">
+            <h2 className="text-3xl font-semibold text-foreground mb-2">Ready to Work Crew</h2>
+            <p className="text-sm text-muted-foreground">Meet our 8 crew members who are ready to tackle your projects today</p>
+          </header>
+          
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+            {/* Row 1 - First 4 crew members */}
+            {[1, 2, 3, 4].map((index) => (
+              <div key={index} className="text-center space-y-3">
+                <div className="w-20 h-20 rounded-full bg-muted mx-auto flex items-center justify-center border-2 border-border">
+                  <span className="text-muted-foreground text-sm">Crew {index}</span>
+                </div>
+                <div className="space-y-1">
+                  <h3 className="font-medium text-foreground">Crew Member {index}</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Brief description and background of this crew member's expertise and experience.
+                  </p>
+                </div>
+              </div>
+            ))}
+            
+            {/* Row 2 - Last 4 crew members */}
+            {[5, 6, 7, 8].map((index) => (
+              <div key={index} className="text-center space-y-3">
+                <div className="w-20 h-20 rounded-full bg-muted mx-auto flex items-center justify-center border-2 border-border">
+                  <span className="text-muted-foreground text-sm">Crew {index}</span>
+                </div>
+                <div className="space-y-1">
+                  <h3 className="font-medium text-foreground">Crew Member {index}</h3>
+                  <p className="text-xs text-muted-foreground leading-relaxed">
+                    Brief description and background of this crew member's expertise and experience.
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
         <section className="mt-12">
           <header className="mb-6 text-center">
             <h2 className="text-3xl font-semibold text-foreground">Assemble your mission crew</h2>
