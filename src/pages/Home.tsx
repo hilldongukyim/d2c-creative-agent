@@ -107,14 +107,14 @@ const Home = () => {
             <p className="text-sm text-muted-foreground">Meet our 8 crew members who are ready to tackle your projects today</p>
           </header>
           
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-5xl mx-auto">
             {/* Row 1 - First 4 crew members */}
             {[1, 2, 3, 4].map((index) => (
-              <div key={index} className="text-center space-y-3">
-                <div className="w-20 h-20 rounded-full bg-muted mx-auto flex items-center justify-center border-2 border-border">
+              <div key={index} className="text-center space-y-4">
+                <div className="w-28 h-36 rounded-lg bg-muted mx-auto flex items-center justify-center border-2 border-border">
                   <span className="text-muted-foreground text-sm">Crew {index}</span>
                 </div>
-                <div className="space-y-1">
+                <div className="space-y-2">
                   <h3 className="font-medium text-foreground">Crew Member {index}</h3>
                   <p className="text-xs text-muted-foreground leading-relaxed">
                     Brief description and background of this crew member's expertise and experience.
@@ -125,11 +125,11 @@ const Home = () => {
             
             {/* Row 2 - Last 4 crew members */}
             {[5, 6, 7, 8].map((index) => (
-              <div key={index} className="text-center space-y-3">
-                <div className="w-20 h-20 rounded-full bg-muted mx-auto flex items-center justify-center border-2 border-border">
+              <div key={index} className="text-center space-y-4">
+                <div className="w-28 h-36 rounded-lg bg-muted mx-auto flex items-center justify-center border-2 border-border">
                   <span className="text-muted-foreground text-sm">Crew {index}</span>
                 </div>
-                <div className="space-y-1">
+                <div className="space-y-2">
                   <h3 className="font-medium text-foreground">Crew Member {index}</h3>
                   <p className="text-xs text-muted-foreground leading-relaxed">
                     Brief description and background of this crew member's expertise and experience.
