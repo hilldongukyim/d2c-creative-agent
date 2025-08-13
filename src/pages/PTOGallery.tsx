@@ -38,7 +38,7 @@ const PTOGallery = () => {
   const [showEnergyLabelHelp, setShowEnergyLabelHelp] = useState(false);
   const [urlValidationError, setUrlValidationError] = useState<string | null>(null);
   const [isEuropeanCountry, setIsEuropeanCountry] = useState<boolean | null>(null);
-  const [webhookUrl, setWebhookUrl] = useState('https://dev.eaip.lge.com/n8n/webhook-test/ae7461ab-d3d2-45ac-be03-286bc165439d');
+  const [webhookUrl, setWebhookUrl] = useState('https://dev.eaip.lge.com/n8n/webhook/0d1d1ae9-c63d-4402-b7a5-124a886eb108');
   const conversationRef = useRef<HTMLDivElement>(null);
 
   // European countries (in various languages)
