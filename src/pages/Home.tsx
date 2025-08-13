@@ -4,7 +4,6 @@ import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 import Logo from "@/components/Logo";
-
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import OrgChart from "../components/OrgChart";
 import FunctionMap from "../components/FunctionMap";
@@ -12,7 +11,6 @@ import ContactOrder from "../components/ContactOrder";
 const aliceProfile = "/lovable-uploads/d004c9d6-0491-459c-8639-7730374641aa.png";
 const benProfile = "/lovable-uploads/df1c4dd4-a06d-4d9c-981e-4463ad0b08dc.png";
 const leaderProfile = "/lovable-uploads/b9d1ddf6-1b17-41b4-9233-91642568cd3c.png";
-
 const Home = () => {
   const navigate = useNavigate();
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
@@ -20,7 +18,7 @@ const Home = () => {
   const [highlightName, setHighlightName] = useState<string | null>(null);
   useEffect(() => {
     const title = "Meet our AI Agents — 내부 업무를 돕는 지능형 팀";
-    const desc = "Intelligent AI agents that accelerate internal work through clear structure and collaboration, delivering faster, more accurate results."
+    const desc = "Intelligent AI agents that accelerate internal work through clear structure and collaboration, delivering faster, more accurate results.";
 
     // Title & meta description
     document.title = title;
@@ -47,9 +45,8 @@ const Home = () => {
       "@type": "WebPage",
       name: title,
       description: desc,
-      url: window.location.href,
+      url: window.location.href
     };
-
     let script = document.getElementById('ld-json-home') as HTMLScriptElement | null;
     if (!script) {
       script = document.createElement('script');
@@ -59,7 +56,6 @@ const Home = () => {
     }
     script.text = JSON.stringify(ld);
   }, []);
-
   const handleAgentClick = (_agent: string, route: string) => {
     if (route) {
       navigate(route);
@@ -75,7 +71,6 @@ const Home = () => {
     setSelectedName(_agent);
     setComingSoonOpen(true);
   };
-
   const handleProfileClick = (name: string) => {
     const lower = name.toLowerCase();
     if (lower === "yumi") return navigate("/promotional");
@@ -83,18 +78,11 @@ const Home = () => {
     setSelectedName(name);
     setComingSoonOpen(true);
   };
-
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 p-6 relative overflow-hidden">
+  return <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 p-6 relative overflow-hidden">
       <Logo />
       
       {/* Back button */}
-      <Button 
-        onClick={() => navigate('/')}
-        variant="ghost"
-        size="sm"
-        className="absolute top-6 right-6 z-20 hover:bg-muted/50 transition-colors"
-      >
+      <Button onClick={() => navigate('/')} variant="ghost" size="sm" className="absolute top-6 right-6 z-20 hover:bg-muted/50 transition-colors">
         <ArrowLeft className="w-4 h-4 mr-2" />
         Back
       </Button>
@@ -102,9 +90,7 @@ const Home = () => {
       {/* Expanding circle animation */}
       <div className="max-w-6xl mx-auto relative z-10">
         <header className="text-center mb-12 pt-8">
-          <h1 className="text-5xl font-bold text-foreground mb-4">
-            Meet our AI Agents
-          </h1>
+          <h1 className="text-5xl font-bold text-foreground mb-4">Meet our Crew</h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             An intelligent agent team that helps and accelerates the work of internal employees. Through clear structure and collaboration, we deliver faster, more accurate results.
           </p>
@@ -119,8 +105,17 @@ const Home = () => {
             <h2 className="text-3xl font-semibold text-foreground">Find Projects by Function and Start Work via Agents</h2>
             <p className="text-sm text-muted-foreground">Browse projects by function, pick what you need, and launch tasks through the assigned agents. Click any card to open the workflow instantly.</p>
           </header>
-          <ContactOrder agents={[{ name: "Yumi", image: aliceProfile }, { name: "Ben", image: benProfile }]} ariaLabel="Suggested contact order" />
-          <FunctionMap profiles={{ yumi: aliceProfile, ben: benProfile }} onProfileClick={handleProfileClick} highlightName={highlightName ?? undefined} />
+          <ContactOrder agents={[{
+          name: "Yumi",
+          image: aliceProfile
+        }, {
+          name: "Ben",
+          image: benProfile
+        }]} ariaLabel="Suggested contact order" />
+          <FunctionMap profiles={{
+          yumi: aliceProfile,
+          ben: benProfile
+        }} onProfileClick={handleProfileClick} highlightName={highlightName ?? undefined} />
         </section>
       </div>
 
@@ -138,8 +133,6 @@ const Home = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
-  );
+    </div>;
 };
-
 export default Home;
