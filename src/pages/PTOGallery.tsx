@@ -235,17 +235,17 @@ const PTOGallery = () => {
     setIsSubmitting(true);
     
     try {
-      // POST 방식으로 JSON 본문 전송
-      const response = await fetch(webhookUrl, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          email: formData.email,
-          productAUrl: formData.mainProductUrl,
-          productBUrl: formData.secondProductUrl,
-        }),
+      // GET 방식으로 URL 파라미터 구성
+      const params = new URLSearchParams({
+        email: formData.email,
+        productAUrl: formData.mainProductUrl,
+        productBUrl: formData.secondProductUrl,
+      });
+
+      const getUrl = `${webhookUrl}?${params.toString()}`;
+
+      const response = await fetch(getUrl, {
+        method: "GET",
       });
 
       if (response.ok) {
