@@ -278,127 +278,46 @@ const Home = () => {
             </Button>
           </header>
 
-          {/* Random Grid Layout for Videos */}
-          <div className="grid grid-cols-12 gap-4 max-w-7xl mx-auto">
-            {/* Large video - spans 4 columns */}
-            <div className="col-span-4 row-span-2">
-              <div className="relative aspect-[4/5] bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg overflow-hidden shadow-lg">
-                <video 
-                  className="w-full h-full object-cover"
-                  autoPlay 
-                  loop 
-                  muted 
-                  playsInline
-                >
-                  <source src="/alice-video.mp4" type="video/mp4" />
-                </video>
-                <div className="absolute inset-0 bg-black/20 hover:bg-black/10 transition-colors"></div>
-                <div className="absolute bottom-4 left-4 text-white">
-                  <h3 className="font-semibold">Alice</h3>
-                  <p className="text-sm opacity-90">Marketing Specialist</p>
-                </div>
-              </div>
+          {/* Random Grid Layout for 8 Video Placeholders */}
+          <div className="grid grid-cols-12 gap-4 max-w-7xl mx-auto min-h-[600px]">
+            {/* Large rectangle - spans 4 columns, 2 rows */}
+            <div className="col-span-4 row-span-2 bg-gradient-to-br from-primary/30 to-secondary/30 rounded-2xl shadow-lg flex items-center justify-center border border-border/20">
+              <span className="text-muted-foreground font-medium">Video 1 (Large)</span>
             </div>
 
-            {/* Medium video */}
-            <div className="col-span-3">
-              <div className="relative aspect-video bg-gradient-to-br from-accent/20 to-primary/20 rounded-lg overflow-hidden shadow-lg">
-                <video 
-                  className="w-full h-full object-cover"
-                  autoPlay 
-                  loop 
-                  muted 
-                  playsInline
-                >
-                  <source src="/ben-video.mp4" type="video/mp4" />
-                </video>
-                <div className="absolute inset-0 bg-black/20 hover:bg-black/10 transition-colors"></div>
-                <div className="absolute bottom-3 left-3 text-white">
-                  <h3 className="font-semibold text-sm">Ben</h3>
-                  <p className="text-xs opacity-90">Developer</p>
-                </div>
-              </div>
+            {/* Medium rectangle */}
+            <div className="col-span-3 bg-gradient-to-br from-accent/30 to-primary/30 rounded-xl shadow-lg flex items-center justify-center border border-border/20">
+              <span className="text-muted-foreground font-medium">Video 2 (Medium)</span>
             </div>
 
-            {/* Small video */}
-            <div className="col-span-2">
-              <div className="relative aspect-square bg-gradient-to-br from-secondary/20 to-muted/20 rounded-lg overflow-hidden shadow-lg">
-                <video 
-                  className="w-full h-full object-cover"
-                  autoPlay 
-                  loop 
-                  muted 
-                  playsInline
-                >
-                  <source src="/completion-video.mp4" type="video/mp4" />
-                </video>
-                <div className="absolute inset-0 bg-black/20 hover:bg-black/10 transition-colors"></div>
-                <div className="absolute bottom-2 left-2 text-white">
-                  <h3 className="font-semibold text-xs">Maya</h3>
-                </div>
-              </div>
+            {/* Small square */}
+            <div className="col-span-2 bg-gradient-to-br from-secondary/30 to-muted/30 rounded-lg shadow-lg flex items-center justify-center border border-border/20">
+              <span className="text-muted-foreground font-medium text-sm">Video 3</span>
             </div>
 
-            {/* Tall video */}
-            <div className="col-span-3 row-span-2">
-              <div className="relative aspect-[3/4] bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg overflow-hidden shadow-lg">
-                <div className="w-full h-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 flex items-center justify-center">
-                  <div className="text-center text-white">
-                    <h3 className="font-semibold mb-2">Carmen</h3>
-                    <p className="text-sm opacity-90">Data Analyst</p>
-                    <div className="mt-4 text-xs opacity-75">Coming Soon</div>
-                  </div>
-                </div>
-              </div>
+            {/* Tall rectangle - spans 3 columns, 2 rows */}
+            <div className="col-span-3 row-span-2 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl shadow-lg flex items-center justify-center border border-border/20">
+              <span className="text-muted-foreground font-medium">Video 4 (Tall)</span>
             </div>
 
-            {/* Wide video */}
-            <div className="col-span-5">
-              <div className="relative aspect-[16/9] bg-gradient-to-br from-secondary/20 to-primary/20 rounded-lg overflow-hidden shadow-lg">
-                <div className="w-full h-full bg-gradient-to-br from-green-500/30 to-blue-500/30 flex items-center justify-center">
-                  <div className="text-center text-white">
-                    <h3 className="font-semibold mb-2">Theo</h3>
-                    <p className="text-sm opacity-90">Platform Engineer</p>
-                    <div className="mt-4 text-xs opacity-75">Coming Soon</div>
-                  </div>
-                </div>
-              </div>
+            {/* Wide rectangle */}
+            <div className="col-span-5 bg-gradient-to-br from-secondary/20 to-primary/20 rounded-xl shadow-lg flex items-center justify-center border border-border/20">
+              <span className="text-muted-foreground font-medium">Video 5 (Wide)</span>
             </div>
 
-            {/* Medium square */}
-            <div className="col-span-2">
-              <div className="relative aspect-square bg-gradient-to-br from-accent/20 to-secondary/20 rounded-lg overflow-hidden shadow-lg">
-                <div className="w-full h-full bg-gradient-to-br from-pink-500/30 to-orange-500/30 flex items-center justify-center">
-                  <div className="text-center text-white">
-                    <h3 className="font-semibold text-sm">Fiona</h3>
-                    <p className="text-xs opacity-90">Designer</p>
-                  </div>
-                </div>
-              </div>
+            {/* Second row - Medium rectangle */}
+            <div className="col-span-3 bg-gradient-to-br from-muted/20 to-accent/20 rounded-xl shadow-lg flex items-center justify-center border border-border/20">
+              <span className="text-muted-foreground font-medium">Video 6</span>
             </div>
 
-            {/* Small horizontal */}
-            <div className="col-span-3">
-              <div className="relative aspect-video bg-gradient-to-br from-muted/20 to-primary/20 rounded-lg overflow-hidden shadow-lg">
-                <div className="w-full h-full bg-gradient-to-br from-purple-500/30 to-pink-500/30 flex items-center justify-center">
-                  <div className="text-center text-white">
-                    <h3 className="font-semibold text-sm">Luna</h3>
-                    <p className="text-xs opacity-90">Content Creator</p>
-                  </div>
-                </div>
-              </div>
+            {/* Small square */}
+            <div className="col-span-2 bg-gradient-to-br from-primary/25 to-secondary/25 rounded-lg shadow-lg flex items-center justify-center border border-border/20">
+              <span className="text-muted-foreground font-medium text-sm">Video 7</span>
             </div>
 
-            {/* Another medium */}
-            <div className="col-span-2">
-              <div className="relative aspect-[3/4] bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg overflow-hidden shadow-lg">
-                <div className="w-full h-full bg-gradient-to-br from-teal-500/30 to-cyan-500/30 flex items-center justify-center">
-                  <div className="text-center text-white">
-                    <h3 className="font-semibold text-sm">Kai</h3>
-                    <p className="text-xs opacity-90">QA Engineer</p>
-                  </div>
-                </div>
-              </div>
+            {/* Extra rectangle */}
+            <div className="col-span-3 bg-gradient-to-br from-accent/25 to-muted/25 rounded-xl shadow-lg flex items-center justify-center border border-border/20">
+              <span className="text-muted-foreground font-medium">Video 8</span>
             </div>
           </div>
         </section>
