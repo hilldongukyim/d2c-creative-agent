@@ -113,8 +113,14 @@ const Home = () => {
               <div key={index} className="text-center space-y-4">
                 <div id={`crew-${index}`} className="w-32 h-40 rounded-lg bg-muted mx-auto flex items-center justify-center border-2 border-border overflow-hidden">
                   {index === 1 ? (
-                    // Video placeholder for Crew 1 - replace with actual video file once uploaded
-                    <span className="text-muted-foreground text-sm">Crew 1 Video</span>
+                    <video 
+                      className="w-full h-full object-cover rounded-md"
+                      src="https://drive.google.com/uc?export=download&id=1VU8qK7PNTVc0zuciT3e-G0aYaKXe44Xh"
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                    />
                   ) : (
                     <span className="text-muted-foreground text-sm">Crew {index}</span>
                   )}
