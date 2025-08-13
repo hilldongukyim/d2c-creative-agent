@@ -75,9 +75,9 @@ const CoverPage = () => {
         <div className="pt-6">
           <Button 
             onClick={handleEnter}
-            className="px-8 py-3 text-lg font-medium bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300"
+            className="px-8 py-3 text-lg font-medium bg-gradient-to-r from-primary to-primary/90 hover:from-primary/90 hover:to-primary text-white border-0 shadow-lg hover:shadow-xl transition-all duration-300 rounded-full"
           >
-            Enter Dashboard
+            Explore the Crew
           </Button>
         </div>
       </div>
