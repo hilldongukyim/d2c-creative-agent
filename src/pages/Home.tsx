@@ -281,43 +281,43 @@ const Home = () => {
           {/* Random Grid Layout for 8 Video Placeholders */}
           <div className="grid grid-cols-12 gap-4 max-w-7xl mx-auto min-h-[600px]">
             {/* Large rectangle - spans 4 columns, 2 rows */}
-            <div className="col-span-4 row-span-2 bg-gradient-to-br from-primary/30 to-secondary/30 rounded-2xl shadow-lg flex items-center justify-center border border-border/20">
-              <span className="text-muted-foreground font-medium">Video 1 (Large)</span>
+            <div className="col-span-4 row-span-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg flex items-center justify-center border border-border/20">
+              <span className="text-white font-medium">Video 1 (Large)</span>
             </div>
 
             {/* Medium rectangle */}
-            <div className="col-span-3 bg-gradient-to-br from-accent/30 to-primary/30 rounded-xl shadow-lg flex items-center justify-center border border-border/20">
-              <span className="text-muted-foreground font-medium">Video 2 (Medium)</span>
+            <div className="col-span-3 bg-gradient-to-br from-green-500 to-teal-600 rounded-xl shadow-lg flex items-center justify-center border border-border/20">
+              <span className="text-white font-medium">Video 2 (Medium)</span>
             </div>
 
             {/* Small square */}
-            <div className="col-span-2 bg-gradient-to-br from-secondary/30 to-muted/30 rounded-lg shadow-lg flex items-center justify-center border border-border/20">
-              <span className="text-muted-foreground font-medium text-sm">Video 3</span>
+            <div className="col-span-2 bg-gradient-to-br from-pink-500 to-rose-600 rounded-lg shadow-lg flex items-center justify-center border border-border/20">
+              <span className="text-white font-medium text-sm">Video 3</span>
             </div>
 
             {/* Tall rectangle - spans 3 columns, 2 rows */}
-            <div className="col-span-3 row-span-2 bg-gradient-to-br from-primary/20 to-accent/20 rounded-2xl shadow-lg flex items-center justify-center border border-border/20">
-              <span className="text-muted-foreground font-medium">Video 4 (Tall)</span>
+            <div className="col-span-3 row-span-2 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl shadow-lg flex items-center justify-center border border-border/20">
+              <span className="text-white font-medium">Video 4 (Tall)</span>
             </div>
 
             {/* Wide rectangle */}
-            <div className="col-span-5 bg-gradient-to-br from-secondary/20 to-primary/20 rounded-xl shadow-lg flex items-center justify-center border border-border/20">
-              <span className="text-muted-foreground font-medium">Video 5 (Wide)</span>
+            <div className="col-span-5 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-xl shadow-lg flex items-center justify-center border border-border/20">
+              <span className="text-white font-medium">Video 5 (Wide)</span>
             </div>
 
             {/* Second row - Medium rectangle */}
-            <div className="col-span-3 bg-gradient-to-br from-muted/20 to-accent/20 rounded-xl shadow-lg flex items-center justify-center border border-border/20">
-              <span className="text-muted-foreground font-medium">Video 6</span>
+            <div className="col-span-3 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl shadow-lg flex items-center justify-center border border-border/20">
+              <span className="text-white font-medium">Video 6</span>
             </div>
 
             {/* Small square */}
-            <div className="col-span-2 bg-gradient-to-br from-primary/25 to-secondary/25 rounded-lg shadow-lg flex items-center justify-center border border-border/20">
-              <span className="text-muted-foreground font-medium text-sm">Video 7</span>
+            <div className="col-span-2 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg shadow-lg flex items-center justify-center border border-border/20">
+              <span className="text-white font-medium text-sm">Video 7</span>
             </div>
 
             {/* Extra rectangle */}
-            <div className="col-span-3 bg-gradient-to-br from-accent/25 to-muted/25 rounded-xl shadow-lg flex items-center justify-center border border-border/20">
-              <span className="text-muted-foreground font-medium">Video 8</span>
+            <div className="col-span-3 bg-gradient-to-br from-cyan-500 to-teal-600 rounded-xl shadow-lg flex items-center justify-center border border-border/20">
+              <span className="text-white font-medium">Video 8</span>
             </div>
           </div>
         </section>
