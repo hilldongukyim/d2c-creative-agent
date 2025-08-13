@@ -38,7 +38,7 @@ const PTOGallery = () => {
   const [showEnergyLabelHelp, setShowEnergyLabelHelp] = useState(false);
   const [urlValidationError, setUrlValidationError] = useState<string | null>(null);
   const [isEuropeanCountry, setIsEuropeanCountry] = useState<boolean | null>(null);
-  const [webhookUrl, setWebhookUrl] = useState('https://dev.eaip.lge.com/n8n/webhook/88a553e3-c7a6-4053-b0bd-e1478512fa6a');
+  const webhookUrl = 'https://dev.eaip.lge.com/n8n/webhook-test/88a553e3-c7a6-4053-b0bd-e1478512fa6a';
   const conversationRef = useRef<HTMLDivElement>(null);
 
   // European countries (in various languages)
@@ -235,17 +235,17 @@ const PTOGallery = () => {
     setIsSubmitting(true);
     
     try {
-      // GET 방식으로 URL 파라미터 구성
-      const params = new URLSearchParams({
-        email: formData.email,
-        productAUrl: formData.mainProductUrl,
-        productBUrl: formData.secondProductUrl,
-      });
-
-      const getUrl = `${webhookUrl}?${params.toString()}`;
-
-      const response = await fetch(getUrl, {
-        method: "GET",
+      // POST 방식으로 JSON 본문 전송
+      const response = await fetch(webhookUrl, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: formData.email,
+          productAUrl: formData.mainProductUrl,
+          productBUrl: formData.secondProductUrl,
+        }),
       });
 
       if (response.ok) {
