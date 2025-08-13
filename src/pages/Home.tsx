@@ -93,10 +93,10 @@ const Home = () => {
         onClick={() => navigate('/')}
         variant="ghost"
         size="sm"
-        className="absolute top-6 left-20 z-20 hover:bg-muted/50 transition-colors"
+        className="absolute top-6 right-6 z-20 hover:bg-muted/50 transition-colors"
       >
         <ArrowLeft className="w-4 h-4 mr-2" />
-        돌아가기
+        Back
       </Button>
       
       {/* Expanding circle animation */}
