@@ -51,172 +51,161 @@ const CoverPage = () => {
         </div>
 
         {/* Org Chart Preview Section */}
-        <Card className="p-8 bg-card/50 backdrop-blur-sm border-muted/20 shadow-lg max-w-5xl mx-auto">
+        <Card className="p-8 bg-card/50 backdrop-blur-sm border-muted/20 shadow-lg max-w-6xl mx-auto">
           <div className="space-y-6">
             <h3 className="text-lg font-semibold text-foreground/80 text-center">Our Team Structure</h3>
             
-            {/* Detailed org chart */}
-            <div className="space-y-6">
-              {/* CEO Level */}
-              <div className="flex justify-center">
-                <div className="w-16 h-16 rounded-lg bg-gradient-to-r from-primary to-primary/80 flex items-center justify-center">
-                  <span className="text-white text-xs font-medium">CEO</span>
+            {/* Horizontal org chart */}
+            <div className="overflow-x-auto">
+              <div className="flex items-start space-x-8 min-w-max px-4">
+                
+                {/* CEO */}
+                <div className="flex flex-col items-center space-y-4">
+                  <div className="w-16 h-16 rounded-full bg-gradient-to-r from-primary to-primary/80 flex items-center justify-center">
+                    <span className="text-white text-xs font-medium">CEO</span>
+                  </div>
+                  <div className="text-xs text-muted-foreground">Leader</div>
                 </div>
-              </div>
-              
-              {/* Connecting line */}
-              <div className="flex justify-center">
-                <div className="w-0.5 h-4 bg-muted-foreground/30"></div>
-              </div>
-              
-              {/* Division Leaders */}
-              <div className="grid grid-cols-3 gap-8">
+                
+                {/* Connecting line */}
+                <div className="flex items-center">
+                  <div className="w-8 h-0.5 bg-muted-foreground/30 mt-8"></div>
+                </div>
+                
                 {/* Marketing Division */}
-                <div className="space-y-3">
-                  <div className="flex justify-center">
-                    <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-secondary to-secondary/80 flex items-center justify-center">
-                      <span className="text-white text-xs">MKT</span>
-                    </div>
+                <div className="flex flex-col items-center space-y-4">
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-r from-secondary to-secondary/80 flex items-center justify-center">
+                    <span className="text-white text-xs">MKT</span>
                   </div>
-                  <div className="flex justify-center">
-                    <div className="w-0.5 h-3 bg-muted-foreground/20"></div>
-                  </div>
+                  <div className="text-xs text-muted-foreground">Marketing</div>
                   
-                  {/* Marketing Teams */}
-                  <div className="grid grid-cols-1 gap-2">
+                  {/* Marketing Teams - horizontal layout */}
+                  <div className="flex space-x-6 pt-2">
                     {/* Team 1 */}
-                    <div className="flex flex-col items-center space-y-1">
-                      <div className="w-8 h-8 rounded bg-secondary/60 flex items-center justify-center">
+                    <div className="flex flex-col items-center space-y-2">
+                      <div className="w-10 h-10 rounded-full bg-secondary/70 flex items-center justify-center">
                         <span className="text-white text-xs">TL</span>
                       </div>
                       <div className="flex space-x-1">
-                        <div className="w-6 h-6 rounded bg-secondary/40"></div>
-                        <div className="w-6 h-6 rounded bg-secondary/40"></div>
+                        <div className="w-6 h-6 rounded-full bg-secondary/50"></div>
+                        <div className="w-6 h-6 rounded-full bg-secondary/50"></div>
                       </div>
                     </div>
                     
                     {/* Team 2 */}
-                    <div className="flex flex-col items-center space-y-1">
-                      <div className="w-8 h-8 rounded bg-secondary/60 flex items-center justify-center">
+                    <div className="flex flex-col items-center space-y-2">
+                      <div className="w-10 h-10 rounded-full bg-secondary/70 flex items-center justify-center">
                         <span className="text-white text-xs">TL</span>
                       </div>
                       <div className="flex space-x-1">
-                        <div className="w-6 h-6 rounded bg-secondary/40"></div>
-                        <div className="w-6 h-6 rounded bg-secondary/40"></div>
+                        <div className="w-6 h-6 rounded-full bg-secondary/50"></div>
+                        <div className="w-6 h-6 rounded-full bg-secondary/50"></div>
                       </div>
                     </div>
                     
                     {/* Team 3 */}
-                    <div className="flex flex-col items-center space-y-1">
-                      <div className="w-8 h-8 rounded bg-secondary/60 flex items-center justify-center">
+                    <div className="flex flex-col items-center space-y-2">
+                      <div className="w-10 h-10 rounded-full bg-secondary/70 flex items-center justify-center">
                         <span className="text-white text-xs">TL</span>
                       </div>
                       <div className="flex space-x-1">
-                        <div className="w-6 h-6 rounded bg-secondary/40"></div>
-                        <div className="w-6 h-6 rounded bg-secondary/40"></div>
+                        <div className="w-6 h-6 rounded-full bg-secondary/50"></div>
+                        <div className="w-6 h-6 rounded-full bg-secondary/50"></div>
                       </div>
                     </div>
                   </div>
                 </div>
                 
                 {/* Platform Division */}
-                <div className="space-y-3">
-                  <div className="flex justify-center">
-                    <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-accent to-accent/80 flex items-center justify-center">
-                      <span className="text-white text-xs">PLT</span>
-                    </div>
+                <div className="flex flex-col items-center space-y-4">
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-r from-accent to-accent/80 flex items-center justify-center">
+                    <span className="text-white text-xs">PLT</span>
                   </div>
-                  <div className="flex justify-center">
-                    <div className="w-0.5 h-3 bg-muted-foreground/20"></div>
-                  </div>
+                  <div className="text-xs text-muted-foreground">Platform</div>
                   
-                  {/* Platform Teams */}
-                  <div className="grid grid-cols-1 gap-2">
+                  {/* Platform Teams - horizontal layout */}
+                  <div className="flex space-x-6 pt-2">
                     {/* Team 1 */}
-                    <div className="flex flex-col items-center space-y-1">
-                      <div className="w-8 h-8 rounded bg-accent/60 flex items-center justify-center">
+                    <div className="flex flex-col items-center space-y-2">
+                      <div className="w-10 h-10 rounded-full bg-accent/70 flex items-center justify-center">
                         <span className="text-white text-xs">TL</span>
                       </div>
                       <div className="flex space-x-1">
-                        <div className="w-6 h-6 rounded bg-accent/40"></div>
-                        <div className="w-6 h-6 rounded bg-accent/40"></div>
+                        <div className="w-6 h-6 rounded-full bg-accent/50"></div>
+                        <div className="w-6 h-6 rounded-full bg-accent/50"></div>
                       </div>
                     </div>
                     
                     {/* Team 2 */}
-                    <div className="flex flex-col items-center space-y-1">
-                      <div className="w-8 h-8 rounded bg-accent/60 flex items-center justify-center">
+                    <div className="flex flex-col items-center space-y-2">
+                      <div className="w-10 h-10 rounded-full bg-accent/70 flex items-center justify-center">
                         <span className="text-white text-xs">TL</span>
                       </div>
                       <div className="flex space-x-1">
-                        <div className="w-6 h-6 rounded bg-accent/40"></div>
-                        <div className="w-6 h-6 rounded bg-accent/40"></div>
+                        <div className="w-6 h-6 rounded-full bg-accent/50"></div>
+                        <div className="w-6 h-6 rounded-full bg-accent/50"></div>
                       </div>
                     </div>
                     
                     {/* Team 3 */}
-                    <div className="flex flex-col items-center space-y-1">
-                      <div className="w-8 h-8 rounded bg-accent/60 flex items-center justify-center">
+                    <div className="flex flex-col items-center space-y-2">
+                      <div className="w-10 h-10 rounded-full bg-accent/70 flex items-center justify-center">
                         <span className="text-white text-xs">TL</span>
                       </div>
                       <div className="flex space-x-1">
-                        <div className="w-6 h-6 rounded bg-accent/40"></div>
-                        <div className="w-6 h-6 rounded bg-accent/40"></div>
+                        <div className="w-6 h-6 rounded-full bg-accent/50"></div>
+                        <div className="w-6 h-6 rounded-full bg-accent/50"></div>
                       </div>
                     </div>
                   </div>
                 </div>
                 
                 {/* Data Division */}
-                <div className="space-y-3">
-                  <div className="flex justify-center">
-                    <div className="w-12 h-12 rounded-lg bg-gradient-to-r from-muted to-muted-foreground flex items-center justify-center">
-                      <span className="text-white text-xs">DATA</span>
-                    </div>
+                <div className="flex flex-col items-center space-y-4">
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-r from-muted to-muted-foreground flex items-center justify-center">
+                    <span className="text-white text-xs">DATA</span>
                   </div>
-                  <div className="flex justify-center">
-                    <div className="w-0.5 h-3 bg-muted-foreground/20"></div>
-                  </div>
+                  <div className="text-xs text-muted-foreground">Data</div>
                   
-                  {/* Data Teams */}
-                  <div className="grid grid-cols-1 gap-2">
+                  {/* Data Teams - horizontal layout */}
+                  <div className="flex space-x-6 pt-2">
                     {/* Team 1 */}
-                    <div className="flex flex-col items-center space-y-1">
-                      <div className="w-8 h-8 rounded bg-muted-foreground/60 flex items-center justify-center">
+                    <div className="flex flex-col items-center space-y-2">
+                      <div className="w-10 h-10 rounded-full bg-muted-foreground/70 flex items-center justify-center">
                         <span className="text-white text-xs">TL</span>
                       </div>
                       <div className="flex space-x-1">
-                        <div className="w-6 h-6 rounded bg-muted-foreground/40"></div>
-                        <div className="w-6 h-6 rounded bg-muted-foreground/40"></div>
+                        <div className="w-6 h-6 rounded-full bg-muted-foreground/50"></div>
+                        <div className="w-6 h-6 rounded-full bg-muted-foreground/50"></div>
                       </div>
                     </div>
                     
                     {/* Team 2 */}
-                    <div className="flex flex-col items-center space-y-1">
-                      <div className="w-8 h-8 rounded bg-muted-foreground/60 flex items-center justify-center">
+                    <div className="flex flex-col items-center space-y-2">
+                      <div className="w-10 h-10 rounded-full bg-muted-foreground/70 flex items-center justify-center">
                         <span className="text-white text-xs">TL</span>
                       </div>
                       <div className="flex space-x-1">
-                        <div className="w-6 h-6 rounded bg-muted-foreground/40"></div>
-                        <div className="w-6 h-6 rounded bg-muted-foreground/40"></div>
+                        <div className="w-6 h-6 rounded-full bg-muted-foreground/50"></div>
+                        <div className="w-6 h-6 rounded-full bg-muted-foreground/50"></div>
                       </div>
                     </div>
                     
                     {/* Team 3 */}
-                    <div className="flex flex-col items-center space-y-1">
-                      <div className="w-8 h-8 rounded bg-muted-foreground/60 flex items-center justify-center">
+                    <div className="flex flex-col items-center space-y-2">
+                      <div className="w-10 h-10 rounded-full bg-muted-foreground/70 flex items-center justify-center">
                         <span className="text-white text-xs">TL</span>
                       </div>
                       <div className="flex space-x-1">
-                        <div className="w-6 h-6 rounded bg-muted-foreground/40"></div>
-                        <div className="w-6 h-6 rounded bg-muted-foreground/40"></div>
+                        <div className="w-6 h-6 rounded-full bg-muted-foreground/50"></div>
+                        <div className="w-6 h-6 rounded-full bg-muted-foreground/50"></div>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
               
-              <div className="text-center text-xs text-muted-foreground mt-4">
+              <div className="text-center text-xs text-muted-foreground mt-6">
                 20 members across 3 divisions, 9 teams
               </div>
             </div>
