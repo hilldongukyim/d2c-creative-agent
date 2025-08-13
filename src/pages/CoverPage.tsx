@@ -71,8 +71,12 @@ const CoverPage = () => {
                 
                 {/* Marketing Division */}
                 <div className="flex flex-col items-center space-y-4">
-                  <div className="w-14 h-14 rounded-full bg-gradient-to-r from-secondary to-secondary/80 flex items-center justify-center">
-                    
+                  <div className="w-14 h-14 rounded-full bg-gradient-to-r from-secondary to-secondary/80 flex items-center justify-center overflow-hidden">
+                    <img 
+                      src="/lovable-uploads/c33a87ea-fc09-484a-a916-58c9777a1e25.png" 
+                      alt="Marketing Division Leader"
+                      className="w-full h-full object-cover rounded-full"
+                    />
                   </div>
                   <div className="text-xs text-muted-foreground">Marketing</div>
                   
