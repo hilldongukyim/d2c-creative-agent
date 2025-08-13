@@ -111,7 +111,7 @@ const Home = () => {
             {/* Row 1 - First 4 crew members */}
             {[1, 2, 3, 4].map((index) => (
               <div key={index} className="text-center space-y-4">
-                <div className="w-32 h-40 rounded-lg bg-muted mx-auto flex items-center justify-center border-2 border-border">
+                <div id={`crew-${index}`} className="w-32 h-40 rounded-lg bg-muted mx-auto flex items-center justify-center border-2 border-border">
                   <span className="text-muted-foreground text-sm">Crew {index}</span>
                 </div>
                 <div className="space-y-2">
