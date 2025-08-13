@@ -3,6 +3,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import CoverPage from "./pages/CoverPage";
 import Index from "./pages/Index";
 import TaskOverview from "./pages/TaskOverview";
 import PromotionalWorkflow from "./pages/PromotionalWorkflow";
@@ -18,7 +19,8 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/" element={<CoverPage />} />
+          <Route path="/home" element={<Index />} />
           <Route path="/promotional" element={<PromotionalWorkflow />} />
           <Route path="/pto-gallery" element={<PTOGallery />} />
           <Route path="/tasks" element={<TaskOverview />} />

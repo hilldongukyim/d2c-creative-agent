@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Separator } from "@/components/ui/separator";
+import Logo from "@/components/Logo";
 
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import OrgChart from "../components/OrgChart";
@@ -83,6 +84,7 @@ const Home = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 p-6 relative overflow-hidden">
+      <Logo />
       {/* Expanding circle animation */}
       <div className="max-w-6xl mx-auto relative z-10">
         <header className="text-center mb-12 pt-8">
