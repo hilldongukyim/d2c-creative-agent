@@ -84,8 +84,12 @@ const CoverPage = () => {
                   <div className="flex space-x-6 pt-2">
                     {/* Team 1 */}
                     <div className="flex flex-col items-center space-y-2">
-                      <div className="w-10 h-10 rounded-full bg-secondary/70 flex items-center justify-center">
-                        
+                      <div className="w-10 h-10 rounded-full bg-secondary/70 flex items-center justify-center overflow-hidden">
+                        <img 
+                          src="/lovable-uploads/2dafb806-93aa-4e79-9e0a-399e9c7e7b17.png" 
+                          alt="Team Leader"
+                          className="w-full h-full object-cover rounded-full"
+                        />
                       </div>
                       <div className="flex space-x-1">
                         <div className="w-6 h-6 rounded-full bg-secondary/50"></div>
