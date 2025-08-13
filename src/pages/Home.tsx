@@ -265,63 +265,6 @@ const Home = () => {
 
         
 
-        {/* Crew Videos Portfolio Section */}
-        <section className="mt-12 mb-16">
-          <header className="mb-8 text-center">
-            <h2 className="text-4xl font-bold text-foreground mb-4">Portfolio</h2>
-            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
-              모바일 웹페이지, 반응형 웹사이트, 게이머형 이벤트 랜딩페이지, 가카오체널가업이벤트의<br />
-              더 많은 사례를 확인해보세요!
-            </p>
-            <Button className="mt-6 bg-red-500 hover:bg-red-600 text-white px-8 py-3 rounded-full text-lg font-medium">
-              포트폴리오 더 보기
-            </Button>
-          </header>
-
-          {/* Random Grid Layout for 8 Video Placeholders */}
-          <div className="grid grid-cols-12 gap-4 max-w-7xl mx-auto min-h-[600px]">
-            {/* Large rectangle - spans 4 columns, 2 rows */}
-            <div className="col-span-4 row-span-2 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl shadow-lg flex items-center justify-center border border-border/20">
-              <span className="text-white font-medium">Video 1 (Large)</span>
-            </div>
-
-            {/* Medium rectangle */}
-            <div className="col-span-3 bg-gradient-to-br from-green-500 to-teal-600 rounded-xl shadow-lg flex items-center justify-center border border-border/20">
-              <span className="text-white font-medium">Video 2 (Medium)</span>
-            </div>
-
-            {/* Small square */}
-            <div className="col-span-2 bg-gradient-to-br from-pink-500 to-rose-600 rounded-lg shadow-lg flex items-center justify-center border border-border/20">
-              <span className="text-white font-medium text-sm">Video 3</span>
-            </div>
-
-            {/* Tall rectangle - spans 3 columns, 2 rows */}
-            <div className="col-span-3 row-span-2 bg-gradient-to-br from-orange-500 to-red-600 rounded-2xl shadow-lg flex items-center justify-center border border-border/20">
-              <span className="text-white font-medium">Video 4 (Tall)</span>
-            </div>
-
-            {/* Wide rectangle */}
-            <div className="col-span-5 bg-gradient-to-br from-indigo-500 to-blue-600 rounded-xl shadow-lg flex items-center justify-center border border-border/20">
-              <span className="text-white font-medium">Video 5 (Wide)</span>
-            </div>
-
-            {/* Second row - Medium rectangle */}
-            <div className="col-span-3 bg-gradient-to-br from-yellow-500 to-orange-600 rounded-xl shadow-lg flex items-center justify-center border border-border/20">
-              <span className="text-white font-medium">Video 6</span>
-            </div>
-
-            {/* Small square */}
-            <div className="col-span-2 bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg shadow-lg flex items-center justify-center border border-border/20">
-              <span className="text-white font-medium text-sm">Video 7</span>
-            </div>
-
-            {/* Extra rectangle */}
-            <div className="col-span-3 bg-gradient-to-br from-cyan-500 to-teal-600 rounded-xl shadow-lg flex items-center justify-center border border-border/20">
-              <span className="text-white font-medium">Video 8</span>
-            </div>
-          </div>
-        </section>
-
         <section className="mt-12">
           <header className="mb-6 text-center">
             <h2 className="text-3xl font-semibold text-foreground">Assemble your mission crew</h2>
