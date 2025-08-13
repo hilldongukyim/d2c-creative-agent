@@ -101,7 +101,7 @@ const Home = () => {
         <div className="mb-12">
           <Card className="p-8 bg-card/50 backdrop-blur-sm border-muted/20 shadow-lg max-w-6xl mx-auto">
             <div className="space-y-6">
-              <h3 className="text-lg font-semibold text-foreground/80 text-center">Our Team Structure</h3>
+              <h3 className="text-lg font-semibold text-foreground/80 text-center">Org Chart</h3>
               
               {/* Horizontal org chart */}
               <div className="overflow-x-auto">
@@ -123,11 +123,7 @@ const Home = () => {
                   {/* Marketing Division */}
                   <div className="flex flex-col items-center space-y-4">
                     <div className="w-14 h-14 rounded-full bg-gradient-to-r from-secondary to-secondary/80 flex items-center justify-center overflow-hidden">
-                      <img 
-                        src="/lovable-uploads/c33a87ea-fc09-484a-a916-58c9777a1e25.png" 
-                        alt="Marketing Division Leader"
-                        className="w-full h-full object-cover rounded-full"
-                      />
+                      <img src="/lovable-uploads/c33a87ea-fc09-484a-a916-58c9777a1e25.png" alt="Marketing Division Leader" className="w-full h-full object-cover rounded-full" />
                     </div>
                     <div className="text-xs text-muted-foreground">Marketing</div>
                     
@@ -136,11 +132,7 @@ const Home = () => {
                       {/* Team 1 */}
                       <div className="flex flex-col items-center space-y-2">
                         <div className="w-10 h-10 rounded-full bg-secondary/70 flex items-center justify-center overflow-hidden">
-                          <img 
-                            src="/lovable-uploads/a77cc591-3d95-420e-91cf-6dcd3459c0c9.png" 
-                            alt="Team Leader"
-                            className="w-full h-full object-cover rounded-full"
-                          />
+                          <img src="/lovable-uploads/a77cc591-3d95-420e-91cf-6dcd3459c0c9.png" alt="Team Leader" className="w-full h-full object-cover rounded-full" />
                         </div>
                         <div className="flex space-x-1">
                           <div className="w-6 h-6 rounded-full bg-secondary/50"></div>
@@ -271,7 +263,7 @@ const Home = () => {
 
 
 
-        <Separator className="my-12" />
+        
 
         <section className="mt-12">
           <header className="mb-6 text-center">
