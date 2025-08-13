@@ -265,6 +265,144 @@ const Home = () => {
 
         
 
+        {/* Crew Videos Portfolio Section */}
+        <section className="mt-12 mb-16">
+          <header className="mb-8 text-center">
+            <h2 className="text-4xl font-bold text-foreground mb-4">Portfolio</h2>
+            <p className="text-lg text-muted-foreground max-w-3xl mx-auto">
+              모바일 웹페이지, 반응형 웹사이트, 게이머형 이벤트 랜딩페이지, 가카오체널가업이벤트의<br />
+              더 많은 사례를 확인해보세요!
+            </p>
+            <Button className="mt-6 bg-red-500 hover:bg-red-600 text-white px-8 py-3 rounded-full text-lg font-medium">
+              포트폴리오 더 보기
+            </Button>
+          </header>
+
+          {/* Random Grid Layout for Videos */}
+          <div className="grid grid-cols-12 gap-4 max-w-7xl mx-auto">
+            {/* Large video - spans 4 columns */}
+            <div className="col-span-4 row-span-2">
+              <div className="relative aspect-[4/5] bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg overflow-hidden shadow-lg">
+                <video 
+                  className="w-full h-full object-cover"
+                  autoPlay 
+                  loop 
+                  muted 
+                  playsInline
+                >
+                  <source src="/alice-video.mp4" type="video/mp4" />
+                </video>
+                <div className="absolute inset-0 bg-black/20 hover:bg-black/10 transition-colors"></div>
+                <div className="absolute bottom-4 left-4 text-white">
+                  <h3 className="font-semibold">Alice</h3>
+                  <p className="text-sm opacity-90">Marketing Specialist</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Medium video */}
+            <div className="col-span-3">
+              <div className="relative aspect-video bg-gradient-to-br from-accent/20 to-primary/20 rounded-lg overflow-hidden shadow-lg">
+                <video 
+                  className="w-full h-full object-cover"
+                  autoPlay 
+                  loop 
+                  muted 
+                  playsInline
+                >
+                  <source src="/ben-video.mp4" type="video/mp4" />
+                </video>
+                <div className="absolute inset-0 bg-black/20 hover:bg-black/10 transition-colors"></div>
+                <div className="absolute bottom-3 left-3 text-white">
+                  <h3 className="font-semibold text-sm">Ben</h3>
+                  <p className="text-xs opacity-90">Developer</p>
+                </div>
+              </div>
+            </div>
+
+            {/* Small video */}
+            <div className="col-span-2">
+              <div className="relative aspect-square bg-gradient-to-br from-secondary/20 to-muted/20 rounded-lg overflow-hidden shadow-lg">
+                <video 
+                  className="w-full h-full object-cover"
+                  autoPlay 
+                  loop 
+                  muted 
+                  playsInline
+                >
+                  <source src="/completion-video.mp4" type="video/mp4" />
+                </video>
+                <div className="absolute inset-0 bg-black/20 hover:bg-black/10 transition-colors"></div>
+                <div className="absolute bottom-2 left-2 text-white">
+                  <h3 className="font-semibold text-xs">Maya</h3>
+                </div>
+              </div>
+            </div>
+
+            {/* Tall video */}
+            <div className="col-span-3 row-span-2">
+              <div className="relative aspect-[3/4] bg-gradient-to-br from-primary/20 to-accent/20 rounded-lg overflow-hidden shadow-lg">
+                <div className="w-full h-full bg-gradient-to-br from-blue-500/30 to-purple-500/30 flex items-center justify-center">
+                  <div className="text-center text-white">
+                    <h3 className="font-semibold mb-2">Carmen</h3>
+                    <p className="text-sm opacity-90">Data Analyst</p>
+                    <div className="mt-4 text-xs opacity-75">Coming Soon</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Wide video */}
+            <div className="col-span-5">
+              <div className="relative aspect-[16/9] bg-gradient-to-br from-secondary/20 to-primary/20 rounded-lg overflow-hidden shadow-lg">
+                <div className="w-full h-full bg-gradient-to-br from-green-500/30 to-blue-500/30 flex items-center justify-center">
+                  <div className="text-center text-white">
+                    <h3 className="font-semibold mb-2">Theo</h3>
+                    <p className="text-sm opacity-90">Platform Engineer</p>
+                    <div className="mt-4 text-xs opacity-75">Coming Soon</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Medium square */}
+            <div className="col-span-2">
+              <div className="relative aspect-square bg-gradient-to-br from-accent/20 to-secondary/20 rounded-lg overflow-hidden shadow-lg">
+                <div className="w-full h-full bg-gradient-to-br from-pink-500/30 to-orange-500/30 flex items-center justify-center">
+                  <div className="text-center text-white">
+                    <h3 className="font-semibold text-sm">Fiona</h3>
+                    <p className="text-xs opacity-90">Designer</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Small horizontal */}
+            <div className="col-span-3">
+              <div className="relative aspect-video bg-gradient-to-br from-muted/20 to-primary/20 rounded-lg overflow-hidden shadow-lg">
+                <div className="w-full h-full bg-gradient-to-br from-purple-500/30 to-pink-500/30 flex items-center justify-center">
+                  <div className="text-center text-white">
+                    <h3 className="font-semibold text-sm">Luna</h3>
+                    <p className="text-xs opacity-90">Content Creator</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Another medium */}
+            <div className="col-span-2">
+              <div className="relative aspect-[3/4] bg-gradient-to-br from-primary/20 to-secondary/20 rounded-lg overflow-hidden shadow-lg">
+                <div className="w-full h-full bg-gradient-to-br from-teal-500/30 to-cyan-500/30 flex items-center justify-center">
+                  <div className="text-center text-white">
+                    <h3 className="font-semibold text-sm">Kai</h3>
+                    <p className="text-xs opacity-90">QA Engineer</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
         <section className="mt-12">
           <header className="mb-6 text-center">
             <h2 className="text-3xl font-semibold text-foreground">Assemble your mission crew</h2>
