@@ -110,12 +110,6 @@ const Home = () => {
           </p>
         </header>
 
-<section className="mb-8">
-          <header className="text-center mb-6">
-            <h2 className="text-3xl font-semibold text-foreground"> Org Chart</h2>
-          </header>
-          <OrgChart leader={{ name: "Suno", image: leaderProfile }} profiles={{ yumi: aliceProfile, ben: benProfile }} onAgentClick={handleAgentClick} damProfiles={[{ name: "Candy", image: "/lovable-uploads/12ea1acb-6641-4e73-85ef-14b102b12d30.png" }, { name: "Maya", image: "/lovable-uploads/d67ab42c-85c8-480e-b65e-66a15abe8586.png" }, { name: "Theo", image: "/lovable-uploads/2e6d7b60-abc9-4051-a585-fad42800aabb.png" }, { name: "Fiona", image: "/lovable-uploads/f3264e74-893f-4cb0-9ec7-91b84b56c631.png" }, { name: "Ben", image: benProfile }, { name: "Yumi", image: aliceProfile }, { name: "Tango", image: "/lovable-uploads/c2f987d1-fdfb-4948-b854-092b9abd9f8c.png" }, { name: "Juno", image: "/lovable-uploads/0984d14e-1c85-48e9-9be5-953e3bc72d9a.png" }, { name: "Luna", image: "/lovable-uploads/09ed6890-8a71-43b1-9f99-2029d69c3e6c.png" }, { name: "Fern", image: "/lovable-uploads/66fb2463-85b8-437c-9a16-afdb1c8b3861.png" }, { name: "Pip", image: "/lovable-uploads/cf830101-de14-48d2-a5f5-23a3f692a0f0.png" }, { name: "Kai", image: "/lovable-uploads/84e535ab-1fa5-418e-93aa-73fa3b361219.png" }, { name: "Noa", image: "/lovable-uploads/0fbe5af8-19f4-4ff0-8c9f-3f1a2c010572.png" }]} />
-        </section>
 
 
         <Separator className="my-12" />
