@@ -1,6 +1,8 @@
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
+import { ArrowLeft } from "lucide-react";
 import Logo from "@/components/Logo";
 
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -85,6 +87,18 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 p-6 relative overflow-hidden">
       <Logo />
+      
+      {/* Back button */}
+      <Button 
+        onClick={() => navigate('/')}
+        variant="ghost"
+        size="sm"
+        className="absolute top-6 left-20 z-20 hover:bg-muted/50 transition-colors"
+      >
+        <ArrowLeft className="w-4 h-4 mr-2" />
+        돌아가기
+      </Button>
+      
       {/* Expanding circle animation */}
       <div className="max-w-6xl mx-auto relative z-10">
         <header className="text-center mb-12 pt-8">
