@@ -2,6 +2,7 @@ import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { ArrowLeft } from "lucide-react";
 import Logo from "@/components/Logo";
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
@@ -95,6 +96,178 @@ const Home = () => {
             An intelligent agent team that helps and accelerates the work of internal employees. Through clear structure and collaboration, we deliver faster, more accurate results.
           </p>
         </header>
+
+        {/* Org Chart Preview Section */}
+        <div className="mb-12">
+          <Card className="p-8 bg-card/50 backdrop-blur-sm border-muted/20 shadow-lg max-w-6xl mx-auto">
+            <div className="space-y-6">
+              <h3 className="text-lg font-semibold text-foreground/80 text-center">Our Team Structure</h3>
+              
+              {/* Horizontal org chart */}
+              <div className="overflow-x-auto">
+                <div className="flex items-start space-x-8 min-w-max px-4">
+                  
+                  {/* CEO */}
+                  <div className="flex flex-col items-center space-y-4">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-primary to-primary/80 flex items-center justify-center">
+                      <span className="text-white text-xs font-medium">CEO</span>
+                    </div>
+                    <div className="text-xs text-muted-foreground">Leader</div>
+                  </div>
+                  
+                  {/* Connecting line */}
+                  <div className="flex items-center">
+                    <div className="w-8 h-0.5 bg-muted-foreground/30 mt-8"></div>
+                  </div>
+                  
+                  {/* Marketing Division */}
+                  <div className="flex flex-col items-center space-y-4">
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-r from-secondary to-secondary/80 flex items-center justify-center overflow-hidden">
+                      <img 
+                        src="/lovable-uploads/c33a87ea-fc09-484a-a916-58c9777a1e25.png" 
+                        alt="Marketing Division Leader"
+                        className="w-full h-full object-cover rounded-full"
+                      />
+                    </div>
+                    <div className="text-xs text-muted-foreground">Marketing</div>
+                    
+                    {/* Marketing Teams - horizontal layout */}
+                    <div className="flex space-x-6 pt-2">
+                      {/* Team 1 */}
+                      <div className="flex flex-col items-center space-y-2">
+                        <div className="w-10 h-10 rounded-full bg-secondary/70 flex items-center justify-center overflow-hidden">
+                          <img 
+                            src="/lovable-uploads/a77cc591-3d95-420e-91cf-6dcd3459c0c9.png" 
+                            alt="Team Leader"
+                            className="w-full h-full object-cover rounded-full"
+                          />
+                        </div>
+                        <div className="flex space-x-1">
+                          <div className="w-6 h-6 rounded-full bg-secondary/50"></div>
+                          <div className="w-6 h-6 rounded-full bg-secondary/50"></div>
+                        </div>
+                      </div>
+                      
+                      {/* Team 2 */}
+                      <div className="flex flex-col items-center space-y-2">
+                        <div className="w-10 h-10 rounded-full bg-secondary/70 flex items-center justify-center">
+                          <span className="text-white text-xs">TL</span>
+                        </div>
+                        <div className="flex space-x-1">
+                          <div className="w-6 h-6 rounded-full bg-secondary/50"></div>
+                          <div className="w-6 h-6 rounded-full bg-secondary/50"></div>
+                        </div>
+                      </div>
+                      
+                      {/* Team 3 */}
+                      <div className="flex flex-col items-center space-y-2">
+                        <div className="w-10 h-10 rounded-full bg-secondary/70 flex items-center justify-center">
+                          <span className="text-white text-xs">TL</span>
+                        </div>
+                        <div className="flex space-x-1">
+                          <div className="w-6 h-6 rounded-full bg-secondary/50"></div>
+                          <div className="w-6 h-6 rounded-full bg-secondary/50"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Platform Division */}
+                  <div className="flex flex-col items-center space-y-4">
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-r from-accent to-accent/80 flex items-center justify-center">
+                      <span className="text-white text-xs">PLT</span>
+                    </div>
+                    <div className="text-xs text-muted-foreground">Platform</div>
+                    
+                    {/* Platform Teams - horizontal layout */}
+                    <div className="flex space-x-6 pt-2">
+                      {/* Team 1 */}
+                      <div className="flex flex-col items-center space-y-2">
+                        <div className="w-10 h-10 rounded-full bg-accent/70 flex items-center justify-center">
+                          <span className="text-white text-xs">TL</span>
+                        </div>
+                        <div className="flex space-x-1">
+                          <div className="w-6 h-6 rounded-full bg-accent/50"></div>
+                          <div className="w-6 h-6 rounded-full bg-accent/50"></div>
+                        </div>
+                      </div>
+                      
+                      {/* Team 2 */}
+                      <div className="flex flex-col items-center space-y-2">
+                        <div className="w-10 h-10 rounded-full bg-accent/70 flex items-center justify-center">
+                          <span className="text-white text-xs">TL</span>
+                        </div>
+                        <div className="flex space-x-1">
+                          <div className="w-6 h-6 rounded-full bg-accent/50"></div>
+                          <div className="w-6 h-6 rounded-full bg-accent/50"></div>
+                        </div>
+                      </div>
+                      
+                      {/* Team 3 */}
+                      <div className="flex flex-col items-center space-y-2">
+                        <div className="w-10 h-10 rounded-full bg-accent/70 flex items-center justify-center">
+                          <span className="text-white text-xs">TL</span>
+                        </div>
+                        <div className="flex space-x-1">
+                          <div className="w-6 h-6 rounded-full bg-accent/50"></div>
+                          <div className="w-6 h-6 rounded-full bg-accent/50"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Data Division */}
+                  <div className="flex flex-col items-center space-y-4">
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-r from-muted to-muted-foreground flex items-center justify-center">
+                      <span className="text-white text-xs">DATA</span>
+                    </div>
+                    <div className="text-xs text-muted-foreground">Data</div>
+                    
+                    {/* Data Teams - horizontal layout */}
+                    <div className="flex space-x-6 pt-2">
+                      {/* Team 1 */}
+                      <div className="flex flex-col items-center space-y-2">
+                        <div className="w-10 h-10 rounded-full bg-muted-foreground/70 flex items-center justify-center">
+                          <span className="text-white text-xs">TL</span>
+                        </div>
+                        <div className="flex space-x-1">
+                          <div className="w-6 h-6 rounded-full bg-muted-foreground/50"></div>
+                          <div className="w-6 h-6 rounded-full bg-muted-foreground/50"></div>
+                        </div>
+                      </div>
+                      
+                      {/* Team 2 */}
+                      <div className="flex flex-col items-center space-y-2">
+                        <div className="w-10 h-10 rounded-full bg-muted-foreground/70 flex items-center justify-center">
+                          <span className="text-white text-xs">TL</span>
+                        </div>
+                        <div className="flex space-x-1">
+                          <div className="w-6 h-6 rounded-full bg-muted-foreground/50"></div>
+                          <div className="w-6 h-6 rounded-full bg-muted-foreground/50"></div>
+                        </div>
+                      </div>
+                      
+                      {/* Team 3 */}
+                      <div className="flex flex-col items-center space-y-2">
+                        <div className="w-10 h-10 rounded-full bg-muted-foreground/70 flex items-center justify-center">
+                          <span className="text-white text-xs">TL</span>
+                        </div>
+                        <div className="flex space-x-1">
+                          <div className="w-6 h-6 rounded-full bg-muted-foreground/50"></div>
+                          <div className="w-6 h-6 rounded-full bg-muted-foreground/50"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="text-center text-xs text-muted-foreground mt-6">
+                  20 members across 3 divisions, 9 teams
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
 
 
 
