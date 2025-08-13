@@ -235,14 +235,17 @@ const PTOGallery = () => {
     setIsSubmitting(true);
     
     try {
-      const formDataToSend = new FormData();
-      formDataToSend.append('email', formData.email);
-      formDataToSend.append('productAUrl', formData.mainProductUrl);
-      formDataToSend.append('productBUrl', formData.secondProductUrl);
+      // GET 방식으로 URL 파라미터 구성
+      const params = new URLSearchParams({
+        email: formData.email,
+        productAUrl: formData.mainProductUrl,
+        productBUrl: formData.secondProductUrl
+      });
 
-      const response = await fetch(webhookUrl, {
-        method: "POST",
-        body: formDataToSend,
+      const getUrl = `${webhookUrl}?${params.toString()}`;
+      
+      const response = await fetch(getUrl, {
+        method: "GET",
       });
 
       if (response.ok) {
