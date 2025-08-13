@@ -53,7 +53,7 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick, dam
                   <img src={profiles.carmen ?? "/lovable-uploads/c67db3d8-8cdc-426a-80e4-b8e7b6bf4604.png"} alt="Carmen profile image" className="h-full w-full object-cover" loading="lazy" />
                 </div>
                 <div>
-                  <div className="font-semibold text-foreground group-hover:text-accent-foreground">Carmen</div>
+                  <div className="font-semibold text-foreground">Carmen</div>
                   <div className="text-xs text-muted-foreground">Marketing Lead</div>
                 </div>
               </div>
