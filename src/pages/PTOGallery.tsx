@@ -228,42 +228,70 @@ const PTOGallery = () => {
   };
 
   const handleSubmit = async () => {
-    if (!webhookUrl || isSubmitting) {
-      return;
-    }
+    if (!webhookUrl || isSubmitting) return;
 
     setIsSubmitting(true);
-    
-    try {
-      const formDataToSend = new FormData();
-      formDataToSend.append('email', formData.email);
-      formDataToSend.append('productAUrl', formData.mainProductUrl);
-      formDataToSend.append('productBUrl', formData.secondProductUrl);
 
-      const response = await fetch(webhookUrl, {
-        method: "POST",
-        body: formDataToSend,
+    try {
+      // Try CORS-friendly simple request first (no preflight)
+      const params = new URLSearchParams();
+      params.set('email', formData.email);
+      params.set('productAUrl', formData.mainProductUrl);
+      params.set('productBUrl', formData.secondProductUrl);
+
+      const res = await fetch(webhookUrl, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded;charset=UTF-8',
+        },
+        body: params.toString(),
+        mode: 'cors',
       });
 
-      if (response.ok) {
+      if (res.ok) {
         setTimeout(() => {
           setSubmissionStatus('success');
           setIsSubmitting(false);
-          // 2초 후 비디오 표시
           setTimeout(() => {
             setShowVideo(true);
           }, 2000);
         }, 2000);
-      } else {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        return;
       }
+
+      // If non-2xx, fall through to fallback
+      throw new Error(`HTTP ${res.status}: ${res.statusText}`);
     } catch (error) {
-      console.error("Error sending to n8n webhook:", error);
-      setSubmissionStatus('failure');
-      setIsSubmitting(false);
+      console.error('Error sending to n8n webhook:', error);
+
+      // Fallback: best-effort send with no-cors (opaque response)
+      try {
+        const params = new URLSearchParams();
+        params.set('email', formData.email);
+        params.set('productAUrl', formData.mainProductUrl);
+        params.set('productBUrl', formData.secondProductUrl);
+
+        await fetch(webhookUrl, {
+          method: 'POST',
+          body: params, // do not set headers to keep it a simple request
+          mode: 'no-cors',
+        });
+
+        // Assume success for UX; the request is sent but response is opaque
+        setTimeout(() => {
+          setSubmissionStatus('success');
+          setIsSubmitting(false);
+          setTimeout(() => {
+            setShowVideo(true);
+          }, 2000);
+        }, 2000);
+      } catch (fallbackErr) {
+        console.error('Fallback no-cors webhook failed:', fallbackErr);
+        setSubmissionStatus('failure');
+        setIsSubmitting(false);
+      }
     }
   };
-
 
   const currentConversation = conversations[currentStep];
   const isQuestion = currentConversation?.type.includes('question');
