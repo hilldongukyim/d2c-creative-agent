@@ -91,7 +91,7 @@ const Home = () => {
       <div className="max-w-6xl mx-auto relative z-10">
         <header className="text-center mb-12 pt-8">
           <h1 className="text-5xl font-bold text-foreground mb-4">Meet our Crew</h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             An intelligent agent team that helps and accelerates the work of internal employees. Through clear structure and collaboration, we deliver faster, more accurate results.
           </p>
         </header>
