@@ -202,7 +202,7 @@ const Home = () => {
                          </div>
                         <div className="flex space-x-1">
                           <div className="w-6 h-6 rounded-full bg-accent/50"></div>
-                          <div className="w-6 h-6 rounded-full bg-accent/50"></div>
+                           <img src="/lovable-uploads/3491b460-323e-4696-98c0-0a4409d989ae.png" alt="Platform Team Member" className="w-6 h-6 rounded-full object-cover" />
                         </div>
                       </div>
                     </div>
