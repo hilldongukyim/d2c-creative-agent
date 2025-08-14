@@ -430,7 +430,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       {/* Hover Popup - Text Only */}
       {hoveredProfile && (
         <div 
-          className="fixed z-50 bg-card border border-border/20 rounded-lg p-4 shadow-md max-w-sm transition-opacity duration-150 pointer-events-none"
+          className="fixed z-50 bg-card border border-border/20 rounded-xl p-6 shadow-xl max-w-sm animate-fade-in pointer-events-none"
           style={{
             left: hoverPosition.x,
             top: hoverPosition.y,
