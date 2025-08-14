@@ -251,9 +251,9 @@ const Home = () => {
                     {/* Fulfillment Team */}
                     <div className="flex space-x-6 pt-2">
                       <div className="flex flex-col items-center space-y-2">
-                        <div className="w-10 h-10 rounded-full bg-green-600/70 flex items-center justify-center">
-                          <span className="text-white text-xs">TL</span>
-                        </div>
+                         <div className="w-10 h-10 rounded-full bg-green-600/70 flex items-center justify-center overflow-hidden">
+                           <img src="/lovable-uploads/6169bcda-23e9-44e6-aaa2-dfc83bf8f979.png" alt="Fulfillment Team Leader" className="w-full h-full object-cover rounded-full" />
+                         </div>
                         <div className="flex space-x-1">
                           <div className="w-6 h-6 rounded-full bg-green-600/50"></div>
                           <div className="w-6 h-6 rounded-full bg-green-600/50"></div>
