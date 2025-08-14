@@ -108,6 +108,14 @@ export default {
 					'100%': {
 						transform: 'translateX(0%)'
 					}
+				},
+				'scroll': {
+					'0%': {
+						transform: 'translateX(0)'
+					},
+					'100%': {
+						transform: 'translateX(-50%)'
+					}
 				}
 			},
 			animation: {

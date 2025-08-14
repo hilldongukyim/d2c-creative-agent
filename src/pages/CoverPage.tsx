@@ -35,86 +35,174 @@ const CoverPage = () => {
       {/* Background decoration */}
       <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-secondary/5" />
       
-      {/* Crew Videos - non-overlapping layout with proper spacing */}
-      <div className="absolute inset-0 pointer-events-none">
-        {/* Video 1 - Top left, large */}
-        <div id="crew-video-1" className="absolute top-24 left-16 w-48 h-48 bg-gradient-to-br from-purple-500/35 to-pink-500/35 rounded-3xl border border-white/25 backdrop-blur-sm scale-115 opacity-95 overflow-hidden">
-          <video 
-            className="w-full h-full object-cover rounded-3xl"
-            autoPlay 
-            loop 
-            muted 
-            playsInline
-          >
-            <source src="/crew-video-1.mp4" type="video/mp4" />
-          </video>
-        </div>
+      {/* Crew Videos - horizontal scrolling lineup at bottom */}
+      <div className="absolute bottom-8 left-0 w-full h-32 overflow-hidden pointer-events-none">
+        <div className="flex animate-[scroll_20s_linear_infinite] space-x-6">
+          {/* First set of videos */}
+          <div className="flex space-x-6 min-w-max">
+            {/* Video 1 - Purple video */}
+            <div id="crew-video-1" className="w-24 h-24 bg-gradient-to-br from-purple-500/35 to-pink-500/35 rounded-2xl border border-white/25 backdrop-blur-sm overflow-hidden flex-shrink-0">
+              <video 
+                className="w-full h-full object-cover rounded-2xl"
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+              >
+                <source src="/crew-video-1.mp4" type="video/mp4" />
+              </video>
+            </div>
 
-        {/* Video 2 - Top right, medium */}
-        <div id="crew-video-2" className="absolute top-32 right-20 w-40 h-40 bg-gradient-to-br from-blue-500/30 to-cyan-500/30 rounded-2xl border border-white/20 backdrop-blur-sm scale-105 opacity-85">
-          <div className="w-full h-full rounded-2xl bg-black/20 flex items-center justify-center">
-            <div className="text-white/75 text-sm font-medium">Coming Soon</div>
+            {/* Video 2 - Blue coming soon */}
+            <div id="crew-video-2" className="w-24 h-24 bg-gradient-to-br from-blue-500/30 to-cyan-500/30 rounded-2xl border border-white/20 backdrop-blur-sm flex-shrink-0">
+              <div className="w-full h-full rounded-2xl bg-black/20 flex items-center justify-center">
+                <div className="text-white/75 text-xs font-medium">Coming Soon</div>
+              </div>
+            </div>
+
+            {/* Video 3 - Green coming soon */}
+            <div id="crew-video-3" className="w-24 h-24 bg-gradient-to-br from-green-500/25 to-emerald-500/25 rounded-2xl border border-white/15 backdrop-blur-sm flex-shrink-0">
+              <div className="w-full h-full rounded-2xl bg-black/20 flex items-center justify-center">
+                <div className="text-white/65 text-xs">Coming Soon</div>
+              </div>
+            </div>
+
+            {/* Video 4 - Orange video */}
+            <div id="crew-video-4" className="w-24 h-24 bg-gradient-to-br from-orange-500/35 to-red-500/35 rounded-2xl border border-white/25 backdrop-blur-sm overflow-hidden flex-shrink-0">
+              <video 
+                className="w-full h-full object-cover rounded-2xl"
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+              >
+                <source src="/crew-video-4.mp4" type="video/mp4" />
+              </video>
+            </div>
+
+            {/* Video 5 - Yellow coming soon */}
+            <div id="crew-video-5" className="w-24 h-24 bg-gradient-to-br from-yellow-500/30 to-amber-500/30 rounded-2xl border border-white/20 backdrop-blur-sm flex-shrink-0">
+              <div className="w-full h-full rounded-2xl bg-black/20 flex items-center justify-center">
+                <div className="text-white/70 text-xs font-medium">Coming Soon</div>
+              </div>
+            </div>
+
+            {/* Video 6 - Indigo video */}
+            <div id="crew-video-6" className="w-24 h-24 bg-gradient-to-br from-indigo-500/25 to-purple-500/25 rounded-2xl border border-white/15 backdrop-blur-sm overflow-hidden flex-shrink-0">
+              <video 
+                className="w-full h-full object-cover rounded-2xl"
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+              >
+                <source src="/crew-video-6.mp4" type="video/mp4" />
+              </video>
+            </div>
+
+            {/* Video 7 - Rose coming soon */}
+            <div id="crew-video-7" className="w-24 h-24 bg-gradient-to-br from-rose-500/20 to-pink-500/20 rounded-2xl border border-white/12 backdrop-blur-sm flex-shrink-0">
+              <div className="w-full h-full rounded-2xl bg-black/15 flex items-center justify-center">
+                <div className="text-white/50 text-xs">Coming Soon</div>
+              </div>
+            </div>
+
+            {/* Video 8 - Teal video */}
+            <div id="crew-video-8" className="w-24 h-24 bg-gradient-to-br from-teal-500/22 to-blue-500/22 rounded-2xl border border-white/14 backdrop-blur-sm overflow-hidden flex-shrink-0">
+              <video 
+                className="w-full h-full object-cover rounded-2xl"
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+              >
+                <source src="/crew-video-8.mp4" type="video/mp4" />
+              </video>
+            </div>
           </div>
-        </div>
 
-        {/* Video 3 - Left center, medium */}
-        <div id="crew-video-3" className="absolute top-1/2 left-12 w-36 h-36 bg-gradient-to-br from-green-500/25 to-emerald-500/25 rounded-2xl border border-white/15 backdrop-blur-sm scale-90 opacity-75 transform -translate-y-1/2">
-          <div className="w-full h-full rounded-2xl bg-black/20 flex items-center justify-center">
-            <div className="text-white/65 text-sm">Coming Soon</div>
+          {/* Duplicate set for seamless loop */}
+          <div className="flex space-x-6 min-w-max">
+            {/* Video 1 - Purple video (duplicate) */}
+            <div className="w-24 h-24 bg-gradient-to-br from-purple-500/35 to-pink-500/35 rounded-2xl border border-white/25 backdrop-blur-sm overflow-hidden flex-shrink-0">
+              <video 
+                className="w-full h-full object-cover rounded-2xl"
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+              >
+                <source src="/crew-video-1.mp4" type="video/mp4" />
+              </video>
+            </div>
+
+            {/* Video 2 - Blue coming soon (duplicate) */}
+            <div className="w-24 h-24 bg-gradient-to-br from-blue-500/30 to-cyan-500/30 rounded-2xl border border-white/20 backdrop-blur-sm flex-shrink-0">
+              <div className="w-full h-full rounded-2xl bg-black/20 flex items-center justify-center">
+                <div className="text-white/75 text-xs font-medium">Coming Soon</div>
+              </div>
+            </div>
+
+            {/* Video 3 - Green coming soon (duplicate) */}
+            <div className="w-24 h-24 bg-gradient-to-br from-green-500/25 to-emerald-500/25 rounded-2xl border border-white/15 backdrop-blur-sm flex-shrink-0">
+              <div className="w-full h-full rounded-2xl bg-black/20 flex items-center justify-center">
+                <div className="text-white/65 text-xs">Coming Soon</div>
+              </div>
+            </div>
+
+            {/* Video 4 - Orange video (duplicate) */}
+            <div className="w-24 h-24 bg-gradient-to-br from-orange-500/35 to-red-500/35 rounded-2xl border border-white/25 backdrop-blur-sm overflow-hidden flex-shrink-0">
+              <video 
+                className="w-full h-full object-cover rounded-2xl"
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+              >
+                <source src="/crew-video-4.mp4" type="video/mp4" />
+              </video>
+            </div>
+
+            {/* Video 5 - Yellow coming soon (duplicate) */}
+            <div className="w-24 h-24 bg-gradient-to-br from-yellow-500/30 to-amber-500/30 rounded-2xl border border-white/20 backdrop-blur-sm flex-shrink-0">
+              <div className="w-full h-full rounded-2xl bg-black/20 flex items-center justify-center">
+                <div className="text-white/70 text-xs font-medium">Coming Soon</div>
+              </div>
+            </div>
+
+            {/* Video 6 - Indigo video (duplicate) */}
+            <div className="w-24 h-24 bg-gradient-to-br from-indigo-500/25 to-purple-500/25 rounded-2xl border border-white/15 backdrop-blur-sm overflow-hidden flex-shrink-0">
+              <video 
+                className="w-full h-full object-cover rounded-2xl"
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+              >
+                <source src="/crew-video-6.mp4" type="video/mp4" />
+              </video>
+            </div>
+
+            {/* Video 7 - Rose coming soon (duplicate) */}
+            <div className="w-24 h-24 bg-gradient-to-br from-rose-500/20 to-pink-500/20 rounded-2xl border border-white/12 backdrop-blur-sm flex-shrink-0">
+              <div className="w-full h-full rounded-2xl bg-black/15 flex items-center justify-center">
+                <div className="text-white/50 text-xs">Coming Soon</div>
+              </div>
+            </div>
+
+            {/* Video 8 - Teal video (duplicate) */}
+            <div className="w-24 h-24 bg-gradient-to-br from-teal-500/22 to-blue-500/22 rounded-2xl border border-white/14 backdrop-blur-sm overflow-hidden flex-shrink-0">
+              <video 
+                className="w-full h-full object-cover rounded-2xl"
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+              >
+                <source src="/crew-video-8.mp4" type="video/mp4" />
+              </video>
+            </div>
           </div>
-        </div>
-
-        {/* Video 4 - Right center, extra large */}
-        <div id="crew-video-4" className="absolute top-1/2 right-8 w-52 h-52 bg-gradient-to-br from-orange-500/35 to-red-500/35 rounded-3xl border border-white/25 backdrop-blur-sm scale-120 opacity-90 transform -translate-y-1/2 overflow-hidden">
-          <video 
-            className="w-full h-full object-cover rounded-3xl"
-            autoPlay 
-            loop 
-            muted 
-            playsInline
-          >
-            <source src="/crew-video-4.mp4" type="video/mp4" />
-          </video>
-        </div>
-
-        {/* Video 5 - Bottom left, medium-large */}
-        <div id="crew-video-5" className="absolute bottom-28 left-20 w-44 h-44 bg-gradient-to-br from-yellow-500/30 to-amber-500/30 rounded-3xl border border-white/20 backdrop-blur-sm scale-110 opacity-80">
-          <div className="w-full h-full rounded-3xl bg-black/20 flex items-center justify-center">
-            <div className="text-white/70 text-sm font-medium">Coming Soon</div>
-          </div>
-        </div>
-
-        {/* Video 6 - Bottom right, medium square */}
-        <div id="crew-video-6" className="absolute bottom-24 right-24 w-40 h-40 bg-gradient-to-br from-indigo-500/25 to-purple-500/25 rounded-2xl border border-white/15 backdrop-blur-sm scale-95 opacity-70 overflow-hidden">
-          <video 
-            className="w-full h-full object-cover rounded-2xl"
-            autoPlay 
-            loop 
-            muted 
-            playsInline
-          >
-            <source src="/crew-video-6.mp4" type="video/mp4" />
-          </video>
-        </div>
-
-        {/* Video 7 - Top center left, small for depth */}
-        <div id="crew-video-7" className="absolute top-16 left-1/3 w-28 h-28 bg-gradient-to-br from-rose-500/20 to-pink-500/20 rounded-xl border border-white/12 backdrop-blur-sm scale-80 opacity-60">
-          <div className="w-full h-full rounded-xl bg-black/15 flex items-center justify-center">
-            <div className="text-white/50 text-xs">Coming Soon</div>
-          </div>
-        </div>
-
-        {/* Video 8 - Bottom center right, small for depth */}
-        <div id="crew-video-8" className="absolute bottom-16 right-1/3 w-32 h-32 bg-gradient-to-br from-teal-500/22 to-blue-500/22 rounded-xl border border-white/14 backdrop-blur-sm scale-85 opacity-65 overflow-hidden">
-          <video 
-            className="w-full h-full object-cover rounded-xl"
-            autoPlay 
-            loop 
-            muted 
-            playsInline
-          >
-            <source src="/crew-video-8.mp4" type="video/mp4" />
-          </video>
         </div>
       </div>
       
