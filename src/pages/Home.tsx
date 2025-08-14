@@ -110,7 +110,7 @@ const Home = () => {
                   {/* CEO */}
                   <div className="flex flex-col items-center space-y-4">
                     <div className="w-16 h-16 rounded-full bg-gradient-to-r from-primary to-primary/80 flex items-center justify-center overflow-hidden">
-                      <img src="/lovable-uploads/fcb326f6-bbbd-49c3-b925-8527956f0952.png" alt="CEO" className="w-full h-full object-cover rounded-full" />
+                      <img src="/lovable-uploads/fcb326f6-bbbd-49c3-b925-8527956f0952.png" alt="CEO" className="w-full h-full object-cover rounded-full" loading="lazy" />
                     </div>
                     <div className="text-xs text-muted-foreground">Leader</div>
                   </div>
@@ -123,7 +123,7 @@ const Home = () => {
                   {/* Marketing Division */}
                   <div className="flex flex-col items-center space-y-4">
                     <div className="w-14 h-14 rounded-full bg-gradient-to-r from-secondary to-secondary/80 flex items-center justify-center overflow-hidden">
-                      <img src="/lovable-uploads/c33a87ea-fc09-484a-a916-58c9777a1e25.png" alt="Marketing Division Leader" className="w-full h-full object-cover rounded-full" />
+                      <img src="/lovable-uploads/c33a87ea-fc09-484a-a916-58c9777a1e25.png" alt="Marketing Division Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
                     </div>
                     <div className="text-xs text-muted-foreground">Marketing</div>
                     
@@ -146,33 +146,33 @@ const Home = () => {
                       {/* Team 1 */}
                       <div className="flex flex-col items-center space-y-2">
                         <div className="w-10 h-10 rounded-full bg-secondary/70 flex items-center justify-center overflow-hidden">
-                          <img src="/lovable-uploads/a77cc591-3d95-420e-91cf-6dcd3459c0c9.png" alt="Team Leader" className="w-full h-full object-cover rounded-full" />
+                          <img src="/lovable-uploads/a77cc591-3d95-420e-91cf-6dcd3459c0c9.png" alt="Team Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
                         </div>
                         <div className="flex space-x-1">
-                           <img src="/lovable-uploads/82747213-07b4-4f0d-9074-7fb071ddef47.png" alt="Team Member" className="w-6 h-6 rounded-full object-cover" />
-                           <img src="/lovable-uploads/6f3f8681-fbf3-47a3-a21d-74688bc3c2a1.png" alt="Team Member" className="w-6 h-6 rounded-full object-cover" />
+                           <img src="/lovable-uploads/82747213-07b4-4f0d-9074-7fb071ddef47.png" alt="Team Member" className="w-6 h-6 rounded-full object-cover" loading="lazy" />
+                           <img src="/lovable-uploads/6f3f8681-fbf3-47a3-a21d-74688bc3c2a1.png" alt="Team Member" className="w-6 h-6 rounded-full object-cover" loading="lazy" />
                         </div>
                       </div>
                       
                       {/* Team 2 */}
                       <div className="flex flex-col items-center space-y-2">
                         <div className="w-10 h-10 rounded-full bg-secondary/70 flex items-center justify-center overflow-hidden">
-                          <img src="/lovable-uploads/5685e774-8cac-4504-b265-453f46b19fb7.png" alt="Team Leader" className="w-full h-full object-cover rounded-full" />
+                          <img src="/lovable-uploads/5685e774-8cac-4504-b265-453f46b19fb7.png" alt="Team Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
                         </div>
                         <div className="flex space-x-1">
-                          <img src="/lovable-uploads/8d5f023d-d8c9-4e4d-929a-77aa58673cad.png" alt="Team Member" className="w-6 h-6 rounded-full object-cover" />
-                          <img src="/lovable-uploads/c2aed439-b50f-4319-bf45-0910935b7026.png" alt="Team Member" className="w-6 h-6 rounded-full object-cover" />
+                          <img src="/lovable-uploads/8d5f023d-d8c9-4e4d-929a-77aa58673cad.png" alt="Team Member" className="w-6 h-6 rounded-full object-cover" loading="lazy" />
+                          <img src="/lovable-uploads/c2aed439-b50f-4319-bf45-0910935b7026.png" alt="Team Member" className="w-6 h-6 rounded-full object-cover" loading="lazy" />
                         </div>
                       </div>
                       
                       {/* Team 3 */}
                       <div className="flex flex-col items-center space-y-2">
                          <div className="w-10 h-10 rounded-full bg-secondary/70 flex items-center justify-center overflow-hidden">
-                           <img src="/lovable-uploads/32ec5171-e196-4f95-8587-d5b2703903da.png" alt="Marketing Team Leader" className="w-full h-full object-cover rounded-full" />
+                           <img src="/lovable-uploads/32ec5171-e196-4f95-8587-d5b2703903da.png" alt="Marketing Team Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
                          </div>
                         <div className="flex space-x-1">
-                          <img src="/lovable-uploads/c1a0dd5b-99cd-4793-bc0d-2e72d34cd95b.png" alt="Team Member" className="w-6 h-6 rounded-full object-cover" />
-                          <img src="/lovable-uploads/7e12f3d9-6831-4df4-a243-dc275bc3b6e8.png" alt="Team Member" className="w-6 h-6 rounded-full object-cover" />
+                          <img src="/lovable-uploads/c1a0dd5b-99cd-4793-bc0d-2e72d34cd95b.png" alt="Team Member" className="w-6 h-6 rounded-full object-cover" loading="lazy" />
+                          <img src="/lovable-uploads/7e12f3d9-6831-4df4-a243-dc275bc3b6e8.png" alt="Team Member" className="w-6 h-6 rounded-full object-cover" loading="lazy" />
                         </div>
                       </div>
                     </div>
@@ -181,7 +181,7 @@ const Home = () => {
                   {/* Platform Division */}
                   <div className="flex flex-col items-center space-y-4">
                     <div className="w-14 h-14 rounded-full bg-gradient-to-r from-accent to-accent/80 flex items-center justify-center overflow-hidden">
-                      <img src="/lovable-uploads/02f4bac4-be03-4759-823e-9d54f558fc2d.png" alt="Platform Division Leader" className="w-full h-full object-cover rounded-full" />
+                      <img src="/lovable-uploads/02f4bac4-be03-4759-823e-9d54f558fc2d.png" alt="Platform Division Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
                     </div>
                     <div className="text-xs text-muted-foreground">Platform</div>
                     
@@ -202,33 +202,33 @@ const Home = () => {
                       {/* Team 1 */}
                       <div className="flex flex-col items-center space-y-2">
                         <div className="w-10 h-10 rounded-full bg-accent/70 flex items-center justify-center overflow-hidden">
-                          <img src="/lovable-uploads/905fe76d-8767-438c-8459-744f8aadaf4e.png" alt="Team Leader" className="w-full h-full object-cover rounded-full" />
+                          <img src="/lovable-uploads/905fe76d-8767-438c-8459-744f8aadaf4e.png" alt="Team Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
                         </div>
                         <div className="flex space-x-1">
-                          <img src="/lovable-uploads/b3383460-9b5b-4286-ae1f-c001292d80a2.png" alt="Team Member" className="w-6 h-6 rounded-full object-cover" />
-                          <img src="/lovable-uploads/a14b0aca-148c-4a8d-86a4-917df413b6d2.png" alt="Team Member" className="w-6 h-6 rounded-full object-cover" />
+                          <img src="/lovable-uploads/b3383460-9b5b-4286-ae1f-c001292d80a2.png" alt="Team Member" className="w-6 h-6 rounded-full object-cover" loading="lazy" />
+                          <img src="/lovable-uploads/a14b0aca-148c-4a8d-86a4-917df413b6d2.png" alt="Team Member" className="w-6 h-6 rounded-full object-cover" loading="lazy" />
                         </div>
                       </div>
                       
                       {/* Team 2 */}
                       <div className="flex flex-col items-center space-y-2">
                          <div className="w-10 h-10 rounded-full bg-accent/70 flex items-center justify-center overflow-hidden">
-                           <img src="/lovable-uploads/2d99278f-ae55-4162-bab6-01b390562a09.png" alt="Platform Team Leader" className="w-full h-full object-cover rounded-full" />
+                           <img src="/lovable-uploads/2d99278f-ae55-4162-bab6-01b390562a09.png" alt="Platform Team Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
                          </div>
                         <div className="flex space-x-1">
-                           <img src="/lovable-uploads/2dd93d2e-af06-4d8f-9aae-988817339d5a.png" alt="Platform Team Member" className="w-6 h-6 rounded-full object-cover" />
-                          <img src="/lovable-uploads/c290987e-0f8e-4025-9cb5-b3e080044311.png" alt="Platform Team Member" className="w-6 h-6 rounded-full object-cover" />
+                           <img src="/lovable-uploads/2dd93d2e-af06-4d8f-9aae-988817339d5a.png" alt="Platform Team Member" className="w-6 h-6 rounded-full object-cover" loading="lazy" />
+                          <img src="/lovable-uploads/c290987e-0f8e-4025-9cb5-b3e080044311.png" alt="Platform Team Member" className="w-6 h-6 rounded-full object-cover" loading="lazy" />
                         </div>
                       </div>
                       
                       {/* Team 3 */}
                       <div className="flex flex-col items-center space-y-2">
                          <div className="w-10 h-10 rounded-full bg-accent/70 flex items-center justify-center overflow-hidden">
-                           <img src="/lovable-uploads/de6b668b-a68e-44f0-8da8-2f5bfe8a6545.png" alt="Platform Team Leader" className="w-full h-full object-cover rounded-full" />
+                           <img src="/lovable-uploads/de6b668b-a68e-44f0-8da8-2f5bfe8a6545.png" alt="Platform Team Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
                          </div>
                         <div className="flex space-x-1">
-                          <img src="/lovable-uploads/16ed2f1f-c52c-43a9-bbb2-85c5c6350585.png" alt="Platform Team Member" className="w-6 h-6 rounded-full object-cover" />
-                           <img src="/lovable-uploads/3491b460-323e-4696-98c0-0a4409d989ae.png" alt="Platform Team Member" className="w-6 h-6 rounded-full object-cover" />
+                          <img src="/lovable-uploads/16ed2f1f-c52c-43a9-bbb2-85c5c6350585.png" alt="Platform Team Member" className="w-6 h-6 rounded-full object-cover" loading="lazy" />
+                           <img src="/lovable-uploads/3491b460-323e-4696-98c0-0a4409d989ae.png" alt="Platform Team Member" className="w-6 h-6 rounded-full object-cover" loading="lazy" />
                         </div>
                       </div>
                     </div>
@@ -237,7 +237,7 @@ const Home = () => {
                   {/* Data Division */}
                   <div className="flex flex-col items-center space-y-4">
                     <div className="w-14 h-14 rounded-full bg-gradient-to-r from-muted to-muted-foreground flex items-center justify-center overflow-hidden">
-                      <img src="/lovable-uploads/1b5b8654-3203-4e33-be69-e907fb27ac94.png" alt="Data Division Leader" className="w-full h-full object-cover rounded-full" />
+                      <img src="/lovable-uploads/1b5b8654-3203-4e33-be69-e907fb27ac94.png" alt="Data Division Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
                     </div>
                     <div className="text-xs text-muted-foreground">Data</div>
                     
@@ -258,22 +258,22 @@ const Home = () => {
                       {/* Team 1 */}
                       <div className="flex flex-col items-center space-y-2">
                         <div className="w-10 h-10 rounded-full bg-muted-foreground/70 flex items-center justify-center overflow-hidden">
-                          <img src="/lovable-uploads/bd844b95-e80c-416b-99b0-6fd44b496446.png" alt="Team Leader" className="w-full h-full object-cover rounded-full" />
+                          <img src="/lovable-uploads/bd844b95-e80c-416b-99b0-6fd44b496446.png" alt="Team Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
                         </div>
                         <div className="flex space-x-1">
-                          <img src="/lovable-uploads/c26e249e-7abe-4de4-a935-06d74100326d.png" alt="Data Team Member" className="w-6 h-6 rounded-full object-cover" />
-                          <img src="/lovable-uploads/739e7983-730a-45fa-906c-fbc3a25e91f0.png" alt="Data Team Member" className="w-6 h-6 rounded-full object-cover" />
+                          <img src="/lovable-uploads/c26e249e-7abe-4de4-a935-06d74100326d.png" alt="Data Team Member" className="w-6 h-6 rounded-full object-cover" loading="lazy" />
+                          <img src="/lovable-uploads/739e7983-730a-45fa-906c-fbc3a25e91f0.png" alt="Data Team Member" className="w-6 h-6 rounded-full object-cover" loading="lazy" />
                         </div>
                       </div>
                       
                       {/* Team 2 */}
                       <div className="flex flex-col items-center space-y-2">
                          <div className="w-10 h-10 rounded-full bg-muted-foreground/70 flex items-center justify-center overflow-hidden">
-                           <img src="/lovable-uploads/06a59546-9642-4ea2-b042-3a1269a4ddb6.png" alt="Data Team Leader" className="w-full h-full object-cover rounded-full" />
+                           <img src="/lovable-uploads/06a59546-9642-4ea2-b042-3a1269a4ddb6.png" alt="Data Team Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
                          </div>
                         <div className="flex space-x-1">
-                          <img src="/lovable-uploads/b0e63467-129e-4f58-8d10-7bc3286ceda8.png" alt="Data Team Member" className="w-6 h-6 rounded-full object-cover" />
-                          <img src="/lovable-uploads/0012d8bd-afeb-4707-bdfc-38991640fce3.png" alt="Data Team Member" className="w-6 h-6 rounded-full object-cover" />
+                          <img src="/lovable-uploads/b0e63467-129e-4f58-8d10-7bc3286ceda8.png" alt="Data Team Member" className="w-6 h-6 rounded-full object-cover" loading="lazy" />
+                          <img src="/lovable-uploads/0012d8bd-afeb-4707-bdfc-38991640fce3.png" alt="Data Team Member" className="w-6 h-6 rounded-full object-cover" loading="lazy" />
                         </div>
                       </div>
                     </div>
@@ -282,7 +282,7 @@ const Home = () => {
                   {/* Fulfillment Division */}
                   <div className="flex flex-col items-center space-y-4">
                     <div className="w-14 h-14 rounded-full bg-gradient-to-r from-green-600 to-green-500 flex items-center justify-center overflow-hidden">
-                      <img src="/lovable-uploads/d3831808-cb36-4e20-8f66-0d0150809a1e.png" alt="Fulfillment Division Leader" className="w-full h-full object-cover rounded-full" />
+                      <img src="/lovable-uploads/d3831808-cb36-4e20-8f66-0d0150809a1e.png" alt="Fulfillment Division Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
                     </div>
                     <div className="text-xs text-muted-foreground">Fulfillment</div>
                     
@@ -300,11 +300,11 @@ const Home = () => {
                     <div className="flex space-x-6 pt-2">
                       <div className="flex flex-col items-center space-y-2">
                          <div className="w-10 h-10 rounded-full bg-green-600/70 flex items-center justify-center overflow-hidden">
-                           <img src="/lovable-uploads/6169bcda-23e9-44e6-aaa2-dfc83bf8f979.png" alt="Fulfillment Team Leader" className="w-full h-full object-cover rounded-full" />
+                           <img src="/lovable-uploads/6169bcda-23e9-44e6-aaa2-dfc83bf8f979.png" alt="Fulfillment Team Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
                          </div>
                         <div className="flex space-x-1">
-                           <img src="/lovable-uploads/471c874b-e576-42ca-9dd6-5432c1faebed.png" alt="Fulfillment Team Member" className="w-6 h-6 rounded-full object-cover" />
-                          <img src="/lovable-uploads/a9d7d297-0543-4d14-9da5-2d51a1c10637.png" alt="Fulfillment Team Member" className="w-6 h-6 rounded-full object-cover" />
+                           <img src="/lovable-uploads/471c874b-e576-42ca-9dd6-5432c1faebed.png" alt="Fulfillment Team Member" className="w-6 h-6 rounded-full object-cover" loading="lazy" />
+                          <img src="/lovable-uploads/a9d7d297-0543-4d14-9da5-2d51a1c10637.png" alt="Fulfillment Team Member" className="w-6 h-6 rounded-full object-cover" loading="lazy" />
                         </div>
                       </div>
                     </div>
@@ -313,7 +313,7 @@ const Home = () => {
                   {/* B2C Subs Capability Boost Division */}
                   <div className="flex flex-col items-center space-y-4">
                     <div className="w-14 h-14 rounded-full bg-gradient-to-r from-purple-600 to-purple-500 flex items-center justify-center overflow-hidden">
-                      <img src="/lovable-uploads/075d631e-1e67-4f0a-b744-36705e88b752.png" alt="B2C Division Leader" className="w-full h-full object-cover rounded-full" />
+                      <img src="/lovable-uploads/075d631e-1e67-4f0a-b744-36705e88b752.png" alt="B2C Division Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
                     </div>
                     <div className="text-xs text-muted-foreground">B2C Subs</div>
                     
@@ -331,11 +331,11 @@ const Home = () => {
                     <div className="flex space-x-6 pt-2">
                       <div className="flex flex-col items-center space-y-2">
                          <div className="w-10 h-10 rounded-full bg-purple-600/70 flex items-center justify-center overflow-hidden">
-                           <img src="/lovable-uploads/2b8c5249-1718-435b-b317-0753f79040fc.png" alt="B2C Team Leader" className="w-full h-full object-cover rounded-full" />
+                           <img src="/lovable-uploads/2b8c5249-1718-435b-b317-0753f79040fc.png" alt="B2C Team Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
                          </div>
                         <div className="flex space-x-1">
-                          <img src="/lovable-uploads/3f553423-99c2-46ad-99b2-874c48d94ff7.png" alt="B2C Team Member" className="w-6 h-6 rounded-full object-cover" />
-                          <img src="/lovable-uploads/3d75cb03-c221-498d-9637-6340d614cbd6.png" alt="B2C Team Member" className="w-6 h-6 rounded-full object-cover" />
+                          <img src="/lovable-uploads/3f553423-99c2-46ad-99b2-874c48d94ff7.png" alt="B2C Team Member" className="w-6 h-6 rounded-full object-cover" loading="lazy" />
+                          <img src="/lovable-uploads/3d75cb03-c221-498d-9637-6340d614cbd6.png" alt="B2C Team Member" className="w-6 h-6 rounded-full object-cover" loading="lazy" />
                         </div>
                       </div>
                     </div>
