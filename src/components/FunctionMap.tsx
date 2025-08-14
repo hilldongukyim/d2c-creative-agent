@@ -254,22 +254,14 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                        onProfileClick?.(item.name);
                      }} role="button" tabIndex={0}>
                                    <div className={`relative ${section.subtitle === "Team Leader" ? "h-20 w-20 md:h-24 md:w-24" : "h-14 w-14 md:h-16 md:w-16"} rounded-full overflow-hidden`}>
-                                    {hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() && crewProfiles[item.name.toLowerCase()]?.videoUrl ? (
-                                      <video 
-                                        src={crewProfiles[item.name.toLowerCase()].videoUrl} 
-                                        autoPlay 
-                                        loop 
-                                        muted 
-                                        className="h-full w-full object-cover"
-                                      />
-                                    ) : item.imageSrc ? (
-                                      <img src={item.imageSrc} alt={`${item.name} profile image`} className="h-full w-full object-cover transition-transform duration-300" loading="lazy" />
-                                    ) : (
-                                      <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
-                                        {item.name.charAt(0)}
-                                      </div>
-                                    )}
-                                  </div>
+                                     {item.imageSrc ? (
+                                       <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" />
+                                     ) : (
+                                       <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
+                                         {item.name.charAt(0)}
+                                       </div>
+                                     )}
+                                   </div>
                                   <div className="mt-2">
                                     <div className="text-sm font-medium text-foreground">{item.name}</div>
                                     <div className="text-xs text-muted-foreground">
@@ -299,15 +291,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                        onProfileClick?.(item.name);
                      }} role="button" tabIndex={0}>
                                  <div className="relative h-20 w-20 md:h-24 md:w-24 rounded-full overflow-hidden">
-                                   {hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() && crewProfiles[item.name.toLowerCase()]?.videoUrl ? (
-                                     <video 
-                                       src={crewProfiles[item.name.toLowerCase()].videoUrl} 
-                                       autoPlay 
-                                       loop 
-                                       muted 
-                                       className="h-full w-full object-cover"
-                                     />
-                                   ) : item.imageSrc ? (
+                                   {item.imageSrc ? (
                                      <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" />
                                    ) : (
                                      <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
