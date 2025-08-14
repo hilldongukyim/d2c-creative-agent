@@ -136,7 +136,7 @@ const Home = () => {
                         </div>
                         <div className="flex space-x-1">
                            <img src="/lovable-uploads/82747213-07b4-4f0d-9074-7fb071ddef47.png" alt="Team Member" className="w-6 h-6 rounded-full object-cover" />
-                          <div className="w-6 h-6 rounded-full bg-secondary/50"></div>
+                           <img src="/lovable-uploads/6f3f8681-fbf3-47a3-a21d-74688bc3c2a1.png" alt="Team Member" className="w-6 h-6 rounded-full object-cover" />
                         </div>
                       </div>
                       
