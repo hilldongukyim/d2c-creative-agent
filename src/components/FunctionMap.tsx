@@ -96,10 +96,14 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     }
   };
 
-  const handleMouseEnter = (event: React.MouseEvent, name: string, role: string) => {
+  const handleMouseEnter = (event: React.MouseEvent, name: string, role: string, teamTitle?: string) => {
     const rect = event.currentTarget.getBoundingClientRect();
+    
+    // For Intern team members, position popup on the left side
+    const isInternMember = teamTitle === "Intern";
+    
     setHoverPosition({
-      x: rect.right + 5,
+      x: isInternMember ? rect.left - 5 : rect.right + 5,
       y: rect.top + rect.height / 2
     });
     setHoveredProfile({name, role});
@@ -403,7 +407,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                   </header>
                   <div className="grid grid-cols-2 gap-3 pointer-events-none">
                      {"items" in group && group.items.map(item => <div key={`${group.title}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" 
-                       onMouseEnter={(e) => handleMouseEnter(e, item.name, item.role)}
+                 onMouseEnter={(e) => handleMouseEnter(e, item.name, item.role, "Intern")}
                        onMouseLeave={handleMouseLeave}
                        onClick={e => {
                    e.stopPropagation();
@@ -434,7 +438,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
           style={{
             left: hoverPosition.x,
             top: hoverPosition.y,
-            transform: 'translateY(-50%)'
+            transform: hoverPosition.x < window.innerWidth / 2 ? 'translateY(-50%)' : 'translateX(-100%) translateY(-50%)'
           }}
         >
           <div className="space-y-4">
