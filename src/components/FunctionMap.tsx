@@ -117,9 +117,13 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
           </div>
           
           {/* Teams Section */}
-          <div className="grid gap-4 md:grid-cols-3">{/* Changed to 3 columns for Promotion layout */}
+          <div className="grid gap-4 md:grid-cols-4">{/* Changed to 4 columns to allow better spacing */}
             {groups.map((group) => (
-              <div key={group.title} className="bg-card/50 rounded-lg p-3 pointer-events-auto">
+              <div key={group.title} className={`bg-card/50 rounded-lg p-3 pointer-events-auto ${
+                group.title === "Promotion" ? "md:col-span-2" : 
+                group.title === "DAM" || group.title === "GEO" ? "md:col-span-1" : 
+                "md:col-span-1"
+              }`}>
                 <header className="mb-4 pointer-events-none">
                   <h3 className="text-lg font-semibold text-foreground">{group.title}</h3>
                 </header>
