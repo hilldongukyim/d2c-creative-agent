@@ -153,9 +153,9 @@ const Home = () => {
                       
                       {/* Team 3 */}
                       <div className="flex flex-col items-center space-y-2">
-                        <div className="w-10 h-10 rounded-full bg-secondary/70 flex items-center justify-center">
-                          <span className="text-white text-xs">TL</span>
-                        </div>
+                         <div className="w-10 h-10 rounded-full bg-secondary/70 flex items-center justify-center overflow-hidden">
+                           <img src="/lovable-uploads/32ec5171-e196-4f95-8587-d5b2703903da.png" alt="Marketing Team Leader" className="w-full h-full object-cover rounded-full" />
+                         </div>
                         <div className="flex space-x-1">
                           <img src="/lovable-uploads/c1a0dd5b-99cd-4793-bc0d-2e72d34cd95b.png" alt="Team Member" className="w-6 h-6 rounded-full object-cover" />
                           <img src="/lovable-uploads/7e12f3d9-6831-4df4-a243-dc275bc3b6e8.png" alt="Team Member" className="w-6 h-6 rounded-full object-cover" />
