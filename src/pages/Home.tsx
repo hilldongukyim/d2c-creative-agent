@@ -243,8 +243,8 @@ const Home = () => {
                   
                   {/* Fulfillment Division */}
                   <div className="flex flex-col items-center space-y-4">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-r from-green-600 to-green-500 flex items-center justify-center">
-                      <span className="text-white text-xs">FULL</span>
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-r from-green-600 to-green-500 flex items-center justify-center overflow-hidden">
+                      <img src="/lovable-uploads/d3831808-cb36-4e20-8f66-0d0150809a1e.png" alt="Fulfillment Division Leader" className="w-full h-full object-cover rounded-full" />
                     </div>
                     <div className="text-xs text-muted-foreground">Fulfillment</div>
                     
