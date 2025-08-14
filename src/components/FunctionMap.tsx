@@ -245,7 +245,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
               {/* GEO and Data Teams in one column */}
               <div className="space-y-4">
                 {/* GEO Team */}
-                {groups.filter(group => group.title === "GEO").map(group => <div key={group.title} className="bg-card border border-border/20 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow pointer-events-auto h-[280px]">
+                {groups.filter(group => group.title === "GEO").map(group => <div key={group.title} className="bg-card border border-border/20 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow pointer-events-auto h-[290px]">
                     <header className="mb-4 pointer-events-none">
                       <h3 className="text-lg font-semibold text-foreground">{group.title}</h3>
                     </header>
