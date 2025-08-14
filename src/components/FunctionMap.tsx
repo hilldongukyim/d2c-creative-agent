@@ -128,12 +128,12 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
               // Define different heights for each team
               const getTeamHeight = (title: string) => {
                 switch (title) {
-                  case "DAM": return "h-80";
-                  case "Promotion": return "h-96";
-                  case "GEO": return "h-64";
-                  case "Data": return "h-72";
-                  case "Intern": return "h-88";
-                  default: return "h-80";
+                  case "DAM": return "h-[420px]";
+                  case "Promotion": return "h-[520px]";
+                  case "GEO": return "h-[200px]";
+                  case "Data": return "h-[200px]";
+                  case "Intern": return "h-[380px]";
+                  default: return "h-[300px]";
                 }
               };
               
