@@ -128,16 +128,16 @@ const Home = () => {
                     <div className="text-xs text-muted-foreground">Marketing</div>
                     
                     {/* Connecting bracket-style line to marketing teams */}
-                    <div className="flex justify-center pt-2">
+                    <div className="flex justify-center pt-0">
                       <div className="relative w-32 h-6">
                         {/* Center vertical line */}
-                        <div className="absolute left-1/2 top-0 w-0.5 h-4 bg-secondary/60 transform -translate-x-1/2"></div>
+                        <div className="absolute left-1/2 top-0 w-0.5 h-4 bg-muted-foreground/40 transform -translate-x-1/2"></div>
                         {/* Horizontal connecting line */}
-                        <div className="absolute top-4 left-2 right-2 h-0.5 bg-secondary/60"></div>
+                        <div className="absolute top-4 left-2 right-2 h-0.5 bg-muted-foreground/40"></div>
                         {/* Left vertical line */}
-                        <div className="absolute left-2 top-4 w-0.5 h-2 bg-secondary/60"></div>
+                        <div className="absolute left-2 top-4 w-0.5 h-2 bg-muted-foreground/40"></div>
                         {/* Right vertical line */}
-                        <div className="absolute right-2 top-4 w-0.5 h-2 bg-secondary/60"></div>
+                        <div className="absolute right-2 top-4 w-0.5 h-2 bg-muted-foreground/40"></div>
                       </div>
                     </div>
                     
