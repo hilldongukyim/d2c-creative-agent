@@ -322,7 +322,7 @@ const PTOGallery = () => {
           <div className="mb-6">
             <Button 
               variant="ghost" 
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/home")}
               className="mb-4 text-gray-400 hover:text-gray-300"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
