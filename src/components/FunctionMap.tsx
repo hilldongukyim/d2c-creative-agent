@@ -126,8 +126,8 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
                           {section.subtitle}
                         </h4>
                         {group.title === "Promotion" && section.subtitle !== "Team Leader" ? (
-                          // Horizontal layout for Analytics and Content Creation sections
-                          <div className="flex gap-4 pointer-events-none">
+                          // Vertical layout for Analytics and Content Creation sections
+                          <div className="flex flex-col gap-3 pointer-events-none">
                             {section.items.map((item) => (
                               <div
                                 key={`${group.title}-${section.subtitle}-${item.name}`}
