@@ -62,7 +62,7 @@ const CoverPage = () => {
                 muted 
                 playsInline
               >
-                <source src="/crew-video-2.mp4" type="video/mp4" />
+                <source src="/crew-video-2-new.mp4" type="video/mp4" />
               </video>
             </div>
 
@@ -185,7 +185,7 @@ const CoverPage = () => {
                 muted 
                 playsInline
               >
-                <source src="/crew-video-2.mp4" type="video/mp4" />
+                <source src="/crew-video-2-new.mp4" type="video/mp4" />
               </video>
             </div>
 
