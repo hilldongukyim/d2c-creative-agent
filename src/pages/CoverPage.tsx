@@ -66,11 +66,17 @@ const CoverPage = () => {
               </video>
             </div>
 
-            {/* Video 3 - Green coming soon */}
-            <div id="crew-video-3" className="w-50 h-40 bg-gradient-to-br from-green-500/25 to-emerald-500/25 rounded-3xl border border-white/15 backdrop-blur-sm flex-shrink-0 shadow-lg">
-              <div className="w-full h-full rounded-3xl bg-black/20 flex items-center justify-center">
-                <div className="text-white/65 text-sm">Coming Soon</div>
-              </div>
+            {/* Video 3 - Green video */}
+            <div id="crew-video-3" className="w-50 h-40 bg-gradient-to-br from-green-500/25 to-emerald-500/25 rounded-3xl border border-white/15 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
+              <video 
+                className="w-full h-full object-cover rounded-3xl"
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+              >
+                <source src="https://drive.google.com/uc?export=download&id=1VU8qK7PNTVc0zuciT3e-G0aYaKXe44Xh" type="video/mp4" />
+              </video>
             </div>
 
             {/* Video 4 - Orange video */}
@@ -183,11 +189,17 @@ const CoverPage = () => {
               </video>
             </div>
 
-            {/* Video 3 - Green coming soon (duplicate) */}
-            <div className="w-50 h-40 bg-gradient-to-br from-green-500/25 to-emerald-500/25 rounded-3xl border border-white/15 backdrop-blur-sm flex-shrink-0 shadow-lg">
-              <div className="w-full h-full rounded-3xl bg-black/20 flex items-center justify-center">
-                <div className="text-white/65 text-sm">Coming Soon</div>
-              </div>
+            {/* Video 3 - Green video (duplicate) */}
+            <div className="w-50 h-40 bg-gradient-to-br from-green-500/25 to-emerald-500/25 rounded-3xl border border-white/15 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
+              <video 
+                className="w-full h-full object-cover rounded-3xl"
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+              >
+                <source src="https://drive.google.com/uc?export=download&id=1VU8qK7PNTVc0zuciT3e-G0aYaKXe44Xh" type="video/mp4" />
+              </video>
             </div>
 
             {/* Video 4 - Orange video (duplicate) */}
