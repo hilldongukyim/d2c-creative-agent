@@ -99,8 +99,8 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
   const handleMouseEnter = (event: React.MouseEvent, name: string, role: string) => {
     const rect = event.currentTarget.getBoundingClientRect();
     setHoverPosition({
-      x: rect.right + 10,
-      y: rect.top
+      x: rect.right + 5,
+      y: rect.top + rect.height / 2
     });
     setHoveredProfile({name, role});
   };
