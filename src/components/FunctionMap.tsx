@@ -438,11 +438,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
           }}
         >
           <div className="space-y-4">
-            <div className="text-center">
-              <h4 className="text-lg font-semibold text-foreground">{hoveredProfile.name}</h4>
-              <p className="text-sm text-muted-foreground">{hoveredProfile.role}</p>
-            </div>
-            
             <div className="space-y-3">
               <div className="text-sm text-foreground leading-relaxed">
                 <strong>약력:</strong> {crewProfiles[hoveredProfile.name.toLowerCase()]?.description || 
