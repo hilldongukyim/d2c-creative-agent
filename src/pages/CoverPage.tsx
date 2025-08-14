@@ -35,61 +35,61 @@ const CoverPage = () => {
       {/* Background decoration */}
       <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-secondary/5" />
       
-      {/* Crew Videos - randomly positioned with depth */}
+      {/* Crew Videos - repositioned closer to center with larger sizes */}
       <div className="absolute inset-0 pointer-events-none">
-        {/* Video 1 - Large, close */}
-        <div className="absolute top-20 left-20 w-40 h-40 bg-gradient-to-br from-purple-500/30 to-pink-500/30 rounded-2xl border border-white/20 backdrop-blur-sm scale-110 opacity-90">
+        {/* Video 1 - Extra large, close to center top-left */}
+        <div className="absolute top-32 left-1/4 w-52 h-52 bg-gradient-to-br from-purple-500/35 to-pink-500/35 rounded-3xl border border-white/25 backdrop-blur-sm scale-115 opacity-95">
+          <div className="w-full h-full rounded-3xl bg-black/20 flex items-center justify-center">
+            <div className="text-white/80 text-base font-medium">Coming Soon</div>
+          </div>
+        </div>
+
+        {/* Video 2 - Large, close to center top-right */}
+        <div className="absolute top-28 right-1/4 w-44 h-44 bg-gradient-to-br from-blue-500/30 to-cyan-500/30 rounded-2xl border border-white/20 backdrop-blur-sm scale-105 opacity-85">
           <div className="w-full h-full rounded-2xl bg-black/20 flex items-center justify-center">
+            <div className="text-white/75 text-sm font-medium">Coming Soon</div>
+          </div>
+        </div>
+
+        {/* Video 3 - Medium, mid-left closer to center */}
+        <div className="absolute top-1/2 left-1/5 w-36 h-36 bg-gradient-to-br from-green-500/25 to-emerald-500/25 rounded-2xl border border-white/15 backdrop-blur-sm scale-90 opacity-75 transform -translate-y-1/2">
+          <div className="w-full h-full rounded-2xl bg-black/20 flex items-center justify-center">
+            <div className="text-white/65 text-sm">Coming Soon</div>
+          </div>
+        </div>
+
+        {/* Video 4 - Extra large, close to center right */}
+        <div className="absolute top-1/2 right-1/5 w-56 h-56 bg-gradient-to-br from-orange-500/35 to-red-500/35 rounded-3xl border border-white/25 backdrop-blur-sm scale-120 opacity-90 transform -translate-y-1/2">
+          <div className="w-full h-full rounded-3xl bg-black/20 flex items-center justify-center">
+            <div className="text-white/80 text-base font-medium">Coming Soon</div>
+          </div>
+        </div>
+
+        {/* Video 5 - Large, close to center bottom-left */}
+        <div className="absolute bottom-32 left-1/4 w-48 h-48 bg-gradient-to-br from-yellow-500/30 to-amber-500/30 rounded-3xl border border-white/20 backdrop-blur-sm scale-110 opacity-80">
+          <div className="w-full h-full rounded-3xl bg-black/20 flex items-center justify-center">
             <div className="text-white/70 text-sm font-medium">Coming Soon</div>
           </div>
         </div>
 
-        {/* Video 2 - Medium, middle distance */}
-        <div className="absolute top-16 right-24 w-32 h-32 bg-gradient-to-br from-blue-500/25 to-cyan-500/25 rounded-2xl border border-white/15 backdrop-blur-sm scale-95 opacity-75">
+        {/* Video 6 - Medium, bottom-right closer to center */}
+        <div className="absolute bottom-28 right-1/4 w-40 h-40 bg-gradient-to-br from-indigo-500/25 to-purple-500/25 rounded-2xl border border-white/15 backdrop-blur-sm scale-95 opacity-70">
           <div className="w-full h-full rounded-2xl bg-black/20 flex items-center justify-center">
-            <div className="text-white/60 text-xs">Coming Soon</div>
+            <div className="text-white/60 text-sm">Coming Soon</div>
           </div>
         </div>
 
-        {/* Video 3 - Small, far */}
-        <div className="absolute top-1/2 left-12 w-24 h-24 bg-gradient-to-br from-green-500/20 to-emerald-500/20 rounded-xl border border-white/10 backdrop-blur-sm scale-80 opacity-60 transform -translate-y-1/2">
-          <div className="w-full h-full rounded-xl bg-black/15 flex items-center justify-center">
-            <div className="text-white/50 text-xs">Coming Soon</div>
-          </div>
-        </div>
-
-        {/* Video 4 - Large, close */}
-        <div className="absolute top-1/2 right-16 w-44 h-44 bg-gradient-to-br from-orange-500/30 to-red-500/30 rounded-2xl border border-white/20 backdrop-blur-sm scale-105 opacity-85 transform -translate-y-1/2">
-          <div className="w-full h-full rounded-2xl bg-black/20 flex items-center justify-center">
-            <div className="text-white/70 text-sm font-medium">Coming Soon</div>
-          </div>
-        </div>
-
-        {/* Video 5 - Medium, middle distance */}
-        <div className="absolute bottom-24 left-32 w-36 h-36 bg-gradient-to-br from-yellow-500/25 to-amber-500/25 rounded-2xl border border-white/15 backdrop-blur-sm scale-90 opacity-70">
-          <div className="w-full h-full rounded-2xl bg-black/20 flex items-center justify-center">
-            <div className="text-white/60 text-xs">Coming Soon</div>
-          </div>
-        </div>
-
-        {/* Video 6 - Small, far */}
-        <div className="absolute bottom-20 right-20 w-28 h-28 bg-gradient-to-br from-indigo-500/20 to-purple-500/20 rounded-xl border border-white/10 backdrop-blur-sm scale-75 opacity-55">
-          <div className="w-full h-full rounded-xl bg-black/15 flex items-center justify-center">
-            <div className="text-white/50 text-xs">Coming Soon</div>
-          </div>
-        </div>
-
-        {/* Video 7 - Extra small, very far */}
-        <div className="absolute top-24 left-1/3 w-20 h-20 bg-gradient-to-br from-rose-500/15 to-pink-500/15 rounded-lg border border-white/8 backdrop-blur-sm scale-70 opacity-45">
-          <div className="w-full h-full rounded-lg bg-black/10 flex items-center justify-center">
+        {/* Video 7 - Small, far left for depth */}
+        <div className="absolute top-20 left-12 w-24 h-24 bg-gradient-to-br from-rose-500/15 to-pink-500/15 rounded-xl border border-white/8 backdrop-blur-sm scale-70 opacity-45">
+          <div className="w-full h-full rounded-xl bg-black/10 flex items-center justify-center">
             <div className="text-white/40 text-xs">Coming Soon</div>
           </div>
         </div>
 
-        {/* Video 8 - Medium-large, close */}
-        <div className="absolute bottom-16 right-1/3 w-38 h-38 bg-gradient-to-br from-teal-500/28 to-blue-500/28 rounded-2xl border border-white/18 backdrop-blur-sm scale-100 opacity-80">
-          <div className="w-full h-full rounded-2xl bg-black/20 flex items-center justify-center">
-            <div className="text-white/65 text-sm">Coming Soon</div>
+        {/* Video 8 - Small, far right for depth */}
+        <div className="absolute bottom-16 right-12 w-28 h-28 bg-gradient-to-br from-teal-500/18 to-blue-500/18 rounded-xl border border-white/10 backdrop-blur-sm scale-75 opacity-50">
+          <div className="w-full h-full rounded-xl bg-black/15 flex items-center justify-center">
+            <div className="text-white/45 text-xs">Coming Soon</div>
           </div>
         </div>
       </div>
