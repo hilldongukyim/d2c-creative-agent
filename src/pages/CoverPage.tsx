@@ -359,7 +359,7 @@ const CoverPage = () => {
       </div>
       
       {/* Main content */}
-      <div className="text-center space-y-8 z-10 max-w-4xl mx-auto px-6 -mt-32">
+      <div className="text-center space-y-8 z-10 max-w-4xl mx-auto px-6 -mt-40">
         {/* Title */}
         <div className="space-y-4">
           <h1 className="text-7xl md:text-8xl font-bold bg-gradient-to-b from-gradient-title-start to-gradient-title-end bg-clip-text text-transparent">
