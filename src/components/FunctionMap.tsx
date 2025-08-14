@@ -186,7 +186,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                  </div>)}
 
               {/* Promotion Team */}
-              {groups.filter(group => group.title === "Promotion").map(group => <div key={group.title} className="bg-card border border-border/20 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow pointer-events-auto h-[630px]">
+              {groups.filter(group => group.title === "Promotion").map(group => <div key={group.title} className="bg-card border border-border/20 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow pointer-events-auto h-[600px]">
                   <header className="mb-4 pointer-events-none">
                     <h3 className="text-lg font-semibold text-foreground">{group.title}</h3>
                   </header>
