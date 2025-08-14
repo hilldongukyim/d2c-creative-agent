@@ -319,13 +319,13 @@ const Home = () => {
       <AlertDialog open={comingSoonOpen} onOpenChange={setComingSoonOpen}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Coming soon</AlertDialogTitle>
+            <AlertDialogTitle>On the Job Training</AlertDialogTitle>
             <AlertDialogDescription>
-              {selectedName ? `${selectedName} 기능은 곧 제공될 예정입니다.` : "해당 기능은 곧 제공될 예정입니다."}
+              {selectedName ? `${selectedName} will coming soon.` : "This feature will coming soon."}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogAction autoFocus>확인</AlertDialogAction>
+            <AlertDialogAction autoFocus>Close</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
