@@ -24,7 +24,7 @@ const CoverPage = () => {
 //{ src: "/crew-video-9.mp4", gradient: "bg-gradient-to-br from-emerald-500/25 to-green-500/25", id: "crew-video-9" },
 //{ src: "/crew-video-10.mp4", gradient: "bg-gradient-to-br from-violet-500/25 to-purple-500/25", id: "crew-video-10" },
     { src: "/crew-video-11.mp4", gradient: "bg-gradient-to-br from-cyan-500/25 to-blue-500/25", id: "crew-video-11" },
-    { src: "/crew-video-12.mp4", gradient: "bg-gradient-to-br from-amber-500/25 to-orange-500/25", id: "crew-video-12" },
+//{ src: "/crew-video-12.mp4", gradient: "bg-gradient-to-br from-amber-500/25 to-orange-500/25", id: "crew-video-12" },
   ];
 
   useEffect(() => {
