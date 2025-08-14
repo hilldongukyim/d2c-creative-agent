@@ -273,7 +273,7 @@ const Home = () => {
                     </div>
                     
                     {/* B2C Subs Team */}
-                    <div className="flex space-x-6 pt-2">
+                    <div className="flex space-x-6 pt-2 justify-center">
                       <div className="flex flex-col items-center space-y-2">
                         <div className="w-10 h-10 rounded-full bg-purple-600/70 flex items-center justify-center">
                           <span className="text-white text-xs">TL</span>
