@@ -201,7 +201,7 @@ const Home = () => {
                            <img src="/lovable-uploads/de6b668b-a68e-44f0-8da8-2f5bfe8a6545.png" alt="Platform Team Leader" className="w-full h-full object-cover rounded-full" />
                          </div>
                         <div className="flex space-x-1">
-                          <div className="w-6 h-6 rounded-full bg-accent/50"></div>
+                          <img src="/lovable-uploads/16ed2f1f-c52c-43a9-bbb2-85c5c6350585.png" alt="Platform Team Member" className="w-6 h-6 rounded-full object-cover" />
                            <img src="/lovable-uploads/3491b460-323e-4696-98c0-0a4409d989ae.png" alt="Platform Team Member" className="w-6 h-6 rounded-full object-cover" />
                         </div>
                       </div>
