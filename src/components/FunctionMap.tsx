@@ -111,7 +111,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
                   />
                 </div>
                 <div className="text-center">
-                  <div className="text-sm font-semibold text-foreground mb-1">vee</div>
+                  <div className="text-sm font-semibold text-foreground mb-1">Vee</div>
                   <div className="text-xs text-muted-foreground">Central Command & Orchestration</div>
                 </div>
               </div>
