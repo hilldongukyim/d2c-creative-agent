@@ -41,7 +41,7 @@ const CoverPage = () => {
           {/* First set of videos */}
           <div className="flex space-x-4 min-w-max">
             {/* Video 1 - Purple video */}
-            <div id="crew-video-1" className="w-80 h-60 bg-gradient-to-br from-purple-500/35 to-pink-500/35 rounded-3xl border border-white/25 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
+            <div id="crew-video-1" className="w-40 h-60 bg-gradient-to-br from-purple-500/35 to-pink-500/35 rounded-3xl border border-white/25 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
               <video 
                 className="w-full h-full object-cover rounded-3xl"
                 autoPlay 
@@ -54,7 +54,7 @@ const CoverPage = () => {
             </div>
 
             {/* Video 2 - Blue video */}
-            <div id="crew-video-2" className="w-80 h-60 bg-gradient-to-br from-blue-500/30 to-cyan-500/30 rounded-3xl border border-white/20 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
+            <div id="crew-video-2" className="w-40 h-60 bg-gradient-to-br from-blue-500/30 to-cyan-500/30 rounded-3xl border border-white/20 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
               <video 
                 className="w-full h-full object-cover rounded-3xl"
                 autoPlay 
@@ -67,7 +67,7 @@ const CoverPage = () => {
             </div>
 
             {/* Video 3 - Green video */}
-            <div id="crew-video-3" className="w-80 h-60 bg-gradient-to-br from-green-500/25 to-emerald-500/25 rounded-3xl border border-white/15 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
+            <div id="crew-video-3" className="w-40 h-60 bg-gradient-to-br from-green-500/25 to-emerald-500/25 rounded-3xl border border-white/15 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
               <video 
                 className="w-full h-full object-cover rounded-3xl"
                 autoPlay 
@@ -80,7 +80,7 @@ const CoverPage = () => {
             </div>
 
             {/* Video 4 - Orange video */}
-            <div id="crew-video-4" className="w-80 h-60 bg-gradient-to-br from-orange-500/35 to-red-500/35 rounded-3xl border border-white/25 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
+            <div id="crew-video-4" className="w-40 h-60 bg-gradient-to-br from-orange-500/35 to-red-500/35 rounded-3xl border border-white/25 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
               <video 
                 className="w-full h-full object-cover rounded-3xl"
                 autoPlay 
@@ -93,14 +93,14 @@ const CoverPage = () => {
             </div>
 
             {/* Video 5 - Yellow coming soon */}
-            <div id="crew-video-5" className="w-80 h-60 bg-gradient-to-br from-yellow-500/30 to-amber-500/30 rounded-3xl border border-white/20 backdrop-blur-sm flex-shrink-0 shadow-lg">
+            <div id="crew-video-5" className="w-40 h-60 bg-gradient-to-br from-yellow-500/30 to-amber-500/30 rounded-3xl border border-white/20 backdrop-blur-sm flex-shrink-0 shadow-lg">
               <div className="w-full h-full rounded-3xl bg-black/20 flex items-center justify-center">
                 <div className="text-white/70 text-sm font-medium">Coming Soon</div>
               </div>
             </div>
 
             {/* Video 6 - Indigo video */}
-            <div id="crew-video-6" className="w-80 h-60 bg-gradient-to-br from-indigo-500/25 to-purple-500/25 rounded-3xl border border-white/15 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
+            <div id="crew-video-6" className="w-40 h-60 bg-gradient-to-br from-indigo-500/25 to-purple-500/25 rounded-3xl border border-white/15 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
               <video 
                 className="w-full h-full object-cover rounded-3xl"
                 autoPlay 
@@ -113,14 +113,14 @@ const CoverPage = () => {
             </div>
 
             {/* Video 7 - Rose coming soon */}
-            <div id="crew-video-7" className="w-80 h-60 bg-gradient-to-br from-rose-500/20 to-pink-500/20 rounded-3xl border border-white/12 backdrop-blur-sm flex-shrink-0 shadow-lg">
+            <div id="crew-video-7" className="w-40 h-60 bg-gradient-to-br from-rose-500/20 to-pink-500/20 rounded-3xl border border-white/12 backdrop-blur-sm flex-shrink-0 shadow-lg">
               <div className="w-full h-full rounded-3xl bg-black/15 flex items-center justify-center">
                 <div className="text-white/50 text-sm">Coming Soon</div>
               </div>
             </div>
 
             {/* Video 8 - Teal video */}
-            <div id="crew-video-8" className="w-80 h-60 bg-gradient-to-br from-teal-500/22 to-blue-500/22 rounded-3xl border border-white/14 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
+            <div id="crew-video-8" className="w-40 h-60 bg-gradient-to-br from-teal-500/22 to-blue-500/22 rounded-3xl border border-white/14 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
               <video 
                 className="w-full h-full object-cover rounded-3xl"
                 autoPlay 
@@ -133,28 +133,28 @@ const CoverPage = () => {
             </div>
 
             {/* Video 9 - Emerald coming soon */}
-            <div id="crew-video-9" className="w-80 h-60 bg-gradient-to-br from-emerald-500/25 to-green-500/25 rounded-3xl border border-white/15 backdrop-blur-sm flex-shrink-0 shadow-lg">
+            <div id="crew-video-9" className="w-40 h-60 bg-gradient-to-br from-emerald-500/25 to-green-500/25 rounded-3xl border border-white/15 backdrop-blur-sm flex-shrink-0 shadow-lg">
               <div className="w-full h-full rounded-3xl bg-black/20 flex items-center justify-center">
                 <div className="text-white/65 text-sm">Coming Soon</div>
               </div>
             </div>
 
             {/* Video 10 - Violet coming soon */}
-            <div id="crew-video-10" className="w-80 h-60 bg-gradient-to-br from-violet-500/25 to-purple-500/25 rounded-3xl border border-white/15 backdrop-blur-sm flex-shrink-0 shadow-lg">
+            <div id="crew-video-10" className="w-40 h-60 bg-gradient-to-br from-violet-500/25 to-purple-500/25 rounded-3xl border border-white/15 backdrop-blur-sm flex-shrink-0 shadow-lg">
               <div className="w-full h-full rounded-3xl bg-black/20 flex items-center justify-center">
                 <div className="text-white/65 text-sm">Coming Soon</div>
               </div>
             </div>
 
             {/* Video 11 - Cyan coming soon */}
-            <div id="crew-video-11" className="w-80 h-60 bg-gradient-to-br from-cyan-500/25 to-blue-500/25 rounded-3xl border border-white/15 backdrop-blur-sm flex-shrink-0 shadow-lg">
+            <div id="crew-video-11" className="w-40 h-60 bg-gradient-to-br from-cyan-500/25 to-blue-500/25 rounded-3xl border border-white/15 backdrop-blur-sm flex-shrink-0 shadow-lg">
               <div className="w-full h-full rounded-3xl bg-black/20 flex items-center justify-center">
                 <div className="text-white/65 text-sm">Coming Soon</div>
               </div>
             </div>
 
             {/* Video 12 - Amber coming soon */}
-            <div id="crew-video-12" className="w-80 h-60 bg-gradient-to-br from-amber-500/25 to-orange-500/25 rounded-3xl border border-white/15 backdrop-blur-sm flex-shrink-0 shadow-lg">
+            <div id="crew-video-12" className="w-40 h-60 bg-gradient-to-br from-amber-500/25 to-orange-500/25 rounded-3xl border border-white/15 backdrop-blur-sm flex-shrink-0 shadow-lg">
               <div className="w-full h-full rounded-3xl bg-black/20 flex items-center justify-center">
                 <div className="text-white/65 text-sm">Coming Soon</div>
               </div>
@@ -164,7 +164,7 @@ const CoverPage = () => {
           {/* Duplicate set for seamless loop */}
           <div className="flex space-x-4 min-w-max">
             {/* Video 1 - Purple video (duplicate) */}
-            <div className="w-80 h-60 bg-gradient-to-br from-purple-500/35 to-pink-500/35 rounded-3xl border border-white/25 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
+            <div className="w-40 h-60 bg-gradient-to-br from-purple-500/35 to-pink-500/35 rounded-3xl border border-white/25 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
               <video 
                 className="w-full h-full object-cover rounded-3xl"
                 autoPlay 
@@ -177,7 +177,7 @@ const CoverPage = () => {
             </div>
 
             {/* Video 2 - Blue video (duplicate) */}
-            <div className="w-80 h-60 bg-gradient-to-br from-blue-500/30 to-cyan-500/30 rounded-3xl border border-white/20 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
+            <div className="w-40 h-60 bg-gradient-to-br from-blue-500/30 to-cyan-500/30 rounded-3xl border border-white/20 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
               <video 
                 className="w-full h-full object-cover rounded-3xl"
                 autoPlay 
@@ -190,7 +190,7 @@ const CoverPage = () => {
             </div>
 
             {/* Video 3 - Green video (duplicate) */}
-            <div className="w-80 h-60 bg-gradient-to-br from-green-500/25 to-emerald-500/25 rounded-3xl border border-white/15 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
+            <div className="w-40 h-60 bg-gradient-to-br from-green-500/25 to-emerald-500/25 rounded-3xl border border-white/15 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
               <video 
                 className="w-full h-full object-cover rounded-3xl"
                 autoPlay 
@@ -203,7 +203,7 @@ const CoverPage = () => {
             </div>
 
             {/* Video 4 - Orange video (duplicate) */}
-            <div className="w-80 h-60 bg-gradient-to-br from-orange-500/35 to-red-500/35 rounded-3xl border border-white/25 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
+            <div className="w-40 h-60 bg-gradient-to-br from-orange-500/35 to-red-500/35 rounded-3xl border border-white/25 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
               <video 
                 className="w-full h-full object-cover rounded-3xl"
                 autoPlay 
@@ -216,14 +216,14 @@ const CoverPage = () => {
             </div>
 
             {/* Video 5 - Yellow coming soon (duplicate) */}
-            <div className="w-80 h-60 bg-gradient-to-br from-yellow-500/30 to-amber-500/30 rounded-3xl border border-white/20 backdrop-blur-sm flex-shrink-0 shadow-lg">
+            <div className="w-40 h-60 bg-gradient-to-br from-yellow-500/30 to-amber-500/30 rounded-3xl border border-white/20 backdrop-blur-sm flex-shrink-0 shadow-lg">
               <div className="w-full h-full rounded-3xl bg-black/20 flex items-center justify-center">
                 <div className="text-white/70 text-sm font-medium">Coming Soon</div>
               </div>
             </div>
 
             {/* Video 6 - Indigo video (duplicate) */}
-            <div className="w-80 h-60 bg-gradient-to-br from-indigo-500/25 to-purple-500/25 rounded-3xl border border-white/15 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
+            <div className="w-40 h-60 bg-gradient-to-br from-indigo-500/25 to-purple-500/25 rounded-3xl border border-white/15 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
               <video 
                 className="w-full h-full object-cover rounded-3xl"
                 autoPlay 
@@ -236,14 +236,14 @@ const CoverPage = () => {
             </div>
 
             {/* Video 7 - Rose coming soon (duplicate) */}
-            <div className="w-80 h-60 bg-gradient-to-br from-rose-500/20 to-pink-500/20 rounded-3xl border border-white/12 backdrop-blur-sm flex-shrink-0 shadow-lg">
+            <div className="w-40 h-60 bg-gradient-to-br from-rose-500/20 to-pink-500/20 rounded-3xl border border-white/12 backdrop-blur-sm flex-shrink-0 shadow-lg">
               <div className="w-full h-full rounded-3xl bg-black/15 flex items-center justify-center">
                 <div className="text-white/50 text-sm">Coming Soon</div>
               </div>
             </div>
 
             {/* Video 8 - Teal video (duplicate) */}
-            <div className="w-80 h-60 bg-gradient-to-br from-teal-500/22 to-blue-500/22 rounded-3xl border border-white/14 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
+            <div className="w-40 h-60 bg-gradient-to-br from-teal-500/22 to-blue-500/22 rounded-3xl border border-white/14 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
               <video 
                 className="w-full h-full object-cover rounded-3xl"
                 autoPlay 
@@ -256,28 +256,28 @@ const CoverPage = () => {
             </div>
 
             {/* Video 9 - Emerald coming soon (duplicate) */}
-            <div className="w-80 h-60 bg-gradient-to-br from-emerald-500/25 to-green-500/25 rounded-3xl border border-white/15 backdrop-blur-sm flex-shrink-0 shadow-lg">
+            <div className="w-40 h-60 bg-gradient-to-br from-emerald-500/25 to-green-500/25 rounded-3xl border border-white/15 backdrop-blur-sm flex-shrink-0 shadow-lg">
               <div className="w-full h-full rounded-3xl bg-black/20 flex items-center justify-center">
                 <div className="text-white/65 text-sm">Coming Soon</div>
               </div>
             </div>
 
             {/* Video 10 - Violet coming soon (duplicate) */}
-            <div className="w-80 h-60 bg-gradient-to-br from-violet-500/25 to-purple-500/25 rounded-3xl border border-white/15 backdrop-blur-sm flex-shrink-0 shadow-lg">
+            <div className="w-40 h-60 bg-gradient-to-br from-violet-500/25 to-purple-500/25 rounded-3xl border border-white/15 backdrop-blur-sm flex-shrink-0 shadow-lg">
               <div className="w-full h-full rounded-3xl bg-black/20 flex items-center justify-center">
                 <div className="text-white/65 text-sm">Coming Soon</div>
               </div>
             </div>
 
             {/* Video 11 - Cyan coming soon (duplicate) */}
-            <div className="w-80 h-60 bg-gradient-to-br from-cyan-500/25 to-blue-500/25 rounded-3xl border border-white/15 backdrop-blur-sm flex-shrink-0 shadow-lg">
+            <div className="w-40 h-60 bg-gradient-to-br from-cyan-500/25 to-blue-500/25 rounded-3xl border border-white/15 backdrop-blur-sm flex-shrink-0 shadow-lg">
               <div className="w-full h-full rounded-3xl bg-black/20 flex items-center justify-center">
                 <div className="text-white/65 text-sm">Coming Soon</div>
               </div>
             </div>
 
             {/* Video 12 - Amber coming soon (duplicate) */}
-            <div className="w-80 h-60 bg-gradient-to-br from-amber-500/25 to-orange-500/25 rounded-3xl border border-white/15 backdrop-blur-sm flex-shrink-0 shadow-lg">
+            <div className="w-40 h-60 bg-gradient-to-br from-amber-500/25 to-orange-500/25 rounded-3xl border border-white/15 backdrop-blur-sm flex-shrink-0 shadow-lg">
               <div className="w-full h-full rounded-3xl bg-black/20 flex items-center justify-center">
                 <div className="text-white/65 text-sm">Coming Soon</div>
               </div>
