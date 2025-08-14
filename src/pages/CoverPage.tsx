@@ -37,7 +37,7 @@ const CoverPage = () => {
       
       {/* Crew Videos - horizontal banner slide */}
       <div className="absolute bottom-12 left-0 w-full h-72 overflow-hidden pointer-events-none">
-        <div className="flex animate-slide space-x-4">
+        <div className="flex animate-slide space-x-4" style={{width: 'calc(200% + 100px)'}}>
           {/* First set of videos */}
           <div className="flex space-x-4 min-w-max">
             {/* Video 1 - Purple video */}
