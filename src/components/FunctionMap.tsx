@@ -61,13 +61,20 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
       ],
     },
     {
-      title: "Intern",
+      title: "Support",
       items: [
-        { name: "Kai", role: "Background Remover", imageSrc: "/lovable-uploads/84e535ab-1fa5-418e-93aa-73fa3b361219.png" },
-        { name: "Maple", role: "Feedback Taker", imageSrc: "/lovable-uploads/5c13c299-f9c2-46a9-9b91-4695964179a5.png" },
-        { name: "Penny", role: "Mailing", imageSrc: "/lovable-uploads/5a6db127-b9e3-4f85-afbb-11b477555583.png" },
-        { name: "Noa", role: "Copy Writing", imageSrc: "/lovable-uploads/0fbe5af8-19f4-4ff0-8c9f-3f1a2c010572.png" },
+        { name: "Alex", role: "Technical Support", imageSrc: "/lovable-uploads/535b910d-712f-4c89-9ad2-55054489bcee.png" },
+        { name: "Sam", role: "Quality Assurance", imageSrc: "/lovable-uploads/78bed169-63a0-4583-b7d3-487b12042967.png" },
       ],
+     },
+     {
+       title: "Intern",
+       items: [
+         { name: "Kai", role: "Background Remover", imageSrc: "/lovable-uploads/84e535ab-1fa5-418e-93aa-73fa3b361219.png" },
+         { name: "Maple", role: "Feedback Taker", imageSrc: "/lovable-uploads/5c13c299-f9c2-46a9-9b91-4695964179a5.png" },
+         { name: "Penny", role: "Mailing", imageSrc: "/lovable-uploads/5a6db127-b9e3-4f85-afbb-11b477555583.png" },
+         { name: "Noa", role: "Copy Writing", imageSrc: "/lovable-uploads/0fbe5af8-19f4-4ff0-8c9f-3f1a2c010572.png" },
+       ],
     },
   ];
 
@@ -112,9 +119,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
           </div>
           
           {/* Teams Section */}
-          <div className="grid gap-6 md:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-4">
             {groups.map((group) => (
-              <div key={group.title} className="bg-card/50 rounded-lg p-4">
+              <div key={group.title} className="bg-card/50 rounded-lg p-3">
             <header className="mb-4">
               <h3 className="text-lg font-semibold text-foreground">{group.title}</h3>
             </header>
