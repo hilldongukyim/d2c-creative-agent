@@ -129,7 +129,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
                             <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground pointer-events-none">
                               {section.subtitle}
                             </h4>
-                            <div className="grid grid-cols-2 gap-3 pointer-events-none">
+                            <div className="flex justify-center pointer-events-none">
                               {section.items.map((item) => (
                                 <div
                                   key={`${group.title}-${section.subtitle}-${item.name}`}
@@ -216,10 +216,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
                       <>
                         {group.sections.map((section) => (
                           <div key={section.subtitle} className="mb-5 last:mb-0 pointer-events-auto">
-                            <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground pointer-events-none">
-                              {section.subtitle}
-                            </h4>
-                            <div className="grid grid-cols-2 gap-3 pointer-events-none">
+                             <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground pointer-events-none">
+                               {section.subtitle}
+                             </h4>
+                             <div className={section.subtitle === "Team Leader" ? "flex justify-center pointer-events-none" : "grid grid-cols-2 gap-3 pointer-events-none"}>
                               {section.items.map((item) => (
                                 <div
                                   key={`${group.title}-${section.subtitle}-${item.name}`}
