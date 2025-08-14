@@ -118,11 +118,17 @@ const CoverPage = () => {
               </video>
             </div>
 
-            {/* Video 7 - Rose coming soon */}
-            <div id="crew-video-7" className="w-40 h-60 bg-gradient-to-br from-rose-500/20 to-pink-500/20 rounded-3xl border border-white/12 backdrop-blur-sm flex-shrink-0 shadow-lg">
-              <div className="w-full h-full rounded-3xl bg-black/15 flex items-center justify-center">
-                <div className="text-white/50 text-sm">Coming Soon</div>
-              </div>
+            {/* Video 7 - Rose video */}
+            <div id="crew-video-7" className="w-40 h-60 bg-gradient-to-br from-rose-500/20 to-pink-500/20 rounded-3xl border border-white/12 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
+              <video 
+                className="w-full h-full object-cover rounded-3xl"
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+              >
+                <source src="/crew-video-7.mp4" type="video/mp4" />
+              </video>
             </div>
 
             {/* Video 8 - Teal video */}
@@ -247,11 +253,17 @@ const CoverPage = () => {
               </video>
             </div>
 
-            {/* Video 7 - Rose coming soon (duplicate) */}
-            <div className="w-40 h-60 bg-gradient-to-br from-rose-500/20 to-pink-500/20 rounded-3xl border border-white/12 backdrop-blur-sm flex-shrink-0 shadow-lg">
-              <div className="w-full h-full rounded-3xl bg-black/15 flex items-center justify-center">
-                <div className="text-white/50 text-sm">Coming Soon</div>
-              </div>
+            {/* Video 7 - Rose video (duplicate) */}
+            <div className="w-40 h-60 bg-gradient-to-br from-rose-500/20 to-pink-500/20 rounded-3xl border border-white/12 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
+              <video 
+                className="w-full h-full object-cover rounded-3xl"
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+              >
+                <source src="/crew-video-7.mp4" type="video/mp4" />
+              </video>
             </div>
 
             {/* Video 8 - Teal video (duplicate) */}
