@@ -210,8 +210,8 @@ const Home = () => {
                   
                   {/* Data Division */}
                   <div className="flex flex-col items-center space-y-4">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-r from-muted to-muted-foreground flex items-center justify-center">
-                      <span className="text-white text-xs">DATA</span>
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-r from-muted to-muted-foreground flex items-center justify-center overflow-hidden">
+                      <img src="/lovable-uploads/1b5b8654-3203-4e33-be69-e907fb27ac94.png" alt="Data Division Leader" className="w-full h-full object-cover rounded-full" />
                     </div>
                     <div className="text-xs text-muted-foreground">Data</div>
                     
