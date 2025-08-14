@@ -17,11 +17,20 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
   const groups: Group[] = [
     {
       title: "DAM",
-      items: [
-        { name: "Candy", role: "Coordinator", imageSrc: "/lovable-uploads/12ea1acb-6641-4e73-85ef-14b102b12d30.png" },
-        { name: "Maya", role: "Account Create", imageSrc: "/lovable-uploads/d67ab42c-85c8-480e-b65e-66a15abe8586.png" },
-        { name: "Theo", role: "Account Delete", imageSrc: "/lovable-uploads/2e6d7b60-abc9-4051-a585-fad42800aabb.png" },
-        { name: "Fiona", role: "Communication", imageSrc: "/lovable-uploads/f3264e74-893f-4cb0-9ec7-91b84b56c631.png" },
+      sections: [
+        {
+          subtitle: "Team Leader",
+          items: [
+            { name: "Candy", role: "Team Leader & Coordinator", imageSrc: "/lovable-uploads/12ea1acb-6641-4e73-85ef-14b102b12d30.png" },
+          ],
+        },
+        {
+          subtitle: "Team Members",
+          items: [
+            { name: "Maya", role: "Account Create", imageSrc: "/lovable-uploads/d67ab42c-85c8-480e-b65e-66a15abe8586.png" },
+            { name: "Fiona", role: "Communication", imageSrc: "/lovable-uploads/f3264e74-893f-4cb0-9ec7-91b84b56c631.png" },
+          ],
+        },
       ],
     },
     {
@@ -46,13 +55,13 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
             { name: "Fern", role: "Other Variation", imageSrc: "/lovable-uploads/66fb2463-85b8-437c-9a16-afdb1c8b3861.png" },
           ],
         },
-      ],
-    },
-    {
-      title: "Gallery Image",
-      items: [
-        { name: "Tango", role: "Gallery Resizing", imageSrc: "/lovable-uploads/c2f987d1-fdfb-4948-b854-092b9abd9f8c.png" },
-        { name: "Ben", role: "PTO Image Creator", imageSrc: profiles.ben },
+        {
+          subtitle: "Gallery & Media",
+          items: [
+            { name: "Tango", role: "Gallery Resizing", imageSrc: "/lovable-uploads/c2f987d1-fdfb-4948-b854-092b9abd9f8c.png" },
+            { name: "Ben", role: "PTO Image Creator", imageSrc: profiles.ben },
+          ],
+        },
       ],
     },
     {
@@ -64,7 +73,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
         { name: "Noa", role: "Copy Writing", imageSrc: "/lovable-uploads/0fbe5af8-19f4-4ff0-8c9f-3f1a2c010572.png" },
       ],
     },
-];
+  ];
 
   const containerRef = useRef<HTMLElement | null>(null);
   useEffect(() => {
