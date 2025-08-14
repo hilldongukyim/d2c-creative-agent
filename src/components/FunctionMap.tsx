@@ -59,7 +59,13 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
         },
       ],
     },
-     {
+    {
+      title: "GEO",
+      items: [
+        { name: "Alex", role: "Geo Specialist", imageSrc: "/lovable-uploads/98c39541-6950-461b-a1b0-0247044ee38e.png" },
+      ],
+    },
+    {
        title: "Intern",
        items: [
          { name: "Kai", role: "Background Remover", imageSrc: "/lovable-uploads/84e535ab-1fa5-418e-93aa-73fa3b361219.png" },
