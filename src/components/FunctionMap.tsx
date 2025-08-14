@@ -35,13 +35,15 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
   const crewProfiles: Record<string, {description: string, videoUrl?: string}> = {
     "candy": {
       description: "Candy는 DAM 팀의 리더로서 팀원들의 업무를 조율하고 전체적인 프로젝트 방향을 설정합니다. 뛰어난 커뮤니케이션 능력과 리더십으로 팀의 효율성을 극대화합니다.",
-      videoUrl: "https://drive.google.com/file/d/1RLkv5_mtASU4gh_vPTtBfSdCtTpXCaMu/preview"
+      videoUrl: "/crew-video-1.mp4"
     },
     "maya": {
-      description: "Maya는 계정 생성 전문가로서 신규 사용자 온보딩 프로세스를 담당합니다. 사용자 경험을 최우선으로 하여 원활한 계정 생성 플로우를 구축합니다."
+      description: "Maya는 계정 생성 전문가로서 신규 사용자 온보딩 프로세스를 담당합니다. 사용자 경험을 최우선으로 하여 원활한 계정 생성 플로우를 구축합니다.",
+      videoUrl: "/crew-video-2.mp4"
     },
     "fiona": {
-      description: "Fiona는 계정 삭제 및 정리 업무를 전담하며, 데이터 보안과 개인정보 보호 규정을 준수하여 안전한 계정 관리를 수행합니다."
+      description: "Fiona는 계정 삭제 및 정리 업무를 전담하며, 데이터 보안과 개인정보 보호 규정을 준수하여 안전한 계정 관리를 수행합니다.",
+      videoUrl: "/crew-video-3.mp4"
     }
   };
 
@@ -200,11 +202,23 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                        e.stopPropagation();
                        onProfileClick?.(item.name);
                      }} role="button" tabIndex={0}>
-                                  <div className={`relative ${section.subtitle === "Team Leader" ? "h-20 w-20 md:h-24 md:w-24" : "h-14 w-14 md:h-16 md:w-16"} rounded-full overflow-hidden`}>
-                                   {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-125" loading="lazy" /> : <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
-                                       {item.name.charAt(0)}
-                                     </div>}
-                                 </div>
+                                   <div className={`relative ${section.subtitle === "Team Leader" ? "h-20 w-20 md:h-24 md:w-24" : "h-14 w-14 md:h-16 md:w-16"} rounded-full overflow-hidden`}>
+                                    {hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() && crewProfiles[item.name.toLowerCase()]?.videoUrl ? (
+                                      <video 
+                                        src={crewProfiles[item.name.toLowerCase()].videoUrl} 
+                                        autoPlay 
+                                        loop 
+                                        muted 
+                                        className="h-full w-full object-cover"
+                                      />
+                                    ) : item.imageSrc ? (
+                                      <img src={item.imageSrc} alt={`${item.name} profile image`} className="h-full w-full object-cover transition-transform duration-300" loading="lazy" />
+                                    ) : (
+                                      <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
+                                        {item.name.charAt(0)}
+                                      </div>
+                                    )}
+                                  </div>
                                   <div className="mt-2">
                                     <div className="text-sm font-medium text-foreground">{item.name}</div>
                                     <div className="text-xs text-muted-foreground">
@@ -351,7 +365,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         </div>
       </div>
 
-      {/* Hover Popup */}
+      {/* Hover Popup - Text Only */}
       {hoveredProfile && (
         <div 
           className="fixed z-50 bg-card border border-border/20 rounded-xl p-6 shadow-xl max-w-sm animate-fade-in pointer-events-none"
@@ -366,18 +380,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
               <h4 className="text-lg font-semibold text-foreground">{hoveredProfile.name}</h4>
               <p className="text-sm text-muted-foreground">{hoveredProfile.role}</p>
             </div>
-            
-            {crewProfiles[hoveredProfile.name.toLowerCase()]?.videoUrl && (
-              <div className="aspect-video rounded-lg overflow-hidden bg-muted">
-                <iframe
-                  src={`${crewProfiles[hoveredProfile.name.toLowerCase()].videoUrl}?autoplay=1&loop=1&controls=0&modestbranding=1`}
-                  className="w-full h-full"
-                  allow="autoplay; encrypted-media"
-                  allowFullScreen
-                  title={`${hoveredProfile.name} introduction video`}
-                />
-              </div>
-            )}
             
             <div className="text-sm text-foreground leading-relaxed">
               {crewProfiles[hoveredProfile.name.toLowerCase()]?.description || 
