@@ -84,9 +84,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
   }, {
     title: "Data",
     items: [{
-      name: "Sam",
+      name: "Orin",
       role: "Data Analyst",
-      imageSrc: "/lovable-uploads/d004c9d6-0491-459c-8639-7730374641aa.png"
+      imageSrc: "/lovable-uploads/1e050018-12f0-4df5-a7ae-c92735447a6d.png"
     }]
   }, {
     title: "GEO",
