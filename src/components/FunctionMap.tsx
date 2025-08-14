@@ -213,12 +213,14 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                           </div>
                         </div>)}
                       
-                      {/* Analytics and Content Creation sections with equal heights */}
-                      <div className="grid grid-cols-2 gap-3">
+                      {/* Analytics and Content Creation sections with aligned tops */}
+                      <div className="grid grid-cols-2 gap-3 items-start">
                         {group.sections.filter(section => section.subtitle !== "Team Leader").map(section => <div key={section.subtitle} className="pointer-events-auto">
-                            <h4 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground text-center pointer-events-none">
-                              {section.subtitle}
-                            </h4>
+                            <div className="h-8 flex items-center justify-center mb-3">
+                              <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground text-center pointer-events-none">
+                                {section.subtitle}
+                              </h4>
+                            </div>
                             <div className="space-y-4 pointer-events-none">
                               {section.items.map(item => <div key={`${group.title}-${section.subtitle}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" onClick={e => {
                         e.stopPropagation();
