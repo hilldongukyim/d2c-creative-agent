@@ -105,7 +105,7 @@ const Home = () => {
               
               {/* Horizontal org chart */}
               <div className="overflow-x-auto">
-                <div className="flex items-start space-x-8 min-w-max px-4">
+                <div className="flex items-start justify-center space-x-8 min-w-max px-8">
                   
                   {/* CEO */}
                   <div className="flex flex-col items-center space-y-4">
