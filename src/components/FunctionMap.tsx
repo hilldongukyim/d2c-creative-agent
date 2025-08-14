@@ -313,9 +313,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                           </div>
                         </div>)}
                       
-                      {/* Analytics and Content Creation sections with aligned tops */}
-                      <div className="grid grid-cols-2 gap-3 items-start">
-                        {group.sections.filter(section => section.subtitle !== "Team Leader").map(section => <div key={section.subtitle} className="pointer-events-auto">
+                       {/* Analytics and Content Creation sections with aligned tops */}
+                       <div className="grid grid-cols-2 gap-3 items-start">
+                         {group.sections.filter(section => section.subtitle !== "Team Leader").map(section => <div key={section.subtitle} className={`pointer-events-auto ${section.subtitle === "Analytics" ? "mt-12" : ""}`}>
                             <div className="h-8 flex items-center justify-center mb-3">
                               <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground text-center pointer-events-none">
                                 {section.subtitle}
