@@ -84,11 +84,17 @@ const CoverPage = () => {
           </div>
         </div>
 
-        {/* Video 6 - Bottom right, medium */}
-        <div id="crew-video-6" className="absolute bottom-24 right-24 w-38 h-38 bg-gradient-to-br from-indigo-500/25 to-purple-500/25 rounded-2xl border border-white/15 backdrop-blur-sm scale-95 opacity-70">
-          <div className="w-full h-full rounded-2xl bg-black/20 flex items-center justify-center">
-            <div className="text-white/60 text-sm">Coming Soon</div>
-          </div>
+        {/* Video 6 - Bottom right, medium square */}
+        <div id="crew-video-6" className="absolute bottom-24 right-24 w-40 h-40 bg-gradient-to-br from-indigo-500/25 to-purple-500/25 rounded-2xl border border-white/15 backdrop-blur-sm scale-95 opacity-70 overflow-hidden">
+          <video 
+            className="w-full h-full object-cover rounded-2xl"
+            autoPlay 
+            loop 
+            muted 
+            playsInline
+          >
+            <source src="/crew-video-6.mp4" type="video/mp4" />
+          </video>
         </div>
 
         {/* Video 7 - Top center left, small for depth */}
