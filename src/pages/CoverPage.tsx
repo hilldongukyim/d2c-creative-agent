@@ -144,11 +144,17 @@ const CoverPage = () => {
               </video>
             </div>
 
-            {/* Video 9 - Emerald coming soon */}
-            <div id="crew-video-9" className="w-40 h-60 bg-gradient-to-br from-emerald-500/25 to-green-500/25 rounded-3xl border border-white/15 backdrop-blur-sm flex-shrink-0 shadow-lg">
-              <div className="w-full h-full rounded-3xl bg-black/20 flex items-center justify-center">
-                <div className="text-white/65 text-sm">Coming Soon</div>
-              </div>
+            {/* Video 9 - Emerald video */}
+            <div id="crew-video-9" className="w-40 h-60 bg-gradient-to-br from-emerald-500/25 to-green-500/25 rounded-3xl border border-white/15 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
+              <video 
+                className="w-full h-full object-cover rounded-3xl"
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+              >
+                <source src="/crew-video-9.mp4" type="video/mp4" />
+              </video>
             </div>
 
             {/* Video 10 - Violet coming soon */}
@@ -279,11 +285,17 @@ const CoverPage = () => {
               </video>
             </div>
 
-            {/* Video 9 - Emerald coming soon (duplicate) */}
-            <div className="w-40 h-60 bg-gradient-to-br from-emerald-500/25 to-green-500/25 rounded-3xl border border-white/15 backdrop-blur-sm flex-shrink-0 shadow-lg">
-              <div className="w-full h-full rounded-3xl bg-black/20 flex items-center justify-center">
-                <div className="text-white/65 text-sm">Coming Soon</div>
-              </div>
+            {/* Video 9 - Emerald video (duplicate) */}
+            <div className="w-40 h-60 bg-gradient-to-br from-emerald-500/25 to-green-500/25 rounded-3xl border border-white/15 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
+              <video 
+                className="w-full h-full object-cover rounded-3xl"
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+              >
+                <source src="/crew-video-9.mp4" type="video/mp4" />
+              </video>
             </div>
 
             {/* Video 10 - Violet coming soon (duplicate) */}
