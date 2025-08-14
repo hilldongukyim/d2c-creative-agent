@@ -231,7 +231,7 @@ const Home = () => {
                       {/* Team 2 */}
                       <div className="flex flex-col items-center space-y-2">
                          <div className="w-10 h-10 rounded-full bg-muted-foreground/70 flex items-center justify-center overflow-hidden">
-                           <img src="/lovable-uploads/63d4f5c8-876c-414e-a07a-e08570c27257.png" alt="Data Team Leader" className="w-full h-full object-cover rounded-full" />
+                           <img src="/lovable-uploads/06a59546-9642-4ea2-b042-3a1269a4ddb6.png" alt="Data Team Leader" className="w-full h-full object-cover rounded-full" />
                          </div>
                         <div className="flex space-x-1">
                           <div className="w-6 h-6 rounded-full bg-muted-foreground/50"></div>
