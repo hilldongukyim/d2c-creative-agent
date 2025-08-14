@@ -179,7 +179,7 @@ const Home = () => {
                           <img src="/lovable-uploads/905fe76d-8767-438c-8459-744f8aadaf4e.png" alt="Team Leader" className="w-full h-full object-cover rounded-full" />
                         </div>
                         <div className="flex space-x-1">
-                          <div className="w-6 h-6 rounded-full bg-accent/50"></div>
+                          <img src="/lovable-uploads/b3383460-9b5b-4286-ae1f-c001292d80a2.png" alt="Team Member" className="w-6 h-6 rounded-full object-cover" />
                           <div className="w-6 h-6 rounded-full bg-accent/50"></div>
                         </div>
                       </div>
