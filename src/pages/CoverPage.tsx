@@ -38,10 +38,16 @@ const CoverPage = () => {
       {/* Crew Videos - non-overlapping layout with proper spacing */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Video 1 - Top left, large */}
-        <div id="crew-video-1" className="absolute top-24 left-16 w-48 h-48 bg-gradient-to-br from-purple-500/35 to-pink-500/35 rounded-3xl border border-white/25 backdrop-blur-sm scale-115 opacity-95">
-          <div className="w-full h-full rounded-3xl bg-black/20 flex items-center justify-center">
-            <div className="text-white/80 text-base font-medium">Coming Soon</div>
-          </div>
+        <div id="crew-video-1" className="absolute top-24 left-16 w-48 h-48 bg-gradient-to-br from-purple-500/35 to-pink-500/35 rounded-3xl border border-white/25 backdrop-blur-sm scale-115 opacity-95 overflow-hidden">
+          <video 
+            className="w-full h-full object-cover rounded-3xl"
+            autoPlay 
+            loop 
+            muted 
+            playsInline
+          >
+            <source src="/crew-video-1.mp4" type="video/mp4" />
+          </video>
         </div>
 
         {/* Video 2 - Top right, medium */}
