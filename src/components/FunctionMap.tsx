@@ -37,9 +37,14 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
       title: "Promotion",
       sections: [
         {
-          subtitle: "Promotion Initiatives",
+          subtitle: "Team Leader",
           items: [
-            { name: "Boris", role: "Promotion Initiator", imageSrc: "/lovable-uploads/a3da050e-3de8-404c-8ab2-868f2e319ec8.png" },
+            { name: "Boris", role: "Team Leader & Promotion Initiator", imageSrc: "/lovable-uploads/a3da050e-3de8-404c-8ab2-868f2e319ec8.png" },
+          ],
+        },
+        {
+          subtitle: "Analytics",
+          items: [
             { name: "Ollie", role: "Sales Analyst", imageSrc: "/lovable-uploads/a2300ba9-4de6-4adc-88fd-b80baa1bdff7.png" },
             { name: "Ravi", role: "Promotion Configurator", imageSrc: "/lovable-uploads/d18ff2c4-e8c7-4c44-b38c-74bb66e23393.png" },
           ],
@@ -48,18 +53,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
           subtitle: "Content Creation",
           items: [
             { name: "Yumi", role: "El-Form Designer", imageSrc: profiles.yumi },
-            { name: "Carmen", role: "Coordinator", imageSrc: "/lovable-uploads/c67db3d8-8cdc-426a-80e4-b8e7b6bf4604.png" },
-            { name: "Pip", role: "Designer", imageSrc: "/lovable-uploads/cf830101-de14-48d2-a5f5-23a3f692a0f0.png" },
-            { name: "Juno", role: "Criteo Variation", imageSrc: "/lovable-uploads/0984d14e-1c85-48e9-9be5-953e3bc72d9a.png" },
-            { name: "Luna", role: "DV360 Variation", imageSrc: "/lovable-uploads/09ed6890-8a71-43b1-9f99-2029d69c3e6c.png" },
-            { name: "Fern", role: "Other Variation", imageSrc: "/lovable-uploads/66fb2463-85b8-437c-9a16-afdb1c8b3861.png" },
-          ],
-        },
-        {
-          subtitle: "Gallery & Media",
-          items: [
-            { name: "Tango", role: "Gallery Resizing", imageSrc: "/lovable-uploads/c2f987d1-fdfb-4948-b854-092b9abd9f8c.png" },
             { name: "Ben", role: "PTO Image Creator", imageSrc: profiles.ben },
+            { name: "Fern", role: "Other Variation", imageSrc: "/lovable-uploads/66fb2463-85b8-437c-9a16-afdb1c8b3861.png" },
+            { name: "Pip", role: "Designer", imageSrc: "/lovable-uploads/cf830101-de14-48d2-a5f5-23a3f692a0f0.png" },
           ],
         },
       ],
