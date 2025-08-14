@@ -276,7 +276,7 @@ const Home = () => {
                           <span className="text-white text-xs">TL</span>
                         </div>
                         <div className="flex space-x-1">
-                          <div className="w-6 h-6 rounded-full bg-purple-600/50"></div>
+                          <img src="/lovable-uploads/3f553423-99c2-46ad-99b2-874c48d94ff7.png" alt="B2C Team Member" className="w-6 h-6 rounded-full object-cover" />
                           <div className="w-6 h-6 rounded-full bg-purple-600/50"></div>
                         </div>
                       </div>
