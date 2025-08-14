@@ -101,9 +101,11 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
           <div className="flex justify-center">
             <div className="flex flex-col items-center">
               <div className="relative h-16 w-16 rounded-full overflow-hidden mb-3 ring-2 ring-primary/20">
-                <div className="h-full w-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white text-lg font-bold">
-                  SA
-                </div>
+                <img
+                  src="/lovable-uploads/721071c1-63ee-4bc4-b9d8-264657716340.png"
+                  alt="Super Agent robot"
+                  className="h-full w-full object-cover"
+                />
               </div>
               <div className="text-center">
                 <div className="text-sm font-semibold text-foreground mb-1">Super Agent</div>
