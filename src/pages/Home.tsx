@@ -294,7 +294,7 @@ const Home = () => {
                         {/* Horizontal connecting line - shorter for single team */}
                         <div className="absolute top-4 left-4 right-4 h-0.5 bg-muted-foreground/40"></div>
                         {/* Single vertical line to team */}
-                        <div className="absolute left-1/2 top-4 w-0.5 h-2 bg-muted-foreground/40 transform -translate-x-1/2"></div>
+                        
                       </div>
                     </div>
                     <div className="flex space-x-6 pt-2">
@@ -325,7 +325,7 @@ const Home = () => {
                         {/* Horizontal connecting line - shorter for single team */}
                         <div className="absolute top-4 left-4 right-4 h-0.5 bg-muted-foreground/40"></div>
                         {/* Single vertical line to team */}
-                        <div className="absolute left-1/2 top-4 w-0.5 h-2 bg-muted-foreground/40 transform -translate-x-1/2"></div>
+                        
                       </div>
                     </div>
                     <div className="flex space-x-6 pt-2">
