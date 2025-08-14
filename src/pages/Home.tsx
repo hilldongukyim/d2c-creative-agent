@@ -235,7 +235,7 @@ const Home = () => {
                          </div>
                         <div className="flex space-x-1">
                           <img src="/lovable-uploads/b0e63467-129e-4f58-8d10-7bc3286ceda8.png" alt="Data Team Member" className="w-6 h-6 rounded-full object-cover" />
-                          <div className="w-6 h-6 rounded-full bg-muted-foreground/50"></div>
+                          <img src="/lovable-uploads/0012d8bd-afeb-4707-bdfc-38991640fce3.png" alt="Data Team Member" className="w-6 h-6 rounded-full object-cover" />
                         </div>
                       </div>
                     </div>
