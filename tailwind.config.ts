@@ -116,6 +116,14 @@ export default {
 					'100%': {
 						transform: 'translateX(-50%)'
 					}
+				},
+				'slide': {
+					'0%': {
+						transform: 'translateX(0)'
+					},
+					'100%': {
+						transform: 'translateX(-50%)'
+					}
 				}
 			},
 			animation: {
@@ -125,7 +133,8 @@ export default {
 				'slide-up': 'slideUp 0.3s ease-out',
 				'pulse-success': 'pulseSuccess 2s ease-in-out infinite',
 				'float': 'float 3s ease-in-out infinite',
-				'wave': 'wave 2s ease-in-out infinite'
+				'wave': 'wave 2s ease-in-out infinite',
+				'slide': 'slide 30s linear infinite'
 			},
 			keyframes: {
 				fadeIn: {
