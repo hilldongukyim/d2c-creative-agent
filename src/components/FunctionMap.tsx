@@ -163,10 +163,18 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
                                       </div>
                                     )}
                                   </div>
-                                  <div className="mt-2">
-                                    <div className="text-sm font-medium text-foreground">{item.name}</div>
-                                    <div className="text-xs text-muted-foreground">{item.role}</div>
-                                  </div>
+                                   <div className="mt-2">
+                                     <div className="text-sm font-medium text-foreground">{item.name}</div>
+                                     <div className="text-xs text-muted-foreground">
+                                       {item.role.includes("&") ? (
+                                         item.role.split("&").map((part, index) => (
+                                           <div key={index}>{part.trim()}</div>
+                                         ))
+                                       ) : (
+                                         item.role
+                                       )}
+                                     </div>
+                                   </div>
                                 </div>
                               ))}
                             </div>
@@ -207,10 +215,18 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
                                         </div>
                                       )}
                                     </div>
-                                    <div className="mt-2">
-                                      <div className="text-sm font-medium text-foreground">{item.name}</div>
-                                      <div className="text-xs text-muted-foreground">{item.role}</div>
-                                    </div>
+                                     <div className="mt-2">
+                                       <div className="text-sm font-medium text-foreground">{item.name}</div>
+                                       <div className="text-xs text-muted-foreground">
+                                         {item.role.includes("&") ? (
+                                           item.role.split("&").map((part, index) => (
+                                             <div key={index}>{part.trim()}</div>
+                                           ))
+                                         ) : (
+                                           item.role
+                                         )}
+                                       </div>
+                                     </div>
                                   </div>
                                 ))}
                               </div>
@@ -255,10 +271,18 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
                                       </div>
                                     )}
                                   </div>
-                                  <div className="mt-2">
-                                    <div className="text-sm font-medium text-foreground">{item.name}</div>
-                                    <div className="text-xs text-muted-foreground">{item.role}</div>
-                                  </div>
+                                   <div className="mt-2">
+                                     <div className="text-sm font-medium text-foreground">{item.name}</div>
+                                     <div className="text-xs text-muted-foreground">
+                                       {item.role.includes("&") ? (
+                                         item.role.split("&").map((part, index) => (
+                                           <div key={index}>{part.trim()}</div>
+                                         ))
+                                       ) : (
+                                         item.role
+                                       )}
+                                     </div>
+                                   </div>
                                 </div>
                               ))}
                             </div>
@@ -295,10 +319,18 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
                             </div>
                           )}
                         </div>
-                        <div className="mt-2">
-                          <div className="text-sm font-medium text-foreground">{item.name}</div>
-                          <div className="text-xs text-muted-foreground">{item.role}</div>
-                        </div>
+                         <div className="mt-2">
+                           <div className="text-sm font-medium text-foreground">{item.name}</div>
+                           <div className="text-xs text-muted-foreground">
+                             {item.role.includes("&") ? (
+                               item.role.split("&").map((part, index) => (
+                                 <div key={index}>{part.trim()}</div>
+                               ))
+                             ) : (
+                               item.role
+                             )}
+                           </div>
+                         </div>
                       </div>
                     ))}
                   </div>
