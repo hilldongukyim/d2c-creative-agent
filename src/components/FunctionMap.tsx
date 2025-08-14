@@ -260,7 +260,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
                     )}
                   </>
                 ) : (
-                  <div className="grid grid-cols-2 gap-3 pointer-events-none">
+                  <div className="flex flex-col gap-3 pointer-events-none">
                     {group.items.map((item) => (
                       <div
                         key={`${group.title}-${item.name}`}
