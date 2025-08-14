@@ -265,7 +265,7 @@ const Home = () => {
                   {/* B2C Subs Capability Boost Division */}
                   <div className="flex flex-col items-center space-y-4">
                     <div className="w-14 h-14 rounded-full bg-gradient-to-r from-purple-600 to-purple-500 flex items-center justify-center overflow-hidden">
-                      <img src="/lovable-uploads/ef02f79b-cece-4218-b074-9bf4ff7ba7ae.png" alt="B2C Division Leader" className="w-full h-full object-cover rounded-full" />
+                      <img src="/lovable-uploads/075d631e-1e67-4f0a-b744-36705e88b752.png" alt="B2C Division Leader" className="w-full h-full object-cover rounded-full" />
                     </div>
                     <div className="text-xs text-muted-foreground">B2C Subs</div>
                     
