@@ -220,7 +220,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
                                  {section.subtitle}
                                </h4>
                              )}
-                             <div className={section.subtitle === "Team Leader" ? "flex justify-center pointer-events-none" : "grid grid-cols-2 gap-3 pointer-events-none"}>
+                             <div className={section.subtitle === "Team Leader" ? "flex justify-center pointer-events-none" : "flex flex-col gap-3 pointer-events-none"}>
                               {section.items.map((item) => (
                                 <div
                                   key={`${group.title}-${section.subtitle}-${item.name}`}
