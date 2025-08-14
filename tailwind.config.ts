@@ -67,6 +67,10 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				'gradient-title': {
+					start: 'hsl(var(--gradient-title-start))',
+					end: 'hsl(var(--gradient-title-end))'
 				}
 			},
 			borderRadius: {
