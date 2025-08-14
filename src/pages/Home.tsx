@@ -272,9 +272,9 @@ const Home = () => {
                     {/* B2C Subs Team */}
                     <div className="flex space-x-6 pt-2">
                       <div className="flex flex-col items-center space-y-2">
-                        <div className="w-10 h-10 rounded-full bg-purple-600/70 flex items-center justify-center">
-                          <span className="text-white text-xs">TL</span>
-                        </div>
+                         <div className="w-10 h-10 rounded-full bg-purple-600/70 flex items-center justify-center overflow-hidden">
+                           <img src="/lovable-uploads/2b8c5249-1718-435b-b317-0753f79040fc.png" alt="B2C Team Leader" className="w-full h-full object-cover rounded-full" />
+                         </div>
                         <div className="flex space-x-1">
                           <img src="/lovable-uploads/3f553423-99c2-46ad-99b2-874c48d94ff7.png" alt="B2C Team Member" className="w-6 h-6 rounded-full object-cover" />
                           <div className="w-6 h-6 rounded-full bg-purple-600/50"></div>
