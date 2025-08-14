@@ -148,10 +148,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         name: "Ollie",
         role: "Sales Analyst",
         imageSrc: "/lovable-uploads/a2300ba9-4de6-4adc-88fd-b80baa1bdff7.png"
-      }]
-    }, {
-      subtitle: "Configuration",
-      items: [{
+      }, {
         name: "Ravi",
         role: "Promotion Configurator",
         imageSrc: "/lovable-uploads/d18ff2c4-e8c7-4c44-b38c-74bb66e23393.png"
@@ -316,9 +313,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                           </div>
                         </div>)}
                       
-                       {/* Analytics and Content Creation sections with aligned tops */}
-                       <div className="grid grid-cols-2 gap-3 items-start">
-                         {group.sections.filter(section => section.subtitle !== "Team Leader").map(section => <div key={section.subtitle} className={`pointer-events-auto ${section.subtitle === "Configuration" ? "mt-12" : ""}`}>
+                      {/* Analytics and Content Creation sections with aligned tops */}
+                      <div className="grid grid-cols-2 gap-3 items-start">
+                        {group.sections.filter(section => section.subtitle !== "Team Leader").map(section => <div key={section.subtitle} className="pointer-events-auto">
                             <div className="h-8 flex items-center justify-center mb-3">
                               <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground text-center pointer-events-none">
                                 {section.subtitle}
