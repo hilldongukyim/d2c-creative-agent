@@ -109,8 +109,8 @@ const Home = () => {
                   
                   {/* CEO */}
                   <div className="flex flex-col items-center space-y-4">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-primary to-primary/80 flex items-center justify-center">
-                      <span className="text-white text-xs font-medium">CEO</span>
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-primary to-primary/80 flex items-center justify-center overflow-hidden">
+                      <img src="/lovable-uploads/fcb326f6-bbbd-49c3-b925-8527956f0952.png" alt="CEO" className="w-full h-full object-cover rounded-full" />
                     </div>
                     <div className="text-xs text-muted-foreground">Leader</div>
                   </div>
