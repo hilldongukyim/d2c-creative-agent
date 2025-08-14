@@ -124,184 +124,175 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
           
           {/* Teams Section */}
           <div className="space-y-4">
-            {/* Top row: DAM and Promotion */}
-            <div className="grid gap-4 md:grid-cols-2">
-              {groups.filter(group => group.title === "DAM" || group.title === "Promotion").map((group) => {
-                const getTeamHeight = (title: string) => {
-                  switch (title) {
-                    case "DAM": return "h-[460px]";
-                    case "Promotion": return "h-[580px]";
-                    default: return "h-[300px]";
-                  }
-                };
-              
-                return (
-                  <div key={group.title} className={`bg-card border border-border/20 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow pointer-events-auto ${getTeamHeight(group.title)}`}>
-                    <header className="mb-4 pointer-events-none">
-                      <h3 className="text-lg font-semibold text-foreground">{group.title}</h3>
-                    </header>
-                    {"sections" in group ? (
-                      <>
-                        {group.title === "Promotion" ? (
-                          // Special layout for Promotion team
-                          <>
-                            {/* Team Leader section first */}
-                            {group.sections.filter(section => section.subtitle === "Team Leader").map((section) => (
-                              <div key={section.subtitle} className="mb-5 pointer-events-auto">
-                                <div className="flex justify-center pointer-events-none">
-                                  {section.items.map((item) => (
-                                    <div
-                                      key={`${group.title}-${section.subtitle}-${item.name}`}
-                                      data-profile-name={item.name.toLowerCase()}
-                                      className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        onProfileClick?.(item.name);
-                                      }}
-                                      role="button"
-                                      tabIndex={0}
-                                    >
-                                      <div className="relative h-20 w-20 md:h-24 md:w-24 rounded-full overflow-hidden">
-                                        {item.imageSrc ? (
-                                          <img
-                                            src={item.imageSrc}
-                                            alt={`${item.name} profile image`}
-                                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
-                                            loading="lazy"
-                                          />
-                                        ) : (
-                                          <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
-                                            {item.name.charAt(0)}
-                                          </div>
-                                        )}
-                                      </div>
-                                       <div className="mt-2">
-                                         <div className="text-sm font-medium text-foreground">{item.name}</div>
-                                         <div className="text-xs text-muted-foreground">
-                                           {item.role.includes("&") ? (
-                                             item.role.split("&").map((part, index) => (
-                                               <div key={index}>{part.trim()}</div>
-                                             ))
-                                           ) : (
-                                             item.role
-                                           )}
-                                         </div>
-                                       </div>
+            {/* Top row: DAM, Promotion, GEO, Intern (4 columns as in image) */}
+            <div className="grid gap-4 grid-cols-4">
+              {/* DAM Team */}
+              {groups.filter(group => group.title === "DAM").map((group) => (
+                <div key={group.title} className="bg-card border border-border/20 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow pointer-events-auto h-[520px]">
+                  <header className="mb-4 pointer-events-none">
+                    <h3 className="text-lg font-semibold text-foreground">{group.title}</h3>
+                  </header>
+                  {"sections" in group && (
+                    <>
+                      {group.sections.map((section) => (
+                        <div key={section.subtitle} className="mb-5 last:mb-0 pointer-events-auto">
+                           <div className={section.subtitle === "Team Leader" ? "flex justify-center pointer-events-none mb-6" : "flex flex-col gap-4 pointer-events-none"}>
+                            {section.items.map((item) => (
+                              <div
+                                key={`${group.title}-${section.subtitle}-${item.name}`}
+                                data-profile-name={item.name.toLowerCase()}
+                                className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onProfileClick?.(item.name);
+                                }}
+                                role="button"
+                                tabIndex={0}
+                              >
+                                 <div className={`relative ${section.subtitle === "Team Leader" ? "h-20 w-20 md:h-24 md:w-24" : "h-16 w-16 md:h-20 md:w-20"} rounded-full overflow-hidden`}>
+                                  {item.imageSrc ? (
+                                    <img
+                                      src={item.imageSrc}
+                                      alt={`${item.name} profile image`}
+                                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                      loading="lazy"
+                                    />
+                                  ) : (
+                                    <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
+                                      {item.name.charAt(0)}
                                     </div>
-                                  ))}
+                                  )}
                                 </div>
+                                 <div className="mt-2">
+                                   <div className="text-sm font-medium text-foreground">{item.name}</div>
+                                   <div className="text-xs text-muted-foreground">
+                                     {item.role.includes("&") ? (
+                                       item.role.split("&").map((part, index) => (
+                                         <div key={index}>{part.trim()}</div>
+                                       ))
+                                     ) : (
+                                       item.role
+                                     )}
+                                   </div>
+                                 </div>
                               </div>
                             ))}
-                            
-                            {/* Analytics and Content Creation sections with better alignment */}
-                            <div className="grid grid-cols-2 gap-4">
-                              {group.sections.filter(section => section.subtitle !== "Team Leader").map((section) => (
-                                <div key={section.subtitle} className="pointer-events-auto">
-                                  <h4 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground text-center pointer-events-none">
-                                    {section.subtitle}
-                                  </h4>
-                                  <div className="space-y-3 pointer-events-none">
-                                    {section.items.map((item) => (
-                                      <div
-                                        key={`${group.title}-${section.subtitle}-${item.name}`}
-                                        data-profile-name={item.name.toLowerCase()}
-                                        className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          onProfileClick?.(item.name);
-                                        }}
-                                        role="button"
-                                        tabIndex={0}
-                                      >
-                                         <div className="relative h-16 w-16 md:h-20 md:w-20 rounded-full overflow-hidden">
-                                          {item.imageSrc ? (
-                                            <img
-                                              src={item.imageSrc}
-                                              alt={`${item.name} profile image`}
-                                              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
-                                              loading="lazy"
-                                            />
-                                          ) : (
-                                            <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
-                                              {item.name.charAt(0)}
-                                            </div>
-                                          )}
-                                        </div>
-                                         <div className="mt-2">
-                                           <div className="text-sm font-medium text-foreground">{item.name}</div>
-                                           <div className="text-xs text-muted-foreground">
-                                             {item.role}
-                                           </div>
-                                         </div>
+                          </div>
+                        </div>
+                      ))}
+                    </>
+                  )}
+                 </div>
+              ))}
+
+              {/* Promotion Team */}
+              {groups.filter(group => group.title === "Promotion").map((group) => (
+                <div key={group.title} className="bg-card border border-border/20 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow pointer-events-auto h-[640px]">
+                  <header className="mb-4 pointer-events-none">
+                    <h3 className="text-lg font-semibold text-foreground">{group.title}</h3>
+                  </header>
+                  {"sections" in group && (
+                    <>
+                      {/* Team Leader section first */}
+                      {group.sections.filter(section => section.subtitle === "Team Leader").map((section) => (
+                        <div key={section.subtitle} className="mb-6 pointer-events-auto">
+                          <div className="flex justify-center pointer-events-none">
+                            {section.items.map((item) => (
+                              <div
+                                key={`${group.title}-${section.subtitle}-${item.name}`}
+                                data-profile-name={item.name.toLowerCase()}
+                                className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  onProfileClick?.(item.name);
+                                }}
+                                role="button"
+                                tabIndex={0}
+                              >
+                                <div className="relative h-20 w-20 md:h-24 md:w-24 rounded-full overflow-hidden">
+                                  {item.imageSrc ? (
+                                    <img
+                                      src={item.imageSrc}
+                                      alt={`${item.name} profile image`}
+                                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                      loading="lazy"
+                                    />
+                                  ) : (
+                                    <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
+                                      {item.name.charAt(0)}
+                                    </div>
+                                  )}
+                                </div>
+                                 <div className="mt-2">
+                                   <div className="text-sm font-medium text-foreground">{item.name}</div>
+                                   <div className="text-xs text-muted-foreground">
+                                     {item.role.includes("&") ? (
+                                       item.role.split("&").map((part, index) => (
+                                         <div key={index}>{part.trim()}</div>
+                                       ))
+                                     ) : (
+                                       item.role
+                                     )}
+                                   </div>
+                                 </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                      
+                      {/* Analytics and Content Creation sections with equal heights */}
+                      <div className="grid grid-cols-2 gap-3">
+                        {group.sections.filter(section => section.subtitle !== "Team Leader").map((section) => (
+                          <div key={section.subtitle} className="pointer-events-auto">
+                            <h4 className="mb-3 text-xs font-semibold uppercase tracking-wide text-muted-foreground text-center pointer-events-none">
+                              {section.subtitle}
+                            </h4>
+                            <div className="space-y-4 pointer-events-none">
+                              {section.items.map((item) => (
+                                <div
+                                  key={`${group.title}-${section.subtitle}-${item.name}`}
+                                  data-profile-name={item.name.toLowerCase()}
+                                  className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onProfileClick?.(item.name);
+                                  }}
+                                  role="button"
+                                  tabIndex={0}
+                                >
+                                   <div className="relative h-16 w-16 md:h-18 md:w-18 rounded-full overflow-hidden">
+                                    {item.imageSrc ? (
+                                      <img
+                                        src={item.imageSrc}
+                                        alt={`${item.name} profile image`}
+                                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                        loading="lazy"
+                                      />
+                                    ) : (
+                                      <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
+                                        {item.name.charAt(0)}
                                       </div>
-                                    ))}
+                                    )}
                                   </div>
+                                   <div className="mt-2">
+                                     <div className="text-sm font-medium text-foreground">{item.name}</div>
+                                     <div className="text-xs text-muted-foreground">{item.role}</div>
+                                   </div>
                                 </div>
                               ))}
                             </div>
-                          </>
-                        ) : (
-                          // Regular layout for DAM team
-                          <>
-                            {group.sections.map((section) => (
-                              <div key={section.subtitle} className="mb-5 last:mb-0 pointer-events-auto">
-                                 <div className={section.subtitle === "Team Leader" ? "flex justify-center pointer-events-none" : "flex flex-col gap-3 pointer-events-none"}>
-                                  {section.items.map((item) => (
-                                    <div
-                                      key={`${group.title}-${section.subtitle}-${item.name}`}
-                                      data-profile-name={item.name.toLowerCase()}
-                                      className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        onProfileClick?.(item.name);
-                                      }}
-                                      role="button"
-                                      tabIndex={0}
-                                    >
-                                       <div className={`relative ${section.subtitle === "Team Leader" ? "h-20 w-20 md:h-24 md:w-24" : "h-16 w-16 md:h-20 md:w-20"} rounded-full overflow-hidden`}>
-                                        {item.imageSrc ? (
-                                          <img
-                                            src={item.imageSrc}
-                                            alt={`${item.name} profile image`}
-                                            className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
-                                            loading="lazy"
-                                          />
-                                        ) : (
-                                          <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
-                                            {item.name.charAt(0)}
-                                          </div>
-                                        )}
-                                      </div>
-                                       <div className="mt-2">
-                                         <div className="text-sm font-medium text-foreground">{item.name}</div>
-                                         <div className="text-xs text-muted-foreground">
-                                           {item.role.includes("&") ? (
-                                             item.role.split("&").map((part, index) => (
-                                               <div key={index}>{part.trim()}</div>
-                                             ))
-                                           ) : (
-                                             item.role
-                                           )}
-                                         </div>
-                                       </div>
-                                    </div>
-                                  ))}
-                                </div>
-                              </div>
-                            ))}
-                          </>
-                        )}
-                      </>
-                    ) : null}
-                   </div>
-                );
-              })}
-            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  )}
+                 </div>
+              ))}
 
-            {/* Middle row: Data and GEO */}
-            <div className="grid gap-4 md:grid-cols-2">
-              {groups.filter(group => group.title === "Data" || group.title === "GEO").map((group) => (
-                <div key={group.title} className="bg-card border border-border/20 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow pointer-events-auto h-[240px]">
+              {/* GEO Team */}
+              {groups.filter(group => group.title === "GEO").map((group) => (
+                <div key={group.title} className="bg-card border border-border/20 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow pointer-events-auto h-[280px]">
                   <header className="mb-4 pointer-events-none">
                     <h3 className="text-lg font-semibold text-foreground">{group.title}</h3>
                   </header>
@@ -341,17 +332,60 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
                   </div>
                 </div>
               ))}
+
+              {/* Intern Team */}
+              {groups.filter(group => group.title === "Intern").map((group) => (
+                <div key={group.title} className="bg-card border border-border/20 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow pointer-events-auto h-[420px]">
+                  <header className="mb-4 pointer-events-none text-center">
+                    <h3 className="text-lg font-semibold text-foreground">{group.title}</h3>
+                  </header>
+                  <div className="grid grid-cols-2 gap-3 pointer-events-none">
+                    {"items" in group && group.items.map((item) => (
+                      <div
+                        key={`${group.title}-${item.name}`}
+                        data-profile-name={item.name.toLowerCase()}
+                        className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onProfileClick?.(item.name);
+                        }}
+                        role="button"
+                        tabIndex={0}
+                      >
+                         <div className="relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden">
+                          {item.imageSrc ? (
+                            <img
+                              src={item.imageSrc}
+                              alt={`${item.name} profile image`}
+                              className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                              loading="lazy"
+                            />
+                          ) : (
+                            <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
+                              {item.name.charAt(0)}
+                            </div>
+                          )}
+                        </div>
+                         <div className="mt-2">
+                           <div className="text-sm font-medium text-foreground">{item.name}</div>
+                           <div className="text-xs text-muted-foreground">{item.role}</div>
+                         </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
             </div>
 
-            {/* Bottom row: Intern */}
+            {/* Bottom row: Data (centered) */}
             <div className="flex justify-center">
-              <div className="w-full md:w-2/3 lg:w-1/2">
-                {groups.filter(group => group.title === "Intern").map((group) => (
-                  <div key={group.title} className="bg-card border border-border/20 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow pointer-events-auto h-[320px]">
-                    <header className="mb-4 pointer-events-none text-center">
+              <div className="w-1/4">
+                {groups.filter(group => group.title === "Data").map((group) => (
+                  <div key={group.title} className="bg-card border border-border/20 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow pointer-events-auto h-[280px]">
+                    <header className="mb-4 pointer-events-none">
                       <h3 className="text-lg font-semibold text-foreground">{group.title}</h3>
                     </header>
-                    <div className="grid grid-cols-2 gap-4 pointer-events-none">
+                    <div className="flex justify-center pointer-events-none">
                       {"items" in group && group.items.map((item) => (
                         <div
                           key={`${group.title}-${item.name}`}
@@ -364,7 +398,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
                           role="button"
                           tabIndex={0}
                         >
-                           <div className="relative h-16 w-16 md:h-20 md:w-20 rounded-full overflow-hidden">
+                           <div className="relative h-20 w-20 md:h-24 md:w-24 rounded-full overflow-hidden">
                             {item.imageSrc ? (
                               <img
                                 src={item.imageSrc}
