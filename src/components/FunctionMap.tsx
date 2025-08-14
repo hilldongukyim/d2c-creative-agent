@@ -132,7 +132,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
                     <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
                       {section.subtitle}
                     </h4>
-                    <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                    <div className="grid grid-cols-2 gap-3">
                       {section.items.map((item) => (
                         <div
                           key={`${group.title}-${section.subtitle}-${item.name}`}
@@ -167,7 +167,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
                 ))}
               </>
             ) : (
-              <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+              <div className="grid grid-cols-2 gap-3">
                 {group.items.map((item) => (
                   <div
                     key={`${group.title}-${item.name}`}
