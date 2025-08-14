@@ -81,33 +81,30 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
   }, [highlightName]);
 
   return (
-    <section ref={containerRef} aria-label="Agent functions map" className="space-y-8">
-      {/* Super Agent Section */}
-      <div className="flex justify-center mb-8">
-        <article className="rounded-xl border bg-card/80 backdrop-blur-sm p-8 shadow-lg max-w-md w-full">
-          <header className="text-center mb-6">
-            <h3 className="text-xl font-bold text-foreground mb-2">Super Agent</h3>
-            <p className="text-sm text-muted-foreground">Central Command & Orchestration</p>
+    <section ref={containerRef} aria-label="Agent functions map" className="space-y-6">
+      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        {/* Super Agent as first item */}
+        <article className="rounded-xl border bg-gradient-to-br from-primary/5 to-primary/10 p-5 shadow-sm xl:col-span-3 md:col-span-2">
+          <header className="text-center mb-4">
+            <h3 className="text-lg font-bold text-foreground mb-1">Super Agent</h3>
+            <p className="text-xs text-muted-foreground">Central Command & Orchestration</p>
           </header>
-          <div className="flex flex-col items-center">
-            <div className="relative h-32 w-32 rounded-full overflow-hidden mb-4 ring-4 ring-primary/20">
-              <div className="h-full w-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white text-3xl font-bold">
-                SA
+          <div className="flex justify-center">
+            <div className="flex flex-col items-center">
+              <div className="relative h-16 w-16 rounded-full overflow-hidden mb-3 ring-2 ring-primary/20">
+                <div className="h-full w-full bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center text-white text-lg font-bold">
+                  SA
+                </div>
               </div>
-            </div>
-            <div className="text-center">
-              <div className="text-lg font-semibold text-foreground mb-1">Super Agent</div>
-              <div className="text-sm text-muted-foreground">Mission Control Specialist</div>
-              <div className="text-xs text-muted-foreground/80 mt-2 max-w-xs">
-                Orchestrates all agent activities and ensures seamless collaboration across teams
+              <div className="text-center">
+                <div className="text-sm font-semibold text-foreground mb-1">Super Agent</div>
+                <div className="text-xs text-muted-foreground">Mission Control Specialist</div>
               </div>
             </div>
           </div>
         </article>
-      </div>
-      
-      {/* Existing Function Map */}
-      <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
+        
+        {/* Existing groups */}
         {groups.map((group) => (
           <article key={group.title} className="rounded-xl border bg-card p-5 shadow-sm">
             <header className="mb-4">
