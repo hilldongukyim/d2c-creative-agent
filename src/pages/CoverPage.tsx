@@ -53,11 +53,17 @@ const CoverPage = () => {
               </video>
             </div>
 
-            {/* Video 2 - Blue coming soon */}
-            <div id="crew-video-2" className="w-50 h-40 bg-gradient-to-br from-blue-500/30 to-cyan-500/30 rounded-3xl border border-white/20 backdrop-blur-sm flex-shrink-0 shadow-lg">
-              <div className="w-full h-full rounded-3xl bg-black/20 flex items-center justify-center">
-                <div className="text-white/75 text-sm font-medium">Coming Soon</div>
-              </div>
+            {/* Video 2 - Blue video */}
+            <div id="crew-video-2" className="w-50 h-40 bg-gradient-to-br from-blue-500/30 to-cyan-500/30 rounded-3xl border border-white/20 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
+              <video 
+                className="w-full h-full object-cover rounded-3xl"
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+              >
+                <source src="https://drive.google.com/uc?export=download&id=1P_HHno821NTCINRQ1-RhJeMjQhZjZ4zA" type="video/mp4" />
+              </video>
             </div>
 
             {/* Video 3 - Green coming soon */}
@@ -164,11 +170,17 @@ const CoverPage = () => {
               </video>
             </div>
 
-            {/* Video 2 - Blue coming soon (duplicate) */}
-            <div className="w-50 h-40 bg-gradient-to-br from-blue-500/30 to-cyan-500/30 rounded-3xl border border-white/20 backdrop-blur-sm flex-shrink-0 shadow-lg">
-              <div className="w-full h-full rounded-3xl bg-black/20 flex items-center justify-center">
-                <div className="text-white/75 text-sm font-medium">Coming Soon</div>
-              </div>
+            {/* Video 2 - Blue video (duplicate) */}
+            <div className="w-50 h-40 bg-gradient-to-br from-blue-500/30 to-cyan-500/30 rounded-3xl border border-white/20 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
+              <video 
+                className="w-full h-full object-cover rounded-3xl"
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+              >
+                <source src="https://drive.google.com/uc?export=download&id=1P_HHno821NTCINRQ1-RhJeMjQhZjZ4zA" type="video/mp4" />
+              </video>
             </div>
 
             {/* Video 3 - Green coming soon (duplicate) */}
