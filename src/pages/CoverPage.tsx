@@ -183,11 +183,17 @@ const CoverPage = () => {
               </video>
             </div>
 
-            {/* Video 12 - Amber coming soon */}
-            <div id="crew-video-12" className="w-40 h-60 bg-gradient-to-br from-amber-500/25 to-orange-500/25 rounded-3xl border border-white/15 backdrop-blur-sm flex-shrink-0 shadow-lg">
-              <div className="w-full h-full rounded-3xl bg-black/20 flex items-center justify-center">
-                <div className="text-white/65 text-sm">Coming Soon</div>
-              </div>
+            {/* Video 12 - Amber video */}
+            <div id="crew-video-12" className="w-40 h-60 bg-gradient-to-br from-amber-500/25 to-orange-500/25 rounded-3xl border border-white/15 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
+              <video 
+                className="w-full h-full object-cover rounded-3xl"
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+              >
+                <source src="/crew-video-12.mp4" type="video/mp4" />
+              </video>
             </div>
           </div>
 
@@ -336,11 +342,17 @@ const CoverPage = () => {
               </video>
             </div>
 
-            {/* Video 12 - Amber coming soon (duplicate) */}
-            <div className="w-40 h-60 bg-gradient-to-br from-amber-500/25 to-orange-500/25 rounded-3xl border border-white/15 backdrop-blur-sm flex-shrink-0 shadow-lg">
-              <div className="w-full h-full rounded-3xl bg-black/20 flex items-center justify-center">
-                <div className="text-white/65 text-sm">Coming Soon</div>
-              </div>
+            {/* Video 12 - Amber video (duplicate) */}
+            <div className="w-40 h-60 bg-gradient-to-br from-amber-500/25 to-orange-500/25 rounded-3xl border border-white/15 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
+              <video 
+                className="w-full h-full object-cover rounded-3xl"
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+              >
+                <source src="/crew-video-12.mp4" type="video/mp4" />
+              </video>
             </div>
           </div>
         </div>
