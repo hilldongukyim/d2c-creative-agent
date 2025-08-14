@@ -321,7 +321,7 @@ const Home = () => {
           <AlertDialogHeader>
             <AlertDialogTitle>On the Job Training</AlertDialogTitle>
             <AlertDialogDescription>
-              {selectedName ? `${selectedName} will coming soon.` : "This feature will coming soon."}
+              {selectedName ? `${selectedName} will be coming soon.` : "This feature will be coming soon."}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
