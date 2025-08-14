@@ -215,7 +215,7 @@ const Home = () => {
                     </div>
                     <div className="text-xs text-muted-foreground">Data</div>
                     
-                    {/* Data Teams - horizontal layout */}
+                    {/* Data Teams - horizontal layout (only 2 teams) */}
                     <div className="flex space-x-6 pt-2">
                       {/* Team 1 */}
                       <div className="flex flex-col items-center space-y-2">
@@ -238,15 +238,46 @@ const Home = () => {
                           <div className="w-6 h-6 rounded-full bg-muted-foreground/50"></div>
                         </div>
                       </div>
-                      
-                      {/* Team 3 */}
+                    </div>
+                  </div>
+                  
+                  {/* Fulfillment Division */}
+                  <div className="flex flex-col items-center space-y-4">
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-r from-green-600 to-green-500 flex items-center justify-center">
+                      <span className="text-white text-xs">FULL</span>
+                    </div>
+                    <div className="text-xs text-muted-foreground">Fulfillment</div>
+                    
+                    {/* Fulfillment Team */}
+                    <div className="flex space-x-6 pt-2">
                       <div className="flex flex-col items-center space-y-2">
-                        <div className="w-10 h-10 rounded-full bg-muted-foreground/70 flex items-center justify-center">
+                        <div className="w-10 h-10 rounded-full bg-green-600/70 flex items-center justify-center">
                           <span className="text-white text-xs">TL</span>
                         </div>
                         <div className="flex space-x-1">
-                          <div className="w-6 h-6 rounded-full bg-muted-foreground/50"></div>
-                          <div className="w-6 h-6 rounded-full bg-muted-foreground/50"></div>
+                          <div className="w-6 h-6 rounded-full bg-green-600/50"></div>
+                          <div className="w-6 h-6 rounded-full bg-green-600/50"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* B2C Subs Capability Boost Division */}
+                  <div className="flex flex-col items-center space-y-4">
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-r from-purple-600 to-purple-500 flex items-center justify-center">
+                      <span className="text-white text-xs">B2C</span>
+                    </div>
+                    <div className="text-xs text-muted-foreground">B2C Subs</div>
+                    
+                    {/* B2C Subs Team */}
+                    <div className="flex space-x-6 pt-2">
+                      <div className="flex flex-col items-center space-y-2">
+                        <div className="w-10 h-10 rounded-full bg-purple-600/70 flex items-center justify-center">
+                          <span className="text-white text-xs">TL</span>
+                        </div>
+                        <div className="flex space-x-1">
+                          <div className="w-6 h-6 rounded-full bg-purple-600/50"></div>
+                          <div className="w-6 h-6 rounded-full bg-purple-600/50"></div>
                         </div>
                       </div>
                     </div>
@@ -254,7 +285,7 @@ const Home = () => {
                 </div>
                 
                 <div className="text-center text-xs text-muted-foreground mt-6">
-                  20 members across 3 divisions, 9 teams
+                  26 members across 5 divisions, 11 teams
                 </div>
               </div>
             </div>
