@@ -28,7 +28,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
           subtitle: "Team Members",
           items: [
             { name: "Maya", role: "Account Create", imageSrc: "/lovable-uploads/d67ab42c-85c8-480e-b65e-66a15abe8586.png" },
-            { name: "Fiona", role: "Communication", imageSrc: "/lovable-uploads/f3264e74-893f-4cb0-9ec7-91b84b56c631.png" },
+            { name: "Fiona", role: "Account Delete", imageSrc: "/lovable-uploads/f3264e74-893f-4cb0-9ec7-91b84b56c631.png" },
           ],
         },
       ],
