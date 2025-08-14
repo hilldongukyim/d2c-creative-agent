@@ -185,7 +185,19 @@ const Home = () => {
                     </div>
                     <div className="text-xs text-muted-foreground">Platform</div>
                     
-                    {/* Platform Teams - horizontal layout */}
+                    {/* Connecting bracket-style line to platform teams */}
+                    <div className="flex justify-center pt-0">
+                      <div className="relative w-32 h-6">
+                        {/* Center vertical line */}
+                        <div className="absolute left-1/2 top-0 w-0.5 h-4 bg-muted-foreground/40 transform -translate-x-1/2"></div>
+                        {/* Horizontal connecting line */}
+                        <div className="absolute top-4 left-2 right-2 h-0.5 bg-muted-foreground/40"></div>
+                        {/* Left vertical line */}
+                        <div className="absolute left-2 top-4 w-0.5 h-2 bg-muted-foreground/40"></div>
+                        {/* Right vertical line */}
+                        <div className="absolute right-2 top-4 w-0.5 h-2 bg-muted-foreground/40"></div>
+                      </div>
+                    </div>
                     <div className="flex space-x-6 pt-2">
                       {/* Team 1 */}
                       <div className="flex flex-col items-center space-y-2">
@@ -229,7 +241,19 @@ const Home = () => {
                     </div>
                     <div className="text-xs text-muted-foreground">Data</div>
                     
-                    {/* Data Teams - horizontal layout (only 2 teams) */}
+                    {/* Connecting bracket-style line to data teams */}
+                    <div className="flex justify-center pt-0">
+                      <div className="relative w-24 h-6">
+                        {/* Center vertical line */}
+                        <div className="absolute left-1/2 top-0 w-0.5 h-4 bg-muted-foreground/40 transform -translate-x-1/2"></div>
+                        {/* Horizontal connecting line */}
+                        <div className="absolute top-4 left-2 right-2 h-0.5 bg-muted-foreground/40"></div>
+                        {/* Left vertical line */}
+                        <div className="absolute left-2 top-4 w-0.5 h-2 bg-muted-foreground/40"></div>
+                        {/* Right vertical line */}
+                        <div className="absolute right-2 top-4 w-0.5 h-2 bg-muted-foreground/40"></div>
+                      </div>
+                    </div>
                     <div className="flex space-x-6 pt-2">
                       {/* Team 1 */}
                       <div className="flex flex-col items-center space-y-2">
@@ -262,7 +286,17 @@ const Home = () => {
                     </div>
                     <div className="text-xs text-muted-foreground">Fulfillment</div>
                     
-                    {/* Fulfillment Team */}
+                    {/* Connecting bracket-style line to fulfillment team */}
+                    <div className="flex justify-center pt-0">
+                      <div className="relative w-16 h-6">
+                        {/* Center vertical line */}
+                        <div className="absolute left-1/2 top-0 w-0.5 h-4 bg-muted-foreground/40 transform -translate-x-1/2"></div>
+                        {/* Horizontal connecting line - shorter for single team */}
+                        <div className="absolute top-4 left-4 right-4 h-0.5 bg-muted-foreground/40"></div>
+                        {/* Single vertical line to team */}
+                        <div className="absolute left-1/2 top-4 w-0.5 h-2 bg-muted-foreground/40 transform -translate-x-1/2"></div>
+                      </div>
+                    </div>
                     <div className="flex space-x-6 pt-2">
                       <div className="flex flex-col items-center space-y-2">
                          <div className="w-10 h-10 rounded-full bg-green-600/70 flex items-center justify-center overflow-hidden">
@@ -283,7 +317,17 @@ const Home = () => {
                     </div>
                     <div className="text-xs text-muted-foreground">B2C Subs</div>
                     
-                    {/* B2C Subs Team */}
+                    {/* Connecting bracket-style line to B2C team */}
+                    <div className="flex justify-center pt-0">
+                      <div className="relative w-16 h-6">
+                        {/* Center vertical line */}
+                        <div className="absolute left-1/2 top-0 w-0.5 h-4 bg-muted-foreground/40 transform -translate-x-1/2"></div>
+                        {/* Horizontal connecting line - shorter for single team */}
+                        <div className="absolute top-4 left-4 right-4 h-0.5 bg-muted-foreground/40"></div>
+                        {/* Single vertical line to team */}
+                        <div className="absolute left-1/2 top-4 w-0.5 h-2 bg-muted-foreground/40 transform -translate-x-1/2"></div>
+                      </div>
+                    </div>
                     <div className="flex space-x-6 pt-2">
                       <div className="flex flex-col items-center space-y-2">
                          <div className="w-10 h-10 rounded-full bg-purple-600/70 flex items-center justify-center overflow-hidden">
