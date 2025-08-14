@@ -19,10 +19,10 @@ const CoverPage = () => {
     { src: "/crew-video-4.mp4", gradient: "bg-gradient-to-br from-orange-500/35 to-red-500/35", id: "crew-video-4" },
     { src: "/crew-video-5.mp4", gradient: "bg-gradient-to-br from-yellow-500/30 to-amber-500/30", id: "crew-video-5" },
     { src: "/crew-video-6.mp4", gradient: "bg-gradient-to-br from-indigo-500/25 to-purple-500/25", id: "crew-video-6" },
-    { src: "/crew-video-7.mp4", gradient: "bg-gradient-to-br from-rose-500/20 to-pink-500/20", id: "crew-video-7" },
+//{ src: "/crew-video-7.mp4", gradient: "bg-gradient-to-br from-rose-500/20 to-pink-500/20", id: "crew-video-7" },
     { src: "/crew-video-8.mp4", gradient: "bg-gradient-to-br from-teal-500/22 to-blue-500/22", id: "crew-video-8" },
-    { src: "/crew-video-9.mp4", gradient: "bg-gradient-to-br from-emerald-500/25 to-green-500/25", id: "crew-video-9" },
-    { src: "/crew-video-10.mp4", gradient: "bg-gradient-to-br from-violet-500/25 to-purple-500/25", id: "crew-video-10" },
+//{ src: "/crew-video-9.mp4", gradient: "bg-gradient-to-br from-emerald-500/25 to-green-500/25", id: "crew-video-9" },
+//{ src: "/crew-video-10.mp4", gradient: "bg-gradient-to-br from-violet-500/25 to-purple-500/25", id: "crew-video-10" },
     { src: "/crew-video-11.mp4", gradient: "bg-gradient-to-br from-cyan-500/25 to-blue-500/25", id: "crew-video-11" },
     { src: "/crew-video-12.mp4", gradient: "bg-gradient-to-br from-amber-500/25 to-orange-500/25", id: "crew-video-12" },
   ];
