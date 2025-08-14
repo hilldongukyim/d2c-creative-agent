@@ -35,7 +35,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
   const crewProfiles: Record<string, {description: string, videoUrl?: string}> = {
     "candy": {
       description: "Candy는 DAM 팀의 리더로서 팀원들의 업무를 조율하고 전체적인 프로젝트 방향을 설정합니다. 뛰어난 커뮤니케이션 능력과 리더십으로 팀의 효율성을 극대화합니다.",
-      videoUrl: "/crew-video-1.mp4"
+      videoUrl: "/candy-video.mp4"
     },
     "maya": {
       description: "Maya는 계정 생성 전문가로서 신규 사용자 온보딩 프로세스를 담당합니다. 사용자 경험을 최우선으로 하여 원활한 계정 생성 플로우를 구축합니다.",
