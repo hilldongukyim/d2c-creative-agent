@@ -120,86 +120,143 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
                 </header>
                 {"sections" in group ? (
                   <>
-                    {group.sections.map((section) => (
-                      <div key={section.subtitle} className="mb-5 last:mb-0 pointer-events-auto">
-                        <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground pointer-events-none">
-                          {section.subtitle}
-                        </h4>
-                        {group.title === "Promotion" && section.subtitle !== "Team Leader" ? (
-                          // Vertical layout for Analytics and Content Creation sections
-                          <div className="flex flex-col gap-3 pointer-events-none">
-                            {section.items.map((item) => (
-                              <div
-                                key={`${group.title}-${section.subtitle}-${item.name}`}
-                                data-profile-name={item.name.toLowerCase()}
-                                className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onProfileClick?.(item.name);
-                                }}
-                                role="button"
-                                tabIndex={0}
-                              >
-                                <div className="relative h-20 w-20 md:h-24 md:w-24 rounded-full overflow-hidden">
-                                  {item.imageSrc ? (
-                                    <img
-                                      src={item.imageSrc}
-                                      alt={`${item.name} profile image`}
-                                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
-                                      loading="lazy"
-                                    />
-                                  ) : (
-                                    <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
-                                      {item.name.charAt(0)}
-                                    </div>
-                                  )}
+                    {group.title === "Promotion" ? (
+                      // Special layout for Promotion team
+                      <>
+                        {/* Team Leader section first */}
+                        {group.sections.filter(section => section.subtitle === "Team Leader").map((section) => (
+                          <div key={section.subtitle} className="mb-5 pointer-events-auto">
+                            <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground pointer-events-none">
+                              {section.subtitle}
+                            </h4>
+                            <div className="grid grid-cols-2 gap-3 pointer-events-none">
+                              {section.items.map((item) => (
+                                <div
+                                  key={`${group.title}-${section.subtitle}-${item.name}`}
+                                  data-profile-name={item.name.toLowerCase()}
+                                  className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onProfileClick?.(item.name);
+                                  }}
+                                  role="button"
+                                  tabIndex={0}
+                                >
+                                  <div className="relative h-20 w-20 md:h-24 md:w-24 rounded-full overflow-hidden">
+                                    {item.imageSrc ? (
+                                      <img
+                                        src={item.imageSrc}
+                                        alt={`${item.name} profile image`}
+                                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                        loading="lazy"
+                                      />
+                                    ) : (
+                                      <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
+                                        {item.name.charAt(0)}
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div className="mt-2">
+                                    <div className="text-sm font-medium text-foreground">{item.name}</div>
+                                    <div className="text-xs text-muted-foreground">{item.role}</div>
+                                  </div>
                                 </div>
-                                <div className="mt-2">
-                                  <div className="text-sm font-medium text-foreground">{item.name}</div>
-                                  <div className="text-xs text-muted-foreground">{item.role}</div>
-                                </div>
-                              </div>
-                            ))}
+                              ))}
+                            </div>
                           </div>
-                        ) : (
-                          // Regular grid layout for other sections
-                          <div className="grid grid-cols-2 gap-3 pointer-events-none">
-                            {section.items.map((item) => (
-                              <div
-                                key={`${group.title}-${section.subtitle}-${item.name}`}
-                                data-profile-name={item.name.toLowerCase()}
-                                className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  onProfileClick?.(item.name);
-                                }}
-                                role="button"
-                                tabIndex={0}
-                              >
-                                <div className="relative h-20 w-20 md:h-24 md:w-24 rounded-full overflow-hidden">
-                                  {item.imageSrc ? (
-                                    <img
-                                      src={item.imageSrc}
-                                      alt={`${item.name} profile image`}
-                                      className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
-                                      loading="lazy"
-                                    />
-                                  ) : (
-                                    <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
-                                      {item.name.charAt(0)}
+                        ))}
+                        
+                        {/* Analytics and Content Creation sections side by side */}
+                        <div className="flex gap-4">
+                          {group.sections.filter(section => section.subtitle !== "Team Leader").map((section) => (
+                            <div key={section.subtitle} className="flex-1 pointer-events-auto">
+                              <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground pointer-events-none">
+                                {section.subtitle}
+                              </h4>
+                              <div className="flex flex-col gap-3 pointer-events-none">
+                                {section.items.map((item) => (
+                                  <div
+                                    key={`${group.title}-${section.subtitle}-${item.name}`}
+                                    data-profile-name={item.name.toLowerCase()}
+                                    className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      onProfileClick?.(item.name);
+                                    }}
+                                    role="button"
+                                    tabIndex={0}
+                                  >
+                                    <div className="relative h-20 w-20 md:h-24 md:w-24 rounded-full overflow-hidden">
+                                      {item.imageSrc ? (
+                                        <img
+                                          src={item.imageSrc}
+                                          alt={`${item.name} profile image`}
+                                          className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                          loading="lazy"
+                                        />
+                                      ) : (
+                                        <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
+                                          {item.name.charAt(0)}
+                                        </div>
+                                      )}
                                     </div>
-                                  )}
-                                </div>
-                                <div className="mt-2">
-                                  <div className="text-sm font-medium text-foreground">{item.name}</div>
-                                  <div className="text-xs text-muted-foreground">{item.role}</div>
-                                </div>
+                                    <div className="mt-2">
+                                      <div className="text-sm font-medium text-foreground">{item.name}</div>
+                                      <div className="text-xs text-muted-foreground">{item.role}</div>
+                                    </div>
+                                  </div>
+                                ))}
                               </div>
-                            ))}
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    ) : (
+                      // Regular layout for other teams
+                      <>
+                        {group.sections.map((section) => (
+                          <div key={section.subtitle} className="mb-5 last:mb-0 pointer-events-auto">
+                            <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground pointer-events-none">
+                              {section.subtitle}
+                            </h4>
+                            <div className="grid grid-cols-2 gap-3 pointer-events-none">
+                              {section.items.map((item) => (
+                                <div
+                                  key={`${group.title}-${section.subtitle}-${item.name}`}
+                                  data-profile-name={item.name.toLowerCase()}
+                                  className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    onProfileClick?.(item.name);
+                                  }}
+                                  role="button"
+                                  tabIndex={0}
+                                >
+                                  <div className="relative h-20 w-20 md:h-24 md:w-24 rounded-full overflow-hidden">
+                                    {item.imageSrc ? (
+                                      <img
+                                        src={item.imageSrc}
+                                        alt={`${item.name} profile image`}
+                                        className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-110"
+                                        loading="lazy"
+                                      />
+                                    ) : (
+                                      <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
+                                        {item.name.charAt(0)}
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div className="mt-2">
+                                    <div className="text-sm font-medium text-foreground">{item.name}</div>
+                                    <div className="text-xs text-muted-foreground">{item.role}</div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
                           </div>
-                        )}
-                      </div>
-                    ))}
+                        ))}
+                      </>
+                    )}
                   </>
                 ) : (
                   <div className="grid grid-cols-2 gap-3 pointer-events-none">
