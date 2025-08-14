@@ -138,7 +138,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
               };
               
               return (
-              <div key={group.title} className={`bg-card/50 rounded-lg p-3 pointer-events-auto ${getTeamHeight(group.title)}`}>
+              <div key={group.title} className={`bg-card border border-border/20 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow pointer-events-auto ${getTeamHeight(group.title)}`}>
                 <header className="mb-4 pointer-events-none">
                   <h3 className="text-lg font-semibold text-foreground">{group.title}</h3>
                 </header>
