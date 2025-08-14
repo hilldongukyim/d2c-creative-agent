@@ -75,7 +75,7 @@ const CoverPage = () => {
                 muted 
                 playsInline
               >
-                <source src="https://drive.google.com/uc?export=download&id=1VU8qK7PNTVc0zuciT3e-G0aYaKXe44Xh" type="video/mp4" />
+                <source src="https://drive.google.com/uc?export=download&id=1rind7WSVR4oO5u_HcVaQMF0Kiy5kIKvL" type="video/mp4" />
               </video>
             </div>
 
@@ -198,7 +198,7 @@ const CoverPage = () => {
                 muted 
                 playsInline
               >
-                <source src="https://drive.google.com/uc?export=download&id=1VU8qK7PNTVc0zuciT3e-G0aYaKXe44Xh" type="video/mp4" />
+                <source src="https://drive.google.com/uc?export=download&id=1rind7WSVR4oO5u_HcVaQMF0Kiy5kIKvL" type="video/mp4" />
               </video>
             </div>
 
