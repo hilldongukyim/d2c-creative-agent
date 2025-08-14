@@ -100,7 +100,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
     <section ref={containerRef} aria-label="Agent functions map" className="space-y-6">
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {/* Super Agent as first item */}
-        <div className="xl:col-span-3 md:col-span-2 bg-white rounded-xl p-6">
+        <div className="xl:col-span-3 md:col-span-2 bg-[hsl(var(--function-map-bg))] rounded-xl p-6">
           {/* Super Agent Section */}
           <div className="text-center mb-8">
             <h3 className="text-lg font-bold text-foreground mb-1">Super Agent</h3>
