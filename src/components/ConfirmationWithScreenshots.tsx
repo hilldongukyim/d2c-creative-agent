@@ -29,7 +29,7 @@ const ConfirmationWithScreenshots = ({
     setIsLoading(true);
     
     // n8n 웹훅 URL (사용자가 n8n에서 생성한 웹훅 URL로 교체)
-    const n8nWebhookUrl = "https://your-n8n-instance.com/webhook/your-webhook-id";
+    const n8nWebhookUrl = "https://dev.eaip.lge.com/n8n/webhook/0d1d1ae9-c63d-4402-b7a5-124a886eb108";
     
     try {
       const response = await fetch(n8nWebhookUrl, {
