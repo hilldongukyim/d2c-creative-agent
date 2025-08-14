@@ -127,8 +127,13 @@ const Home = () => {
                     </div>
                     <div className="text-xs text-muted-foreground">Marketing</div>
                     
+                    {/* Connecting line to marketing teams */}
+                    <div className="flex justify-center pt-2">
+                      <div className="w-0.5 h-4 bg-secondary/60"></div>
+                    </div>
+                    
                     {/* Marketing Teams - horizontal layout */}
-                    <div className="flex space-x-6 pt-2">
+                    <div className="flex space-x-6 pt-0">
                       {/* Team 1 */}
                       <div className="flex flex-col items-center space-y-2">
                         <div className="w-10 h-10 rounded-full bg-secondary/70 flex items-center justify-center overflow-hidden">
