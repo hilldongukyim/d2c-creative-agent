@@ -60,15 +60,15 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
       ],
     },
     {
-      title: "GEO",
-      items: [
-        { name: "Alex", role: "Geo Specialist", imageSrc: "/lovable-uploads/98c39541-6950-461b-a1b0-0247044ee38e.png" },
-      ],
-    },
-    {
       title: "Data",
       items: [
         { name: "Sam", role: "Data Analyst", imageSrc: "/lovable-uploads/d004c9d6-0491-459c-8639-7730374641aa.png" },
+      ],
+    },
+    {
+      title: "GEO",
+      items: [
+        { name: "Alex", role: "Geo Specialist", imageSrc: "/lovable-uploads/98c39541-6950-461b-a1b0-0247044ee38e.png" },
       ],
     },
     {
