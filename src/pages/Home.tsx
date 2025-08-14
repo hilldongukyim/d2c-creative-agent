@@ -267,7 +267,10 @@ const Home = () => {
                     <div className="w-14 h-14 rounded-full bg-gradient-to-r from-purple-600 to-purple-500 flex items-center justify-center">
                       <span className="text-white text-xs">B2C</span>
                     </div>
-                    <div className="text-xs text-muted-foreground">B2C Subs</div>
+                    <div className="text-xs text-muted-foreground text-center">
+                      <div>B2C</div>
+                      <div>Capability Boost</div>
+                    </div>
                     
                     {/* B2C Subs Team */}
                     <div className="flex space-x-6 pt-2">
