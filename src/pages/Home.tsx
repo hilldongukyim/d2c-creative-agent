@@ -166,8 +166,8 @@ const Home = () => {
                   
                   {/* Platform Division */}
                   <div className="flex flex-col items-center space-y-4">
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-r from-accent to-accent/80 flex items-center justify-center">
-                      <span className="text-white text-xs">PLT</span>
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-r from-accent to-accent/80 flex items-center justify-center overflow-hidden">
+                      <img src="/lovable-uploads/02f4bac4-be03-4759-823e-9d54f558fc2d.png" alt="Platform Division Leader" className="w-full h-full object-cover rounded-full" />
                     </div>
                     <div className="text-xs text-muted-foreground">Platform</div>
                     
