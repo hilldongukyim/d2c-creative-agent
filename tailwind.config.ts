@@ -134,7 +134,7 @@ export default {
 				'pulse-success': 'pulseSuccess 2s ease-in-out infinite',
 				'float': 'float 3s ease-in-out infinite',
 				'wave': 'wave 2s ease-in-out infinite',
-				'slide': 'slide 30s linear infinite'
+				'slide': 'slide 25s linear infinite'
 			},
 			keyframes: {
 				fadeIn: {
