@@ -93,31 +93,32 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
     <section ref={containerRef} aria-label="Agent functions map" className="space-y-6">
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {/* Super Agent as first item */}
-        <article className="rounded-xl border bg-gradient-to-br from-primary/5 to-primary/10 p-5 shadow-sm xl:col-span-3 md:col-span-2">
-          <header className="text-center mb-4">
+        <div className="xl:col-span-3 md:col-span-2 bg-gradient-to-br from-primary/5 to-primary/10 rounded-xl p-6">
+          {/* Super Agent Section */}
+          <div className="text-center mb-8">
             <h3 className="text-lg font-bold text-foreground mb-1">Super Agent</h3>
-            <p className="text-xs text-muted-foreground">Central Command & Orchestration</p>
-          </header>
-          <div className="flex justify-center">
-            <div className="flex flex-col items-center">
-              <div className="relative h-16 w-16 rounded-full overflow-hidden mb-3 ring-2 ring-primary/20">
-                <img
-                  src="/lovable-uploads/721071c1-63ee-4bc4-b9d8-264657716340.png"
-                  alt="Super Agent robot"
-                  className="h-full w-full object-cover"
-                />
-              </div>
-              <div className="text-center">
-                <div className="text-sm font-semibold text-foreground mb-1">vee</div>
-                <div className="text-xs text-muted-foreground">Central Command & Orchestration</div>
+            <p className="text-xs text-muted-foreground mb-4">Central Command & Orchestration</p>
+            <div className="flex justify-center">
+              <div className="flex flex-col items-center">
+                <div className="relative h-16 w-16 rounded-full overflow-hidden mb-3 ring-2 ring-primary/20">
+                  <img
+                    src="/lovable-uploads/721071c1-63ee-4bc4-b9d8-264657716340.png"
+                    alt="Super Agent robot"
+                    className="h-full w-full object-cover"
+                  />
+                </div>
+                <div className="text-center">
+                  <div className="text-sm font-semibold text-foreground mb-1">vee</div>
+                  <div className="text-xs text-muted-foreground">Central Command & Orchestration</div>
+                </div>
               </div>
             </div>
           </div>
-        </article>
-        
-        {/* Existing groups */}
-        {groups.map((group) => (
-          <article key={group.title} className="rounded-xl border bg-card p-5 shadow-sm">
+          
+          {/* Teams Section */}
+          <div className="grid gap-6 md:grid-cols-3">
+            {groups.map((group) => (
+              <div key={group.title} className="bg-card/50 rounded-lg p-4">
             <header className="mb-4">
               <h3 className="text-lg font-semibold text-foreground">{group.title}</h3>
             </header>
@@ -195,8 +196,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
                 ))}
               </div>
             )}
-          </article>
-        ))}
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
