@@ -92,11 +92,17 @@ const CoverPage = () => {
               </video>
             </div>
 
-            {/* Video 5 - Yellow coming soon */}
-            <div id="crew-video-5" className="w-40 h-60 bg-gradient-to-br from-yellow-500/30 to-amber-500/30 rounded-3xl border border-white/20 backdrop-blur-sm flex-shrink-0 shadow-lg">
-              <div className="w-full h-full rounded-3xl bg-black/20 flex items-center justify-center">
-                <div className="text-white/70 text-sm font-medium">Coming Soon</div>
-              </div>
+            {/* Video 5 - Yellow video */}
+            <div id="crew-video-5" className="w-40 h-60 bg-gradient-to-br from-yellow-500/30 to-amber-500/30 rounded-3xl border border-white/20 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
+              <video 
+                className="w-full h-full object-cover rounded-3xl"
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+              >
+                <source src="/crew-video-5.mp4" type="video/mp4" />
+              </video>
             </div>
 
             {/* Video 6 - Indigo video */}
@@ -215,11 +221,17 @@ const CoverPage = () => {
               </video>
             </div>
 
-            {/* Video 5 - Yellow coming soon (duplicate) */}
-            <div className="w-40 h-60 bg-gradient-to-br from-yellow-500/30 to-amber-500/30 rounded-3xl border border-white/20 backdrop-blur-sm flex-shrink-0 shadow-lg">
-              <div className="w-full h-full rounded-3xl bg-black/20 flex items-center justify-center">
-                <div className="text-white/70 text-sm font-medium">Coming Soon</div>
-              </div>
+            {/* Video 5 - Yellow video (duplicate) */}
+            <div className="w-40 h-60 bg-gradient-to-br from-yellow-500/30 to-amber-500/30 rounded-3xl border border-white/20 backdrop-blur-sm overflow-hidden flex-shrink-0 shadow-lg">
+              <video 
+                className="w-full h-full object-cover rounded-3xl"
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+              >
+                <source src="/crew-video-5.mp4" type="video/mp4" />
+              </video>
             </div>
 
             {/* Video 6 - Indigo video (duplicate) */}
