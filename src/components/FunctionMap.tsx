@@ -124,8 +124,21 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
           
           {/* Teams Section */}
           <div className="grid gap-4 md:grid-cols-4">{/* Changed to 4 columns to allow better spacing */}
-            {groups.map((group) => (
-              <div key={group.title} className="bg-card/50 rounded-lg p-3 pointer-events-auto">
+            {groups.map((group) => {
+              // Define different heights for each team
+              const getTeamHeight = (title: string) => {
+                switch (title) {
+                  case "DAM": return "h-80";
+                  case "Promotion": return "h-96";
+                  case "GEO": return "h-64";
+                  case "Data": return "h-72";
+                  case "Intern": return "h-88";
+                  default: return "h-80";
+                }
+              };
+              
+              return (
+              <div key={group.title} className={`bg-card/50 rounded-lg p-3 pointer-events-auto ${getTeamHeight(group.title)}`}>
                 <header className="mb-4 pointer-events-none">
                   <h3 className="text-lg font-semibold text-foreground">{group.title}</h3>
                 </header>
@@ -341,8 +354,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
                     ))}
                   </div>
                 )}
-              </div>
-            ))}
+               </div>
+              );
+            })}
           </div>
         </div>
       </div>
