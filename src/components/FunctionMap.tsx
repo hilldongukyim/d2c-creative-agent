@@ -148,7 +148,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
                                 role="button"
                                 tabIndex={0}
                               >
-                                 <div className={`relative ${section.subtitle === "Team Leader" ? "h-20 w-20 md:h-24 md:w-24" : "h-16 w-16 md:h-20 md:w-20"} rounded-full overflow-hidden`}>
+                                 <div className={`relative ${section.subtitle === "Team Leader" ? "h-20 w-20 md:h-24 md:w-24" : "h-14 w-14 md:h-16 md:w-16"} rounded-full overflow-hidden`}>
                                   {item.imageSrc ? (
                                     <img
                                       src={item.imageSrc}
@@ -310,7 +310,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
                           role="button"
                           tabIndex={0}
                         >
-                           <div className="relative h-20 w-20 md:h-24 md:w-24 rounded-full overflow-hidden">
+                           <div className="relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden">
                             {item.imageSrc ? (
                               <img
                                 src={item.imageSrc}
@@ -353,7 +353,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
                           role="button"
                           tabIndex={0}
                         >
-                           <div className="relative h-20 w-20 md:h-24 md:w-24 rounded-full overflow-hidden">
+                           <div className="relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden">
                             {item.imageSrc ? (
                               <img
                                 src={item.imageSrc}
