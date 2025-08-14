@@ -131,9 +131,11 @@ const FunctionMap: React.FC<FunctionMapProps> = ({ profiles, onProfileClick, hig
                         {/* Team Leader section first */}
                         {group.sections.filter(section => section.subtitle === "Team Leader").map((section) => (
                           <div key={section.subtitle} className="mb-5 pointer-events-auto">
-                            <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground pointer-events-none">
-                              {section.subtitle}
-                            </h4>
+                            {section.subtitle !== "Team Leader" && (
+                              <h4 className="mb-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground pointer-events-none">
+                                {section.subtitle}
+                              </h4>
+                            )}
                             <div className="flex justify-center pointer-events-none">
                               {section.items.map((item) => (
                                 <div
