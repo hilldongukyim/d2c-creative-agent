@@ -113,7 +113,7 @@ const ChatInterface = () => {
     }, 1000);
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (currentQuestion < 6) {
       // Add user's answer
       const userMessage: Message = {
@@ -161,7 +161,7 @@ const ChatInterface = () => {
         }, 1000);
       }, 500);
     } else {
-      // Final confirmation
+      // Final confirmation - send data to webhook
       const userMessage: Message = {
         id: "final-confirm",
         sender: "user",
@@ -171,12 +171,40 @@ const ChatInterface = () => {
       };
       setMessages(prev => [...prev, userMessage]);
       
+      // Send data to n8n webhook
+      try {
+        const webhookUrl = "https://your-n8n-webhook-url.com/webhook/promotional-content"; // Replace with actual n8n URL
+        
+        const payload = {
+          epId: formData.epId,
+          promotionInfo: formData.promotionInfo,
+          productUrl: formData.productUrl,
+          lifestyleImage: formData.lifestyleImage,
+          disclaimer: formData.disclaimer,
+          channels: formData.channels,
+          timestamp: new Date().toISOString()
+        };
+
+        await fetch(webhookUrl, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          mode: "no-cors",
+          body: JSON.stringify(payload),
+        });
+
+        console.log("Data sent to webhook:", payload);
+      } catch (error) {
+        console.error("Failed to send data to webhook:", error);
+      }
+      
       // Success message
       setTimeout(() => {
         const successMessage: Message = {
           id: "success",
           sender: "yumi",
-          content: "Excellent! I've received all your details and will start working on your promotional content right away. You'll receive the final deliverables at your provided email address. Thank you for working with me! 🎉",
+          content: "Excellent! I've received all your details and sent them to our content creation system. You'll receive the final deliverables at your provided email address. Thank you for working with me! 🎉",
           timestamp: new Date()
         };
         setMessages(prev => [...prev, successMessage]);
