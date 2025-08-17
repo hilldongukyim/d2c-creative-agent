@@ -116,12 +116,16 @@ const ChatInterface = () => {
   const handleSubmit = async () => {
     if (currentQuestion < 6) {
       // Add user's answer
+      const userContent = questions[currentQuestion].inputType === "checkbox" 
+        ? selectedChannels.join(", ") 
+        : currentQuestion === 0 // First question (EP ID)
+          ? `${currentInput}@lge.com`
+          : currentInput;
+          
       const userMessage: Message = {
         id: `user-${currentQuestion}`,
         sender: "user",
-        content: questions[currentQuestion].inputType === "checkbox" 
-          ? selectedChannels.join(", ") 
-          : currentInput,
+        content: userContent,
         timestamp: new Date(),
         type: "answer"
       };
