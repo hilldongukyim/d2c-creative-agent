@@ -401,7 +401,7 @@ const Home = () => {
                               <img src="/lovable-uploads/c67db3d8-8cdc-426a-80e4-b8e7b6bf4604.png" alt="Team Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
                             </div>
                             <div className="flex space-x-1">
-                              <img src="/lovable-uploads/0626cb3c-cbe3-4b16-a5f6-29748386fa13.png" alt="Team Member" className="w-4 h-4 rounded-full object-cover" loading="lazy" />
+                              <img src="/lovable-uploads/6e1f62a8-db94-4fca-a06b-f9b8f7b3567c.png" alt="Team Member" className="w-4 h-4 rounded-full object-cover" loading="lazy" />
                               <img src="/lovable-uploads/0984d14e-1c85-48e9-9be5-953e3bc72d9a.png" alt="Team Member" className="w-4 h-4 rounded-full object-cover" loading="lazy" />
                             </div>
                           </div>
