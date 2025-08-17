@@ -122,7 +122,7 @@ const Home = () => {
                   </div>
                   
                   {/* Connecting lines from President */}
-                  <div className="relative w-32 h-8 mx-auto">
+                  <div className="relative w-32 h-6 mx-auto">
                     {/* Center vertical line from President */}
                     <div className="absolute left-1/2 top-0 w-0.5 h-4 bg-muted-foreground/30 transform -translate-x-1/2"></div>
                     {/* Horizontal line */}
