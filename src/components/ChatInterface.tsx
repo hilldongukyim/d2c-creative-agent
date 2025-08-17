@@ -129,11 +129,15 @@ const ChatInterface = () => {
       // Update form data
       const field = questions[currentQuestion].field;
       if (field) {
+        const value = questions[currentQuestion].inputType === "checkbox" 
+          ? selectedChannels 
+          : currentQuestion === 0 // First question (EP ID)
+            ? `${currentInput}@lge.com`
+            : currentInput;
+        
         setFormData(prev => ({
           ...prev,
-          [field]: questions[currentQuestion].inputType === "checkbox" 
-            ? selectedChannels 
-            : currentInput
+          [field]: value
         }));
       }
 
@@ -291,6 +295,36 @@ const ChatInterface = () => {
             disabled={!currentInput.trim()}
             size="icon"
             className="shrink-0 self-end"
+          >
+            <Send className="w-4 h-4" />
+          </Button>
+        </div>
+      );
+    }
+
+    // Special handling for first question (EP ID with @lge.com)
+    if (currentQuestion === 0) {
+      return (
+        <div className="flex gap-2">
+          <div className="flex flex-1 items-center border border-input rounded-md bg-background">
+            <Input
+              type="text"
+              value={currentInput}
+              onChange={(e) => setCurrentInput(e.target.value)}
+              placeholder="Enter your ID"
+              className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && currentInput.trim()) {
+                  handleSubmit();
+                }
+              }}
+            />
+            <span className="px-3 text-muted-foreground">@lge.com</span>
+          </div>
+          <Button 
+            onClick={handleSubmit}
+            disabled={!currentInput.trim()}
+            size="icon"
           >
             <Send className="w-4 h-4" />
           </Button>
