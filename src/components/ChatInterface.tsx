@@ -4,8 +4,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ArrowLeft, Send, Edit3, Globe } from "lucide-react";
+import { ArrowLeft, Send, Edit3, Globe, CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 interface Message {
   id: string;
@@ -493,11 +494,14 @@ const languages = {
 
 const ChatInterface = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [currentLanguage, setCurrentLanguage] = useState<keyof typeof languages>("en");
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [currentInput, setCurrentInput] = useState("");
   const [selectedChannels, setSelectedChannels] = useState<string[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionStatus, setSubmissionStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
   const [formData, setFormData] = useState<FormData>({
     epId: "",
     promotionInfo: "",
@@ -611,13 +615,17 @@ const ChatInterface = () => {
     } else {
       // Final confirmation - send data to webhook
       const userMessage: Message = {
-        id: "final-confirm",
+        id: `final-confirm-${Date.now()}`,
         sender: "user",
         content: currentLanguageData.ui.confirmed,
         timestamp: new Date(),
         type: "answer"
       };
       setMessages(prev => [...prev, userMessage]);
+      
+      // Set submitting state
+      setIsSubmitting(true);
+      setSubmissionStatus("sending");
       
       // Send data to n8n webhook
       try {
@@ -633,7 +641,7 @@ const ChatInterface = () => {
           timestamp: new Date().toISOString()
         };
 
-        await fetch(webhookUrl, {
+        const response = await fetch(webhookUrl, {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -643,20 +651,50 @@ const ChatInterface = () => {
         });
 
         console.log("Data sent to webhook:", payload);
+        
+        // Since we're using no-cors, we can't read the response status
+        // We'll assume success if no error is thrown
+        setSubmissionStatus("success");
+        
+        toast({
+          title: "성공!",
+          description: "프로모션 콘텐츠 요청이 성공적으로 전송되었습니다.",
+        });
+
+        // Success message
+        setTimeout(() => {
+          const successMessage: Message = {
+            id: `success-${Date.now()}`,
+            sender: "yumi",
+            content: currentLanguageData.ui.successMessage,
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, successMessage]);
+        }, 1000);
+        
       } catch (error) {
         console.error("Failed to send data to webhook:", error);
+        setSubmissionStatus("error");
+        
+        toast({
+          title: "오류 발생",
+          description: "웹훅 전송에 실패했습니다. 다시 시도해 주세요.",
+          variant: "destructive",
+        });
+
+        // Error message
+        setTimeout(() => {
+          const errorMessage: Message = {
+            id: `error-${Date.now()}`,
+            sender: "yumi",
+            content: "죄송합니다. 전송 중 오류가 발생했습니다. 다시 시도해 주세요.",
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, errorMessage]);
+        }, 1000);
+      } finally {
+        setIsSubmitting(false);
       }
-      
-      // Success message
-      setTimeout(() => {
-        const successMessage: Message = {
-          id: "success",
-          sender: "yumi",
-          content: currentLanguageData.ui.successMessage,
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, successMessage]);
-      }, 1000);
     }
   };
 
@@ -711,9 +749,17 @@ const ChatInterface = () => {
             <div><strong>Disclaimer:</strong> {formData.disclaimer}</div>
             <div><strong>Channels:</strong> {formData.channels.join(", ")}</div>
           </div>
-          <Button onClick={handleSubmit} className="w-full">
-            <Send className="w-4 h-4 mr-2" />
-            {currentLanguageData.ui.confirmProceed}
+          <Button onClick={handleSubmit} className="w-full" disabled={isSubmitting}>
+            {isSubmitting ? (
+              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+            ) : submissionStatus === "success" ? (
+              <CheckCircle className="w-4 h-4 mr-2" />
+            ) : submissionStatus === "error" ? (
+              <XCircle className="w-4 h-4 mr-2" />
+            ) : (
+              <Send className="w-4 h-4 mr-2" />
+            )}
+            {isSubmitting ? "전송 중..." : currentLanguageData.ui.confirmProceed}
           </Button>
         </div>
       );
