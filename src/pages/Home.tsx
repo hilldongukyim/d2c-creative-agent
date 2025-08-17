@@ -139,7 +139,7 @@ const Home = () => {
                       <div className="w-14 h-14 rounded-full bg-gradient-to-r from-primary to-primary/80 flex items-center justify-center overflow-hidden">
                         <img src="/lovable-uploads/fcb326f6-bbbd-49c3-b925-8527956f0952.png" alt="D2C Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
                       </div>
-                      <div className="text-xs text-muted-foreground">D2C Leader</div>
+                      <div className="text-xs text-muted-foreground">D2C</div>
                       
                       {/* Connecting lines from D2C Leader to 3 divisions */}
                       <div className="relative w-64 h-8 ml-0">
