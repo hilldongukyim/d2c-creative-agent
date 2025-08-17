@@ -621,7 +621,7 @@ const ChatInterface = () => {
       
       // Send data to n8n webhook
       try {
-        const webhookUrl = "https://your-n8n-webhook-url.com/webhook/promotional-content"; // Replace with actual n8n URL
+        const webhookUrl = "https://dev.eaip.lge.com/n8n/webhook/9cd2cbaf-1f04-4d71-ac24-fad9a247dabd";
         
         const payload = {
           epId: formData.epId,
