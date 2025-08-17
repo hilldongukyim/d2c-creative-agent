@@ -137,7 +137,7 @@ const Home = () => {
                       <div className="text-xs text-muted-foreground">D2C Leader</div>
                       
                       {/* Connecting lines from D2C Leader to 3 divisions */}
-                      <div className="relative w-64 h-8 mx-auto">
+                      <div className="relative w-64 h-8 ml-0">
                         {/* Center vertical line from D2C Leader */}
                         <div className="absolute left-1/2 top-0 w-0.5 h-4 bg-muted-foreground/30 transform -translate-x-1/2"></div>
                         {/* Horizontal line */}
