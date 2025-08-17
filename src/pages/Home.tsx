@@ -107,81 +107,25 @@ const Home = () => {
               <div className="overflow-x-auto">
                 <div className="flex items-start justify-center space-x-8 min-w-max px-8">
                   
-                  {/* Top Leader */}
+                  {/* CEO */}
                   <div className="flex flex-col items-center space-y-4">
-                    <div className="w-18 h-18 rounded-full bg-gradient-to-r from-primary to-primary/80 flex items-center justify-center overflow-hidden">
-                      <img src="/lovable-uploads/fcb326f6-bbbd-49c3-b925-8527956f0952.png" alt="Top Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-primary to-primary/80 flex items-center justify-center overflow-hidden">
+                      <img src="/lovable-uploads/fcb326f6-bbbd-49c3-b925-8527956f0952.png" alt="CEO" className="w-full h-full object-cover rounded-full" loading="lazy" />
                     </div>
-                    <div className="text-xs text-muted-foreground">Top Leader</div>
+                    <div className="text-xs text-muted-foreground">Leader</div>
                   </div>
                   
                   {/* Connecting line */}
                   <div className="flex items-center">
-                    <div className="w-8 h-0.5 bg-muted-foreground/30 mt-9"></div>
-                  </div>
-                  
-                  {/* Main Business Leader */}
-                  <div className="flex flex-col items-center space-y-4">
-                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-primary/80 to-primary/60 flex items-center justify-center overflow-hidden">
-                      <img src="/lovable-uploads/b9d1ddf6-1b17-41b4-9233-91642568cd3c.png" alt="Business Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
-                    </div>
-                    <div className="text-xs text-muted-foreground">Business Leader</div>
-                    
-                    {/* Connecting bracket-style line to business divisions */}
-                    <div className="flex justify-center pt-0">
-                      <div className="relative w-48 h-6">
-                        {/* Center vertical line */}
-                        <div className="absolute left-1/2 top-0 w-0.5 h-4 bg-muted-foreground/40 transform -translate-x-1/2"></div>
-                        {/* Horizontal connecting line */}
-                        <div className="absolute top-4 left-8 right-8 h-0.5 bg-muted-foreground/40"></div>
-                        {/* Left vertical line */}
-                        <div className="absolute left-8 top-4 w-0.5 h-2 bg-muted-foreground/40"></div>
-                        {/* Center vertical line */}
-                        <div className="absolute left-1/2 top-4 w-0.5 h-2 bg-muted-foreground/40 transform -translate-x-1/2"></div>
-                        {/* Right vertical line */}
-                        <div className="absolute right-8 top-4 w-0.5 h-2 bg-muted-foreground/40"></div>
-                      </div>
-                    </div>
-                    
-                    {/* Business Divisions - horizontal layout */}
-                    <div className="flex space-x-8 pt-0">
-                      {/* D2C Division */}
-                      <div className="flex flex-col items-center space-y-2">
-                        <div className="w-14 h-14 rounded-full bg-gradient-to-r from-secondary to-secondary/80 flex items-center justify-center overflow-hidden">
-                          <img src="/lovable-uploads/c33a87ea-fc09-484a-a916-58c9777a1e25.png" alt="D2C Division Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
-                        </div>
-                        <div className="text-xs text-muted-foreground">D2C</div>
-                      </div>
-                      
-                      {/* Fulfillment Division */}
-                      <div className="flex flex-col items-center space-y-2">
-                        <div className="w-14 h-14 rounded-full bg-gradient-to-r from-green-600 to-green-500 flex items-center justify-center overflow-hidden">
-                          <img src="/lovable-uploads/2b8c5249-1718-435b-b317-0753f79040fc.png" alt="Fulfillment Division Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
-                        </div>
-                        <div className="text-xs text-muted-foreground">Fulfillment</div>
-                      </div>
-                      
-                      {/* B2C Division */}
-                      <div className="flex flex-col items-center space-y-2">
-                        <div className="w-14 h-14 rounded-full bg-gradient-to-r from-blue-600 to-blue-500 flex items-center justify-center overflow-hidden">
-                          <img src="/lovable-uploads/78bed169-63a0-4583-b7d3-487b12042967.png" alt="B2C Division Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
-                        </div>
-                        <div className="text-xs text-muted-foreground">B2C</div>
-                      </div>
-                    </div>
-                  </div>
-                  
-                  {/* Connecting line to tech divisions */}
-                  <div className="flex items-center">
                     <div className="w-8 h-0.5 bg-muted-foreground/30 mt-8"></div>
                   </div>
                   
-                  {/* D2C Sub-teams */}
+                  {/* Marketing Division */}
                   <div className="flex flex-col items-center space-y-4">
                     <div className="w-14 h-14 rounded-full bg-gradient-to-r from-secondary to-secondary/80 flex items-center justify-center overflow-hidden">
-                      <img src="/lovable-uploads/c33a87ea-fc09-484a-a916-58c9777a1e25.png" alt="D2C Division Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
+                      <img src="/lovable-uploads/c33a87ea-fc09-484a-a916-58c9777a1e25.png" alt="Marketing Division Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
                     </div>
-                    <div className="text-xs text-muted-foreground">D2C Teams</div>
+                    <div className="text-xs text-muted-foreground">Marketing</div>
                     
                     {/* Connecting bracket-style line to marketing teams */}
                     <div className="flex justify-center pt-0">
