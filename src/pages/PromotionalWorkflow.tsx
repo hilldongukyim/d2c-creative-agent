@@ -1,7 +1,7 @@
-import WorkflowDashboard from "@/components/WorkflowDashboard";
+import ChatInterface from "@/components/ChatInterface";
 
 const PromotionalWorkflow = () => {
-  return <WorkflowDashboard />;
+  return <ChatInterface />;
 };
 
 export default PromotionalWorkflow;
