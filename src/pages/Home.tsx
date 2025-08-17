@@ -105,8 +105,19 @@ const Home = () => {
               
               {/* Hierarchical org chart */}
               <div className="overflow-x-auto">
-                {/* Top level - D2C Leader */}
-                <div className="flex flex-col items-center space-y-8">
+                {/* Top level - President */}
+                <div className="flex flex-col items-center space-y-6">
+                  <div className="flex flex-col items-center space-y-2">
+                    <div className="w-20 h-20 rounded-full bg-gradient-to-r from-yellow-600 to-yellow-500 flex items-center justify-center overflow-hidden">
+                      <img src="/lovable-uploads/fcb326f6-bbbd-49c3-b925-8527956f0952.png" alt="President" className="w-full h-full object-cover rounded-full" loading="lazy" />
+                    </div>
+                    <div className="text-xs text-muted-foreground">President</div>
+                  </div>
+                  
+                  {/* Connecting line down */}
+                  <div className="w-0.5 h-6 bg-muted-foreground/30"></div>
+                  
+                  {/* Second level - D2C Leader */}
                   <div className="flex flex-col items-center space-y-2">
                     <div className="w-16 h-16 rounded-full bg-gradient-to-r from-primary to-primary/80 flex items-center justify-center overflow-hidden">
                       <img src="/lovable-uploads/fcb326f6-bbbd-49c3-b925-8527956f0952.png" alt="D2C Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
@@ -115,9 +126,9 @@ const Home = () => {
                   </div>
                   
                   {/* Connecting line down */}
-                  <div className="w-0.5 h-8 bg-muted-foreground/30"></div>
+                  <div className="w-0.5 h-6 bg-muted-foreground/30"></div>
                   
-                  {/* Second level - Marketing, Platform, Data under D2C */}
+                  {/* Third level - Marketing, Platform, Data under D2C */}
                   <div className="flex items-start justify-center space-x-16 min-w-max">
                     {/* Marketing Division */}
                     <div className="flex flex-col items-center space-y-4">
@@ -279,8 +290,8 @@ const Home = () => {
                     </div>
                   </div>
                   
-                  {/* Third level - Fulfillment and B2C (separate from D2C hierarchy) */}
-                  <div className="flex items-start justify-center space-x-24 mt-12">
+                  {/* Fourth level - Fulfillment and B2C (separate from D2C hierarchy) */}
+                  <div className="flex items-start justify-center space-x-24 mt-8">
                     {/* Fulfillment Division */}
                     <div className="flex flex-col items-center space-y-4">
                       <div className="w-14 h-14 rounded-full bg-gradient-to-r from-green-600 to-green-500 flex items-center justify-center overflow-hidden">
