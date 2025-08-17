@@ -307,8 +307,12 @@ const ChatInterface = () => {
             <ArrowLeft className="w-4 h-4" />
           </Button>
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 flex items-center justify-center text-white font-semibold">
-              Y
+            <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-r from-pink-400 to-purple-500 flex items-center justify-center">
+              <img 
+                src="/lovable-uploads/17094800-5b16-4d6c-a2af-41b224a30be0.png" 
+                alt="Yumi"
+                className="w-full h-full object-cover"
+              />
             </div>
             <div>
               <h1 className="font-semibold">Yumi</h1>
@@ -327,8 +331,12 @@ const ChatInterface = () => {
               className={`flex gap-3 ${message.sender === "user" ? "justify-end" : "justify-start"}`}
             >
               {message.sender === "yumi" && (
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 flex items-center justify-center text-white text-sm font-semibold shrink-0">
-                  Y
+                <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-r from-pink-400 to-purple-500 flex items-center justify-center shrink-0">
+                  <img 
+                    src="/lovable-uploads/17094800-5b16-4d6c-a2af-41b224a30be0.png" 
+                    alt="Yumi"
+                    className="w-full h-full object-cover"
+                  />
                 </div>
               )}
               <div
@@ -363,8 +371,12 @@ const ChatInterface = () => {
           
           {isTyping && (
             <div className="flex gap-3">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-r from-pink-400 to-purple-500 flex items-center justify-center text-white text-sm font-semibold">
-                Y
+              <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-r from-pink-400 to-purple-500 flex items-center justify-center">
+                <img 
+                  src="/lovable-uploads/17094800-5b16-4d6c-a2af-41b224a30be0.png" 
+                  alt="Yumi"
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div className="bg-white dark:bg-slate-800 rounded-2xl px-4 py-3 shadow-sm">
                 <div className="flex gap-1">
