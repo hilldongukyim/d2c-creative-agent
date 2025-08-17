@@ -159,7 +159,7 @@ const Home = () => {
                       <div className="w-14 h-14 rounded-full bg-gradient-to-r from-orange-600 to-orange-500 flex items-center justify-center overflow-hidden">
                         <img src="/lovable-uploads/fe79c60e-6e86-4d92-946e-06c96aadda7a.png" alt="Operations Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
                       </div>
-                      <div className="text-xs text-muted-foreground">Operations Leader</div>
+                      <div className="text-xs text-muted-foreground">Leader</div>
                       
                       {/* Connecting lines from Operations Leader to 2 divisions */}
                       <div className="relative w-32 h-8 ml-0">
