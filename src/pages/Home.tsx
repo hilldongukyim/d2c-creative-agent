@@ -157,7 +157,7 @@ const Home = () => {
                     {/* Operations Leader */}
                     <div className="flex flex-col items-center space-y-4">
                       <div className="w-14 h-14 rounded-full bg-gradient-to-r from-orange-600 to-orange-500 flex items-center justify-center overflow-hidden">
-                        <img src="/lovable-uploads/b863cf96-c87e-4a11-a6ac-ea2f2e1381bb.png" alt="Operations Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
+                        <img src="/lovable-uploads/fe79c60e-6e86-4d92-946e-06c96aadda7a.png" alt="Operations Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
                       </div>
                       <div className="text-xs text-muted-foreground">Operations Leader</div>
                       
