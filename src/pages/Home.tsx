@@ -126,7 +126,7 @@ const Home = () => {
                     {/* Center vertical line from President */}
                     <div className="absolute left-1/2 top-0 w-0.5 h-4 bg-muted-foreground/30 transform -translate-x-1/2"></div>
                     {/* Horizontal line */}
-                    <div className="absolute top-4 left-4 right-4 h-0.5 bg-muted-foreground/30"></div>
+                    <div className="absolute top-4 left-2 right-2 h-0.5 bg-muted-foreground/30"></div>
                     {/* Vertical lines to 2 leaders */}
                     <div className="absolute left-6 top-4 w-0.5 h-4 bg-muted-foreground/30"></div> {/* D2C Leader */}
                     <div className="absolute right-6 top-4 w-0.5 h-4 bg-muted-foreground/30"></div> {/* Operations Leader */}
