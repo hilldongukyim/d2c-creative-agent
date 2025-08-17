@@ -136,18 +136,16 @@ const Home = () => {
                       </div>
                       <div className="text-xs text-muted-foreground">D2C Leader</div>
                       
-                      {/* Connecting lines from D2C Leader to 5 divisions */}
-                      <div className="relative w-96 h-8 mx-auto">
+                      {/* Connecting lines from D2C Leader to 3 divisions */}
+                      <div className="relative w-64 h-8 mx-auto">
                         {/* Center vertical line from D2C Leader */}
                         <div className="absolute left-1/2 top-0 w-0.5 h-4 bg-muted-foreground/30 transform -translate-x-1/2"></div>
                         {/* Horizontal line */}
                         <div className="absolute top-4 left-8 right-8 h-0.5 bg-muted-foreground/30"></div>
-                        {/* Vertical lines to 5 divisions */}
+                        {/* Vertical lines to 3 divisions */}
                         <div className="absolute left-12 top-4 w-0.5 h-4 bg-muted-foreground/30"></div> {/* Marketing */}
-                        <div className="absolute left-32 top-4 w-0.5 h-4 bg-muted-foreground/30"></div> {/* Platform */}
-                        <div className="absolute left-1/2 top-4 w-0.5 h-4 bg-muted-foreground/30 transform -translate-x-1/2"></div> {/* Data */}
-                        <div className="absolute right-32 top-4 w-0.5 h-4 bg-muted-foreground/30"></div> {/* B2C Subs */}
-                        <div className="absolute right-12 top-4 w-0.5 h-4 bg-muted-foreground/30"></div> {/* Fulfillment */}
+                        <div className="absolute left-1/2 top-4 w-0.5 h-4 bg-muted-foreground/30 transform -translate-x-1/2"></div> {/* Platform */}
+                        <div className="absolute right-12 top-4 w-0.5 h-4 bg-muted-foreground/30"></div> {/* Data */}
                       </div>
                       
                       {/* Third level - All 5 divisions at same level */}
