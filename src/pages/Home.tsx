@@ -108,7 +108,7 @@ const Home = () => {
                 {/* Top level - President */}
                 <div className="flex flex-col items-center space-y-6">
                   <div className="flex flex-col items-center space-y-2">
-                    <div className="w-20 h-20 rounded-full bg-gradient-to-r from-yellow-600 to-yellow-500 flex items-center justify-center overflow-hidden">
+                    <div className="w-16 h-16 rounded-full bg-gradient-to-r from-yellow-600 to-yellow-500 flex items-center justify-center overflow-hidden">
                       <img src="/lovable-uploads/fcb326f6-bbbd-49c3-b925-8527956f0952.png" alt="President" className="w-full h-full object-cover rounded-full" loading="lazy" />
                     </div>
                     <div className="text-xs text-muted-foreground">President</div>
