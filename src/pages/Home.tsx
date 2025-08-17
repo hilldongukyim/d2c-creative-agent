@@ -113,7 +113,7 @@ const Home = () => {
               {/* Hierarchical org chart */}
               <div className="overflow-x-auto">
                 {/* Top level - President */}
-                <div className="flex flex-col items-center space-y-6">
+                <div className="flex flex-col items-center space-y-3">
                   <div className="flex flex-col items-center space-y-2">
                     <div className="w-16 h-16 rounded-full bg-gradient-to-r from-yellow-600 to-yellow-500 flex items-center justify-center overflow-hidden">
                       <img src="/lovable-uploads/33c98f89-515a-41e9-8fb3-e8cd68137c7c.png" alt="President" className="w-full h-full object-cover rounded-full" loading="lazy" />
