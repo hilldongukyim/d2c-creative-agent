@@ -115,31 +115,38 @@ const Home = () => {
                   </div>
                   
                   {/* Connecting lines from President */}
-                  <div className="relative w-96 h-8 mx-auto">
+                  <div className="relative w-80 h-8 mx-auto">
                     {/* Center vertical line from President */}
                     <div className="absolute left-1/2 top-0 w-0.5 h-4 bg-muted-foreground/30 transform -translate-x-1/2"></div>
                     {/* Horizontal line */}
-                    <div className="absolute top-4 left-8 right-8 h-0.5 bg-muted-foreground/30"></div>
-                    {/* Vertical lines to leaders */}
-                    <div className="absolute left-20 top-4 w-0.5 h-4 bg-muted-foreground/30"></div> {/* D2C */}
-                    <div className="absolute left-1/2 top-4 w-0.5 h-4 bg-muted-foreground/30 transform -translate-x-1/2"></div> {/* Fulfillment */}
-                    <div className="absolute right-20 top-4 w-0.5 h-4 bg-muted-foreground/30"></div> {/* B2C */}
+                    <div className="absolute top-4 left-6 right-6 h-0.5 bg-muted-foreground/30"></div>
+                    {/* Vertical line to D2C Leader */}
+                    <div className="absolute left-1/2 top-4 w-0.5 h-4 bg-muted-foreground/30 transform -translate-x-1/2"></div>
                   </div>
                   
-                  {/* Second level - D2C Leader, Fulfillment, B2C Leaders */}
-                  <div className="flex items-start justify-center space-x-20 min-w-max">
-                    {/* D2C Leader */}
-                    <div className="flex flex-col items-center space-y-4">
-                      <div className="w-14 h-14 rounded-full bg-gradient-to-r from-primary to-primary/80 flex items-center justify-center overflow-hidden">
-                        <img src="/lovable-uploads/fcb326f6-bbbd-49c3-b925-8527956f0952.png" alt="D2C Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
-                      </div>
-                      <div className="text-xs text-muted-foreground">D2C Leader</div>
-                      
-                      {/* Connecting line down from D2C Leader */}
-                      <div className="w-0.5 h-6 bg-muted-foreground/30"></div>
-                      
-                      {/* Third level - Marketing, Platform, Data under D2C */}
-                      <div className="flex items-start justify-center space-x-12 min-w-max">
+                  {/* Second level - D2C Leader only */}
+                  <div className="flex flex-col items-center space-y-4">
+                    <div className="w-14 h-14 rounded-full bg-gradient-to-r from-primary to-primary/80 flex items-center justify-center overflow-hidden">
+                      <img src="/lovable-uploads/fcb326f6-bbbd-49c3-b925-8527956f0952.png" alt="D2C Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
+                    </div>
+                    <div className="text-xs text-muted-foreground">D2C Leader</div>
+                    
+                    {/* Connecting lines from D2C Leader to all divisions */}
+                    <div className="relative w-96 h-8 mx-auto">
+                      {/* Center vertical line from D2C Leader */}
+                      <div className="absolute left-1/2 top-0 w-0.5 h-4 bg-muted-foreground/30 transform -translate-x-1/2"></div>
+                      {/* Horizontal line */}
+                      <div className="absolute top-4 left-4 right-4 h-0.5 bg-muted-foreground/30"></div>
+                      {/* Vertical lines to all divisions */}
+                      <div className="absolute left-12 top-4 w-0.5 h-4 bg-muted-foreground/30"></div> {/* Marketing */}
+                      <div className="absolute left-32 top-4 w-0.5 h-4 bg-muted-foreground/30"></div> {/* Platform */}
+                      <div className="absolute left-52 top-4 w-0.5 h-4 bg-muted-foreground/30"></div> {/* Data */}
+                      <div className="absolute right-32 top-4 w-0.5 h-4 bg-muted-foreground/30"></div> {/* Fulfillment */}
+                      <div className="absolute right-12 top-4 w-0.5 h-4 bg-muted-foreground/30"></div> {/* B2C */}
+                    </div>
+                    
+                    {/* Third level - All divisions on same level */}
+                    <div className="flex items-start justify-center space-x-8 min-w-max">
                         {/* Marketing Division */}
                         <div className="flex flex-col items-center space-y-4">
                           <div className="w-12 h-12 rounded-full bg-gradient-to-r from-secondary to-secondary/80 flex items-center justify-center overflow-hidden">
@@ -276,62 +283,62 @@ const Home = () => {
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                    
-                    {/* Fulfillment Division */}
-                    <div className="flex flex-col items-center space-y-4">
-                      <div className="w-14 h-14 rounded-full bg-gradient-to-r from-green-600 to-green-500 flex items-center justify-center overflow-hidden">
-                        <img src="/lovable-uploads/d3831808-cb36-4e20-8f66-0d0150809a1e.png" alt="Fulfillment Division Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
-                      </div>
-                      <div className="text-xs text-muted-foreground">Fulfillment</div>
-                      
-                      {/* Connecting bracket-style line to fulfillment team */}
-                      <div className="flex justify-center pt-0">
-                        <div className="relative w-16 h-6">
-                          {/* Center vertical line */}
-                          <div className="absolute left-1/2 top-0 w-0.5 h-4 bg-muted-foreground/40 transform -translate-x-1/2"></div>
-                          {/* Horizontal connecting line - shorter for single team */}
-                          <div className="absolute top-4 left-4 right-4 h-0.5 bg-muted-foreground/40"></div>
-                        </div>
-                      </div>
-                      <div className="flex space-x-6 pt-2">
-                        <div className="flex flex-col items-center space-y-2">
-                           <div className="w-10 h-10 rounded-full bg-green-600/70 flex items-center justify-center overflow-hidden">
-                             <img src="/lovable-uploads/6169bcda-23e9-44e6-aaa2-dfc83bf8f979.png" alt="Fulfillment Team Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
-                           </div>
-                          <div className="flex space-x-1">
-                             <img src="/lovable-uploads/471c874b-e576-42ca-9dd6-5432c1faebed.png" alt="Fulfillment Team Member" className="w-6 h-6 rounded-full object-cover" loading="lazy" />
-                            <img src="/lovable-uploads/a9d7d297-0543-4d14-9da5-2d51a1c10637.png" alt="Fulfillment Team Member" className="w-6 h-6 rounded-full object-cover" loading="lazy" />
+                        
+                        {/* Fulfillment Division */}
+                        <div className="flex flex-col items-center space-y-4">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-r from-green-600 to-green-500 flex items-center justify-center overflow-hidden">
+                            <img src="/lovable-uploads/d3831808-cb36-4e20-8f66-0d0150809a1e.png" alt="Fulfillment Division Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
+                          </div>
+                          <div className="text-xs text-muted-foreground">Fulfillment</div>
+                          
+                          {/* Connecting bracket-style line to fulfillment team */}
+                          <div className="flex justify-center pt-0">
+                            <div className="relative w-16 h-6">
+                              {/* Center vertical line */}
+                              <div className="absolute left-1/2 top-0 w-0.5 h-4 bg-muted-foreground/40 transform -translate-x-1/2"></div>
+                              {/* Horizontal connecting line - shorter for single team */}
+                              <div className="absolute top-4 left-4 right-4 h-0.5 bg-muted-foreground/40"></div>
+                            </div>
+                          </div>
+                          <div className="flex space-x-6 pt-2">
+                            <div className="flex flex-col items-center space-y-2">
+                               <div className="w-8 h-8 rounded-full bg-green-600/70 flex items-center justify-center overflow-hidden">
+                                 <img src="/lovable-uploads/6169bcda-23e9-44e6-aaa2-dfc83bf8f979.png" alt="Fulfillment Team Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
+                               </div>
+                              <div className="flex space-x-1">
+                                 <img src="/lovable-uploads/471c874b-e576-42ca-9dd6-5432c1faebed.png" alt="Fulfillment Team Member" className="w-4 h-4 rounded-full object-cover" loading="lazy" />
+                                <img src="/lovable-uploads/a9d7d297-0543-4d14-9da5-2d51a1c10637.png" alt="Fulfillment Team Member" className="w-4 h-4 rounded-full object-cover" loading="lazy" />
+                              </div>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    </div>
-                    
-                    {/* B2C Subs Capability Boost Division */}
-                    <div className="flex flex-col items-center space-y-4">
-                      <div className="w-14 h-14 rounded-full bg-gradient-to-r from-purple-600 to-purple-500 flex items-center justify-center overflow-hidden">
-                        <img src="/lovable-uploads/075d631e-1e67-4f0a-b744-36705e88b752.png" alt="B2C Division Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
-                      </div>
-                      <div className="text-xs text-muted-foreground">B2C Subs</div>
-                      
-                      {/* Connecting bracket-style line to B2C team */}
-                      <div className="flex justify-center pt-0">
-                        <div className="relative w-16 h-6">
-                          {/* Center vertical line */}
-                          <div className="absolute left-1/2 top-0 w-0.5 h-4 bg-muted-foreground/40 transform -translate-x-1/2"></div>
-                          {/* Horizontal connecting line - shorter for single team */}
-                          <div className="absolute top-4 left-4 right-4 h-0.5 bg-muted-foreground/40"></div>
-                        </div>
-                      </div>
-                      <div className="flex space-x-6 pt-2">
-                        <div className="flex flex-col items-center space-y-2">
-                           <div className="w-10 h-10 rounded-full bg-purple-600/70 flex items-center justify-center overflow-hidden">
-                             <img src="/lovable-uploads/2b8c5249-1718-435b-b317-0753f79040fc.png" alt="B2C Team Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
-                           </div>
-                          <div className="flex space-x-1">
-                            <img src="/lovable-uploads/3f553423-99c2-46ad-99b2-874c48d94ff7.png" alt="B2C Team Member" className="w-6 h-6 rounded-full object-cover" loading="lazy" />
-                            <img src="/lovable-uploads/3d75cb03-c221-498d-9637-6340d614cbd6.png" alt="B2C Team Member" className="w-6 h-6 rounded-full object-cover" loading="lazy" />
+                        
+                        {/* B2C Subs Capability Boost Division */}
+                        <div className="flex flex-col items-center space-y-4">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-r from-purple-600 to-purple-500 flex items-center justify-center overflow-hidden">
+                            <img src="/lovable-uploads/075d631e-1e67-4f0a-b744-36705e88b752.png" alt="B2C Division Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
+                          </div>
+                          <div className="text-xs text-muted-foreground">B2C Subs</div>
+                          
+                          {/* Connecting bracket-style line to B2C team */}
+                          <div className="flex justify-center pt-0">
+                            <div className="relative w-16 h-6">
+                              {/* Center vertical line */}
+                              <div className="absolute left-1/2 top-0 w-0.5 h-4 bg-muted-foreground/40 transform -translate-x-1/2"></div>
+                              {/* Horizontal connecting line - shorter for single team */}
+                              <div className="absolute top-4 left-4 right-4 h-0.5 bg-muted-foreground/40"></div>
+                            </div>
+                          </div>
+                          <div className="flex space-x-6 pt-2">
+                            <div className="flex flex-col items-center space-y-2">
+                               <div className="w-8 h-8 rounded-full bg-purple-600/70 flex items-center justify-center overflow-hidden">
+                                 <img src="/lovable-uploads/2b8c5249-1718-435b-b317-0753f79040fc.png" alt="B2C Team Leader" className="w-full h-full object-cover rounded-full" loading="lazy" />
+                               </div>
+                              <div className="flex space-x-1">
+                                <img src="/lovable-uploads/3f553423-99c2-46ad-99b2-874c48d94ff7.png" alt="B2C Team Member" className="w-4 h-4 rounded-full object-cover" loading="lazy" />
+                                <img src="/lovable-uploads/3d75cb03-c221-498d-9637-6340d614cbd6.png" alt="B2C Team Member" className="w-4 h-4 rounded-full object-cover" loading="lazy" />
+                              </div>
+                            </div>
                           </div>
                         </div>
                       </div>
