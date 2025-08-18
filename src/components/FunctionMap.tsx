@@ -125,93 +125,125 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
   const handleMouseLeave = () => {
     setHoveredProfile(null);
   };
-  const groups: Group[] = [{
-    title: "DAM",
-    sections: [{
-      subtitle: "Team Leader",
-      items: [{
-        name: "Candy",
-        role: "Team Leader & Coordinator",
-        imageSrc: "/lovable-uploads/12ea1acb-6641-4e73-85ef-14b102b12d30.png"
-      }]
-    }, {
-      subtitle: "Team Members",
-      items: [{
-        name: "Maya",
-        role: "Account Create",
-        imageSrc: "/lovable-uploads/d67ab42c-85c8-480e-b65e-66a15abe8586.png"
-      }, {
-        name: "Fiona",
-        role: "Account Delete",
-        imageSrc: "/lovable-uploads/f3264e74-893f-4cb0-9ec7-91b84b56c631.png"
-      }]
-    }]
-  }, {
-    title: "Promotion",
-    sections: [{
-      subtitle: "Team Leader",
-      items: [{
-        name: "Boris",
-        role: "Team Leader & Promotion Initiator",
-        imageSrc: "/lovable-uploads/a3da050e-3de8-404c-8ab2-868f2e319ec8.png"
-      }]
-    }, {
-      subtitle: "Analytics",
-      items: [{
-        name: "Ollie",
-        role: "Sales Analyst",
-        imageSrc: "/lovable-uploads/a2300ba9-4de6-4adc-88fd-b80baa1bdff7.png"
-      }, {
-        name: "Ravi",
-        role: "Promotion Configurator",
-        imageSrc: "/lovable-uploads/d18ff2c4-e8c7-4c44-b38c-74bb66e23393.png"
-      }]
-    }, {
-      subtitle: "Content Creation",
-      items: [{
-        name: "Yumi",
-        role: "El-Form Designer",
-        imageSrc: profiles.yumi
-      }, {
-        name: "Ben",
-        role: "PTO Image Creator",
-        imageSrc: profiles.ben
-      }]
-    }]
-  }, {
-    title: "Data",
-    items: [{
-      name: "Orin",
-      role: "Data Crawler",
-      imageSrc: "/lovable-uploads/1e050018-12f0-4df5-a7ae-c92735447a6d.png"
-    }]
-  }, {
-    title: "GEO",
-    items: [{
-      name: "Dan",
-      role: "GEO Specialist",
-      imageSrc: "/lovable-uploads/94ff046a-059b-4866-bbb8-94ce2f9e6716.png"
-    }]
-  }, {
+  // Organizational structure with divisions
+  const divisions = [
+    {
+      name: "Marketing",
+      teams: [
+        {
+          title: "DAM",
+          items: [
+            {
+              name: "Candy",
+              role: "Team Leader & Coordinator",
+              imageSrc: "/lovable-uploads/12ea1acb-6641-4e73-85ef-14b102b12d30.png"
+            },
+            {
+              name: "Maya",
+              role: "Account Create",
+              imageSrc: "/lovable-uploads/d67ab42c-85c8-480e-b65e-66a15abe8586.png"
+            },
+            {
+              name: "Fiona",
+              role: "Account Delete",
+              imageSrc: "/lovable-uploads/f3264e74-893f-4cb0-9ec7-91b84b56c631.png"
+            }
+          ]
+        },
+        {
+          title: "Content",
+          items: [
+            {
+              name: "Yumi",
+              role: "El-Form Designer",
+              imageSrc: profiles.yumi
+            },
+            {
+              name: "Ben",
+              role: "PTO Image Creator",
+              imageSrc: profiles.ben
+            }
+          ]
+        },
+        {
+          title: "GEO",
+          items: [
+            {
+              name: "Dan",
+              role: "GEO Specialist",
+              imageSrc: "/lovable-uploads/94ff046a-059b-4866-bbb8-94ce2f9e6716.png"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      name: "Platform",
+      teams: [
+        {
+          title: "Platform Team",
+          items: [
+            {
+              name: "Boris",
+              role: "Team Leader & Promotion Initiator",
+              imageSrc: "/lovable-uploads/a3da050e-3de8-404c-8ab2-868f2e319ec8.png"
+            },
+            {
+              name: "Ollie",
+              role: "Sales Analyst",
+              imageSrc: "/lovable-uploads/a2300ba9-4de6-4adc-88fd-b80baa1bdff7.png"
+            },
+            {
+              name: "Ravi",
+              role: "Promotion Configurator",
+              imageSrc: "/lovable-uploads/d18ff2c4-e8c7-4c44-b38c-74bb66e23393.png"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      name: "Data",
+      teams: [
+        {
+          title: "Data Team",
+          items: [
+            {
+              name: "Orin",
+              role: "Data Crawler",
+              imageSrc: "/lovable-uploads/1e050018-12f0-4df5-a7ae-c92735447a6d.png"
+            }
+          ]
+        }
+      ]
+    }
+  ];
+
+  const internTeam = {
     title: "Intern",
-    items: [{
-      name: "Kai",
-      role: "Background Remover",
-      imageSrc: "/lovable-uploads/84e535ab-1fa5-418e-93aa-73fa3b361219.png"
-    }, {
-      name: "Maple",
-      role: "Feedback Taker",
-      imageSrc: "/lovable-uploads/5c13c299-f9c2-46a9-9b91-4695964179a5.png"
-    }, {
-      name: "Mell",
-      role: "Mailing",
-      imageSrc: "/lovable-uploads/5a6db127-b9e3-4f85-afbb-11b477555583.png"
-    }, {
-      name: "Noa",
-      role: "Copy Writing",
-      imageSrc: "/lovable-uploads/0fbe5af8-19f4-4ff0-8c9f-3f1a2c010572.png"
-    }]
-  }];
+    items: [
+      {
+        name: "Kai",
+        role: "Background Remover",
+        imageSrc: "/lovable-uploads/84e535ab-1fa5-418e-93aa-73fa3b361219.png"
+      },
+      {
+        name: "Maple",
+        role: "Feedback Taker",
+        imageSrc: "/lovable-uploads/5c13c299-f9c2-46a9-9b91-4695964179a5.png"
+      },
+      {
+        name: "Mell",
+        role: "Mailing",
+        imageSrc: "/lovable-uploads/5a6db127-b9e3-4f85-afbb-11b477555583.png"
+      },
+      {
+        name: "Noa",
+        role: "Copy Writing",
+        imageSrc: "/lovable-uploads/0fbe5af8-19f4-4ff0-8c9f-3f1a2c010572.png"
+      }
+    ]
+  };
   const containerRef = useRef<HTMLElement | null>(null);
   useEffect(() => {
     if (!highlightName) return;
@@ -247,210 +279,118 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
             </div>
           </div>
           
-          {/* Teams Section */}
-          <div className="space-y-4">
-            {/* Top row: DAM, Promotion, GEO, Intern (4 columns as in image) */}
-            <div className="grid gap-4 grid-cols-4">
-              {/* DAM Team */}
-              {groups.filter(group => group.title === "DAM").map(group => <div key={group.title} className="bg-card border border-border/20 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow pointer-events-auto h-[600px]">
-                  <header className="mb-4 pointer-events-none">
-                    <h3 className="text-lg font-semibold text-foreground">{group.title}</h3>
-                  </header>
-                  {"sections" in group && <>
-                      {group.sections.map(section => <div key={section.subtitle} className="mb-5 last:mb-0 pointer-events-auto">
-                           <div className={section.subtitle === "Team Leader" ? "flex justify-center pointer-events-none mb-6" : "flex flex-col gap-4 pointer-events-none"}>
-                             {section.items.map(item => <div key={`${group.title}-${section.subtitle}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" onMouseEnter={e => handleMouseEnter(e, item.name, item.role)} onMouseLeave={handleMouseLeave} onClick={e => {
-                      e.stopPropagation();
-                      onProfileClick?.(item.name);
-                    }} role="button" tabIndex={0}>
-                                   <div className={`relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden ${item.name === "Candy" ? "border-2 border-red-500" : ""}`}>
-                                     {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
-                                         {item.name.charAt(0)}
-                                       </div>}
-                                   </div>
-                                  <div className="mt-2">
-                                    <div className="text-sm font-medium text-foreground">{item.name}</div>
-                                    <div className="text-xs text-muted-foreground">
-                                      {item.role.includes("&") ? item.role.split("&").map((part, index) => <div key={index}>{part.trim()}</div>) : item.role}
-                                    </div>
+          {/* Organizational Chart */}
+          <div className="space-y-8">
+            {/* Division Headers */}
+            <div className="grid grid-cols-3 gap-8 mb-8">
+              {divisions.map(division => (
+                <div key={division.name} className="text-center">
+                  <div className="bg-primary text-primary-foreground rounded-lg px-6 py-3 font-bold text-lg mb-6">
+                    {division.name} Division
+                  </div>
+                  
+                  {/* Teams under each division */}
+                  <div className="grid gap-4">
+                    {division.teams.map(team => (
+                      <div key={team.title} className="bg-card border border-border/20 rounded-xl p-4 shadow-sm">
+                        <h4 className="text-sm font-semibold text-muted-foreground mb-3 text-center">
+                          {team.title}
+                        </h4>
+                        <div className="flex flex-wrap justify-center gap-3">
+                          {team.items.map(item => (
+                            <div
+                              key={`${team.title}-${item.name}`}
+                              data-profile-name={item.name.toLowerCase()}
+                              className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1"
+                              onMouseEnter={e => handleMouseEnter(e, item.name, item.role)}
+                              onMouseLeave={handleMouseLeave}
+                              onClick={e => {
+                                e.stopPropagation();
+                                onProfileClick?.(item.name);
+                              }}
+                              role="button"
+                              tabIndex={0}
+                            >
+                              <div className={`relative h-12 w-12 md:h-14 md:w-14 rounded-full overflow-hidden ${item.name === "Candy" || item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
+                                {item.imageSrc ? (
+                                  <img
+                                    src={item.imageSrc}
+                                    alt={`${item.name} profile image`}
+                                    className={`h-full w-full object-cover transition-transform duration-300 ${
+                                      hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''
+                                    }`}
+                                    loading="lazy"
+                                  />
+                                ) : (
+                                  <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-sm font-medium">
+                                    {item.name.charAt(0)}
                                   </div>
-                               </div>)}
-                          </div>
-                        </div>)}
-                    </>}
-                 </div>)}
-
-              {/* Promotion Team */}
-              {groups.filter(group => group.title === "Promotion").map(group => <div key={group.title} className="bg-card border border-border/20 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow pointer-events-auto h-[600px]">
-                  <header className="mb-4 pointer-events-none">
-                    <h3 className="text-lg font-semibold text-foreground">{group.title}</h3>
-                  </header>
-                  {"sections" in group && <>
-                      {/* Team Leader section first */}
-                      {group.sections.filter(section => section.subtitle === "Team Leader").map(section => <div key={section.subtitle} className="mb-6 pointer-events-auto">
-                          <div className="flex justify-center pointer-events-none">
-                             {section.items.map(item => <div key={`${group.title}-${section.subtitle}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" onMouseEnter={e => handleMouseEnter(e, item.name, item.role)} onMouseLeave={handleMouseLeave} onClick={e => {
-                      e.stopPropagation();
-                      onProfileClick?.(item.name);
-                    }} role="button" tabIndex={0}>
-                                  <div className="relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden border-2 border-red-500">
-                                   {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
-                                       {item.name.charAt(0)}
-                                     </div>}
-                                 </div>
-                                 <div className="mt-2">
-                                   <div className="text-sm font-medium text-foreground">{item.name}</div>
-                                   <div className="text-xs text-muted-foreground">
-                                     {item.role.includes("&") ? item.role.split("&").map((part, index) => <div key={index}>{part.trim()}</div>) : item.role}
-                                   </div>
-                                 </div>
-                              </div>)}
-                          </div>
-                        </div>)}
-                      
-                      {/* Analytics and Content Creation sections with aligned tops */}
-                      <div className="grid grid-cols-2 gap-3 items-start">
-                        {group.sections.filter(section => section.subtitle !== "Team Leader").map(section => <div key={section.subtitle} className="pointer-events-auto">
-                            <div className="h-8 flex items-center justify-center mb-3">
-                              <h4 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground text-center pointer-events-none">
-                                {section.subtitle}
-                              </h4>
+                                )}
+                              </div>
+                              <div className="mt-2">
+                                <div className="text-xs font-medium text-foreground">{item.name}</div>
+                                <div className="text-xs text-muted-foreground">
+                                  {item.role.includes("&") ? (
+                                    item.role.split("&").map((part, index) => (
+                                      <div key={index}>{part.trim()}</div>
+                                    ))
+                                  ) : (
+                                    item.role
+                                  )}
+                                </div>
+                              </div>
                             </div>
-                            <div className="space-y-4 pointer-events-none">
-                               {section.items.map(item => <div key={`${group.title}-${section.subtitle}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" onMouseEnter={e => handleMouseEnter(e, item.name, item.role)} onMouseLeave={handleMouseLeave} onClick={e => {
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Intern Team - Independent Section */}
+            <div className="border-t pt-8">
+              <div className="text-center mb-6">
+                <div className="bg-secondary text-secondary-foreground rounded-lg px-6 py-3 font-bold text-lg inline-block">
+                  {internTeam.title}
+                </div>
+              </div>
+              <div className="bg-card border border-border/20 rounded-xl p-6 shadow-sm max-w-2xl mx-auto">
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  {internTeam.items.map(item => (
+                    <div
+                      key={`intern-${item.name}`}
+                      data-profile-name={item.name.toLowerCase()}
+                      className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1"
+                      onMouseEnter={e => handleMouseEnter(e, item.name, item.role, "Intern")}
+                      onMouseLeave={handleMouseLeave}
+                      onClick={e => {
                         e.stopPropagation();
                         onProfileClick?.(item.name);
-                      }} role="button" tabIndex={0}>
-                                    <div className="relative h-16 w-16 md:h-18 md:w-18 rounded-full overflow-hidden">
-                                     {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
-                                         {item.name.charAt(0)}
-                                       </div>}
-                                  </div>
-                                   <div className="mt-2">
-                                     <div className="text-sm font-medium text-foreground">{item.name}</div>
-                                     <div className="text-xs text-muted-foreground">{item.role}</div>
-                                   </div>
-                                </div>)}
-                            </div>
-                          </div>)}
+                      }}
+                      role="button"
+                      tabIndex={0}
+                    >
+                      <div className="relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden">
+                        <img
+                          src={item.imageSrc}
+                          alt={`${item.name} profile image`}
+                          className={`h-full w-full object-cover transition-transform duration-300 ${
+                            hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''
+                          }`}
+                          loading="lazy"
+                        />
                       </div>
-                    </>}
-                 </div>)}
-
-              {/* GEO and Data Teams in one column */}
-              <div className="space-y-4">
-                {/* GEO Team */}
-                {groups.filter(group => group.title === "GEO").map(group => <div key={group.title} className="bg-card border border-border/20 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow pointer-events-auto h-[290px]">
-                    <header className="mb-4 pointer-events-none">
-                      <h3 className="text-lg font-semibold text-foreground">{group.title}</h3>
-                    </header>
-                    <div className="flex justify-center pointer-events-none">
-                       {"items" in group && group.items.map(item => <div key={`${group.title}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" onMouseEnter={e => handleMouseEnter(e, item.name, item.role)} onMouseLeave={handleMouseLeave} onClick={e => {
-                    e.stopPropagation();
-                    onProfileClick?.(item.name);
-                  }} role="button" tabIndex={0}>
-                           <div className="relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden">
-                            {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
-                                {item.name.charAt(0)}
-                              </div>}
-                          </div>
-                           <div className="mt-2">
-                             <div className="text-sm font-medium text-foreground">{item.name}</div>
-                             <div className="text-xs text-muted-foreground">{item.role}</div>
-                           </div>
-                        </div>)}
+                      <div className="mt-2">
+                        <div className="text-sm font-medium text-foreground">{item.name}</div>
+                        <div className="text-xs text-muted-foreground">{item.role}</div>
+                      </div>
                     </div>
-                  </div>)}
-
-                {/* Data Team */}
-                {groups.filter(group => group.title === "Data").map(group => <div key={group.title} className="bg-card border border-border/20 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow pointer-events-auto h-[295px]">
-                    <header className="mb-4 pointer-events-none">
-                      <h3 className="text-lg font-semibold text-foreground">{group.title}</h3>
-                    </header>
-                    <div className="flex justify-center pointer-events-none">
-                      {"items" in group && group.items.map(item => <div key={`${group.title}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" onMouseEnter={e => handleMouseEnter(e, item.name, item.role)} onMouseLeave={handleMouseLeave} onClick={e => {
-                    e.stopPropagation();
-                    onProfileClick?.(item.name);
-                  }} role="button" tabIndex={0}>
-                           <div className="relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden">
-                           {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
-                                {item.name.charAt(0)}
-                              </div>}
-                          </div>
-                           <div className="mt-2">
-                             <div className="text-sm font-medium text-foreground">{item.name}</div>
-                             <div className="text-xs text-muted-foreground">{item.role}</div>
-                           </div>
-                        </div>)}
-                    </div>
-                  </div>)}
-              </div>
-
-              {/* Intern Team */}
-              <div className="bg-card border border-border/20 rounded-xl p-4 shadow-sm hover:shadow-md transition-shadow pointer-events-auto h-[600px]">
-                <header className="mb-4 pointer-events-none text-center">
-                  <h3 className="text-lg font-semibold text-foreground">Intern</h3>
-                </header>
-                <div className="grid grid-cols-2 gap-3 pointer-events-none">
-                  {/* Kai - Background Remover */}
-                  <div data-profile-name="kai" className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" onMouseEnter={e => handleMouseEnter(e, "Kai", "Background Remover", "Intern")} onMouseLeave={handleMouseLeave} onClick={e => {
-                  e.stopPropagation();
-                  onProfileClick?.("Kai");
-                }} role="button" tabIndex={0}>
-                    <div className="relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden">
-                      <img src="/lovable-uploads/84e535ab-1fa5-418e-93aa-73fa3b361219.png" alt="Kai profile image" className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === "kai" ? 'scale-125' : ''}`} loading="lazy" />
-                    </div>
-                    <div className="mt-2">
-                      <div className="text-sm font-medium text-foreground">Kai</div>
-                      <div className="text-xs text-muted-foreground">Background Remover</div>
-                    </div>
-                  </div>
-
-                  {/* Maple - Feedback Taker */}
-                  <div data-profile-name="maple" className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" onMouseEnter={e => handleMouseEnter(e, "Maple", "Feedback Taker", "Intern")} onMouseLeave={handleMouseLeave} onClick={e => {
-                  e.stopPropagation();
-                  onProfileClick?.("Maple");
-                }} role="button" tabIndex={0}>
-                    <div className="relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden">
-                      <img src="/lovable-uploads/5c13c299-f9c2-46a9-9b91-4695964179a5.png" alt="Maple profile image" className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === "maple" ? 'scale-125' : ''}`} loading="lazy" />
-                    </div>
-                    <div className="mt-2">
-                      <div className="text-sm font-medium text-foreground">Maple</div>
-                      <div className="text-xs text-muted-foreground">Feedback Taker</div>
-                    </div>
-                  </div>
-
-                  {/* Mell - Mailing */}
-                  <div data-profile-name="mell" className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" onMouseEnter={e => handleMouseEnter(e, "Mell", "Mailing", "Intern")} onMouseLeave={handleMouseLeave} onClick={e => {
-                  e.stopPropagation();
-                  onProfileClick?.("Mell");
-                }} role="button" tabIndex={0}>
-                    <div className="relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden">
-                      <img src="/lovable-uploads/5a6db127-b9e3-4f85-afbb-11b477555583.png" alt="Mell profile image" className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === "mell" ? 'scale-125' : ''}`} loading="lazy" />
-                    </div>
-                    <div className="mt-2">
-                      <div className="text-sm font-medium text-foreground">Mell</div>
-                      <div className="text-xs text-muted-foreground">Mailing</div>
-                    </div>
-                  </div>
-
-                  {/* Noa - Copy Writing */}
-                  <div data-profile-name="noa" className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" onMouseEnter={e => handleMouseEnter(e, "Noa", "Copy Writing", "Intern")} onMouseLeave={handleMouseLeave} onClick={e => {
-                  e.stopPropagation();
-                  onProfileClick?.("Noa");
-                }} role="button" tabIndex={0}>
-                    <div className="relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden">
-                      <img src="/lovable-uploads/0fbe5af8-19f4-4ff0-8c9f-3f1a2c010572.png" alt="Noa profile image" className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === "noa" ? 'scale-125' : ''}`} loading="lazy" />
-                    </div>
-                    <div className="mt-2">
-                      <div className="text-sm font-medium text-foreground">Noa</div>
-                      <div className="text-xs text-muted-foreground">Copy Writing</div>
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
             </div>
-
           </div>
         </div>
       </div>
