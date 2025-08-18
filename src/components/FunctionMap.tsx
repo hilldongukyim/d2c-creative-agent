@@ -225,7 +225,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
             
             <div className="flex justify-center">
               <div className="flex flex-col items-center">
-                 <div className="relative h-16 w-16 rounded-full overflow-hidden mb-3 ring-2 ring-primary/20 cursor-pointer" 
+                 <div className="relative h-20 w-20 md:h-24 md:w-24 rounded-full overflow-hidden mb-3 ring-2 ring-primary/20 cursor-pointer" 
                    onMouseEnter={(e) => handleMouseEnter(e, "Vee", "Central Command & Orchestration")}
                    onMouseLeave={handleMouseLeave}>
                    <img src="/lovable-uploads/721071c1-63ee-4bc4-b9d8-264657716340.png" alt="Super Agent robot" className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === "vee" ? 'scale-125' : ''}`} />
