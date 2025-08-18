@@ -126,163 +126,120 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     setHoveredProfile(null);
   };
   // Organizational structure with divisions
-  const divisions = [
-    {
-      name: "Marketing",
-      teams: [
-        {
-          title: "DAM",
-          items: [
-            {
-              name: "Candy",
-              role: "Team Leader & Coordinator",
-              imageSrc: "/lovable-uploads/12ea1acb-6641-4e73-85ef-14b102b12d30.png"
-            },
-            {
-              name: "Maya",
-              role: "Account Create",
-              imageSrc: "/lovable-uploads/d67ab42c-85c8-480e-b65e-66a15abe8586.png"
-            },
-            {
-              name: "On Hiring",
-              role: "Account Delete",
-              imageSrc: ""
-            }
-          ]
-        },
-        {
-          title: "Content",
-          items: [
-            {
-              name: "Yumi",
-              role: "El-Form Designer",
-              imageSrc: profiles.yumi
-            },
-            {
-              name: "Ben",
-              role: "PTO Image Creator",
-              imageSrc: profiles.ben
-            }
-          ]
-        },
-        {
-          title: "GEO",
-          items: [
-            {
-              name: "Dan",
-              role: "GEO Specialist",
-              imageSrc: "/lovable-uploads/94ff046a-059b-4866-bbb8-94ce2f9e6716.png"
-            }
-          ]
-        }
-      ]
-    },
-    {
-      name: "Platform",
-      teams: [
-        {
-          title: "Promotion",
-          items: [
-            {
-              name: "Boris",
-              role: "Team Leader & Promotion Initiator",
-              imageSrc: "/lovable-uploads/a3da050e-3de8-404c-8ab2-868f2e319ec8.png"
-            },
-            {
-              name: "Ollie",
-              role: "Sales Analyst",
-              imageSrc: "/lovable-uploads/a2300ba9-4de6-4adc-88fd-b80baa1bdff7.png"
-            },
-            {
-              name: "Ravi",
-              role: "Promotion Configurator",
-              imageSrc: "/lovable-uploads/d18ff2c4-e8c7-4c44-b38c-74bb66e23393.png"
-            }
-          ]
-        },
-        {
-          title: "Analytics",
-          items: [
-            {
-              name: "On Hiring",
-              role: "",
-              imageSrc: ""
-            },
-            {
-              name: "On Hiring",
-              role: "",
-              imageSrc: ""
-            },
-            {
-              name: "On Hiring",
-              role: "",
-              imageSrc: ""
-            },
-            {
-              name: "On Hiring",
-              role: "",
-              imageSrc: ""
-            }
-          ]
-        }
-      ]
-    },
-    {
-      name: "Data",
-      teams: [
-        {
-          title: "Crawling",
-          items: [
-            {
-              name: "Orin",
-              role: "Data Crawler",
-              imageSrc: "/lovable-uploads/1e050018-12f0-4df5-a7ae-c92735447a6d.png"
-            }
-          ]
-        },
-        {
-          title: "Processing",
-          items: [
-            {
-              name: "On Hiring",
-              role: "",
-              imageSrc: ""
-            },
-            {
-              name: "On Hiring",
-              role: "",
-              imageSrc: ""
-            }
-          ]
-        }
-      ]
-    }
-  ];
-
+  const divisions = [{
+    name: "Marketing",
+    teams: [{
+      title: "DAM",
+      items: [{
+        name: "Candy",
+        role: "Team Leader & Coordinator",
+        imageSrc: "/lovable-uploads/12ea1acb-6641-4e73-85ef-14b102b12d30.png"
+      }, {
+        name: "Maya",
+        role: "Account Create",
+        imageSrc: "/lovable-uploads/d67ab42c-85c8-480e-b65e-66a15abe8586.png"
+      }, {
+        name: "On Hiring",
+        role: "Account Delete",
+        imageSrc: ""
+      }]
+    }, {
+      title: "Content",
+      items: [{
+        name: "Yumi",
+        role: "El-Form Designer",
+        imageSrc: profiles.yumi
+      }, {
+        name: "Ben",
+        role: "PTO Image Creator",
+        imageSrc: profiles.ben
+      }]
+    }, {
+      title: "GEO",
+      items: [{
+        name: "Dan",
+        role: "GEO Specialist",
+        imageSrc: "/lovable-uploads/94ff046a-059b-4866-bbb8-94ce2f9e6716.png"
+      }]
+    }]
+  }, {
+    name: "Platform",
+    teams: [{
+      title: "Promotion",
+      items: [{
+        name: "Boris",
+        role: "Team Leader & Promotion Initiator",
+        imageSrc: "/lovable-uploads/a3da050e-3de8-404c-8ab2-868f2e319ec8.png"
+      }, {
+        name: "Ollie",
+        role: "Sales Analyst",
+        imageSrc: "/lovable-uploads/a2300ba9-4de6-4adc-88fd-b80baa1bdff7.png"
+      }, {
+        name: "Ravi",
+        role: "Promotion Configurator",
+        imageSrc: "/lovable-uploads/d18ff2c4-e8c7-4c44-b38c-74bb66e23393.png"
+      }]
+    }, {
+      title: "Analytics",
+      items: [{
+        name: "On Hiring",
+        role: "",
+        imageSrc: ""
+      }, {
+        name: "On Hiring",
+        role: "",
+        imageSrc: ""
+      }, {
+        name: "On Hiring",
+        role: "",
+        imageSrc: ""
+      }, {
+        name: "On Hiring",
+        role: "",
+        imageSrc: ""
+      }]
+    }]
+  }, {
+    name: "Data",
+    teams: [{
+      title: "Crawling",
+      items: [{
+        name: "Orin",
+        role: "Data Crawler",
+        imageSrc: "/lovable-uploads/1e050018-12f0-4df5-a7ae-c92735447a6d.png"
+      }]
+    }, {
+      title: "Processing",
+      items: [{
+        name: "On Hiring",
+        role: "",
+        imageSrc: ""
+      }, {
+        name: "On Hiring",
+        role: "",
+        imageSrc: ""
+      }]
+    }]
+  }];
   const internTeam = {
     title: "Intern",
-    items: [
-      {
-        name: "Kai",
-        role: "Background Remover",
-        imageSrc: "/lovable-uploads/84e535ab-1fa5-418e-93aa-73fa3b361219.png"
-      },
-      {
-        name: "On Hiring",
-        role: "",
-        imageSrc: ""
-      },
-      {
-        name: "Mell",
-        role: "Mailing",
-        imageSrc: "/lovable-uploads/5a6db127-b9e3-4f85-afbb-11b477555583.png"
-      },
-      {
-        name: "On Hiring",
-        role: "",
-        imageSrc: ""
-      }
-    ]
+    items: [{
+      name: "Kai",
+      role: "Background Remover",
+      imageSrc: "/lovable-uploads/84e535ab-1fa5-418e-93aa-73fa3b361219.png"
+    }, {
+      name: "On Hiring",
+      role: "",
+      imageSrc: ""
+    }, {
+      name: "Mell",
+      role: "Mailing",
+      imageSrc: "/lovable-uploads/5a6db127-b9e3-4f85-afbb-11b477555583.png"
+    }, {
+      name: "On Hiring",
+      role: "",
+      imageSrc: ""
+    }]
   };
   const containerRef = useRef<HTMLElement | null>(null);
   useEffect(() => {
@@ -326,9 +283,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
               <div className="flex justify-center mb-6">
                 <div className="flex flex-col items-center">
                   <div className="relative h-16 w-16 rounded-full overflow-hidden border-2 border-primary">
-                    <div className="h-full w-full flex items-center justify-center text-foreground/80 text-lg font-medium" style={{ backgroundColor: '#6B6B6B' }}>
-                      D
-                    </div>
+                    <div className="h-full w-full flex items-center justify-center text-foreground/80 text-lg font-medium" style={{
+                    backgroundColor: '#6B6B6B'
+                  }}>
+                  </div>
                   </div>
                   <div className="mt-2">
                     <div className="text-sm font-semibold text-foreground">D2C Leader</div>
@@ -344,8 +302,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
               <div className="absolute left-1/3 top-0 bottom-0 w-0.5 bg-border"></div>
               <div className="absolute left-2/3 top-0 bottom-0 w-0.5 bg-border"></div>
               
-              {divisions.map((division, index) => (
-                <div key={division.name} className="text-center">
+              {divisions.map((division, index) => <div key={division.name} className="text-center">
                   <h3 className="text-foreground font-semibold text-base mb-2">
                     {division.name}
                   </h3>
@@ -354,7 +311,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                   <div className="flex justify-center mb-4">
                     <div className="flex flex-col items-center">
                       <div className="relative h-12 w-12 rounded-full overflow-hidden">
-                        <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{ backgroundColor: '#6B6B6B' }}>
+                        <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{
+                      backgroundColor: '#6B6B6B'
+                    }}>
                           {division.name.charAt(0)}
                         </div>
                       </div>
@@ -366,160 +325,75 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                   
                   {/* Teams under each division */}
                   <div className="grid gap-4">
-                    {division.teams.map(team => (
-                      <div key={team.title} className="bg-card rounded-xl px-1 py-2 shadow-sm">
+                    {division.teams.map(team => <div key={team.title} className="bg-card rounded-xl px-1 py-2 shadow-sm">
                         <h4 className="text-sm font-semibold text-muted-foreground mb-3 text-center">
                           {team.title}
                         </h4>
-                        {team.title === "DAM" || team.title === "Promotion" ? (
-                          <div className="space-y-3">
+                        {team.title === "DAM" || team.title === "Promotion" ? <div className="space-y-3">
                             {/* First row - Candy only */}
                             <div className="flex justify-center">
-                              {team.items.slice(0, 1).map(item => (
-                                <div
-                                  key={`${team.title}-${item.name}`}
-                                  data-profile-name={item.name.toLowerCase()}
-                                  className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1"
-                                  onMouseEnter={e => handleMouseEnter(e, item.name, item.role)}
-                                  onMouseLeave={handleMouseLeave}
-                                  onClick={e => {
-                                    e.stopPropagation();
-                                    onProfileClick?.(item.name);
-                                  }}
-                                  role="button"
-                                  tabIndex={0}
-                                >
+                              {team.items.slice(0, 1).map(item => <div key={`${team.title}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1" onMouseEnter={e => handleMouseEnter(e, item.name, item.role)} onMouseLeave={handleMouseLeave} onClick={e => {
+                        e.stopPropagation();
+                        onProfileClick?.(item.name);
+                      }} role="button" tabIndex={0}>
                                   <div className={`relative h-12 w-12 md:h-14 md:w-14 rounded-full overflow-hidden ${item.name === "Candy" || item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
-                                    {item.imageSrc ? (
-                                      <img
-                                        src={item.imageSrc}
-                                        alt={`${item.name} profile image`}
-                                        className={`h-full w-full object-cover transition-transform duration-300 ${
-                                          hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''
-                                        }`}
-                                        loading="lazy"
-                                      />
-                                    ) : (
-                                      <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{ backgroundColor: '#6B6B6B' }}>
+                                    {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{
+                            backgroundColor: '#6B6B6B'
+                          }}>
                                         {item.name.charAt(0)}
-                                      </div>
-                                    )}
+                                      </div>}
                                   </div>
                                   <div className="mt-2">
                                     <div className="text-xs font-medium text-foreground">{item.name}</div>
                                     <div className="text-xs text-muted-foreground">
-                                      {item.role.includes("&") ? (
-                                        item.role.split("&").map((part, index) => (
-                                          <div key={index}>{part.trim()}</div>
-                                        ))
-                                      ) : (
-                                        item.role
-                                      )}
+                                      {item.role.includes("&") ? item.role.split("&").map((part, index) => <div key={index}>{part.trim()}</div>) : item.role}
                                     </div>
                                   </div>
-                                </div>
-                              ))}
+                                </div>)}
                             </div>
                             {/* Second row - Maya and On Hiring */}
                             <div className="flex justify-center gap-3">
-                              {team.items.slice(1).map(item => (
-                                <div
-                                  key={`${team.title}-${item.name}`}
-                                  data-profile-name={item.name.toLowerCase()}
-                                  className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1"
-                                  onMouseEnter={e => handleMouseEnter(e, item.name, item.role)}
-                                  onMouseLeave={handleMouseLeave}
-                                  onClick={e => {
-                                    e.stopPropagation();
-                                    onProfileClick?.(item.name);
-                                  }}
-                                  role="button"
-                                  tabIndex={0}
-                                >
+                              {team.items.slice(1).map(item => <div key={`${team.title}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1" onMouseEnter={e => handleMouseEnter(e, item.name, item.role)} onMouseLeave={handleMouseLeave} onClick={e => {
+                        e.stopPropagation();
+                        onProfileClick?.(item.name);
+                      }} role="button" tabIndex={0}>
                                   <div className={`relative h-12 w-12 md:h-14 md:w-14 rounded-full overflow-hidden ${item.name === "Candy" || item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
-                                    {item.imageSrc ? (
-                                      <img
-                                        src={item.imageSrc}
-                                        alt={`${item.name} profile image`}
-                                        className={`h-full w-full object-cover transition-transform duration-300 ${
-                                          hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''
-                                        }`}
-                                        loading="lazy"
-                                      />
-                                    ) : (
-                                      <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{ backgroundColor: '#6B6B6B' }}>
-                                      </div>
-                                    )}
+                                    {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{
+                            backgroundColor: '#6B6B6B'
+                          }}>
+                                      </div>}
                                   </div>
                                   <div className="mt-2">
                                     <div className="text-xs font-medium text-foreground">{item.name}</div>
                                     <div className="text-xs text-muted-foreground">
-                                      {item.role.includes("&") ? (
-                                        item.role.split("&").map((part, index) => (
-                                          <div key={index}>{part.trim()}</div>
-                                        ))
-                                      ) : (
-                                        item.role
-                                      )}
+                                      {item.role.includes("&") ? item.role.split("&").map((part, index) => <div key={index}>{part.trim()}</div>) : item.role}
                                     </div>
                                   </div>
-                                </div>
-                              ))}
+                                </div>)}
                             </div>
-                          </div>
-                        ) : (
-                          <div className="flex flex-wrap justify-center gap-3">
-                            {team.items.map(item => (
-                              <div
-                                key={`${team.title}-${item.name}`}
-                                data-profile-name={item.name.toLowerCase()}
-                                className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1"
-                                onMouseEnter={e => handleMouseEnter(e, item.name, item.role)}
-                                onMouseLeave={handleMouseLeave}
-                                onClick={e => {
-                                  e.stopPropagation();
-                                  onProfileClick?.(item.name);
-                                }}
-                                role="button"
-                                tabIndex={0}
-                              >
+                          </div> : <div className="flex flex-wrap justify-center gap-3">
+                            {team.items.map(item => <div key={`${team.title}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1" onMouseEnter={e => handleMouseEnter(e, item.name, item.role)} onMouseLeave={handleMouseLeave} onClick={e => {
+                      e.stopPropagation();
+                      onProfileClick?.(item.name);
+                    }} role="button" tabIndex={0}>
                                 <div className={`relative h-12 w-12 md:h-14 md:w-14 rounded-full overflow-hidden ${item.name === "Candy" || item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
-                                  {item.imageSrc ? (
-                                    <img
-                                      src={item.imageSrc}
-                                      alt={`${item.name} profile image`}
-                                      className={`h-full w-full object-cover transition-transform duration-300 ${
-                                        hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''
-                                      }`}
-                                      loading="lazy"
-                                    />
-                                  ) : (
-                                    <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{ backgroundColor: '#6B6B6B' }}>
+                                  {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{
+                          backgroundColor: '#6B6B6B'
+                        }}>
                                       {item.name.charAt(0)}
-                                    </div>
-                                  )}
+                                    </div>}
                                 </div>
                                 <div className="mt-2">
                                   <div className="text-xs font-medium text-foreground">{item.name}</div>
                                   <div className="text-xs text-muted-foreground">
-                                    {item.role.includes("&") ? (
-                                      item.role.split("&").map((part, index) => (
-                                        <div key={index}>{part.trim()}</div>
-                                      ))
-                                    ) : (
-                                      item.role
-                                    )}
+                                    {item.role.includes("&") ? item.role.split("&").map((part, index) => <div key={index}>{part.trim()}</div>) : item.role}
                                   </div>
                                 </div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
-                      </div>
-                    ))}
+                              </div>)}
+                          </div>}
+                      </div>)}
                   </div>
-                </div>
-              ))}
+                </div>)}
             </div>
 
             {/* Intern Team - Independent Section */}
@@ -531,41 +405,21 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
               </div>
               <div className="bg-card border border-border/20 rounded-xl p-6 shadow-sm max-w-2xl mx-auto">
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {internTeam.items.map(item => (
-                    <div
-                      key={`intern-${item.name}`}
-                      data-profile-name={item.name.toLowerCase()}
-                      className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1"
-                      onMouseEnter={e => handleMouseEnter(e, item.name, item.role, "Intern")}
-                      onMouseLeave={handleMouseLeave}
-                      onClick={e => {
-                        e.stopPropagation();
-                        onProfileClick?.(item.name);
-                      }}
-                      role="button"
-                      tabIndex={0}
-                    >
+                  {internTeam.items.map(item => <div key={`intern-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1" onMouseEnter={e => handleMouseEnter(e, item.name, item.role, "Intern")} onMouseLeave={handleMouseLeave} onClick={e => {
+                  e.stopPropagation();
+                  onProfileClick?.(item.name);
+                }} role="button" tabIndex={0}>
                        <div className="relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden">
-                         {item.imageSrc ? (
-                           <img
-                             src={item.imageSrc}
-                             alt={`${item.name} profile image`}
-                             className={`h-full w-full object-cover transition-transform duration-300 ${
-                               hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''
-                             }`}
-                             loading="lazy"
-                           />
-                         ) : (
-                           <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{ backgroundColor: '#6B6B6B' }}>
-                           </div>
-                         )}
+                         {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{
+                      backgroundColor: '#6B6B6B'
+                    }}>
+                           </div>}
                        </div>
                        <div className="mt-2">
                          <div className="text-sm font-medium text-foreground">{item.name}</div>
                          {item.role && <div className="text-xs text-muted-foreground">{item.role}</div>}
                        </div>
-                    </div>
-                  ))}
+                    </div>)}
                 </div>
               </div>
             </div>
