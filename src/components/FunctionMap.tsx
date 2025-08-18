@@ -263,7 +263,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
   return <section ref={containerRef} aria-label="Agent functions map" className="space-y-6">
       <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
         {/* Super Agent as first item */}
-        <div className="xl:col-span-3 md:col-span-2 bg-[hsl(var(--function-map-bg))] rounded-xl p-6">
+        <div className="xl:col-span-3 md:col-span-2 bg-[hsl(var(--function-map-bg))] rounded-xl p-4">
           {/* Super Agent Section */}
           <div className="text-center mb-8">
             
@@ -282,7 +282,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
           {/* Organizational Chart */}
           <div className="space-y-8">
             {/* D2C Leader */}
-            <div className="text-center mb-8">
+            <div className="text-center mb-4">
               <div className="flex justify-center mb-6">
                 <div className="flex flex-col items-center">
                   <div className="relative h-16 w-16 rounded-full overflow-hidden border-2 border-primary">
