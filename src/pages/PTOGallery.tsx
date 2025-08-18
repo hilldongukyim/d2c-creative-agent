@@ -308,7 +308,7 @@ const PTOGallery = () => {
             <Button 
               variant="outline"
               className="text-white border-white hover:bg-white hover:text-black px-6 py-2 text-base transition-all duration-300"
-              onClick={() => navigate("/")}
+              onClick={() => navigate("/home")}
             >
               Back to Home
             </Button>
