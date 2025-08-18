@@ -87,7 +87,7 @@ const CoverPage = () => {
             Twin Crew
           </h1>
           <p className="text-xl md:text-2xl text-muted-foreground font-medium">
-            Your Professional Second Self.
+            A Team of Your Second Selves.
           </p>
         </div>
 
