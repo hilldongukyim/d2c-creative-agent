@@ -373,7 +373,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                       />
                                     ) : (
                                       <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{ backgroundColor: '#6B6B6B' }}>
-                                        {item.name.charAt(0)}
                                       </div>
                                     )}
                                   </div>
