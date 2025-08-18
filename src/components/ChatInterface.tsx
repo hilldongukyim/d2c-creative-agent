@@ -436,15 +436,17 @@ const ChatInterface = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 relative overflow-hidden">
+    <div className="min-h-screen relative overflow-hidden" style={{
+      backgroundImage: `url('/lovable-uploads/16b91392-64fd-4dd0-8569-0c35e54e11cb.png')`,
+      backgroundSize: 'cover',
+      backgroundPosition: 'center',
+      backgroundRepeat: 'no-repeat'
+    }}>
       {/* Background decorative elements */}
       <div className="absolute inset-0 overflow-hidden">
         <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-xl"></div>
         <div className="absolute top-1/3 -left-20 w-60 h-60 bg-white/5 rounded-full blur-2xl"></div>
         <div className="absolute bottom-20 right-1/4 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
-        {/* Small house decoration */}
-        <div className="absolute bottom-10 right-10 text-6xl opacity-20">🏠</div>
-        <div className="absolute bottom-20 left-20 text-4xl opacity-30">☁️</div>
       </div>
 
       {/* Back to Home button */}
