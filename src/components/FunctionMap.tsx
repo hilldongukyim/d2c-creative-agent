@@ -206,7 +206,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       name: "Data",
       teams: [
         {
-          title: "Data Team",
+          title: "Crawling",
           items: [
             {
               name: "Orin",
