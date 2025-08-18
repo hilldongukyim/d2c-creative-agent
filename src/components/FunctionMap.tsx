@@ -229,7 +229,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         role: "",
         imageSrc: ""
       }, {
-        name: "On Hiring", 
+        name: "On Hiring",
         role: "",
         imageSrc: ""
       }]
@@ -328,8 +328,8 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
               {/* Vertical lines to each division leader */}
               <div className="absolute left-1/8 top-0 w-0.5 h-16 bg-border"></div>
               <div className="absolute left-3/8 top-0 w-0.5 h-16 bg-border"></div>
-              <div className="absolute left-5/8 top-0 w-0.5 h-16 bg-border"></div>
-              <div className="absolute left-7/8 top-0 w-0.5 h-16 bg-border"></div>
+              
+              
               
               {divisions.map((division, index) => <div key={division.name} className="text-center">
                   <h3 className="text-foreground font-semibold text-base mb-2">
