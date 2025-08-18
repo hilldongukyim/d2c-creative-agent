@@ -320,10 +320,16 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
 
             {/* Division Headers */}
             <div className="grid grid-cols-4 gap-6 mb-8 relative">
-              {/* Vertical dividers */}
-              <div className="absolute left-1/4 top-0 bottom-0 w-0.5 bg-border"></div>
-              <div className="absolute left-2/4 top-0 bottom-0 w-0.5 bg-border"></div>
-              <div className="absolute left-3/4 top-0 bottom-0 w-0.5 bg-border"></div>
+              {/* Organizational connecting lines */}
+              {/* Main vertical line from D2C Leader */}
+              <div className="absolute left-1/2 -top-8 w-0.5 h-8 bg-border transform -translate-x-0.5"></div>
+              {/* Horizontal line connecting all divisions */}
+              <div className="absolute left-1/8 right-1/8 top-0 h-0.5 bg-border"></div>
+              {/* Vertical lines to each division */}
+              <div className="absolute left-1/8 top-0 w-0.5 h-4 bg-border"></div>
+              <div className="absolute left-3/8 top-0 w-0.5 h-4 bg-border"></div>
+              <div className="absolute left-5/8 top-0 w-0.5 h-4 bg-border"></div>
+              <div className="absolute left-7/8 top-0 w-0.5 h-4 bg-border"></div>
               
               {divisions.map((division, index) => <div key={division.name} className="text-center">
                   <h3 className="text-foreground font-semibold text-base mb-2">
