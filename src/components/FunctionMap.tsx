@@ -238,9 +238,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         imageSrc: "/lovable-uploads/5a6db127-b9e3-4f85-afbb-11b477555583.png"
       },
       {
-        name: "Noa",
-        role: "Copy Writing",
-        imageSrc: "/lovable-uploads/0fbe5af8-19f4-4ff0-8c9f-3f1a2c010572.png"
+        name: "On Hiring",
+        role: "",
+        imageSrc: ""
       }
     ]
   };
@@ -470,20 +470,25 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                       role="button"
                       tabIndex={0}
                     >
-                      <div className="relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden">
-                        <img
-                          src={item.imageSrc}
-                          alt={`${item.name} profile image`}
-                          className={`h-full w-full object-cover transition-transform duration-300 ${
-                            hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''
-                          }`}
-                          loading="lazy"
-                        />
-                      </div>
-                      <div className="mt-2">
-                        <div className="text-sm font-medium text-foreground">{item.name}</div>
-                        <div className="text-xs text-muted-foreground">{item.role}</div>
-                      </div>
+                       <div className="relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden">
+                         {item.imageSrc ? (
+                           <img
+                             src={item.imageSrc}
+                             alt={`${item.name} profile image`}
+                             className={`h-full w-full object-cover transition-transform duration-300 ${
+                               hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''
+                             }`}
+                             loading="lazy"
+                           />
+                         ) : (
+                           <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{ backgroundColor: '#6B6B6B' }}>
+                           </div>
+                         )}
+                       </div>
+                       <div className="mt-2">
+                         <div className="text-sm font-medium text-foreground">{item.name}</div>
+                         {item.role && <div className="text-xs text-muted-foreground">{item.role}</div>}
+                       </div>
                     </div>
                   ))}
                 </div>
