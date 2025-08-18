@@ -257,7 +257,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                        e.stopPropagation();
                        onProfileClick?.(item.name);
                      }} role="button" tabIndex={0}>
-                                   <div className={`relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden border border-red-500`}>
+                                   <div className={`relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden ${item.name === "Candy" ? "border border-red-500" : ""}`}>
                                      {item.imageSrc ? (
                                        <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" />
                                      ) : (
