@@ -296,52 +296,151 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                         <h4 className="text-sm font-semibold text-muted-foreground mb-3 text-center">
                           {team.title}
                         </h4>
-                        <div className="flex flex-wrap justify-center gap-3">
-                          {team.items.map(item => (
-                            <div
-                              key={`${team.title}-${item.name}`}
-                              data-profile-name={item.name.toLowerCase()}
-                              className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1"
-                              onMouseEnter={e => handleMouseEnter(e, item.name, item.role)}
-                              onMouseLeave={handleMouseLeave}
-                              onClick={e => {
-                                e.stopPropagation();
-                                onProfileClick?.(item.name);
-                              }}
-                              role="button"
-                              tabIndex={0}
-                            >
-                              <div className={`relative h-12 w-12 md:h-14 md:w-14 rounded-full overflow-hidden ${item.name === "Candy" || item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
-                                {item.imageSrc ? (
-                                  <img
-                                    src={item.imageSrc}
-                                    alt={`${item.name} profile image`}
-                                    className={`h-full w-full object-cover transition-transform duration-300 ${
-                                      hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''
-                                    }`}
-                                    loading="lazy"
-                                  />
-                                 ) : (
-                                   <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{ backgroundColor: '#6B6B6B' }}>
-                                     {item.name.charAt(0)}
-                                   </div>
-                                 )}
-                              </div>
-                              <div className="mt-2">
-                                <div className="text-xs font-medium text-foreground">{item.name}</div>
-                                <div className="text-xs text-muted-foreground">
-                                  {item.role.includes("&") ? (
-                                    item.role.split("&").map((part, index) => (
-                                      <div key={index}>{part.trim()}</div>
-                                    ))
+                        {team.title === "DAM" ? (
+                          <div className="space-y-3">
+                            {/* First row - Candy only */}
+                            <div className="flex justify-center">
+                              {team.items.slice(0, 1).map(item => (
+                                <div
+                                  key={`${team.title}-${item.name}`}
+                                  data-profile-name={item.name.toLowerCase()}
+                                  className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1"
+                                  onMouseEnter={e => handleMouseEnter(e, item.name, item.role)}
+                                  onMouseLeave={handleMouseLeave}
+                                  onClick={e => {
+                                    e.stopPropagation();
+                                    onProfileClick?.(item.name);
+                                  }}
+                                  role="button"
+                                  tabIndex={0}
+                                >
+                                  <div className={`relative h-12 w-12 md:h-14 md:w-14 rounded-full overflow-hidden ${item.name === "Candy" || item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
+                                    {item.imageSrc ? (
+                                      <img
+                                        src={item.imageSrc}
+                                        alt={`${item.name} profile image`}
+                                        className={`h-full w-full object-cover transition-transform duration-300 ${
+                                          hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''
+                                        }`}
+                                        loading="lazy"
+                                      />
+                                    ) : (
+                                      <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{ backgroundColor: '#6B6B6B' }}>
+                                        {item.name.charAt(0)}
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div className="mt-2">
+                                    <div className="text-xs font-medium text-foreground">{item.name}</div>
+                                    <div className="text-xs text-muted-foreground">
+                                      {item.role.includes("&") ? (
+                                        item.role.split("&").map((part, index) => (
+                                          <div key={index}>{part.trim()}</div>
+                                        ))
+                                      ) : (
+                                        item.role
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                            {/* Second row - Maya and On Hiring */}
+                            <div className="flex justify-center gap-3">
+                              {team.items.slice(1).map(item => (
+                                <div
+                                  key={`${team.title}-${item.name}`}
+                                  data-profile-name={item.name.toLowerCase()}
+                                  className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1"
+                                  onMouseEnter={e => handleMouseEnter(e, item.name, item.role)}
+                                  onMouseLeave={handleMouseLeave}
+                                  onClick={e => {
+                                    e.stopPropagation();
+                                    onProfileClick?.(item.name);
+                                  }}
+                                  role="button"
+                                  tabIndex={0}
+                                >
+                                  <div className={`relative h-12 w-12 md:h-14 md:w-14 rounded-full overflow-hidden ${item.name === "Candy" || item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
+                                    {item.imageSrc ? (
+                                      <img
+                                        src={item.imageSrc}
+                                        alt={`${item.name} profile image`}
+                                        className={`h-full w-full object-cover transition-transform duration-300 ${
+                                          hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''
+                                        }`}
+                                        loading="lazy"
+                                      />
+                                    ) : (
+                                      <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{ backgroundColor: '#6B6B6B' }}>
+                                        {item.name.charAt(0)}
+                                      </div>
+                                    )}
+                                  </div>
+                                  <div className="mt-2">
+                                    <div className="text-xs font-medium text-foreground">{item.name}</div>
+                                    <div className="text-xs text-muted-foreground">
+                                      {item.role.includes("&") ? (
+                                        item.role.split("&").map((part, index) => (
+                                          <div key={index}>{part.trim()}</div>
+                                        ))
+                                      ) : (
+                                        item.role
+                                      )}
+                                    </div>
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="flex flex-wrap justify-center gap-3">
+                            {team.items.map(item => (
+                              <div
+                                key={`${team.title}-${item.name}`}
+                                data-profile-name={item.name.toLowerCase()}
+                                className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1"
+                                onMouseEnter={e => handleMouseEnter(e, item.name, item.role)}
+                                onMouseLeave={handleMouseLeave}
+                                onClick={e => {
+                                  e.stopPropagation();
+                                  onProfileClick?.(item.name);
+                                }}
+                                role="button"
+                                tabIndex={0}
+                              >
+                                <div className={`relative h-12 w-12 md:h-14 md:w-14 rounded-full overflow-hidden ${item.name === "Candy" || item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
+                                  {item.imageSrc ? (
+                                    <img
+                                      src={item.imageSrc}
+                                      alt={`${item.name} profile image`}
+                                      className={`h-full w-full object-cover transition-transform duration-300 ${
+                                        hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''
+                                      }`}
+                                      loading="lazy"
+                                    />
                                   ) : (
-                                    item.role
+                                    <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{ backgroundColor: '#6B6B6B' }}>
+                                      {item.name.charAt(0)}
+                                    </div>
                                   )}
                                 </div>
+                                <div className="mt-2">
+                                  <div className="text-xs font-medium text-foreground">{item.name}</div>
+                                  <div className="text-xs text-muted-foreground">
+                                    {item.role.includes("&") ? (
+                                      item.role.split("&").map((part, index) => (
+                                        <div key={index}>{part.trim()}</div>
+                                      ))
+                                    ) : (
+                                      item.role
+                                    )}
+                                  </div>
+                                </div>
                               </div>
-                            </div>
-                          ))}
-                        </div>
+                            ))}
+                          </div>
+                        )}
                       </div>
                     ))}
                   </div>
