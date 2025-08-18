@@ -209,10 +209,18 @@ const ChatInterface = () => {
     
     if (!inputValue.trim() && currentQuestion.inputType !== "checkbox") return;
 
+    // For the first question (EP ID), automatically append @lge.com if not already present
+    let finalValue = inputValue;
+    if (currentQuestion.inputType === "email" && currentQuestionIndex === 0) {
+      if (!inputValue.includes("@")) {
+        finalValue = inputValue + "@lge.com";
+      }
+    }
+
     const userMessage: Message = {
       id: `user-${Date.now()}`,
       sender: "user",
-      content: inputValue,
+      content: finalValue,
       timestamp: new Date(),
       type: "answer"
     };
@@ -222,7 +230,7 @@ const ChatInterface = () => {
     if (currentQuestion.field) {
       setFormData(prev => ({
         ...prev,
-        [currentQuestion.field]: inputValue
+        [currentQuestion.field]: finalValue
       }));
     }
 
