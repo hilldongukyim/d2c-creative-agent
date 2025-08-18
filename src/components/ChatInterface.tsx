@@ -81,7 +81,7 @@ const languages = {
       enterYourId: "Enter your ID",
       typeResponse: "Type your response here...",
       confirmed: "Confirmed! Please proceed with creating the promotional content.",
-      successMessage: "Excellent! I've received all your details and sent them to our content creation system. You'll receive the final deliverables at your provided email address. Thank you for working with me! 🎉"
+      successMessage: "Excellent! I've received all your details and sent them to our content creation system. You'll receive the final deliverables at your provided email address. Will get back to you soon! 🎉"
     }
   },
   ko: {
@@ -139,7 +139,7 @@ const languages = {
       enterYourId: "ID를 입력하세요",
       typeResponse: "답변을 입력하세요...",
       confirmed: "확인되었습니다! 프로모션 콘텐츠 제작을 진행해주세요.",
-      successMessage: "훌륭합니다! 모든 세부사항을 받았으며 콘텐츠 제작 시스템으로 전송했습니다. 제공해주신 이메일 주소로 최종 결과물을 받으실 수 있습니다. 함께 작업해주셔서 감사합니다! 🎉"
+      successMessage: "훌륭합니다! 모든 세부사항을 받았으며 콘텐츠 제작 시스템으로 전송했습니다. 제공해주신 이메일 주소로 최종 결과물을 받으실 수 있습니다. 빨리 작업하고 올게요! 🎉"
     }
   }
 };
