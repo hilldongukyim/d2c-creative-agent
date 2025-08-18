@@ -281,17 +281,48 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
           
           {/* Organizational Chart */}
           <div className="space-y-8">
+            {/* D2C Leader */}
+            <div className="text-center mb-8">
+              <div className="flex justify-center mb-6">
+                <div className="flex flex-col items-center">
+                  <div className="relative h-16 w-16 rounded-full overflow-hidden border-2 border-primary">
+                    <div className="h-full w-full flex items-center justify-center text-foreground/80 text-lg font-medium" style={{ backgroundColor: '#6B6B6B' }}>
+                      D
+                    </div>
+                  </div>
+                  <div className="mt-2">
+                    <div className="text-sm font-semibold text-foreground">D2C Leader</div>
+                    <div className="text-xs text-muted-foreground">Division Coordinator</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Division Headers */}
             <div className="grid grid-cols-3 gap-8 mb-8 relative">
               {/* Vertical dividers */}
               <div className="absolute left-1/3 top-0 bottom-0 w-0.5 bg-border"></div>
               <div className="absolute left-2/3 top-0 bottom-0 w-0.5 bg-border"></div>
               
-              {divisions.map(division => (
+              {divisions.map((division, index) => (
                 <div key={division.name} className="text-center">
-                  <h3 className="text-foreground font-semibold text-base mb-6">
+                  <h3 className="text-foreground font-semibold text-base mb-2">
                     {division.name}
                   </h3>
+                  
+                  {/* Division Leader */}
+                  <div className="flex justify-center mb-4">
+                    <div className="flex flex-col items-center">
+                      <div className="relative h-12 w-12 rounded-full overflow-hidden">
+                        <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{ backgroundColor: '#6B6B6B' }}>
+                          {division.name.charAt(0)}
+                        </div>
+                      </div>
+                      <div className="mt-1">
+                        <div className="text-xs font-medium text-foreground">{division.name} Leader</div>
+                      </div>
+                    </div>
+                  </div>
                   
                   {/* Teams under each division */}
                   <div className="grid gap-4">
