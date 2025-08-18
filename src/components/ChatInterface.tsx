@@ -141,354 +141,6 @@ const languages = {
       confirmed: "확인되었습니다! 프로모션 콘텐츠 제작을 진행해주세요.",
       successMessage: "훌륭합니다! 모든 세부사항을 받았으며 콘텐츠 제작 시스템으로 전송했습니다. 제공해주신 이메일 주소로 최종 결과물을 받으실 수 있습니다. 함께 작업해주셔서 감사합니다! 🎉"
     }
-  },
-  es: {
-    code: "es",
-    name: "Español",
-    flag: "🇪🇸",
-    questions: [
-      {
-        id: 1,
-        text: "¡Hola! Soy Yumi, tu diseñadora de contenido promocional. ¡Estoy emocionada de ayudarte a crear contenido promocional increíble! 🎨\n\nEmpecemos con lo básico: ¿podrías proporcionarme tu ID de EP? Esta será la dirección de correo electrónico donde recibirás los entregables finales.",
-        field: "epId" as keyof FormData,
-        inputType: "email"
-      },
-      {
-        id: 2,
-        text: "¡Perfecto! Ahora cuéntame sobre esta promoción. ¡Me encantaría ayudarte a crear el texto perfecto! Por favor comparte:\n\n• Detalles breves de la promoción\n• Tasas de descuento específicas y productos que te gustaría destacar\n• Cualquier texto que ya tengas en mente\n\n¡Cuantos más detalles me des, mejor podré adaptar el copywriting para que coincida perfectamente con tu visión!",
-        field: "promotionInfo" as keyof FormData,
-        inputType: "textarea"
-      },
-      {
-        id: 3,
-        text: "¡Increíble! Ya casi llegamos. Ahora necesito la URL PDP del producto que quieres destacar. Por favor copia y pega la URL de la página del producto aquí.\n\n(Actualmente, podemos mostrar un producto por contenido promocional)",
-        field: "productUrl" as keyof FormData,
-        inputType: "url"
-      },
-      {
-        id: 4,
-        text: "¡Excelente elección! Ahora hablemos sobre las imágenes de estilo de vida. ¿Qué tipo de ambiente o personas te gustaría ver en las imágenes de estilo de vida?\n\n¡Solo dame una descripción aproximada y generaré algo increíble para ti! Piensa en el estado de ánimo, el entorno o el tipo de persona que mejor representaría tu producto.",
-        field: "lifestyleImage" as keyof FormData,
-        inputType: "textarea"
-      },
-      {
-        id: 5,
-        text: "¡Perfecto! ¿Necesitas incluir alguna exención de responsabilidad en el contenido promocional? Si es así, proporciona el texto exacto que te gustaría incluir.\n\nSi no, simplemente escribe 'Ninguna' y pasaremos al siguiente paso.",
-        field: "disclaimer" as keyof FormData,
-        inputType: "textarea"
-      },
-      {
-        id: 6,
-        text: "¡Casi terminamos! Última pregunta: ¿dónde se publicará este contenido promocional? Por favor selecciona todos los canales que apliquen:",
-        field: "channels" as keyof FormData,
-        inputType: "checkbox",
-        options: ["LG.COM", "Pmax", "DV360", "Criteo", "AWIN", "Social"]
-      },
-      {
-        id: 7,
-        text: "¡Perfecto! Te muestro todo lo que has proporcionado. Por favor revisa todos los detalles a continuación y confirma cuando estés listo para proceder:",
-        field: null,
-        inputType: "confirmation"
-      }
-    ],
-    ui: {
-      continue: "Continuar",
-      confirmProceed: "Confirmar y proceder",
-      enterYourId: "Ingresa tu ID",
-      typeResponse: "Escribe tu respuesta aquí...",
-      confirmed: "¡Confirmado! Por favor procede con la creación del contenido promocional.",
-      successMessage: "¡Excelente! He recibido todos tus detalles y los he enviado a nuestro sistema de creación de contenido. Recibirás los entregables finales en tu dirección de correo electrónico proporcionada. ¡Gracias por trabajar conmigo! 🎉"
-    }
-  },
-  de: {
-    code: "de",
-    name: "Deutsch",
-    flag: "🇩🇪",
-    questions: [
-      {
-        id: 1,
-        text: "Hallo! Ich bin Yumi, deine Designerin für Werbeinhalte. Ich freue mich darauf, dir dabei zu helfen, großartige Werbeinhalte zu erstellen! 🎨\n\nLass uns mit den Grundlagen beginnen - könntest du mir bitte deine EP-ID geben? Das wird die E-Mail-Adresse sein, an die du die finalen Ergebnisse erhältst.",
-        field: "epId" as keyof FormData,
-        inputType: "email"
-      },
-      {
-        id: 2,
-        text: "Perfekt! Erzähl mir jetzt von dieser Promotion. Ich würde gerne dabei helfen, den perfekten Text zu erstellen! Bitte teile mit:\n\n• Kurze Promotion-Details\n• Spezifische Rabattsätze und Produkte, die du hervorheben möchtest\n• Jegliche Texte, die du bereits im Kopf hast\n\nJe mehr Details du mir gibst, desto besser kann ich das Copywriting an deine Vision anpassen!",
-        field: "promotionInfo" as keyof FormData,
-        inputType: "textarea"
-      },
-      {
-        id: 3,
-        text: "Großartig! Wir sind fast da. Jetzt brauche ich die PDP-URL des Produkts, das du hervorheben möchtest. Bitte kopiere und füge die Produktseiten-URL hier ein.\n\n(Derzeit können wir ein Produkt pro Werbeinhalt präsentieren)",
-        field: "productUrl" as keyof FormData,
-        inputType: "url"
-      },
-      {
-        id: 4,
-        text: "Großartige Wahl! Lass uns jetzt über die Lifestyle-Bilder sprechen. Welche Art von Atmosphäre oder Menschen möchtest du in den Lifestyle-Bildern sehen?\n\nGib mir einfach eine grobe Beschreibung und ich werde etwas Erstaunliches für dich generieren! Denk an die Stimmung, Umgebung oder Art von Person, die dein Produkt am besten repräsentieren würde.",
-        field: "lifestyleImage" as keyof FormData,
-        inputType: "textarea"
-      },
-      {
-        id: 5,
-        text: "Perfekt! Benötigst du irgendwelche Haftungsausschlüsse im Werbeinhalt? Falls ja, gib bitte den genauen Text an, den du einschließen möchtest.\n\nWenn nicht, schreibe einfach 'Keine' und wir gehen zum nächsten Schritt über.",
-        field: "disclaimer" as keyof FormData,
-        inputType: "textarea"
-      },
-      {
-        id: 6,
-        text: "Fast fertig! Letzte Frage - wo wird dieser Werbeinhalt veröffentlicht? Bitte wähle alle zutreffenden Kanäle aus:",
-        field: "channels" as keyof FormData,
-        inputType: "checkbox",
-        options: ["LG.COM", "Pmax", "DV360", "Criteo", "AWIN", "Social"]
-      },
-      {
-        id: 7,
-        text: "Perfekt! Lass mich dir alles zeigen, was du angegeben hast. Bitte überprüfe alle Details unten und bestätige, wenn du bereit bist fortzufahren:",
-        field: null,
-        inputType: "confirmation"
-      }
-    ],
-    ui: {
-      continue: "Weiter",
-      confirmProceed: "Bestätigen und fortfahren",
-      enterYourId: "Gib deine ID ein",
-      typeResponse: "Schreibe deine Antwort hier...",
-      confirmed: "Bestätigt! Bitte fahre mit der Erstellung des Werbeinhalts fort.",
-      successMessage: "Ausgezeichnet! Ich habe alle deine Details erhalten und sie an unser Content-Erstellungssystem gesendet. Du erhältst die finalen Ergebnisse an deine angegebene E-Mail-Adresse. Danke für die Zusammenarbeit! 🎉"
-    }
-  },
-  fr: {
-    code: "fr",
-    name: "Français",
-    flag: "🇫🇷",
-    questions: [
-      {
-        id: 1,
-        text: "Salut ! Je suis Yumi, votre conceptrice de contenu promotionnel. Je suis ravie de vous aider à créer un contenu promotionnel fantastique ! 🎨\n\nCommençons par les bases - pourriez-vous me donner votre ID EP ? Ce sera l'adresse e-mail où vous recevrez les livrables finaux.",
-        field: "epId" as keyof FormData,
-        inputType: "email"
-      },
-      {
-        id: 2,
-        text: "Parfait ! Maintenant, parlez-moi de cette promotion. J'aimerais vous aider à créer le texte parfait ! Veuillez partager :\n\n• Détails brefs de la promotion\n• Taux de remise spécifiques et produits que vous aimeriez mettre en avant\n• Tout texte que vous avez déjà en tête\n\nPlus vous me donnez de détails, mieux je peux adapter la rédaction pour correspondre parfaitement à votre vision !",
-        field: "promotionInfo" as keyof FormData,
-        inputType: "textarea"
-      },
-      {
-        id: 3,
-        text: "Génial ! Nous y sommes presque. Maintenant j'ai besoin de l'URL PDP du produit que vous voulez mettre en avant. Veuillez copier et coller l'URL de la page produit ici.\n\n(Actuellement, nous pouvons présenter un produit par contenu promotionnel)",
-        field: "productUrl" as keyof FormData,
-        inputType: "url"
-      },
-      {
-        id: 4,
-        text: "Excellent choix ! Maintenant, parlons des images de style de vie. Quel type d'ambiance ou de personnes aimeriez-vous voir dans les images de style de vie ?\n\nDonnez-moi juste une description approximative et je générerai quelque chose d'incroyable pour vous ! Pensez à l'ambiance, au cadre ou au type de personne qui représenterait le mieux votre produit.",
-        field: "lifestyleImage" as keyof FormData,
-        inputType: "textarea"
-      },
-      {
-        id: 5,
-        text: "Parfait ! Avez-vous besoin d'inclure des clauses de non-responsabilité dans le contenu promotionnel ? Si oui, veuillez fournir le texte exact que vous aimeriez inclure.\n\nSinon, tapez simplement 'Aucune' et nous passerons à l'étape suivante.",
-        field: "disclaimer" as keyof FormData,
-        inputType: "textarea"
-      },
-      {
-        id: 6,
-        text: "Presque fini ! Dernière question - où ce contenu promotionnel sera-t-il publié ? Veuillez sélectionner tous les canaux qui s'appliquent :",
-        field: "channels" as keyof FormData,
-        inputType: "checkbox",
-        options: ["LG.COM", "Pmax", "DV360", "Criteo", "AWIN", "Social"]
-      },
-      {
-        id: 7,
-        text: "Parfait ! Laissez-moi vous montrer tout ce que vous avez fourni. Veuillez examiner tous les détails ci-dessous et confirmer quand vous êtes prêt à procéder :",
-        field: null,
-        inputType: "confirmation"
-      }
-    ],
-    ui: {
-      continue: "Continuer",
-      confirmProceed: "Confirmer et procéder",
-      enterYourId: "Entrez votre ID",
-      typeResponse: "Tapez votre réponse ici...",
-      confirmed: "Confirmé ! Veuillez procéder à la création du contenu promotionnel.",
-      successMessage: "Excellent ! J'ai reçu tous vos détails et les ai envoyés à notre système de création de contenu. Vous recevrez les livrables finaux à votre adresse e-mail fournie. Merci de travailler avec moi ! 🎉"
-    }
-  },
-  ja: {
-    code: "ja",
-    name: "日本語",
-    flag: "🇯🇵",
-    questions: [
-      {
-        id: 1,
-        text: "こんにちは！私はプロモーションコンテンツデザイナーのYumiです。素晴らしいプロモーションコンテンツの作成をお手伝いできて嬉しいです！🎨\n\n基本的なことから始めましょう - EP IDを教えていただけますか？これが最終成果物を受け取るメールアドレスになります。",
-        field: "epId" as keyof FormData,
-        inputType: "email"
-      },
-      {
-        id: 2,
-        text: "完璧です！今度はこのプロモーションについて教えてください。完璧なコピーを作成するお手伝いをしたいと思います！以下を共有してください：\n\n• プロモーションの簡単な詳細\n• 具体的な割引率とハイライトしたい商品\n• すでに考えているコピーがあれば\n\n詳細を教えていただくほど、あなたのビジョンに完璧に合うコピーライティングを作成できます！",
-        field: "promotionInfo" as keyof FormData,
-        inputType: "textarea"
-      },
-      {
-        id: 3,
-        text: "素晴らしい！もうすぐです。今度は特集したい商品のPDP URLが必要です。商品ページのURLをコピーしてここに貼り付けてください。\n\n（現在、プロモーションコンテンツごとに1つの商品を紹介できます）",
-        field: "productUrl" as keyof FormData,
-        inputType: "url"
-      },
-      {
-        id: 4,
-        text: "素晴らしい選択です！今度はライフスタイル画像について話しましょう。ライフスタイル画像でどのような雰囲気や人々を見たいですか？\n\n大まかな説明をしてくだされば、素晴らしいものを生成します！あなたの商品を最もよく表現する雰囲気、設定、または人のタイプを考えてみてください。",
-        field: "lifestyleImage" as keyof FormData,
-        inputType: "textarea"
-      },
-      {
-        id: 5,
-        text: "完璧です！プロモーションコンテンツに含める免責事項はありますか？ある場合は、含めたい正確なテキストを提供してください。\n\nない場合は、「なし」と入力して次のステップに進みましょう。",
-        field: "disclaimer" as keyof FormData,
-        inputType: "textarea"
-      },
-      {
-        id: 6,
-        text: "ほぼ完了です！最後の質問 - このプロモーションコンテンツはどこに公開されますか？該当するすべてのチャンネルを選択してください：",
-        field: "channels" as keyof FormData,
-        inputType: "checkbox",
-        options: ["LG.COM", "Pmax", "DV360", "Criteo", "AWIN", "Social"]
-      },
-      {
-        id: 7,
-        text: "完璧です！提供していただいたすべての内容をお見せします。以下の詳細をご確認いただき、準備ができたら確認してください：",
-        field: null,
-        inputType: "confirmation"
-      }
-    ],
-    ui: {
-      continue: "続行",
-      confirmProceed: "確認して進行",
-      enterYourId: "IDを入力してください",
-      typeResponse: "こちらに回答を入力してください...",
-      confirmed: "確認されました！プロモーションコンテンツの作成を進めてください。",
-      successMessage: "素晴らしい！すべての詳細を受け取り、コンテンツ作成システムに送信しました。提供されたメールアドレスで最終成果物を受け取ります。一緒に作業していただき、ありがとうございます！🎉"
-    }
-  },
-  zh: {
-    code: "zh",
-    name: "中文",
-    flag: "🇨🇳",
-    questions: [
-      {
-        id: 1,
-        text: "你好！我是Yumi，你的推广内容设计师。我很兴奋能帮助你创建令人惊叹的推广内容！🎨\n\n让我们从基础开始 - 你能提供你的EP ID吗？这将是你接收最终交付成果的电子邮件地址。",
-        field: "epId" as keyof FormData,
-        inputType: "email"
-      },
-      {
-        id: 2,
-        text: "完美！现在告诉我关于这个推广的信息。我很想帮你制作完美的文案！请分享：\n\n• 推广的简要详情\n• 具体的折扣率和你想突出的产品\n• 你已经想到的任何文案\n\n你给我的细节越多，我就能更好地量身定制文案来完美匹配你的愿景！",
-        field: "promotionInfo" as keyof FormData,
-        inputType: "textarea"
-      },
-      {
-        id: 3,
-        text: "太棒了！我们快到了。现在我需要你想要特色展示的产品的PDP URL。请在这里复制粘贴产品页面URL。\n\n（目前，我们可以在每个推广内容中展示一个产品）",
-        field: "productUrl" as keyof FormData,
-        inputType: "url"
-      },
-      {
-        id: 4,
-        text: "很好的选择！现在让我们谈论生活方式图像。你希望在生活方式图像中看到什么样的氛围或人物？\n\n给我一个大概的描述，我会为你生成令人惊叹的内容！想想最能代表你产品的心情、环境或人物类型。",
-        field: "lifestyleImage" as keyof FormData,
-        inputType: "textarea"
-      },
-      {
-        id: 5,
-        text: "완벽합니다! 홍보 콘텐츠에 면책 조항을 포함해야 합니까? 필요한 경우 포함하고 싶은 정확한 텍스트를 제공해 주세요.\n\n필요하지 않다면 '없음'이라고 입력하시면 다음 단계로 진행하겠습니다.",
-        field: "disclaimer" as keyof FormData,
-        inputType: "textarea"
-      },
-      {
-        id: 6,
-        text: "快完成了！最后一个问题 - 这个推广内容将在哪里发布？请选择所有适用的渠道：",
-        field: "channels" as keyof FormData,
-        inputType: "checkbox",
-        options: ["LG.COM", "Pmax", "DV360", "Criteo", "AWIN", "Social"]
-      },
-      {
-        id: 7,
-        text: "完美！让我展示你提供的所有内容。请查看下面的所有详细信息，准备好后确认：",
-        field: null,
-        inputType: "confirmation"
-      }
-    ],
-    ui: {
-      continue: "继续",
-      confirmProceed: "确认并继续",
-      enterYourId: "输入你的ID",
-      typeResponse: "在这里输入你的回复...",
-      confirmed: "已确认！请继续创建推广内容。",
-      successMessage: "太棒了！我已经收到了你的所有详细信息并发送到我们的内容创建系统。你将在提供的电子邮件地址收到最终交付成果。感谢与我合作！🎉"
-    }
-  },
-  ru: {
-    code: "ru",
-    name: "Русский",
-    flag: "🇷🇺",
-    questions: [
-      {
-        id: 1,
-        text: "Привет! Я Юми, ваш дизайнер рекламного контента. Я рада помочь вам создать потрясающий рекламный контент! 🎨\n\nДавайте начнем с основ - не могли бы вы предоставить свой EP ID? Это будет адрес электронной почты, на который вы получите финальные материалы.",
-        field: "epId" as keyof FormData,
-        inputType: "email"
-      },
-      {
-        id: 2,
-        text: "Отлично! Теперь расскажите мне об этой акции. Я бы хотела помочь вам создать идеальный текст! Пожалуйста, поделитесь:\n\n• Краткие детали акции\n• Конкретные скидки и продукты, которые вы хотели бы выделить\n• Любой текст, который у вас уже есть в голове\n\nЧем больше деталей вы мне дадите, тем лучше я смогу адаптировать копирайтинг под ваше видение!",
-        field: "promotionInfo" as keyof FormData,
-        inputType: "textarea"
-      },
-      {
-        id: 3,
-        text: "Потрясающе! Мы почти у цели. Теперь мне нужен PDP URL продукта, который вы хотите представить. Пожалуйста, скопируйте и вставьте URL страницы продукта здесь.\n\n(В настоящее время мы можем представить один продукт на рекламный контент)",
-        field: "productUrl" as keyof FormData,
-        inputType: "url"
-      },
-      {
-        id: 4,
-        text: "Отличный выбор! Теперь давайте поговорим о лайфстайл-изображениях. Какую атмосферу или людей вы хотели бы видеть в лайфстайл-изображениях?\n\nПросто дайте мне примерное описание, и я создам что-то потрясающее для вас! Подумайте о настроении, обстановке или типе человека, который лучше всего представил бы ваш продукт.",
-        field: "lifestyleImage" as keyof FormData,
-        inputType: "textarea"
-      },
-      {
-        id: 5,
-        text: "Отлично! Нужны ли вам какие-либо отказы от ответственности в рекламном контенте? Если да, пожалуйста, предоставьте точный текст, который вы хотели бы включить.\n\nЕсли нет, просто напечатайте 'Нет' и мы перейдем к следующему шагу.",
-        field: "disclaimer" as keyof FormData,
-        inputType: "textarea"
-      },
-      {
-        id: 6,
-        text: "Почти готово! Последний вопрос - где будет опубликован этот рекламный контент? Пожалуйста, выберите все применимые каналы:",
-        field: "channels" as keyof FormData,
-        inputType: "checkbox",
-        options: ["LG.COM", "Pmax", "DV360", "Criteo", "AWIN", "Social"]
-      },
-      {
-        id: 7,
-        text: "Отлично! Позвольте мне показать все, что вы предоставили. Пожалуйста, просмотрите все детали ниже и подтвердите, когда будете готовы продолжить:",
-        field: null,
-        inputType: "confirmation"
-      }
-    ],
-    ui: {
-      continue: "Продолжить",
-      confirmProceed: "Подтвердить и продолжить",
-      enterYourId: "Введите ваш ID",
-      typeResponse: "Введите ваш ответ здесь...",
-      confirmed: "Подтверждено! Пожалуйста, продолжите с созданием рекламного контента.",
-      successMessage: "Отлично! Я получила все ваши детали и отправила их в нашу систему создания контента. Вы получите финальные материалы на предоставленный адрес электронной почты. Спасибо за работу со мной! 🎉"
-    }
   }
 };
 
@@ -496,12 +148,9 @@ const ChatInterface = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [currentLanguage, setCurrentLanguage] = useState<keyof typeof languages>("en");
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [messages, setMessages] = useState<Message[]>([]);
-  const [currentQuestion, setCurrentQuestion] = useState(0);
-  const [currentInput, setCurrentInput] = useState("");
-  const [selectedChannels, setSelectedChannels] = useState<string[]>([]);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submissionStatus, setSubmissionStatus] = useState<"idle" | "sending" | "success" | "error">("idle");
+  const [inputValue, setInputValue] = useState("");
   const [formData, setFormData] = useState<FormData>({
     epId: "",
     promotionInfo: "",
@@ -510,11 +159,10 @@ const ChatInterface = () => {
     disclaimer: "",
     channels: []
   });
-  const [isTyping, setIsTyping] = useState(false);
+  const [isCompleted, setIsCompleted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submissionStatus, setSubmissionStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const currentLanguageData = languages[currentLanguage];
-  const questions = currentLanguageData.questions;
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -525,296 +173,237 @@ const ChatInterface = () => {
   }, [messages]);
 
   useEffect(() => {
-    // Initial message from Yumi
-    const welcomeMessage: Message = {
-      id: "welcome",
+    // Initialize with first question
+    const firstQuestion = languages[currentLanguage].questions[0];
+    setMessages([{
+      id: `yumi-${Date.now()}`,
       sender: "yumi",
-      content: currentLanguageData.questions[0].text,
+      content: firstQuestion.text,
       timestamp: new Date(),
       type: "question"
-    };
-    setMessages([welcomeMessage]);
-  }, [currentLanguageData]);
-
-  // Reset messages when language changes
-  useEffect(() => {
-    if (currentQuestion === 0 && messages.length > 0) {
-      const welcomeMessage: Message = {
-        id: "welcome",
-        sender: "yumi",
-        content: currentLanguageData.questions[0].text,
-        timestamp: new Date(),
-        type: "question"
-      };
-      setMessages([welcomeMessage]);
-    }
+    }]);
   }, [currentLanguage]);
 
-  const simulateTyping = () => {
-    setIsTyping(true);
-    setTimeout(() => {
-      setIsTyping(false);
-    }, 1000);
+  const getCurrentQuestion = () => {
+    return languages[currentLanguage].questions[currentQuestionIndex];
   };
 
-  const handleSubmit = async () => {
-    if (currentQuestion < 6) {
-      // Add user's answer
-      const userContent = questions[currentQuestion].inputType === "checkbox" 
-        ? selectedChannels.join(", ") 
-        : currentQuestion === 0 // First question (EP ID)
-          ? `${currentInput}@lge.com`
-          : currentInput;
-          
-      const userMessage: Message = {
-        id: `user-${currentQuestion}`,
-        sender: "user",
-        content: userContent,
+  const handleNextQuestion = () => {
+    if (currentQuestionIndex < languages[currentLanguage].questions.length - 1) {
+      const nextIndex = currentQuestionIndex + 1;
+      setCurrentQuestionIndex(nextIndex);
+      const nextQuestion = languages[currentLanguage].questions[nextIndex];
+      
+      setMessages(prev => [...prev, {
+        id: `yumi-${Date.now()}`,
+        sender: "yumi",
+        content: nextQuestion.text,
         timestamp: new Date(),
-        type: "answer"
-      };
+        type: "question"
+      }]);
+    }
+  };
 
-      // Update form data
-      const field = questions[currentQuestion].field;
-      if (field) {
-        const value = questions[currentQuestion].inputType === "checkbox" 
-          ? selectedChannels 
-          : currentQuestion === 0 // First question (EP ID)
-            ? `${currentInput}@lge.com`
-            : currentInput;
-        
-        setFormData(prev => ({
-          ...prev,
-          [field]: value
-        }));
-      }
+  const handleInputSubmit = () => {
+    const currentQuestion = getCurrentQuestion();
+    
+    if (!inputValue.trim() && currentQuestion.inputType !== "checkbox") return;
 
-      setMessages(prev => [...prev, userMessage]);
-      
-      // Clear input
-      setCurrentInput("");
-      setSelectedChannels([]);
-      
-      // Move to next question
-      setCurrentQuestion(prev => prev + 1);
-      
-      // Add Yumi's next question after a delay
-      setTimeout(() => {
-        simulateTyping();
+    const userMessage: Message = {
+      id: `user-${Date.now()}`,
+      sender: "user",
+      content: inputValue,
+      timestamp: new Date(),
+      type: "answer"
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+
+    if (currentQuestion.field) {
+      setFormData(prev => ({
+        ...prev,
+        [currentQuestion.field]: inputValue
+      }));
+    }
+
+    setInputValue("");
+    
+    setTimeout(() => {
+      handleNextQuestion();
+    }, 500);
+  };
+
+  const handleChannelChange = (channel: string, checked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      channels: checked 
+        ? [...prev.channels, channel]
+        : prev.channels.filter(c => c !== channel)
+    }));
+  };
+
+  const handleChannelSubmit = () => {
+    const channelsText = formData.channels.length > 0 
+      ? formData.channels.join(", ") 
+      : "None selected";
+
+    const userMessage: Message = {
+      id: `user-${Date.now()}`,
+      sender: "user",
+      content: channelsText,
+      timestamp: new Date(),
+      type: "answer"
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    
+    setTimeout(() => {
+      handleNextQuestion();
+    }, 500);
+  };
+
+  const handleConfirmation = async () => {
+    setIsSubmitting(true);
+    setSubmissionStatus('idle');
+
+    const confirmationMessage: Message = {
+      id: `user-${Date.now()}`,
+      sender: "user",
+      content: languages[currentLanguage].ui.confirmed,
+      timestamp: new Date(),
+      type: "answer"
+    };
+
+    setMessages(prev => [...prev, confirmationMessage]);
+
+    // Submit to webhook
+    try {
+      const response = await fetch('https://dev.eaip.lge.com/n8n/webhook/9cd2cbaf-1f04-4d71-ac24-fad9a247dabd', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        setSubmissionStatus('success');
+        toast({
+          title: "Success",
+          description: "Your request has been submitted successfully!",
+        });
+
         setTimeout(() => {
-          const nextMessage: Message = {
-            id: `yumi-${currentQuestion + 1}`,
+          const successMessage: Message = {
+            id: `yumi-${Date.now()}`,
             sender: "yumi",
-            content: questions[currentQuestion + 1].text,
+            content: languages[currentLanguage].ui.successMessage,
             timestamp: new Date(),
             type: "question"
           };
-          setMessages(prev => [...prev, nextMessage]);
-        }, 1000);
-      }, 500);
-    } else {
-      // Final confirmation - send data to webhook
-      const userMessage: Message = {
-        id: `final-confirm-${Date.now()}`,
-        sender: "user",
-        content: currentLanguageData.ui.confirmed,
-        timestamp: new Date(),
-        type: "answer"
-      };
-      setMessages(prev => [...prev, userMessage]);
-      
-      // Set submitting state
-      setIsSubmitting(true);
-      setSubmissionStatus("sending");
-      
-      // Send data to n8n webhook
-      try {
-        const webhookUrl = "https://dev.eaip.lge.com/n8n/webhook/9cd2cbaf-1f04-4d71-ac24-fad9a247dabd";
-        
-        const payload = {
-          epId: formData.epId,
-          promotionInfo: formData.promotionInfo,
-          productUrl: formData.productUrl,
-          lifestyleImage: formData.lifestyleImage,
-          disclaimer: formData.disclaimer,
-          channels: formData.channels,
-          timestamp: new Date().toISOString()
-        };
 
-        const response = await fetch(webhookUrl, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          mode: "no-cors",
-          body: JSON.stringify(payload),
-        });
-
-        console.log("Data sent to webhook:", payload);
-        
-        // Since we're using no-cors, we can't read the response status
-        // We'll assume success if no error is thrown
-        setSubmissionStatus("success");
-        
-        toast({
-          title: "성공!",
-          description: "프로모션 콘텐츠 요청이 성공적으로 전송되었습니다.",
-        });
-
-        // Success message
-        setTimeout(() => {
-          const successMessage: Message = {
-            id: `success-${Date.now()}`,
-            sender: "yumi",
-            content: currentLanguageData.ui.successMessage,
-            timestamp: new Date()
-          };
           setMessages(prev => [...prev, successMessage]);
-        }, 1000);
-        
-      } catch (error) {
-        console.error("Failed to send data to webhook:", error);
-        setSubmissionStatus("error");
-        
-        toast({
-          title: "오류 발생",
-          description: "웹훅 전송에 실패했습니다. 다시 시도해 주세요.",
-          variant: "destructive",
-        });
-
-        // Error message
-        setTimeout(() => {
-          const errorMessage: Message = {
-            id: `error-${Date.now()}`,
-            sender: "yumi",
-            content: "죄송합니다. 전송 중 오류가 발생했습니다. 다시 시도해 주세요.",
-            timestamp: new Date()
-          };
-          setMessages(prev => [...prev, errorMessage]);
-        }, 1000);
-      } finally {
-        setIsSubmitting(false);
+          setIsCompleted(true);
+        }, 1500);
+      } else {
+        throw new Error('Failed to submit');
       }
+    } catch (error) {
+      setSubmissionStatus('error');
+      toast({
+        title: "Error",
+        description: "Failed to submit your request. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
-  const handleChannelToggle = (channel: string) => {
-    setSelectedChannels(prev => 
-      prev.includes(channel) 
-        ? prev.filter(c => c !== channel)
-        : [...prev, channel]
-    );
-  };
-
-  const renderInput = () => {
-    const question = questions[currentQuestion];
+  const getCurrentInputField = () => {
+    const currentQuestion = getCurrentQuestion();
     
-    if (currentQuestion >= 7) return null;
-
-    if (question.inputType === "checkbox") {
+    if (currentQuestion.inputType === "confirmation") {
       return (
-        <div className="space-y-3">
-          {question.options?.map(option => (
+        <div className="space-y-6">
+          <div className="bg-gray-50 p-4 rounded-lg space-y-3">
+            <h3 className="font-semibold text-gray-900">Review Your Information:</h3>
+            <div className="space-y-2 text-sm">
+              <p><span className="font-medium">EP ID:</span> {formData.epId}</p>
+              <p><span className="font-medium">Promotion Info:</span> {formData.promotionInfo}</p>
+              <p><span className="font-medium">Product URL:</span> {formData.productUrl}</p>
+              <p><span className="font-medium">Lifestyle Image:</span> {formData.lifestyleImage}</p>
+              <p><span className="font-medium">Disclaimer:</span> {formData.disclaimer}</p>
+              <p><span className="font-medium">Channels:</span> {formData.channels.join(", ") || "None"}</p>
+            </div>
+          </div>
+          <Button 
+            onClick={handleConfirmation} 
+            className="w-full flex items-center gap-2 bg-orange-400 hover:bg-orange-500 text-white"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Processing...
+              </>
+            ) : submissionStatus === 'success' ? (
+              <>
+                <CheckCircle className="w-4 h-4 text-green-500" />
+                Submitted Successfully!
+              </>
+            ) : submissionStatus === 'error' ? (
+              <>
+                <XCircle className="w-4 h-4 text-red-500" />
+                Try Again
+              </>
+            ) : (
+              languages[currentLanguage].ui.confirmProceed
+            )}
+          </Button>
+        </div>
+      );
+    }
+
+    if (currentQuestion.inputType === "checkbox") {
+      return (
+        <div className="space-y-4">
+          {currentQuestion.options?.map((option) => (
             <div key={option} className="flex items-center space-x-2">
               <Checkbox
                 id={option}
-                checked={selectedChannels.includes(option)}
-                onCheckedChange={() => handleChannelToggle(option)}
+                checked={formData.channels.includes(option)}
+                onCheckedChange={(checked) => handleChannelChange(option, checked as boolean)}
               />
-              <label htmlFor={option} className="text-sm font-medium">
-                {option}
-              </label>
+              <label htmlFor={option} className="text-sm font-medium">{option}</label>
             </div>
           ))}
           <Button 
-            onClick={handleSubmit}
-            disabled={selectedChannels.length === 0}
-            className="w-full mt-4"
+            onClick={handleChannelSubmit}
+            className="w-full mt-4 bg-orange-400 hover:bg-orange-500 text-white"
+            disabled={formData.channels.length === 0}
           >
-            <Send className="w-4 h-4 mr-2" />
-            {currentLanguageData.ui.continue}
+            {languages[currentLanguage].ui.continue}
           </Button>
         </div>
       );
     }
 
-    if (question.inputType === "confirmation") {
-      return (
-        <div className="space-y-4">
-          <div className="bg-muted/50 rounded-lg p-4 space-y-3 text-sm">
-            <div><strong>EP ID:</strong> {formData.epId}</div>
-            <div><strong>Promotion Info:</strong> {formData.promotionInfo}</div>
-            <div><strong>Product URL:</strong> {formData.productUrl}</div>
-            <div><strong>Lifestyle Image:</strong> {formData.lifestyleImage}</div>
-            <div><strong>Disclaimer:</strong> {formData.disclaimer}</div>
-            <div><strong>Channels:</strong> {formData.channels.join(", ")}</div>
-          </div>
-          <Button onClick={handleSubmit} className="w-full" disabled={isSubmitting}>
-            {isSubmitting ? (
-              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-            ) : submissionStatus === "success" ? (
-              <CheckCircle className="w-4 h-4 mr-2" />
-            ) : submissionStatus === "error" ? (
-              <XCircle className="w-4 h-4 mr-2" />
-            ) : (
-              <Send className="w-4 h-4 mr-2" />
-            )}
-            {isSubmitting ? "전송 중..." : currentLanguageData.ui.confirmProceed}
-          </Button>
-        </div>
-      );
-    }
-
-    if (question.inputType === "textarea") {
+    if (currentQuestion.inputType === "textarea") {
       return (
         <div className="flex gap-2">
           <Textarea
-            value={currentInput}
-            onChange={(e) => setCurrentInput(e.target.value)}
-            placeholder={currentLanguageData.ui.typeResponse}
-            className="min-h-[80px]"
-            onKeyDown={(e) => {
-              if (e.key === "Enter" && !e.shiftKey) {
-                e.preventDefault();
-                if (currentInput.trim()) handleSubmit();
-              }
-            }}
+            value={inputValue}
+            onChange={(e) => setInputValue(e.target.value)}
+            placeholder={languages[currentLanguage].ui.typeResponse}
+            rows={3}
+            className="flex-1 border-gray-200"
           />
           <Button 
-            onClick={handleSubmit}
-            disabled={!currentInput.trim()}
+            onClick={handleInputSubmit}
+            disabled={!inputValue.trim()}
             size="icon"
-            className="shrink-0 self-end"
-          >
-            <Send className="w-4 h-4" />
-          </Button>
-        </div>
-      );
-    }
-
-    // Special handling for first question (EP ID with @lge.com)
-    if (currentQuestion === 0) {
-      return (
-        <div className="flex gap-2">
-          <div className="flex flex-1 items-center border border-input rounded-md bg-background">
-            <Input
-              type="text"
-              value={currentInput}
-              onChange={(e) => setCurrentInput(e.target.value)}
-              placeholder={currentLanguageData.ui.enterYourId}
-              className="border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
-              onKeyDown={(e) => {
-                if (e.key === "Enter" && currentInput.trim()) {
-                  handleSubmit();
-                }
-              }}
-            />
-            <span className="px-3 text-muted-foreground">@lge.com</span>
-          </div>
-          <Button 
-            onClick={handleSubmit}
-            disabled={!currentInput.trim()}
-            size="icon"
+            className="self-end bg-orange-400 hover:bg-orange-500"
           >
             <Send className="w-4 h-4" />
           </Button>
@@ -823,22 +412,22 @@ const ChatInterface = () => {
     }
 
     return (
-      <div className="flex gap-2">
+      <div className="flex gap-2 items-center bg-gray-100 rounded-lg px-3 py-2">
+        <span className="text-gray-600 text-sm">@</span>
         <Input
-          type={question.inputType}
-          value={currentInput}
-          onChange={(e) => setCurrentInput(e.target.value)}
-          placeholder={currentLanguageData.ui.typeResponse}
-          onKeyDown={(e) => {
-            if (e.key === "Enter" && currentInput.trim()) {
-              handleSubmit();
-            }
-          }}
+          type={currentQuestion.inputType}
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+          placeholder={currentQuestion.inputType === "email" ? languages[currentLanguage].ui.enterYourId : languages[currentLanguage].ui.typeResponse}
+          className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
+          onKeyPress={(e) => e.key === "Enter" && handleInputSubmit()}
         />
+        <span className="text-gray-600 text-sm">lge.com</span>
         <Button 
-          onClick={handleSubmit}
-          disabled={!currentInput.trim()}
+          onClick={handleInputSubmit}
+          disabled={!inputValue.trim()}
           size="icon"
+          className="bg-orange-400 hover:bg-orange-500"
         >
           <Send className="w-4 h-4" />
         </Button>
@@ -847,136 +436,81 @@ const ChatInterface = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-100 via-slate-200 to-slate-300 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-      {/* Header */}
-      <div className="sticky top-0 z-10 bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b">
-        <div className="max-w-4xl mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => navigate("/home")}
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </Button>
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full overflow-hidden bg-gradient-to-r from-pink-400 to-purple-500 flex items-center justify-center">
-                <img 
-                  src="/lovable-uploads/17094800-5b16-4d6c-a2af-41b224a30be0.png" 
-                  alt="Yumi"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div>
-                <h1 className="font-semibold">Yumi</h1>
-                <p className="text-xs text-muted-foreground">Promotional Content Designer</p>
-              </div>
-            </div>
-          </div>
-          
-          {/* Language Selector */}
-          <div className="flex items-center gap-2">
-            <Globe className="w-4 h-4 text-muted-foreground" />
-            <Select value={currentLanguage} onValueChange={(value: keyof typeof languages) => setCurrentLanguage(value)}>
-              <SelectTrigger className="w-32">
-                <SelectValue>
-                  <span className="flex items-center gap-2">
-                    <span>{currentLanguageData.flag}</span>
-                    <span className="text-sm">{currentLanguageData.name}</span>
-                  </span>
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                {Object.entries(languages).map(([code, lang]) => (
-                  <SelectItem key={code} value={code}>
-                    <span className="flex items-center gap-2">
-                      <span>{lang.flag}</span>
-                      <span>{lang.name}</span>
-                    </span>
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-blue-400 via-blue-500 to-blue-600 relative overflow-hidden">
+      {/* Background decorative elements */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-xl"></div>
+        <div className="absolute top-1/3 -left-20 w-60 h-60 bg-white/5 rounded-full blur-2xl"></div>
+        <div className="absolute bottom-20 right-1/4 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
+        {/* Small house decoration */}
+        <div className="absolute bottom-10 right-10 text-6xl opacity-20">🏠</div>
+        <div className="absolute bottom-20 left-20 text-4xl opacity-30">☁️</div>
       </div>
 
-      {/* Chat Messages */}
-      <div className="max-w-4xl mx-auto px-4 py-6">
-        <div className="space-y-6 pb-32">
-          {messages.map((message) => (
-            <div
-              key={message.id}
-              className={`flex gap-3 ${message.sender === "user" ? "justify-end" : "justify-start"}`}
-            >
-              {message.sender === "yumi" && (
-                <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-r from-pink-400 to-purple-500 flex items-center justify-center shrink-0">
-                  <img 
-                    src="/lovable-uploads/17094800-5b16-4d6c-a2af-41b224a30be0.png" 
-                    alt="Yumi"
-                    className="w-full h-full object-cover"
-                  />
-                </div>
-              )}
-              <div
-                className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-                  message.sender === "yumi"
-                    ? "bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100 shadow-sm"
-                    : "bg-gradient-to-r from-blue-500 to-purple-600 text-white ml-auto"
-                }`}
-              >
-                <p className="text-sm leading-relaxed whitespace-pre-line">
-                  {message.content}
-                </p>
-                <div className="flex items-center gap-1 mt-2">
-                  <span className="text-xs opacity-70">
-                    {message.timestamp.toLocaleTimeString([], { 
-                      hour: '2-digit', 
-                      minute: '2-digit' 
-                    })}
-                  </span>
-                  {message.sender === "yumi" && message.type === "question" && (
-                    <Edit3 className="w-3 h-3 opacity-50" />
-                  )}
-                </div>
-              </div>
-              {message.sender === "user" && (
-                <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center text-white text-sm font-semibold shrink-0">
-                  U
-                </div>
-              )}
-            </div>
-          ))}
-          
-          {isTyping && (
-            <div className="flex gap-3">
-              <div className="w-8 h-8 rounded-full overflow-hidden bg-gradient-to-r from-pink-400 to-purple-500 flex items-center justify-center">
-                <img 
-                  src="/lovable-uploads/17094800-5b16-4d6c-a2af-41b224a30be0.png" 
-                  alt="Yumi"
-                  className="w-full h-full object-cover"
-                />
-              </div>
-              <div className="bg-white dark:bg-slate-800 rounded-2xl px-4 py-3 shadow-sm">
-                <div className="flex gap-1">
-                  <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }}></div>
-                  <div className="w-2 h-2 bg-slate-400 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></div>
-                </div>
-              </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
+      {/* Back to Home button */}
+      <div className="absolute top-6 left-6 z-10">
+        <Button
+          variant="ghost"
+          onClick={() => navigate("/")}
+          className="text-white hover:bg-white/10 flex items-center gap-2"
+        >
+          <ArrowLeft className="w-4 h-4" />
+          Back to Home
+        </Button>
+      </div>
 
-        {/* Input Area */}
-        {currentQuestion < 7 && (
-          <div className="fixed bottom-0 left-0 right-0 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm border-t p-4">
-            <div className="max-w-4xl mx-auto">
-              {renderInput()}
+      {/* Main chat container */}
+      <div className="flex items-center justify-center min-h-screen p-4">
+        <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden relative">
+          {/* Chat header with Yumi's profile */}
+          <div className="bg-white p-6 border-b border-gray-100">
+            <div className="flex items-center gap-4">
+              <div className="w-16 h-16 rounded-full overflow-hidden bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center">
+                <span className="text-2xl">🎨</span>
+              </div>
+              <div>
+                <h2 className="text-xl font-semibold text-gray-900">Yumi</h2>
+                <p className="text-gray-600">PTO Gallery Creator</p>
+              </div>
             </div>
           </div>
-        )}
+
+          {/* Messages area */}
+          <div className="h-96 overflow-y-auto p-6 space-y-4 bg-gray-50">
+            {messages.map((message) => (
+              <div
+                key={message.id}
+                className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
+              >
+                <div
+                  className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${
+                    message.sender === "user"
+                      ? "bg-blue-500 text-white rounded-br-md"
+                      : "bg-white text-gray-900 shadow-sm rounded-bl-md border border-gray-100"
+                  }`}
+                >
+                  <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                  <div className="flex items-center gap-1 mt-2">
+                    <span className="text-xs opacity-70">
+                      {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                    </span>
+                    {message.sender === "user" && (
+                      <Edit3 className="w-3 h-3 opacity-50" />
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Input area */}
+          {!isCompleted && (
+            <div className="p-6 bg-white border-t border-gray-100">
+              {getCurrentInputField()}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
