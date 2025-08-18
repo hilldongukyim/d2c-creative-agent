@@ -284,8 +284,8 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
             {/* Division Headers */}
             <div className="grid grid-cols-3 gap-8 mb-8 relative">
               {/* Vertical dividers */}
-              <div className="absolute left-1/3 top-0 bottom-0 w-px bg-border"></div>
-              <div className="absolute left-2/3 top-0 bottom-0 w-px bg-border"></div>
+              <div className="absolute left-1/3 top-0 bottom-0 w-0.5 bg-border"></div>
+              <div className="absolute left-2/3 top-0 bottom-0 w-0.5 bg-border"></div>
               
               {divisions.map(division => (
                 <div key={division.name} className="text-center">
