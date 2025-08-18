@@ -326,7 +326,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
               <div className="absolute left-16 right-16 -top-4 h-0.5 bg-border"></div>
               
               {/* Vertical lines to each division */}
-              <div className="absolute left-1/8 top-0 w-0.5 h-16 bg-border transform -translate-x-0.5"></div>
               
               
               
