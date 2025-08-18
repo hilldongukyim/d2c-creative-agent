@@ -465,8 +465,12 @@ const ChatInterface = () => {
           {/* Chat header with Yumi's profile */}
           <div className="bg-white p-6 border-b border-gray-100">
             <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full overflow-hidden bg-gradient-to-br from-purple-400 to-pink-400 flex items-center justify-center">
-                <span className="text-2xl">🎨</span>
+              <div className="w-16 h-16 rounded-full overflow-hidden">
+                <img 
+                  src="/lovable-uploads/1d0546ae-2d59-40cf-a231-60343eecc72a.png" 
+                  alt="Yumi Profile" 
+                  className="w-full h-full object-cover"
+                />
               </div>
               <div>
                 <h2 className="text-xl font-semibold text-gray-900">Yumi</h2>
