@@ -223,11 +223,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     title: "Intern",
     items: [
       {
-        name: "Mell",
-        role: "Mailing",
-        imageSrc: "/lovable-uploads/5a6db127-b9e3-4f85-afbb-11b477555583.png"
-      },
-      {
         name: "Kai",
         role: "Background Remover",
         imageSrc: "/lovable-uploads/84e535ab-1fa5-418e-93aa-73fa3b361219.png"
@@ -236,6 +231,11 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         name: "On Hiring",
         role: "",
         imageSrc: ""
+      },
+      {
+        name: "Mell",
+        role: "Mailing",
+        imageSrc: "/lovable-uploads/5a6db127-b9e3-4f85-afbb-11b477555583.png"
       },
       {
         name: "On Hiring",
