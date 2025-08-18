@@ -291,7 +291,14 @@ const ChatInterface = () => {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          EPID: formData.epId,
+          PromotionInfo: formData.promotionInfo,
+          ProductUrl: formData.productUrl,
+          LifestyleImage: formData.lifestyleImage,
+          Disclaimer: formData.disclaimer,
+          Channels: formData.channels
+        }),
       });
 
       if (response.ok) {
