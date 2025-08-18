@@ -413,7 +413,6 @@ const ChatInterface = () => {
 
     return (
       <div className="flex gap-2 items-center bg-gray-100 rounded-lg px-3 py-2">
-        <span className="text-gray-600 text-sm">@</span>
         <Input
           type={currentQuestion.inputType}
           value={inputValue}
@@ -422,7 +421,7 @@ const ChatInterface = () => {
           className="flex-1 border-0 bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0"
           onKeyPress={(e) => e.key === "Enter" && handleInputSubmit()}
         />
-        <span className="text-gray-600 text-sm">lge.com</span>
+        <span className="text-gray-600 text-sm">@lge.com</span>
         <Button 
           onClick={handleInputSubmit}
           disabled={!inputValue.trim()}
