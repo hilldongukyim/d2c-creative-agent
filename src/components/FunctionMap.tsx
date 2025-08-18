@@ -282,7 +282,11 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
           {/* Organizational Chart */}
           <div className="space-y-8">
             {/* Division Headers */}
-            <div className="grid grid-cols-3 gap-8 mb-8">
+            <div className="grid grid-cols-3 gap-8 mb-8 relative">
+              {/* Vertical dividers */}
+              <div className="absolute left-1/3 top-0 bottom-0 w-px bg-border"></div>
+              <div className="absolute left-2/3 top-0 bottom-0 w-px bg-border"></div>
+              
               {divisions.map(division => (
                 <div key={division.name} className="text-center">
                   <h3 className="text-foreground font-semibold text-base mb-6">
@@ -292,7 +296,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                   {/* Teams under each division */}
                   <div className="grid gap-4">
                     {division.teams.map(team => (
-                      <div key={team.title} className="bg-card border-2 border-border rounded-xl p-4 shadow-sm">
+                      <div key={team.title} className="bg-card rounded-xl p-4 shadow-sm">
                         <h4 className="text-sm font-semibold text-muted-foreground mb-3 text-center">
                           {team.title}
                         </h4>
