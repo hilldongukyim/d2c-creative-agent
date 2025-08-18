@@ -220,6 +220,31 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         imageSrc: ""
       }]
     }]
+  }, {
+    name: "Business",
+    teams: [{
+      title: "Sales",
+      items: [{
+        name: "On Hiring",
+        role: "",
+        imageSrc: ""
+      }, {
+        name: "On Hiring", 
+        role: "",
+        imageSrc: ""
+      }]
+    }, {
+      title: "Strategy",
+      items: [{
+        name: "On Hiring",
+        role: "",
+        imageSrc: ""
+      }, {
+        name: "On Hiring",
+        role: "",
+        imageSrc: ""
+      }]
+    }]
   }];
   const internTeam = {
     title: "Intern",
@@ -294,10 +319,11 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
             </div>
 
             {/* Division Headers */}
-            <div className="grid grid-cols-3 gap-8 mb-8 relative">
+            <div className="grid grid-cols-4 gap-6 mb-8 relative">
               {/* Vertical dividers */}
-              <div className="absolute left-1/3 top-0 bottom-0 w-0.5 bg-border"></div>
-              <div className="absolute left-2/3 top-0 bottom-0 w-0.5 bg-border"></div>
+              <div className="absolute left-1/4 top-0 bottom-0 w-0.5 bg-border"></div>
+              <div className="absolute left-2/4 top-0 bottom-0 w-0.5 bg-border"></div>
+              <div className="absolute left-3/4 top-0 bottom-0 w-0.5 bg-border"></div>
               
               {divisions.map((division, index) => <div key={division.name} className="text-center">
                   <h3 className="text-foreground font-semibold text-base mb-2">
