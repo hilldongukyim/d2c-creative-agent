@@ -89,11 +89,16 @@ const Home = () => {
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 p-6 relative overflow-hidden">
       <Logo />
       
-      {/* Back button */}
-      <Button onClick={() => navigate('/')} variant="ghost" size="sm" className="absolute top-6 right-6 z-20 hover:bg-muted/50 transition-colors">
-        <ArrowLeft className="w-4 h-4 mr-2" />
-        Back
-      </Button>
+      {/* Navigation buttons */}
+      <div className="absolute top-6 right-6 z-20 flex gap-2">
+        <Button onClick={() => navigate('/org-chart')} variant="default" size="sm" className="hover:bg-primary/90 transition-colors">
+          View Full Chart
+        </Button>
+        <Button onClick={() => navigate('/')} variant="ghost" size="sm" className="hover:bg-muted/50 transition-colors">
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back
+        </Button>
+      </div>
       
       {/* Expanding circle animation */}
       <div className="max-w-6xl mx-auto relative z-10">
