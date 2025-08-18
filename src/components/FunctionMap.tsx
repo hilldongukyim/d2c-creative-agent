@@ -228,9 +228,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         imageSrc: "/lovable-uploads/84e535ab-1fa5-418e-93aa-73fa3b361219.png"
       },
       {
-        name: "Maple",
-        role: "Feedback Taker",
-        imageSrc: "/lovable-uploads/5c13c299-f9c2-46a9-9b91-4695964179a5.png"
+        name: "On Hiring",
+        role: "",
+        imageSrc: ""
       },
       {
         name: "Mell",
