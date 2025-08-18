@@ -329,7 +329,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
               <div className="absolute left-1/8 top-0 w-0.5 h-16 bg-border transform -translate-x-0.5"></div>
               <div className="absolute left-3/8 top-0 w-0.5 h-16 bg-border transform -translate-x-0.5"></div>
               <div className="absolute left-5/8 top-0 w-0.5 h-16 bg-border transform -translate-x-0.5"></div>
-              <div className="absolute left-7/8 top-0 w-0.5 h-16 bg-border transform -translate-x-0.5"></div>
+              
               {/* Vertical dividers */}
               <div className="absolute left-1/4 top-0 bottom-0 w-0.5 bg-border"></div>
               <div className="absolute left-2/4 top-0 bottom-0 w-0.5 bg-border"></div>
