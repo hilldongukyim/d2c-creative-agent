@@ -304,7 +304,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
           {/* Organizational Chart */}
           <div className="space-y-8">
             {/* D2C Leader */}
-            <div className="text-center mb-4">
+            <div className="text-center mb-4 relative">
               <div className="flex justify-center mb-6">
                 <div className="flex flex-col items-center">
                   <div className="relative h-16 w-16 rounded-full overflow-hidden border-2 border-primary">
@@ -316,10 +316,20 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                   </div>
                 </div>
               </div>
+              {/* Vertical line from D2C Leader */}
+              <div className="absolute left-1/2 bottom-0 w-0.5 h-8 bg-border transform -translate-x-0.5"></div>
             </div>
 
             {/* Division Headers */}
             <div className="grid grid-cols-4 gap-6 mb-8 relative">
+              {/* Horizontal line connecting all divisions */}
+              <div className="absolute left-0 right-0 top-0 h-0.5 bg-border"></div>
+              
+              {/* Vertical lines to each division */}
+              <div className="absolute left-1/8 top-0 w-0.5 h-16 bg-border transform -translate-x-0.5"></div>
+              <div className="absolute left-3/8 top-0 w-0.5 h-16 bg-border transform -translate-x-0.5"></div>
+              <div className="absolute left-5/8 top-0 w-0.5 h-16 bg-border transform -translate-x-0.5"></div>
+              <div className="absolute left-7/8 top-0 w-0.5 h-16 bg-border transform -translate-x-0.5"></div>
               {/* Vertical dividers */}
               <div className="absolute left-1/4 top-0 bottom-0 w-0.5 bg-border"></div>
               <div className="absolute left-2/4 top-0 bottom-0 w-0.5 bg-border"></div>
