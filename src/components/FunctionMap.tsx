@@ -190,7 +190,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       role: "Feedback Taker",
       imageSrc: "/lovable-uploads/5c13c299-f9c2-46a9-9b91-4695964179a5.png"
     }, {
-      name: "Penny",
+      name: "Mell",
       role: "Mailing",
       imageSrc: "/lovable-uploads/5a6db127-b9e3-4f85-afbb-11b477555583.png"
     }, {
