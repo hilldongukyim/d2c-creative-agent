@@ -474,7 +474,7 @@ const ChatInterface = () => {
               </div>
               <div>
                 <h2 className="text-xl font-semibold text-gray-900">Yumi</h2>
-                <p className="text-gray-600">PTO Gallery Creator</p>
+                <p className="text-gray-600">Promotional Content Designer</p>
               </div>
             </div>
           </div>
