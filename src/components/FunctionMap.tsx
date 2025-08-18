@@ -28,11 +28,24 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
   onProfileClick,
   highlightName
 }) => {
-  const [hoveredProfile, setHoveredProfile] = useState<{name: string, role: string} | null>(null);
-  const [hoverPosition, setHoverPosition] = useState<{x: number, y: number}>({x: 0, y: 0});
+  const [hoveredProfile, setHoveredProfile] = useState<{
+    name: string;
+    role: string;
+  } | null>(null);
+  const [hoverPosition, setHoverPosition] = useState<{
+    x: number;
+    y: number;
+  }>({
+    x: 0,
+    y: 0
+  });
 
   // Crew member profiles with descriptions and personality traits
-  const crewProfiles: Record<string, {description: string, personality: string, videoUrl?: string}> = {
+  const crewProfiles: Record<string, {
+    description: string;
+    personality: string;
+    videoUrl?: string;
+  }> = {
     "vee": {
       description: "Vee는 모든 AI 에이전트들의 중앙 지휘 센터 역할을 담당합니다. 복잡한 업무 흐름을 조율하고 각 팀 간의 협업을 최적화합니다.",
       personality: "체계적이고 분석적이며, 전체적인 시각에서 문제를 해결하는 것을 선호합니다."
@@ -95,20 +108,20 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       personality: "전세계 언어에 능통하며, 창의적인 광고 카피 감각이 뛰어납니다."
     }
   };
-
   const handleMouseEnter = (event: React.MouseEvent, name: string, role: string, teamTitle?: string) => {
     const rect = event.currentTarget.getBoundingClientRect();
-    
+
     // For Intern team members, position popup on the left side
     const isInternMember = teamTitle === "Intern";
-    
     setHoverPosition({
       x: isInternMember ? rect.left - 5 : rect.right + 5,
       y: rect.top + rect.height / 2
     });
-    setHoveredProfile({name, role});
+    setHoveredProfile({
+      name,
+      role
+    });
   };
-
   const handleMouseLeave = () => {
     setHoveredProfile(null);
   };
@@ -225,14 +238,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
             
             <div className="flex justify-center">
               <div className="flex flex-col items-center">
-                 <div className="relative h-20 w-20 md:h-24 md:w-24 rounded-full overflow-hidden mb-3 ring-2 ring-primary/20 cursor-pointer" 
-                   onMouseEnter={(e) => handleMouseEnter(e, "Vee", "Central Command & Orchestration")}
-                   onMouseLeave={handleMouseLeave}>
-                   <img src="/lovable-uploads/721071c1-63ee-4bc4-b9d8-264657716340.png" alt="Super Agent robot" className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === "vee" ? 'scale-125' : ''}`} />
-                 </div>
+                 
                 <div className="text-center">
-                  <div className="text-sm font-semibold text-foreground mb-1">Vee</div>
-                  <div className="text-xs text-muted-foreground">Central Command & Orchestration</div>
+                  
+                  
                 </div>
               </div>
             </div>
@@ -250,21 +259,14 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                   {"sections" in group && <>
                       {group.sections.map(section => <div key={section.subtitle} className="mb-5 last:mb-0 pointer-events-auto">
                            <div className={section.subtitle === "Team Leader" ? "flex justify-center pointer-events-none mb-6" : "flex flex-col gap-4 pointer-events-none"}>
-                             {section.items.map(item => <div key={`${group.title}-${section.subtitle}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" 
-                               onMouseEnter={(e) => handleMouseEnter(e, item.name, item.role)}
-                               onMouseLeave={handleMouseLeave}
-                               onClick={e => {
-                       e.stopPropagation();
-                       onProfileClick?.(item.name);
-                     }} role="button" tabIndex={0}>
+                             {section.items.map(item => <div key={`${group.title}-${section.subtitle}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" onMouseEnter={e => handleMouseEnter(e, item.name, item.role)} onMouseLeave={handleMouseLeave} onClick={e => {
+                      e.stopPropagation();
+                      onProfileClick?.(item.name);
+                    }} role="button" tabIndex={0}>
                                    <div className={`relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden ${item.name === "Candy" ? "border-2 border-red-500" : ""}`}>
-                                     {item.imageSrc ? (
-                                       <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" />
-                                     ) : (
-                                       <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
+                                     {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
                                          {item.name.charAt(0)}
-                                       </div>
-                                     )}
+                                       </div>}
                                    </div>
                                   <div className="mt-2">
                                     <div className="text-sm font-medium text-foreground">{item.name}</div>
@@ -287,21 +289,14 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                       {/* Team Leader section first */}
                       {group.sections.filter(section => section.subtitle === "Team Leader").map(section => <div key={section.subtitle} className="mb-6 pointer-events-auto">
                           <div className="flex justify-center pointer-events-none">
-                             {section.items.map(item => <div key={`${group.title}-${section.subtitle}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" 
-                               onMouseEnter={(e) => handleMouseEnter(e, item.name, item.role)}
-                               onMouseLeave={handleMouseLeave}
-                               onClick={e => {
-                       e.stopPropagation();
-                       onProfileClick?.(item.name);
-                     }} role="button" tabIndex={0}>
+                             {section.items.map(item => <div key={`${group.title}-${section.subtitle}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" onMouseEnter={e => handleMouseEnter(e, item.name, item.role)} onMouseLeave={handleMouseLeave} onClick={e => {
+                      e.stopPropagation();
+                      onProfileClick?.(item.name);
+                    }} role="button" tabIndex={0}>
                                   <div className="relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden border-2 border-red-500">
-                                   {item.imageSrc ? (
-                                     <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" />
-                                   ) : (
-                                     <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
+                                   {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
                                        {item.name.charAt(0)}
-                                     </div>
-                                   )}
+                                     </div>}
                                  </div>
                                  <div className="mt-2">
                                    <div className="text-sm font-medium text-foreground">{item.name}</div>
@@ -322,13 +317,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                               </h4>
                             </div>
                             <div className="space-y-4 pointer-events-none">
-                               {section.items.map(item => <div key={`${group.title}-${section.subtitle}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" 
-                                 onMouseEnter={(e) => handleMouseEnter(e, item.name, item.role)}
-                                 onMouseLeave={handleMouseLeave}
-                                 onClick={e => {
-                         e.stopPropagation();
-                         onProfileClick?.(item.name);
-                       }} role="button" tabIndex={0}>
+                               {section.items.map(item => <div key={`${group.title}-${section.subtitle}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" onMouseEnter={e => handleMouseEnter(e, item.name, item.role)} onMouseLeave={handleMouseLeave} onClick={e => {
+                        e.stopPropagation();
+                        onProfileClick?.(item.name);
+                      }} role="button" tabIndex={0}>
                                     <div className="relative h-16 w-16 md:h-18 md:w-18 rounded-full overflow-hidden">
                                      {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-xl font-medium">
                                          {item.name.charAt(0)}
@@ -353,10 +345,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                       <h3 className="text-lg font-semibold text-foreground">{group.title}</h3>
                     </header>
                     <div className="flex justify-center pointer-events-none">
-                       {"items" in group && group.items.map(item => <div key={`${group.title}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" 
-                         onMouseEnter={(e) => handleMouseEnter(e, item.name, item.role)}
-                         onMouseLeave={handleMouseLeave}
-                         onClick={e => {
+                       {"items" in group && group.items.map(item => <div key={`${group.title}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" onMouseEnter={e => handleMouseEnter(e, item.name, item.role)} onMouseLeave={handleMouseLeave} onClick={e => {
                     e.stopPropagation();
                     onProfileClick?.(item.name);
                   }} role="button" tabIndex={0}>
@@ -379,10 +368,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                       <h3 className="text-lg font-semibold text-foreground">{group.title}</h3>
                     </header>
                     <div className="flex justify-center pointer-events-none">
-                      {"items" in group && group.items.map(item => <div key={`${group.title}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" 
-                        onMouseEnter={(e) => handleMouseEnter(e, item.name, item.role)}
-                        onMouseLeave={handleMouseLeave}
-                        onClick={e => {
+                      {"items" in group && group.items.map(item => <div key={`${group.title}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" onMouseEnter={e => handleMouseEnter(e, item.name, item.role)} onMouseLeave={handleMouseLeave} onClick={e => {
                     e.stopPropagation();
                     onProfileClick?.(item.name);
                   }} role="button" tabIndex={0}>
@@ -407,13 +393,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                 </header>
                 <div className="grid grid-cols-2 gap-3 pointer-events-none">
                   {/* Kai - Background Remover */}
-                  <div data-profile-name="kai" className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" 
-                    onMouseEnter={(e) => handleMouseEnter(e, "Kai", "Background Remover", "Intern")}
-                    onMouseLeave={handleMouseLeave}
-                    onClick={e => {
-                      e.stopPropagation();
-                      onProfileClick?.("Kai");
-                    }} role="button" tabIndex={0}>
+                  <div data-profile-name="kai" className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" onMouseEnter={e => handleMouseEnter(e, "Kai", "Background Remover", "Intern")} onMouseLeave={handleMouseLeave} onClick={e => {
+                  e.stopPropagation();
+                  onProfileClick?.("Kai");
+                }} role="button" tabIndex={0}>
                     <div className="relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden">
                       <img src="/lovable-uploads/84e535ab-1fa5-418e-93aa-73fa3b361219.png" alt="Kai profile image" className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === "kai" ? 'scale-125' : ''}`} loading="lazy" />
                     </div>
@@ -424,13 +407,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                   </div>
 
                   {/* Maple - Feedback Taker */}
-                  <div data-profile-name="maple" className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" 
-                    onMouseEnter={(e) => handleMouseEnter(e, "Maple", "Feedback Taker", "Intern")}
-                    onMouseLeave={handleMouseLeave}
-                    onClick={e => {
-                      e.stopPropagation();
-                      onProfileClick?.("Maple");
-                    }} role="button" tabIndex={0}>
+                  <div data-profile-name="maple" className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" onMouseEnter={e => handleMouseEnter(e, "Maple", "Feedback Taker", "Intern")} onMouseLeave={handleMouseLeave} onClick={e => {
+                  e.stopPropagation();
+                  onProfileClick?.("Maple");
+                }} role="button" tabIndex={0}>
                     <div className="relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden">
                       <img src="/lovable-uploads/5c13c299-f9c2-46a9-9b91-4695964179a5.png" alt="Maple profile image" className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === "maple" ? 'scale-125' : ''}`} loading="lazy" />
                     </div>
@@ -441,13 +421,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                   </div>
 
                   {/* Mell - Mailing */}
-                  <div data-profile-name="mell" className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" 
-                    onMouseEnter={(e) => handleMouseEnter(e, "Mell", "Mailing", "Intern")}
-                    onMouseLeave={handleMouseLeave}
-                    onClick={e => {
-                      e.stopPropagation();
-                      onProfileClick?.("Mell");
-                    }} role="button" tabIndex={0}>
+                  <div data-profile-name="mell" className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" onMouseEnter={e => handleMouseEnter(e, "Mell", "Mailing", "Intern")} onMouseLeave={handleMouseLeave} onClick={e => {
+                  e.stopPropagation();
+                  onProfileClick?.("Mell");
+                }} role="button" tabIndex={0}>
                     <div className="relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden">
                       <img src="/lovable-uploads/5a6db127-b9e3-4f85-afbb-11b477555583.png" alt="Mell profile image" className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === "mell" ? 'scale-125' : ''}`} loading="lazy" />
                     </div>
@@ -458,13 +435,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                   </div>
 
                   {/* Noa - Copy Writing */}
-                  <div data-profile-name="noa" className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" 
-                    onMouseEnter={(e) => handleMouseEnter(e, "Noa", "Copy Writing", "Intern")}
-                    onMouseLeave={handleMouseLeave}
-                    onClick={e => {
-                      e.stopPropagation();
-                      onProfileClick?.("Noa");
-                    }} role="button" tabIndex={0}>
+                  <div data-profile-name="noa" className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1 pointer-events-auto" onMouseEnter={e => handleMouseEnter(e, "Noa", "Copy Writing", "Intern")} onMouseLeave={handleMouseLeave} onClick={e => {
+                  e.stopPropagation();
+                  onProfileClick?.("Noa");
+                }} role="button" tabIndex={0}>
                     <div className="relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden">
                       <img src="/lovable-uploads/0fbe5af8-19f4-4ff0-8c9f-3f1a2c010572.png" alt="Noa profile image" className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === "noa" ? 'scale-125' : ''}`} loading="lazy" />
                     </div>
@@ -482,31 +456,23 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       </div>
 
       {/* Hover Popup - Text Only */}
-      {hoveredProfile && (
-        <div 
-          className="fixed z-50 bg-card border border-border/20 rounded-xl p-6 shadow-xl max-w-sm animate-fade-in pointer-events-none"
-          style={{
-            left: hoverPosition.x,
-            top: hoverPosition.y,
-            transform: hoverPosition.x < window.innerWidth / 2 ? 'translateY(-50%)' : 'translateX(-100%) translateY(-50%)'
-          }}
-        >
+      {hoveredProfile && <div className="fixed z-50 bg-card border border-border/20 rounded-xl p-6 shadow-xl max-w-sm animate-fade-in pointer-events-none" style={{
+      left: hoverPosition.x,
+      top: hoverPosition.y,
+      transform: hoverPosition.x < window.innerWidth / 2 ? 'translateY(-50%)' : 'translateX(-100%) translateY(-50%)'
+    }}>
           <div className="space-y-4">
             <div className="space-y-3">
               <div className="text-sm text-foreground leading-relaxed">
-                <strong>약력:</strong> {crewProfiles[hoveredProfile.name.toLowerCase()]?.description || 
-                 `${hoveredProfile.name}는 ${hoveredProfile.role} 역할을 담당하고 있습니다.`}
+                <strong>약력:</strong> {crewProfiles[hoveredProfile.name.toLowerCase()]?.description || `${hoveredProfile.name}는 ${hoveredProfile.role} 역할을 담당하고 있습니다.`}
               </div>
               
-              {crewProfiles[hoveredProfile.name.toLowerCase()]?.personality && (
-                <div className="text-sm text-foreground leading-relaxed">
+              {crewProfiles[hoveredProfile.name.toLowerCase()]?.personality && <div className="text-sm text-foreground leading-relaxed">
                   <strong>성향:</strong> {crewProfiles[hoveredProfile.name.toLowerCase()].personality}
-                </div>
-              )}
+                </div>}
             </div>
           </div>
-        </div>
-      )}
+        </div>}
     </section>;
 };
 export default FunctionMap;

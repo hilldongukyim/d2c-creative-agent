@@ -96,7 +96,7 @@ const Home = () => {
       {/* Expanding circle animation */}
       <div className="max-w-6xl mx-auto relative z-10">
         <header className="text-center mb-12 pt-8">
-          <h1 className="text-5xl font-bold text-foreground mb-4">Meet the Crew</h1>
+          <h1 className="text-5xl font-bold text-foreground mb-4">Meet AI Twin Crew</h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
             An intelligent agent team that helps and accelerates the work of internal employees. Through clear structure and collaboration, we deliver faster, more accurate results.
           </p>
@@ -109,8 +109,8 @@ const Home = () => {
 
         <section className="mt-12">
           <header className="mb-6 text-center">
-            <h2 className="text-3xl font-semibold text-foreground">Assemble your mission crew</h2>
-            <p className="text-sm text-muted-foreground">Browse projects by function, pick what you need, and launch tasks through the assigned agents. Click any card to open the workflow instantly.</p>
+            
+            
           </header>
           <ContactOrder agents={[{
           name: "Yumi",
