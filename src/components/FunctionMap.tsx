@@ -419,7 +419,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                             </div>}
                         </div>
                          <div className="mt-2">
-                           <div className="text-sm font-medium text-foreground">{item.name}</div>
+                            <div className="text-sm font-medium text-foreground">Mell</div>
                            <div className="text-xs text-muted-foreground">{item.role}</div>
                          </div>
                       </div>)}
