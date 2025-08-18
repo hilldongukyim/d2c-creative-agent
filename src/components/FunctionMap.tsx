@@ -448,7 +448,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
             </div>
 
             {/* Intern Team - Independent Section */}
-            <div className="pt-4">
+            <div className="pt-1">
               <div className="text-center mb-6">
                 <div className="text-foreground rounded-lg px-6 py-3 font-bold text-lg inline-block">
                   {internTeam.title}
