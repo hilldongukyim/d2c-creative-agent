@@ -84,7 +84,7 @@ const Home = () => {
       
       {/* Navigation buttons */}
       <div className="absolute top-6 right-6 z-20 flex gap-2">
-        <Button onClick={() => navigate('/org-chart')} variant="default" size="sm" className="hover:bg-primary/90 transition-colors">
+        <Button onClick={() => navigate('/org-chart')} variant="outline" size="sm" className="text-muted-foreground border-muted-foreground/30 hover:bg-muted/20 hover:text-foreground transition-colors">
           View Full Chart
         </Button>
         <Button onClick={() => navigate('/')} variant="ghost" size="sm" className="hover:bg-muted/50 transition-colors">
