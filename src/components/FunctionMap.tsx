@@ -296,7 +296,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                         <h4 className="text-sm font-semibold text-muted-foreground mb-3 text-center">
                           {team.title}
                         </h4>
-                        {team.title === "DAM" ? (
+                        {team.title === "DAM" || team.title === "Promotion" ? (
                           <div className="space-y-3">
                             {/* First row - Candy only */}
                             <div className="flex justify-center">
