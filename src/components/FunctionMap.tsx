@@ -343,8 +343,8 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                   <div className="flex justify-center mb-4 pb-6">
                     <div className="flex flex-col items-center">
                       <div className="relative h-12 w-12 rounded-full overflow-hidden">
-                        <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{
-                      backgroundColor: '#6B6B6B'
+                        <div className="h-full w-full flex items-center justify-center text-white text-sm font-medium" style={{
+                      backgroundColor: '#F87171'
                     }}>
                           {division.name.charAt(0)}
                         </div>
