@@ -144,9 +144,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
               imageSrc: "/lovable-uploads/d67ab42c-85c8-480e-b65e-66a15abe8586.png"
             },
             {
-              name: "Fiona",
+              name: "On Hiring",
               role: "Account Delete",
-              imageSrc: "/lovable-uploads/f3264e74-893f-4cb0-9ec7-91b84b56c631.png"
+              imageSrc: ""
             }
           ]
         },
@@ -321,11 +321,11 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                     }`}
                                     loading="lazy"
                                   />
-                                ) : (
-                                  <div className="h-full w-full bg-muted flex items-center justify-center text-foreground/80 text-sm font-medium">
-                                    {item.name.charAt(0)}
-                                  </div>
-                                )}
+                                 ) : (
+                                   <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{ backgroundColor: '#6B6B6B' }}>
+                                     {item.name.charAt(0)}
+                                   </div>
+                                 )}
                               </div>
                               <div className="mt-2">
                                 <div className="text-xs font-medium text-foreground">{item.name}</div>
