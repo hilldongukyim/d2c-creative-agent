@@ -285,9 +285,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
             <div className="grid grid-cols-3 gap-8 mb-8">
               {divisions.map(division => (
                 <div key={division.name} className="text-center">
-                  <div className="bg-primary text-primary-foreground rounded-lg px-6 py-3 font-bold text-lg mb-6">
-                    {division.name} Division
-                  </div>
+                  <h3 className="text-foreground font-semibold text-base mb-6">
+                    {division.name}
+                  </h3>
                   
                   {/* Teams under each division */}
                   <div className="grid gap-4">
