@@ -324,7 +324,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
               {/* Main vertical line from D2C Leader */}
               <div className="absolute left-1/2 -top-8 w-0.5 h-8 bg-border transform -translate-x-0.5"></div>
               {/* Horizontal line connecting all divisions */}
-              <div className="absolute left-1/8 right-1/8 top-0 h-0.5 bg-border"></div>
+              <div className="absolute left-0 right-0 top-0 h-0.5 bg-border"></div>
               {/* Vertical lines to each division leader */}
               <div className="absolute left-1/8 top-0 w-0.5 h-16 bg-border"></div>
               <div className="absolute left-3/8 top-0 w-0.5 h-16 bg-border"></div>
