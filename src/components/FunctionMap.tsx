@@ -325,11 +325,11 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
               <div className="absolute left-1/2 -top-8 w-0.5 h-8 bg-border transform -translate-x-0.5"></div>
               {/* Horizontal line connecting all divisions */}
               <div className="absolute left-1/8 right-1/8 top-0 h-0.5 bg-border"></div>
-              {/* Vertical lines to each division */}
-              <div className="absolute left-1/8 top-0 w-0.5 h-4 bg-border"></div>
-              <div className="absolute left-3/8 top-0 w-0.5 h-4 bg-border"></div>
-              <div className="absolute left-5/8 top-0 w-0.5 h-4 bg-border"></div>
-              <div className="absolute left-7/8 top-0 w-0.5 h-4 bg-border"></div>
+              {/* Vertical lines to each division leader */}
+              <div className="absolute left-1/8 top-0 w-0.5 h-16 bg-border"></div>
+              <div className="absolute left-3/8 top-0 w-0.5 h-16 bg-border"></div>
+              <div className="absolute left-5/8 top-0 w-0.5 h-16 bg-border"></div>
+              <div className="absolute left-7/8 top-0 w-0.5 h-16 bg-border"></div>
               
               {divisions.map((division, index) => <div key={division.name} className="text-center">
                   <h3 className="text-foreground font-semibold text-base mb-2">
