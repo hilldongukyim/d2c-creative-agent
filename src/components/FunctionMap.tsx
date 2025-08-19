@@ -326,8 +326,8 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
               <div className="absolute left-16 right-16 -top-4 h-0.5 bg-border"></div>
               
               {/* Vertical lines separating divisions */}
-              <div className="absolute left-1/4 top-0 bottom-0 w-px bg-border"></div>
-              <div className="absolute left-2/4 top-0 bottom-0 w-px bg-border"></div>
+              
+              
               
               
               {divisions.map((division, index) => <div key={division.name} className="text-center">
