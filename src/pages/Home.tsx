@@ -79,6 +79,7 @@ const Home = () => {
     if (lower === "ben") return navigate("/pto-gallery");
     if (lower === "candy") return window.location.href = "https://candy-global-dam-product-owner.lovable.app/";
     if (lower === "maya") return window.location.href = "https://maya-global-dam-account-creator.lovable.app/";
+    if (lower === "boris") return window.location.href = "https://request-page-craft.lovable.app/";
     setSelectedName(name);
     setComingSoonOpen(true);
   };
