@@ -77,8 +77,8 @@ const Home = () => {
     const lower = name.toLowerCase();
     if (lower === "yumi") return navigate("/promotional");
     if (lower === "ben") return navigate("/pto-gallery");
-    if (lower === "candy") return window.open("https://candy-global-dam-product-owner.lovable.app/", "_blank");
-    if (lower === "maya") return window.open("https://maya-global-dam-account-creator.lovable.app/", "_blank");
+    if (lower === "candy") return window.location.href = "https://candy-global-dam-product-owner.lovable.app/";
+    if (lower === "maya") return window.location.href = "https://maya-global-dam-account-creator.lovable.app/";
     setSelectedName(name);
     setComingSoonOpen(true);
   };
