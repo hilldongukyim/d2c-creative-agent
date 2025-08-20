@@ -33,44 +33,75 @@ const languages = {
     questions: [
       {
         id: 1,
-        text: "Hi there! I'm Yumi, your promotional content designer. I'm excited to help you create amazing promotional content! 🎨\n\nLet's start with the basics - could you please provide your EP ID? This will be the email address where you'll receive the final deliverables.",
+        messages: [
+          "Hi there! I'm Yumi, your promotional content designer. 🎨",
+          "I'm excited to help you create amazing promotional content!",
+          "Let's start with the basics - could you please provide your EP ID?",
+          "This will be the email address where you'll receive the final deliverables."
+        ],
         field: "epId" as keyof FormData,
         inputType: "email"
       },
       {
         id: 2,
-        text: "Perfect! Now, tell me about this promotion. I'd love to help you craft the perfect copy! Please share:\n\n• Brief promotion details\n• Specific discount rates and products you'd like highlighted\n• Any copy you already have in mind\n\nThe more details you give me, the better I can tailor the copywriting to match your vision perfectly!",
+        messages: [
+          "Perfect! Now, tell me about this promotion.",
+          "I'd love to help you craft the perfect copy! Please share:",
+          "• Brief promotion details\n• Specific discount rates and products you'd like highlighted\n• Any copy you already have in mind",
+          "The more details you give me, the better I can tailor the copywriting to match your vision perfectly!"
+        ],
         field: "promotionInfo" as keyof FormData,
         inputType: "textarea"
       },
       {
         id: 3,
-        text: "Awesome! We're almost there. Now I need the PDP URL of the product you want to feature. Please copy and paste the product page URL here.\n\n(Currently, we can showcase one product per promotional content)",
+        messages: [
+          "Awesome! We're almost there.",
+          "Now I need the PDP URL of the product you want to feature.",
+          "Please copy and paste the product page URL here.",
+          "(Currently, we can showcase one product per promotional content)"
+        ],
         field: "productUrl" as keyof FormData,
         inputType: "url"
       },
       {
         id: 4,
-        text: "Great choice! Now, let's talk about the lifestyle imagery. What kind of vibe or people would you like to see in the lifestyle images?\n\nJust give me a rough description and I'll generate something amazing for you! Think about the mood, setting, or type of person that would best represent your product.",
+        messages: [
+          "Great choice! Now, let's talk about the lifestyle imagery.",
+          "What kind of vibe or people would you like to see in the lifestyle images?",
+          "Just give me a rough description and I'll generate something amazing for you!",
+          "Think about the mood, setting, or type of person that would best represent your product."
+        ],
         field: "lifestyleImage" as keyof FormData,
         inputType: "textarea"
       },
       {
         id: 5,
-        text: "Perfect! Do you need any disclaimers included in the promotional content? If so, please provide the exact text you'd like to include.\n\nIf not, just type 'None' and we'll move on to the next step.",
+        messages: [
+          "Perfect! Do you need any disclaimers included in the promotional content?",
+          "If so, please provide the exact text you'd like to include.",
+          "If not, just type 'None' and we'll move on to the next step."
+        ],
         field: "disclaimer" as keyof FormData,
         inputType: "textarea"
       },
       {
         id: 6,
-        text: "Almost done! Last question - where will this promotional content be published? Please select all the channels that apply:",
+        messages: [
+          "Almost done! Last question.",
+          "Where will this promotional content be published?",
+          "Please select all the channels that apply:"
+        ],
         field: "channels" as keyof FormData,
         inputType: "checkbox",
         options: ["LG.COM", "Pmax", "DV360", "Criteo", "AWIN", "Social"]
       },
       {
         id: 7,
-        text: "Perfect! Let me show you everything you've provided. Please review all the details below and confirm when you're ready to proceed:",
+        messages: [
+          "Perfect! Let me show you everything you've provided.",
+          "Please review all the details below and confirm when you're ready to proceed:"
+        ],
         field: null,
         inputType: "confirmation"
       }
@@ -91,44 +122,75 @@ const languages = {
     questions: [
       {
         id: 1,
-        text: "안녕하세요! 저는 프로모션 콘텐츠 디자이너 유미입니다. 멋진 프로모션 콘텐츠를 만들어드릴 수 있어서 기쁩니다! 🎨\n\n기본 정보부터 시작하겠습니다. EP ID를 알려주시겠어요? 최종 결과물을 받으실 이메일 주소입니다.",
+        messages: [
+          "안녕하세요! 저는 프로모션 콘텐츠 디자이너 유미입니다. 🎨",
+          "멋진 프로모션 콘텐츠를 만들어드릴 수 있어서 기쁩니다!",
+          "기본 정보부터 시작하겠습니다. EP ID를 알려주시겠어요?",
+          "최종 결과물을 받으실 이메일 주소입니다."
+        ],
         field: "epId" as keyof FormData,
         inputType: "email"
       },
       {
         id: 2,
-        text: "완벽합니다! 이제 이번 프로모션에 대해 알려주세요. 완벽한 카피를 작성하는데 도움이 되도록 다음 내용을 공유해 주세요:\n\n• 프로모션 간단 소개\n• 구체적인 할인율과 강조하고 싶은 제품\n• 이미 생각해두신 카피가 있다면\n\n자세한 내용을 알려주실수록 귀하의 비전에 완벽하게 맞는 카피라이팅을 만들어드릴 수 있습니다!",
+        messages: [
+          "완벽합니다! 이제 이번 프로모션에 대해 알려주세요.",
+          "완벽한 카피를 작성하는데 도움이 되도록 다음 내용을 공유해 주세요:",
+          "• 프로모션 간단 소개\n• 구체적인 할인율과 강조하고 싶은 제품\n• 이미 생각해두신 카피가 있다면",
+          "자세한 내용을 알려주실수록 귀하의 비전에 완벽하게 맞는 카피라이팅을 만들어드릴 수 있습니다!"
+        ],
         field: "promotionInfo" as keyof FormData,
         inputType: "textarea"
       },
       {
         id: 3,
-        text: "훌륭합니다! 거의 다 왔어요. 이제 특집하고 싶은 제품의 PDP URL이 필요합니다. 제품 페이지 URL을 복사해서 붙여넣어 주세요.\n\n(현재 프로모션 콘텐츠당 하나의 제품을 소개할 수 있습니다)",
+        messages: [
+          "훌륭합니다! 거의 다 왔어요.",
+          "이제 특집하고 싶은 제품의 PDP URL이 필요합니다.",
+          "제품 페이지 URL을 복사해서 붙여넣어 주세요.",
+          "(현재 프로모션 콘텐츠당 하나의 제품을 소개할 수 있습니다)"
+        ],
         field: "productUrl" as keyof FormData,
         inputType: "url"
       },
       {
         id: 4,
-        text: "좋은 선택이네요! 이제 라이프스타일 이미지에 대해 이야기해볼까요? 라이프스타일 이미지에서 어떤 분위기나 사람들을 보고 싶으신가요?\n\n대략적인 설명만 해주시면 멋진 이미지를 생성해드리겠습니다! 제품을 가장 잘 나타낼 수 있는 분위기, 설정, 또는 사람의 유형을 생각해보세요.",
+        messages: [
+          "좋은 선택이네요! 이제 라이프스타일 이미지에 대해 이야기해볼까요?",
+          "라이프스타일 이미지에서 어떤 분위기나 사람들을 보고 싶으신가요?",
+          "대략적인 설명만 해주시면 멋진 이미지를 생성해드리겠습니다!",
+          "제품을 가장 잘 나타낼 수 있는 분위기, 설정, 또는 사람의 유형을 생각해보세요."
+        ],
         field: "lifestyleImage" as keyof FormData,
         inputType: "textarea"
       },
       {
         id: 5,
-        text: "완벽합니다! 프로모션 콘텐츠에 포함해야 할 면책 조항이 있나요? 있으시다면 포함하고 싶은 정확한 텍스트를 제공해 주세요.\n\n없으시다면 '없음'이라고 입력하시고 다음 단계로 넘어가겠습니다.",
+        messages: [
+          "완벽합니다! 프로모션 콘텐츠에 포함해야 할 면책 조항이 있나요?",
+          "있으시다면 포함하고 싶은 정확한 텍스트를 제공해 주세요.",
+          "없으시다면 '없음'이라고 입력하시고 다음 단계로 넘어가겠습니다."
+        ],
         field: "disclaimer" as keyof FormData,
         inputType: "textarea"
       },
       {
         id: 6,
-        text: "거의 끝났어요! 마지막 질문입니다 - 이 프로모션 콘텐츠는 어디에 게시될 예정인가요? 해당하는 모든 채널을 선택해 주세요:",
+        messages: [
+          "거의 끝났어요! 마지막 질문입니다.",
+          "이 프로모션 콘텐츠는 어디에 게시될 예정인가요?",
+          "해당하는 모든 채널을 선택해 주세요:"
+        ],
         field: "channels" as keyof FormData,
         inputType: "checkbox",
         options: ["LG.COM", "Pmax", "DV360", "Criteo", "AWIN", "Social"]
       },
       {
         id: 7,
-        text: "완벽합니다! 제공해주신 모든 내용을 보여드리겠습니다. 아래 세부사항을 검토하시고 진행할 준비가 되면 확인해 주세요:",
+        messages: [
+          "완벽합니다! 제공해주신 모든 내용을 보여드리겠습니다.",
+          "아래 세부사항을 검토하시고 진행할 준비가 되면 확인해 주세요:"
+        ],
         field: null,
         inputType: "confirmation"
       }
@@ -174,35 +236,27 @@ const ChatInterface = () => {
   }, [messages]);
 
   useEffect(() => {
-    // Initialize with first question
+    // Initialize with first question messages
     const firstQuestion = languages[currentLanguage].questions[0];
-    setMessages([{
-      id: `yumi-${Date.now()}`,
-      sender: "yumi",
-      content: firstQuestion.text,
-      timestamp: new Date(),
-      type: "question"
-    }]);
+    sendSequentialMessages(firstQuestion.messages);
   }, [currentLanguage]);
+
+  const sendSequentialMessages = (messages: string[]) => {
+    messages.forEach((messageText, index) => {
+      setTimeout(() => {
+        setMessages(prev => [...prev, {
+          id: `yumi-${Date.now()}-${index}`,
+          sender: "yumi",
+          content: messageText,
+          timestamp: new Date(),
+          type: "question"
+        }]);
+      }, index * 1500); // 1.5 second delay between each message
+    });
+  };
 
   const getCurrentQuestion = () => {
     return languages[currentLanguage].questions[currentQuestionIndex];
-  };
-
-  const handleNextQuestion = () => {
-    if (currentQuestionIndex < languages[currentLanguage].questions.length - 1) {
-      const nextIndex = currentQuestionIndex + 1;
-      setCurrentQuestionIndex(nextIndex);
-      const nextQuestion = languages[currentLanguage].questions[nextIndex];
-      
-      setMessages(prev => [...prev, {
-        id: `yumi-${Date.now()}`,
-        sender: "yumi",
-        content: nextQuestion.text,
-        timestamp: new Date(),
-        type: "question"
-      }]);
-    }
   };
 
   const addThinkingMessage = () => {
@@ -217,7 +271,7 @@ const ChatInterface = () => {
       type: "question"
     }]);
 
-    // Replace thinking message with actual question after 1.5 seconds
+    // Replace thinking message with sequential messages after 1.5 seconds
     setTimeout(() => {
       setIsYumiThinking(false);
       if (currentQuestionIndex < languages[currentLanguage].questions.length - 1) {
@@ -225,19 +279,11 @@ const ChatInterface = () => {
         setCurrentQuestionIndex(nextIndex);
         const nextQuestion = languages[currentLanguage].questions[nextIndex];
         
-        setMessages(prev => 
-          prev.map(msg => 
-            msg.id === thinkingId 
-              ? {
-                  id: `yumi-${Date.now()}`,
-                  sender: "yumi",
-                  content: nextQuestion.text,
-                  timestamp: new Date(),
-                  type: "question"
-                }
-              : msg
-          )
-        );
+        // Remove thinking message
+        setMessages(prev => prev.filter(msg => msg.id !== thinkingId));
+        
+        // Send sequential messages
+        sendSequentialMessages(nextQuestion.messages);
       }
     }, 1500);
   };
