@@ -162,6 +162,7 @@ const ChatInterface = () => {
   const [isCompleted, setIsCompleted] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionStatus, setSubmissionStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [isYumiThinking, setIsYumiThinking] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -204,6 +205,43 @@ const ChatInterface = () => {
     }
   };
 
+  const addThinkingMessage = () => {
+    const thinkingId = `thinking-${Date.now()}`;
+    setIsYumiThinking(true);
+    
+    setMessages(prev => [...prev, {
+      id: thinkingId,
+      sender: "yumi",
+      content: "...",
+      timestamp: new Date(),
+      type: "question"
+    }]);
+
+    // Replace thinking message with actual question after 1.5 seconds
+    setTimeout(() => {
+      setIsYumiThinking(false);
+      if (currentQuestionIndex < languages[currentLanguage].questions.length - 1) {
+        const nextIndex = currentQuestionIndex + 1;
+        setCurrentQuestionIndex(nextIndex);
+        const nextQuestion = languages[currentLanguage].questions[nextIndex];
+        
+        setMessages(prev => 
+          prev.map(msg => 
+            msg.id === thinkingId 
+              ? {
+                  id: `yumi-${Date.now()}`,
+                  sender: "yumi",
+                  content: nextQuestion.text,
+                  timestamp: new Date(),
+                  type: "question"
+                }
+              : msg
+          )
+        );
+      }
+    }, 1500);
+  };
+
   const handleInputSubmit = () => {
     const currentQuestion = getCurrentQuestion();
     
@@ -237,17 +275,8 @@ const ChatInterface = () => {
     setInputValue("");
     
     setTimeout(() => {
-      handleNextQuestion();
-    }, 500);
-  };
-
-  const handleChannelChange = (channel: string, checked: boolean) => {
-    setFormData(prev => ({
-      ...prev,
-      channels: checked 
-        ? [...prev.channels, channel]
-        : prev.channels.filter(c => c !== channel)
-    }));
+      addThinkingMessage();
+    }, 300);
   };
 
   const handleChannelSubmit = () => {
@@ -266,8 +295,17 @@ const ChatInterface = () => {
     setMessages(prev => [...prev, userMessage]);
     
     setTimeout(() => {
-      handleNextQuestion();
-    }, 500);
+      addThinkingMessage();
+    }, 300);
+  };
+
+  const handleChannelChange = (channel: string, checked: boolean) => {
+    setFormData(prev => ({
+      ...prev,
+      channels: checked 
+        ? [...prev.channels, channel]
+        : prev.channels.filter(c => c !== channel)
+    }));
   };
 
   const handleConfirmation = async () => {
@@ -509,7 +547,17 @@ const ChatInterface = () => {
                       : "bg-white text-gray-900 shadow-sm rounded-bl-md border border-gray-100"
                   }`}
                 >
-                  <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+                   <p className="text-sm whitespace-pre-wrap">
+                     {message.content === "..." ? (
+                       <span className="inline-flex">
+                         <span className="animate-pulse mr-1">.</span>
+                         <span className="animate-pulse delay-150 mr-1">.</span>
+                         <span className="animate-pulse delay-300">.</span>
+                       </span>
+                     ) : (
+                       message.content
+                     )}
+                   </p>
                   <div className="flex items-center gap-1 mt-2">
                     <span className="text-xs opacity-70">
                       {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
