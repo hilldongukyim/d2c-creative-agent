@@ -77,6 +77,7 @@ const Home = () => {
     if (lower === "yumi") return navigate("/promotional");
     if (lower === "ben") return navigate("/pto-gallery");
     if (lower === "candy") return window.open("https://candy-global-dam-product-owner.lovable.app/", "_blank");
+    if (lower === "maya") return window.open("https://maya-global-dam-account-creator.lovable.app/", "_blank");
     setSelectedName(name);
     setComingSoonOpen(true);
   };
