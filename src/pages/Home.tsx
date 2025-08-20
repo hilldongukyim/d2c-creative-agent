@@ -73,6 +73,7 @@ const Home = () => {
     setComingSoonOpen(true);
   };
   const handleProfileClick = (name: string) => {
+    console.log('handleProfileClick called with:', name);
     const lower = name.toLowerCase();
     if (lower === "yumi") return navigate("/promotional");
     if (lower === "ben") return navigate("/pto-gallery");
