@@ -76,6 +76,7 @@ const Home = () => {
     const lower = name.toLowerCase();
     if (lower === "yumi") return navigate("/promotional");
     if (lower === "ben") return navigate("/pto-gallery");
+    if (lower === "candy") return window.open("https://candy-global-dam-product-owner.lovable.app/", "_blank");
     setSelectedName(name);
     setComingSoonOpen(true);
   };
