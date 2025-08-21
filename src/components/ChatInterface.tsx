@@ -156,6 +156,331 @@ const languages = {
       confirmed: "확인되었습니다! 프로모션 콘텐츠 제작을 진행해주세요.",
       successMessage: "훌륭합니다! 모든 세부사항을 받았으며 콘텐츠 제작 시스템으로 전송했습니다. 제공해주신 이메일 주소로 최종 결과물을 받으실 수 있습니다. 빨리 작업하고 올게요! 🎉"
     }
+  },
+  es: {
+    code: "es",
+    name: "Español",
+    flag: "🇪🇸",
+    questions: [
+      {
+        id: 1,
+        reaction: "¡Hola! Soy Yumi, tu diseñadora de contenido promocional. 🎨",
+        content: "¡Estoy emocionada de ayudarte a crear contenido promocional increíble!\n\nComencemos con lo básico: ¿podrías proporcionarme tu EP ID? Esta será la dirección de correo electrónico donde recibirás los entregables finales.",
+        field: "epId" as keyof FormData,
+        inputType: "email"
+      },
+      {
+        id: 2,
+        reaction: "¡Perfecto! Ahora, cuéntame sobre esta promoción.",
+        content: "¡Me encantaría ayudarte a crear el copy perfecto! Por favor comparte:\n\n• Detalles breves de la promoción\n• Tasas de descuento específicas y productos que te gustaría destacar\n• Cualquier copy que ya tengas en mente\n\n¡Cuantos más detalles me proporciones, mejor podré adaptar el copywriting para que coincida perfectamente con tu visión!",
+        field: "promotionInfo" as keyof FormData,
+        inputType: "textarea"
+      },
+      {
+        id: 3,
+        reaction: "¡Genial! Ya casi llegamos.",
+        content: "Ahora necesito la URL PDP del producto que quieres destacar. Por favor copia y pega la URL de la página del producto aquí.\n\n(Actualmente, podemos mostrar un producto por contenido promocional)",
+        field: "productUrl" as keyof FormData,
+        inputType: "url"
+      },
+      {
+        id: 4,
+        reaction: "¡Excelente elección! Ahora, hablemos de las imágenes de estilo de vida.",
+        content: "¿Qué tipo de ambiente o personas te gustaría ver en las imágenes de estilo de vida?\n\n¡Solo dame una descripción aproximada y generaré algo increíble para ti! Piensa en el estado de ánimo, el entorno o el tipo de persona que mejor representaría tu producto.",
+        field: "lifestyleImage" as keyof FormData,
+        inputType: "textarea"
+      },
+      {
+        id: 5,
+        reaction: "¡Perfecto! ¿Necesitas incluir algún descargo de responsabilidad en el contenido promocional?",
+        content: "Si es así, por favor proporciona el texto exacto que te gustaría incluir.\n\nSi no, simplemente escribe 'Ninguno' y pasaremos al siguiente paso.",
+        field: "disclaimer" as keyof FormData,
+        inputType: "textarea"
+      },
+      {
+        id: 6,
+        reaction: "¡Casi terminamos! Última pregunta.",
+        content: "¿Dónde se publicará este contenido promocional? Por favor selecciona todos los canales que apliquen:",
+        field: "channels" as keyof FormData,
+        inputType: "checkbox",
+        options: ["LG.COM", "Pmax", "DV360", "Criteo", "AWIN", "Social"]
+      },
+      {
+        id: 7,
+        reaction: "¡Perfecto! Permíteme mostrarte todo lo que has proporcionado.",
+        content: "Por favor revisa todos los detalles a continuación y confirma cuando estés listo para proceder:",
+        field: null,
+        inputType: "confirmation"
+      }
+    ],
+    ui: {
+      continue: "Continuar",
+      confirmProceed: "Confirmar y Proceder",
+      enterYourId: "Ingresa tu ID",
+      typeResponse: "Escribe tu respuesta aquí...",
+      confirmed: "¡Confirmado! Por favor procede con la creación del contenido promocional.",
+      successMessage: "¡Excelente! He recibido todos tus detalles y los he enviado a nuestro sistema de creación de contenido. Recibirás los entregables finales en tu dirección de correo electrónico proporcionada. ¡Te responderé pronto! 🎉"
+    }
+  },
+  fr: {
+    code: "fr",
+    name: "Français",
+    flag: "🇫🇷",
+    questions: [
+      {
+        id: 1,
+        reaction: "Salut ! Je suis Yumi, votre designer de contenu promotionnel. 🎨",
+        content: "Je suis ravie de vous aider à créer un contenu promotionnel incroyable !\n\nCommençons par les bases - pourriez-vous me fournir votre EP ID ? Ce sera l'adresse email où vous recevrez les livrables finaux.",
+        field: "epId" as keyof FormData,
+        inputType: "email"
+      },
+      {
+        id: 2,
+        reaction: "Parfait ! Maintenant, parlez-moi de cette promotion.",
+        content: "J'adorerais vous aider à créer le copy parfait ! Veuillez partager :\n\n• Détails brefs de la promotion\n• Taux de remise spécifiques et produits que vous aimeriez mettre en avant\n• Tout copy que vous avez déjà en tête\n\nPlus vous me donnez de détails, mieux je peux adapter le copywriting pour correspondre parfaitement à votre vision !",
+        field: "promotionInfo" as keyof FormData,
+        inputType: "textarea"
+      },
+      {
+        id: 3,
+        reaction: "Génial ! Nous y sommes presque.",
+        content: "Maintenant j'ai besoin de l'URL PDP du produit que vous voulez mettre en avant. Veuillez copier et coller l'URL de la page produit ici.\n\n(Actuellement, nous pouvons présenter un produit par contenu promotionnel)",
+        field: "productUrl" as keyof FormData,
+        inputType: "url"
+      },
+      {
+        id: 4,
+        reaction: "Excellent choix ! Maintenant, parlons des images lifestyle.",
+        content: "Quel type d'ambiance ou de personnes aimeriez-vous voir dans les images lifestyle ?\n\nDonnez-moi juste une description approximative et je génèrerai quelque chose d'incroyable pour vous ! Pensez à l'ambiance, au cadre, ou au type de personne qui représenterait le mieux votre produit.",
+        field: "lifestyleImage" as keyof FormData,
+        inputType: "textarea"
+      },
+      {
+        id: 5,
+        reaction: "Parfait ! Avez-vous besoin d'inclure des clauses de non-responsabilité dans le contenu promotionnel ?",
+        content: "Si oui, veuillez fournir le texte exact que vous aimeriez inclure.\n\nSinon, tapez simplement 'Aucune' et nous passerons à l'étape suivante.",
+        field: "disclaimer" as keyof FormData,
+        inputType: "textarea"
+      },
+      {
+        id: 6,
+        reaction: "Presque fini ! Dernière question.",
+        content: "Où ce contenu promotionnel sera-t-il publié ? Veuillez sélectionner tous les canaux qui s'appliquent :",
+        field: "channels" as keyof FormData,
+        inputType: "checkbox",
+        options: ["LG.COM", "Pmax", "DV360", "Criteo", "AWIN", "Social"]
+      },
+      {
+        id: 7,
+        reaction: "Parfait ! Laissez-moi vous montrer tout ce que vous avez fourni.",
+        content: "Veuillez examiner tous les détails ci-dessous et confirmer quand vous êtes prêt à procéder :",
+        field: null,
+        inputType: "confirmation"
+      }
+    ],
+    ui: {
+      continue: "Continuer",
+      confirmProceed: "Confirmer et Procéder",
+      enterYourId: "Entrez votre ID",
+      typeResponse: "Tapez votre réponse ici...",
+      confirmed: "Confirmé ! Veuillez procéder à la création du contenu promotionnel.",
+      successMessage: "Excellent ! J'ai reçu tous vos détails et les ai envoyés à notre système de création de contenu. Vous recevrez les livrables finaux à votre adresse email fournie. Je reviens vers vous bientôt ! 🎉"
+    }
+  },
+  de: {
+    code: "de",
+    name: "Deutsch",
+    flag: "🇩🇪",
+    questions: [
+      {
+        id: 1,
+        reaction: "Hallo! Ich bin Yumi, Ihre Designerin für Werbeinhalte. 🎨",
+        content: "Ich freue mich darauf, Ihnen bei der Erstellung fantastischer Werbeinhalte zu helfen!\n\nLassen Sie uns mit den Grundlagen beginnen - könnten Sie mir bitte Ihre EP ID geben? Das wird die E-Mail-Adresse sein, an die Sie die finalen Ergebnisse erhalten.",
+        field: "epId" as keyof FormData,
+        inputType: "email"
+      },
+      {
+        id: 2,
+        reaction: "Perfekt! Erzählen Sie mir nun von dieser Werbeaktion.",
+        content: "Ich würde Ihnen gerne dabei helfen, den perfekten Text zu erstellen! Bitte teilen Sie mit:\n\n• Kurze Details zur Werbeaktion\n• Spezifische Rabattsätze und Produkte, die Sie hervorheben möchten\n• Jeden Text, den Sie bereits im Kopf haben\n\nJe mehr Details Sie mir geben, desto besser kann ich das Texten an Ihre Vision anpassen!",
+        field: "promotionInfo" as keyof FormData,
+        inputType: "textarea"
+      },
+      {
+        id: 3,
+        reaction: "Großartig! Wir sind fast da.",
+        content: "Jetzt brauche ich die PDP-URL des Produkts, das Sie hervorheben möchten. Bitte kopieren Sie die Produktseiten-URL hier hinein.\n\n(Derzeit können wir ein Produkt pro Werbeinhalt präsentieren)",
+        field: "productUrl" as keyof FormData,
+        inputType: "url"
+      },
+      {
+        id: 4,
+        reaction: "Ausgezeichnete Wahl! Sprechen wir nun über Lifestyle-Bilder.",
+        content: "Welche Art von Atmosphäre oder Menschen möchten Sie in den Lifestyle-Bildern sehen?\n\nGeben Sie mir einfach eine grobe Beschreibung und ich erstelle etwas Fantastisches für Sie! Denken Sie an die Stimmung, das Setting oder den Personentyp, der Ihr Produkt am besten repräsentieren würde.",
+        field: "lifestyleImage" as keyof FormData,
+        inputType: "textarea"
+      },
+      {
+        id: 5,
+        reaction: "Perfekt! Müssen Haftungsausschlüsse in den Werbeinhalt aufgenommen werden?",
+        content: "Falls ja, geben Sie bitte den genauen Text an, den Sie einschließen möchten.\n\nFalls nicht, tippen Sie einfach 'Keine' und wir gehen zum nächsten Schritt über.",
+        field: "disclaimer" as keyof FormData,
+        inputType: "textarea"
+      },
+      {
+        id: 6,
+        reaction: "Fast fertig! Letzte Frage.",
+        content: "Wo wird dieser Werbeinhalt veröffentlicht? Bitte wählen Sie alle zutreffenden Kanäle aus:",
+        field: "channels" as keyof FormData,
+        inputType: "checkbox",
+        options: ["LG.COM", "Pmax", "DV360", "Criteo", "AWIN", "Social"]
+      },
+      {
+        id: 7,
+        reaction: "Perfekt! Lassen Sie mich Ihnen alles zeigen, was Sie bereitgestellt haben.",
+        content: "Bitte überprüfen Sie alle Details unten und bestätigen Sie, wenn Sie bereit sind fortzufahren:",
+        field: null,
+        inputType: "confirmation"
+      }
+    ],
+    ui: {
+      continue: "Weiter",
+      confirmProceed: "Bestätigen und Fortfahren",
+      enterYourId: "Geben Sie Ihre ID ein",
+      typeResponse: "Tippen Sie Ihre Antwort hier...",
+      confirmed: "Bestätigt! Bitte fahren Sie mit der Erstellung des Werbeinhalts fort.",
+      successMessage: "Ausgezeichnet! Ich habe alle Ihre Details erhalten und an unser Content-Erstellungssystem gesendet. Sie erhalten die finalen Ergebnisse an Ihre angegebene E-Mail-Adresse. Ich melde mich bald bei Ihnen! 🎉"
+    }
+  },
+  th: {
+    code: "th",
+    name: "ไทย",
+    flag: "🇹🇭",
+    questions: [
+      {
+        id: 1,
+        reaction: "สวัสดีค่ะ! ฉันชื่อยูมิ เป็นนักออกแบบเนื้อหาโปรโมชั่นของคุณ 🎨",
+        content: "ฉันตื่นเต้นมากที่จะช่วยคุณสร้างเนื้อหาโปรโมชั่นที่น่าทึ่ง!\n\nมาเริ่มด้วยข้อมูลพื้นฐานกันก่อน - คุณช่วยให้ EP ID ของคุณได้ไหมคะ? นี่จะเป็นที่อยู่อีเมลที่คุณจะได้รับผลงานสุดท้าย",
+        field: "epId" as keyof FormData,
+        inputType: "email"
+      },
+      {
+        id: 2,
+        reaction: "เยี่ยมเลย! ตอนนี้มาเล่าให้ฟังเกี่ยวกับโปรโมชั่นนี้หน่อย",
+        content: "ฉันอยากช่วยคุณสร้างข้อความที่สมบูรณ์แบบ! กรุณาแบ่งปัน:\n\n• รายละเอียดโปรโมชั่นโดยย่อ\n• อัตราส่วนลดเฉพาะและผลิตภัณฑ์ที่คุณต้องการเน้น\n• ข้อความใดๆ ที่คุณคิดไว้แล้ว\n\nยิ่งคุณให้รายละเอียดมากเท่าไหร่ ฉันก็ยิ่งสามารถปรับแต่งการเขียนให้ตรงกับวิสัยทัศน์ของคุณได้อย่างสมบูรณ์แบบ!",
+        field: "promotionInfo" as keyof FormData,
+        inputType: "textarea"
+      },
+      {
+        id: 3,
+        reaction: "เจ๋งมาก! เกือบถึงแล้ว",
+        content: "ตอนนี้ฉันต้องการ PDP URL ของผลิตภัณฑ์ที่คุณต้องการเน้น กรุณาคัดลอกและวาง URL หน้าผลิตภัณฑ์ที่นี่\n\n(ปัจจุบันเราสามารถแสดงผลิตภัณฑ์หนึ่งรายการต่อเนื้อหาโปรโมชั่น)",
+        field: "productUrl" as keyof FormData,
+        inputType: "url"
+      },
+      {
+        id: 4,
+        reaction: "เลือกได้ดีมาก! ตอนนี้มาพูดถึงภาพไลฟ์สไตล์กัน",
+        content: "คุณอยากเห็นบรรยากาศแบบไหนหรือคนแบบไหนในภาพไลฟ์สไตล์?\n\nแค่บอกฉันคร่าวๆ แล้วฉันจะสร้างสิ่งที่น่าทึ่งให้คุณ! ลองคิดถึงอารมณ์ ฉากหลัง หรือประเภทของคนที่จะแสดงผลิตภัณฑ์ของคุณได้ดีที่สุด",
+        field: "lifestyleImage" as keyof FormData,
+        inputType: "textarea"
+      },
+      {
+        id: 5,
+        reaction: "สมบูรณ์แบบ! คุณต้องการรวมข้อจำกัดความรับผิดชอบในเนื้อหาโปรโมชั่นหรือไม่?",
+        content: "หากต้องการ กรุณาให้ข้อความที่แน่นอนที่คุณต้องการใส่\n\nหากไม่ต้องการ ก็แค่พิมพ์ 'ไม่มี' แล้วเราจะไปขั้นตอนต่อไป",
+        field: "disclaimer" as keyof FormData,
+        inputType: "textarea"
+      },
+      {
+        id: 6,
+        reaction: "เกือบเสร็จแล้ว! คำถามสุดท้าย",
+        content: "เนื้อหาโปรโมชั่นนี้จะถูกเผยแพร่ที่ไหน? กรุณาเลือกช่องทางทั้งหมดที่เกี่ยวข้อง:",
+        field: "channels" as keyof FormData,
+        inputType: "checkbox",
+        options: ["LG.COM", "Pmax", "DV360", "Criteo", "AWIN", "Social"]
+      },
+      {
+        id: 7,
+        reaction: "สมบูรณ์แบบ! ให้ฉันแสดงทุกอย่างที่คุณให้มา",
+        content: "กรุณาตรวจสอบรายละเอียดทั้งหมดด้านล่างและยืนยันเมื่อคุณพร้อมที่จะดำเนินการ:",
+        field: null,
+        inputType: "confirmation"
+      }
+    ],
+    ui: {
+      continue: "ดำเนินการต่อ",
+      confirmProceed: "ยืนยันและดำเนินการ",
+      enterYourId: "ใส่ ID ของคุณ",
+      typeResponse: "พิมพ์คำตอบของคุณที่นี่...",
+      confirmed: "ยืนยันแล้ว! กรุณาดำเนินการสร้างเนื้อหาโปรโมชั่น",
+      successMessage: "ยอดเยี่ยม! ฉันได้รับรายละเอียดทั้งหมดของคุณแล้วและส่งไปยังระบบสร้างเนื้อหาของเรา คุณจะได้รับผลงานสุดท้ายที่ที่อยู่อีเมลที่คุณให้มา จะกลับมาหาคุณเร็วๆ นี้! 🎉"
+    }
+  },
+  ja: {
+    code: "ja",
+    name: "日本語",
+    flag: "🇯🇵",
+    questions: [
+      {
+        id: 1,
+        reaction: "こんにちは！私はプロモーションコンテンツデザイナーのユミです。🎨",
+        content: "素晴らしいプロモーションコンテンツを作るお手伝いができて嬉しいです！\n\n基本情報から始めましょう。EP IDを教えていただけますか？最終成果物をお受け取りいただくメールアドレスです。",
+        field: "epId" as keyof FormData,
+        inputType: "email"
+      },
+      {
+        id: 2,
+        reaction: "完璧です！このプロモーションについて教えてください。",
+        content: "完璧なコピーを作成するお手伝いをさせてください！以下を共有してください：\n\n• プロモーションの簡単な詳細\n• 具体的な割引率とハイライトしたい製品\n• すでに考えているコピーがあれば\n\n詳細を教えていただくほど、あなたのビジョンに完璧に合うコピーライティングを作成できます！",
+        field: "promotionInfo" as keyof FormData,
+        inputType: "textarea"
+      },
+      {
+        id: 3,
+        reaction: "素晴らしい！もうすぐです。",
+        content: "フィーチャーしたい製品のPDP URLが必要です。製品ページのURLをここにコピー＆ペーストしてください。\n\n（現在、プロモーションコンテンツ1つにつき1つの製品を紹介できます）",
+        field: "productUrl" as keyof FormData,
+        inputType: "url"
+      },
+      {
+        id: 4,
+        reaction: "素晴らしい選択！ライフスタイル画像について話しましょう。",
+        content: "ライフスタイル画像でどのような雰囲気や人々を見たいですか？\n\n大まかな説明をしていただければ、素晴らしいものを生成します！製品を最もよく表現する雰囲気、設定、または人のタイプを考えてみてください。",
+        field: "lifestyleImage" as keyof FormData,
+        inputType: "textarea"
+      },
+      {
+        id: 5,
+        reaction: "完璧です！プロモーションコンテンツに免責事項を含める必要がありますか？",
+        content: "ある場合は、含めたい正確なテキストを提供してください。\n\nない場合は、「なし」と入力して次のステップに進みます。",
+        field: "disclaimer" as keyof FormData,
+        inputType: "textarea"
+      },
+      {
+        id: 6,
+        reaction: "もうすぐ完了！最後の質問です。",
+        content: "このプロモーションコンテンツはどこで公開されますか？該当するすべてのチャンネルを選択してください：",
+        field: "channels" as keyof FormData,
+        inputType: "checkbox",
+        options: ["LG.COM", "Pmax", "DV360", "Criteo", "AWIN", "Social"]
+      },
+      {
+        id: 7,
+        reaction: "完璧です！提供していただいたすべてを表示します。",
+        content: "以下のすべての詳細を確認し、進む準備ができたら確認してください：",
+        field: null,
+        inputType: "confirmation"
+      }
+    ],
+    ui: {
+      continue: "続行",
+      confirmProceed: "確認して進む",
+      enterYourId: "IDを入力してください",
+      typeResponse: "ここに回答を入力してください...",
+      confirmed: "確認されました！プロモーションコンテンツの作成を進めてください。",
+      successMessage: "素晴らしい！すべての詳細を受け取り、コンテンツ作成システムに送信しました。提供されたメールアドレスで最終成果物をお受け取りいただけます。すぐにご連絡いたします！🎉"
+    }
   }
 };
 
