@@ -514,9 +514,11 @@ const ChatInterface = () => {
   }, [messages]);
 
   useEffect(() => {
-    // Initialize with first question reaction and content
-    const firstQuestion = languages[currentLanguage].questions[0];
-    sendReactionAndContent(firstQuestion.reaction, firstQuestion.content);
+    // Initialize with first question reaction and content only on first load
+    if (messages.length === 0) {
+      const firstQuestion = languages[currentLanguage].questions[0];
+      sendReactionAndContent(firstQuestion.reaction, firstQuestion.content);
+    }
   }, [currentLanguage]);
 
   const sendReactionAndContent = (reaction: string, content: string) => {
