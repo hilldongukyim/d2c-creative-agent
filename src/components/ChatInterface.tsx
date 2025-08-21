@@ -879,19 +879,30 @@ const ChatInterface = () => {
                     <DropdownMenuItem
                       key={code}
                       onClick={() => {
-                        setCurrentLanguage(code as keyof typeof languages);
-                        setCurrentQuestionIndex(0);
-                        setMessages([]);
-                        setFormData({
-                          epId: "",
-                          promotionInfo: "",
-                          productUrl: "",
-                          lifestyleImage: "",
-                          disclaimer: "",
-                          channels: []
-                        });
-                        setIsCompleted(false);
-                        setInputValue("");
+                        const newLanguage = code as keyof typeof languages;
+                        if (newLanguage !== currentLanguage) {
+                          // Translate existing messages to new language
+                          const translatedMessages = messages.map(message => {
+                            if (message.sender === 'yumi') {
+                              // Find corresponding question in new language
+                              const messageIndex = messages.filter(m => m.sender === 'yumi' && m.id <= message.id).length - 1;
+                              const questionIndex = Math.floor(messageIndex / 2); // Each question has reaction + content
+                              const isReaction = messageIndex % 2 === 0;
+                              
+                              if (questionIndex < languages[newLanguage].questions.length) {
+                                const newQuestion = languages[newLanguage].questions[questionIndex];
+                                return {
+                                  ...message,
+                                  content: isReaction ? newQuestion.reaction : newQuestion.content
+                                };
+                              }
+                            }
+                            return message; // Keep user messages as is
+                          });
+                          
+                          setMessages(translatedMessages);
+                          setCurrentLanguage(newLanguage);
+                        }
                       }}
                       className="flex items-center gap-2"
                     >
