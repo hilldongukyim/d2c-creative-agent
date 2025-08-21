@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ArrowLeft, Send, Edit3, Globe, CheckCircle, XCircle, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -524,18 +525,57 @@ const ChatInterface = () => {
         <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden relative">
           {/* Chat header with Yumi's profile */}
           <div className="bg-white p-6 border-b border-gray-100">
-            <div className="flex items-center gap-4">
-              <div className="w-16 h-16 rounded-full overflow-hidden">
-                <img 
-                  src="/lovable-uploads/1d0546ae-2d59-40cf-a231-60343eecc72a.png" 
-                  alt="Yumi Profile" 
-                  className="w-full h-full object-cover"
-                />
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-16 h-16 rounded-full overflow-hidden">
+                  <img 
+                    src="/lovable-uploads/1d0546ae-2d59-40cf-a231-60343eecc72a.png" 
+                    alt="Yumi Profile" 
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <div>
+                  <h2 className="text-xl font-semibold text-gray-900">Yumi</h2>
+                  <p className="text-gray-600">Promotional Content Designer</p>
+                </div>
               </div>
-              <div>
-                <h2 className="text-xl font-semibold text-gray-900">Yumi</h2>
-                <p className="text-gray-600">Promotional Content Designer</p>
-              </div>
+              
+              {/* Language selector */}
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="flex items-center gap-2">
+                    <Globe className="w-4 h-4" />
+                    <span>{languages[currentLanguage].flag}</span>
+                    <span className="hidden sm:inline">{languages[currentLanguage].name}</span>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  {Object.entries(languages).map(([code, lang]) => (
+                    <DropdownMenuItem
+                      key={code}
+                      onClick={() => {
+                        setCurrentLanguage(code as keyof typeof languages);
+                        setCurrentQuestionIndex(0);
+                        setMessages([]);
+                        setFormData({
+                          epId: "",
+                          promotionInfo: "",
+                          productUrl: "",
+                          lifestyleImage: "",
+                          disclaimer: "",
+                          channels: []
+                        });
+                        setIsCompleted(false);
+                        setInputValue("");
+                      }}
+                      className="flex items-center gap-2"
+                    >
+                      <span>{lang.flag}</span>
+                      <span>{lang.name}</span>
+                    </DropdownMenuItem>
+                  ))}
+                </DropdownMenuContent>
+              </DropdownMenu>
             </div>
           </div>
 
