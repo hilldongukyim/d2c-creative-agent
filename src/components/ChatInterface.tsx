@@ -927,9 +927,10 @@ const ChatInterface = () => {
                 <div
                   className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${
                     message.sender === "user"
-                      ? "bg-blue-500 text-white rounded-br-md"
+                      ? "text-white rounded-br-md"
                       : "bg-white text-gray-900 shadow-sm rounded-bl-md border border-gray-100"
                   }`}
+                  style={message.sender === "user" ? { backgroundColor: "#5D4E49" } : {}}
                 >
                    <p className="text-sm whitespace-pre-wrap">
                      {message.content === "..." ? (
