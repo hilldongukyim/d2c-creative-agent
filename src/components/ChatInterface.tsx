@@ -839,7 +839,7 @@ const ChatInterface = () => {
                 muted 
                 playsInline
               >
-                <source src="/completion-video.mp4" type="video/mp4" />
+                <source src="/yumi-completion-video.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
             </div>
