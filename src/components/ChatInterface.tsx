@@ -823,7 +823,7 @@ const ChatInterface = () => {
 
   return (
     <div className="min-h-screen relative overflow-hidden" style={{
-      backgroundImage: `url('/lovable-uploads/16b91392-64fd-4dd0-8569-0c35e54e11cb.png')`,
+      backgroundImage: `url('/lovable-uploads/bc537bc9-b912-4359-a294-eb543db318e3.png')`,
       backgroundSize: 'cover',
       backgroundPosition: 'center',
       backgroundRepeat: 'no-repeat'
