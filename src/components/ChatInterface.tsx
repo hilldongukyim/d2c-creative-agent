@@ -821,6 +821,50 @@ const ChatInterface = () => {
     );
   };
 
+  // Show completion screen when process is done
+  if (isCompleted) {
+    return (
+      <div className="h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center" 
+           style={{
+             backgroundImage: `url('/lovable-uploads/bc537bc9-b912-4359-a294-eb543db318e3.png')`
+           }}>
+        <div className="w-full max-w-lg mx-4 bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
+          <div className="p-8 text-center">
+            {/* Completion Video */}
+            <div className="mb-6">
+              <video 
+                className="w-32 h-32 mx-auto rounded-full object-cover shadow-lg"
+                autoPlay 
+                loop 
+                muted 
+                playsInline
+              >
+                <source src="/completion-video.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </div>
+            
+            {/* Yumi's Message */}
+            <div className="mb-8">
+              <p className="text-white text-lg font-medium leading-relaxed">
+                I'll focus on my work now,<br />
+                you can close this screen
+              </p>
+            </div>
+            
+            {/* CTA Button */}
+            <Button
+              onClick={() => navigate("/")}
+              className="bg-white/20 hover:bg-white/30 text-white border border-white/30 px-6 py-2 rounded-full transition-all duration-200 backdrop-blur-sm"
+            >
+              Go to Home
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen relative overflow-hidden" style={{
       backgroundImage: `url('/lovable-uploads/bc537bc9-b912-4359-a294-eb543db318e3.png')`,
