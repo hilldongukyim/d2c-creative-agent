@@ -194,7 +194,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       title: "Operation",
       items: [{
         name: "Theo",
-        role: "New Product Introduction Manager",
+        role: "NPI Manager",
         imageSrc: "/lovable-uploads/a682c963-0927-4ca3-8546-707e094f3836.png"
       }]
     }, {
