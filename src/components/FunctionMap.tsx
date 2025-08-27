@@ -431,7 +431,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                 <div className={`relative h-12 w-12 md:h-14 md:w-14 rounded-full overflow-hidden cursor-pointer ${item.name === "Candy" || item.name === "Boris" ? "border-2 border-red-500" : ""}`} onClick={(e) => {
                                   e.stopPropagation();
                                   if (item.name === "Theo") {
-                                    window.open("https://welcome-thanks-lim.lovable.app", "_blank");
+                                    window.open("https://blank-canvas-coupone.lovable.app/", "_blank");
                                   }
                                 }}>
                                   {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{
