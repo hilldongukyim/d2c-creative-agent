@@ -431,6 +431,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                 <div className={`relative h-12 w-12 md:h-14 md:w-14 rounded-full overflow-hidden cursor-pointer ${item.name === "Candy" || item.name === "Boris" ? "border-2 border-red-500" : ""}`} onClick={(e) => {
                                   e.stopPropagation();
                                   if (item.name === "Theo") {
+                                    window.open("https://welcome-thanks-lim.lovable.app", "_blank");
+                                  }
+                                  if (item.name === "Clara") {
                                     window.open("https://blank-canvas-coupone.lovable.app/", "_blank");
                                   }
                                 }}>
