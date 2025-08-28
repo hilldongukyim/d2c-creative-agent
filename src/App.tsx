@@ -18,6 +18,7 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
+      <elevenlabs-convai agent-id="agent_9501k3rhp078f3t9wjzth9vkdspm" />
         <Routes>
           <Route path="/" element={<CoverPage />} />
           <Route path="/home" element={<Index />} />
