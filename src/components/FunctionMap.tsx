@@ -432,9 +432,11 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                   e.stopPropagation();
                                   if (item.name === "Theo") {
                                     window.open("https://welcome-thanks-lim.lovable.app", "_blank");
-                                  }
-                                  if (item.name === "Clara") {
+                                  } else if (item.name === "Clara") {
                                     window.open("https://blank-canvas-coupone.lovable.app/", "_blank");
+                                  } else {
+                                    // For other profiles (Ben, Yumi, etc.), trigger the parent click handler
+                                    onProfileClick?.(item.name);
                                   }
                                 }}>
                                   {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{
