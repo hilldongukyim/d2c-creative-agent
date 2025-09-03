@@ -658,7 +658,7 @@ const ChatInterface = () => {
 
     // Submit to webhook
     try {
-      const response = await fetch('https://dev.eaip.lge.com/n8n/webhook/4fa28184-90d6-41bb-aa21-8b620685d162', {
+      const response = await fetch('https://hook.eu2.make.com/fudgr1kczns9j3bj9ckzp6b4fxpg2jx8', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
