@@ -83,6 +83,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       description: "Ben은 닷컴 PTO모델 갤러리 이미지를 제작합니다. 일관되면서 안정적인 퀄리티로 올바른 정보를 반영한 이미지를 생성합니다.",
       personality: "닷컴 갤러리 이미지 영역에 대해서 관심이 많으며, 지속적으로 학습중입니다."
     },
+    "pip": {
+      description: "Pip은 Content QA 전문가로서 제작된 콘텐츠가 Content Creation Guideline과 Brand Guideline에 적합하게 제작되었는지 검토하고, 올바른 콘텐츠 방향으로 제작할 수 있도록 가이드합니다.",
+      personality: "꼼꼼하고 세심하며, 브랜드 가이드라인과 품질 기준에 대한 깊은 이해를 바탕으로 정확한 피드백을 제공합니다."
+    },
     "orin": {
       description: "Orin은 데이터 크롤러로서 웹상의 다양한 정보를 수집하고 정리합니다. 정확하고 신뢰할 수 있는 데이터를 확보하여 팀의 의사결정을 지원합니다.",
       personality: "꼼꼼하고 인내심이 강하며, 정보의 정확성과 신뢰성을 중시합니다."
@@ -157,6 +161,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         name: "Ben",
         role: "PTO Image Creator",
         imageSrc: profiles.ben
+      }, {
+        name: "Pip",
+        role: "Content QA Specialist",
+        imageSrc: "/lovable-uploads/2d6113a8-70c0-4d9e-a66a-88b336591e65.png"
       }]
     }, {
       title: "GEO",
@@ -434,6 +442,8 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                     window.open("https://welcome-thanks-lim.lovable.app", "_blank");
                                   } else if (item.name === "Clara") {
                                     window.open("https://blank-canvas-coupone.lovable.app/", "_blank");
+                                  } else if (item.name === "Pip") {
+                                    window.location.href = "/pip-qa";
                                   } else {
                                     // For other profiles (Ben, Yumi, etc.), trigger the parent click handler
                                     onProfileClick?.(item.name);

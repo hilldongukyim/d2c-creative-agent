@@ -9,6 +9,7 @@ import OrgChartPage from "./pages/OrgChartPage";
 import TaskOverview from "./pages/TaskOverview";
 import PromotionalWorkflow from "./pages/PromotionalWorkflow";
 import PTOGallery from "./pages/PTOGallery";
+import PipQA from "./pages/PipQA";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -26,6 +27,7 @@ const App = () => (
           <Route path="/promotional" element={<PromotionalWorkflow />} />
           <Route path="/pto-gallery" element={<PTOGallery />} />
           <Route path="/tasks" element={<TaskOverview />} />
+          <Route path="/pip-qa" element={<PipQA />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
