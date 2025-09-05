@@ -164,7 +164,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       }, {
         name: "Allen",
         role: "Content QA Specialist",
-        imageSrc: "/lovable-uploads/2d6113a8-70c0-4d9e-a66a-88b336591e65.png"
+        imageSrc: "/lovable-uploads/5f177a57-30d7-413c-bfc1-46dd6a011745.png"
       }]
     }, {
       title: "GEO",
