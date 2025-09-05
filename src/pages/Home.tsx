@@ -77,6 +77,7 @@ const Home = () => {
     const lower = name.toLowerCase();
     if (lower === "yumi") return navigate("/promotional");
     if (lower === "ben") return navigate("/pto-gallery");
+    if (lower === "orin") return navigate("/crawling");
     if (lower === "candy") return window.location.href = "https://candy-global-dam-product-owner.lovable.app/";
     if (lower === "maya") return window.location.href = "https://maya-global-dam-account-creator.lovable.app/";
     if (lower === "boris") return window.location.href = "https://request-page-craft.lovable.app/";
