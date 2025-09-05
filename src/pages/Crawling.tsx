@@ -127,7 +127,7 @@ const Crawling = () => {
           <div className="flex items-center gap-4 mb-6 pb-4 border-b border-border">
             <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-primary/20">
               <img
-                src="/orin-profile.png"
+                src="/lovable-uploads/492f6b28-9886-4137-89ce-b5265fb1e4b6.png"
                 alt="Orin price crawler profile image"
                 className="w-full h-full object-cover object-center scale-110"
                 loading="lazy"
