@@ -8,19 +8,22 @@ const AllenQA = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Load ElevenLabs ConvAI widget script
-    const script = document.createElement('script');
-    script.src = 'https://unpkg.com/@elevenlabs/convai-widget-embed';
-    script.async = true;
-    script.type = 'text/javascript';
-    document.head.appendChild(script);
-
-    return () => {
-      // Cleanup script on unmount
-      if (script.parentNode) {
-        document.head.removeChild(script);
-      }
-    };
+    // Check if script is already loaded
+    const existingScript = document.querySelector('script[src="https://unpkg.com/@elevenlabs/convai-widget-embed"]');
+    
+    if (!existingScript) {
+      const script = document.createElement('script');
+      script.src = 'https://unpkg.com/@elevenlabs/convai-widget-embed';
+      script.async = true;
+      script.type = 'text/javascript';
+      script.onload = () => {
+        console.log('ElevenLabs ConvAI widget script loaded successfully');
+      };
+      script.onerror = () => {
+        console.error('Failed to load ElevenLabs ConvAI widget script');
+      };
+      document.head.appendChild(script);
+    }
   }, []);
 
   return (
@@ -47,7 +50,12 @@ const AllenQA = () => {
           <h1 className="text-4xl font-bold text-foreground">Allen - Content QA Assistant</h1>
           <p className="text-muted-foreground mb-8">음성으로 대화할 수 있는 콘텐츠 QA 어시스턴트입니다</p>
           <div className="flex justify-center">
-            <elevenlabs-convai agent-id="agent_5701k4cze7cqff9vf8nz8hz7akaf"></elevenlabs-convai>
+            <div 
+              className="w-full max-w-md min-h-[400px] p-4 border-2 border-dashed border-muted-foreground/20 rounded-lg bg-muted/10"
+              dangerouslySetInnerHTML={{
+                __html: `<elevenlabs-convai agent-id="agent_5701k4cze7cqff9vf8nz8hz7akaf"></elevenlabs-convai>`
+              }}
+            />
           </div>
         </div>
       </div>
