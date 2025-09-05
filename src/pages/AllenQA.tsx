@@ -17,7 +17,9 @@ const AllenQA = () => {
 
     return () => {
       // Cleanup script on unmount
-      document.head.removeChild(script);
+      if (script.parentNode) {
+        document.head.removeChild(script);
+      }
     };
   }, []);
 
