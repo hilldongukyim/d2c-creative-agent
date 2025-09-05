@@ -163,7 +163,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         imageSrc: profiles.ben
       }, {
         name: "Allen",
-        role: "Content QA Specialist",
+        role: "Content QA Assistant",
         imageSrc: "/lovable-uploads/5f177a57-30d7-413c-bfc1-46dd6a011745.png"
       }]
     }, {
