@@ -20,19 +20,18 @@ const App = () => (
     <TooltipProvider>
       <Toaster />
       <Sonner />
-      <elevenlabs-convai agent-id="agent_9501k3rhp078f3t9wjzth9vkdspm" />
-        <Routes>
-          <Route path="/" element={<CoverPage />} />
-          <Route path="/home" element={<Index />} />
-          <Route path="/org-chart" element={<OrgChartPage />} />
-          <Route path="/promotional" element={<PromotionalWorkflow />} />
-          <Route path="/pto-gallery" element={<PTOGallery />} />
-          <Route path="/tasks" element={<TaskOverview />} />
-          <Route path="/pip-qa" element={<PipQA />} />
-          <Route path="/crawling" element={<Crawling />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+      <Routes>
+        <Route path="/" element={<CoverPage />} />
+        <Route path="/home" element={<Index />} />
+        <Route path="/org-chart" element={<OrgChartPage />} />
+        <Route path="/promotional" element={<PromotionalWorkflow />} />
+        <Route path="/pto-gallery" element={<PTOGallery />} />
+        <Route path="/tasks" element={<TaskOverview />} />
+        <Route path="/pip-qa" element={<PipQA />} />
+        <Route path="/crawling" element={<Crawling />} />
+        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </TooltipProvider>
   </QueryClientProvider>
 );
