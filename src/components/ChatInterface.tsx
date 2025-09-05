@@ -883,7 +883,7 @@ const ChatInterface = () => {
       <div className="absolute top-6 left-6 z-10">
         <Button
           variant="ghost"
-          onClick={() => navigate("/")}
+          onClick={() => navigate("/home")}
           className="text-white hover:bg-white/10 flex items-center gap-2"
         >
           <ArrowLeft className="w-4 h-4" />
