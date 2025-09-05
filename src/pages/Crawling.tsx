@@ -13,7 +13,7 @@ const Crawling = () => {
  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [email, setEmail] = useState<string>("");
   const { toast } = useToast();
-
+ 
   useEffect(() => {
     document.title = "Orin - Price Crawler";
   }, []);
