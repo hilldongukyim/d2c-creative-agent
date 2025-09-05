@@ -6,8 +6,10 @@ import { ArrowLeft, ExternalLink, Upload } from "lucide-react";
 import { useEffect, useState } from "react";
 import * as XLSX from 'xlsx';
 import { useToast } from "@/hooks/use-toast";
+import { useNavigate } from "react-router-dom";
 
 const Crawling = () => {
+ const navigate = useNavigate();
  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [email, setEmail] = useState<string>("");
   const { toast } = useToast();
@@ -112,7 +114,7 @@ const Crawling = () => {
         <div className="mb-6">
           <Button
             variant="ghost"
-            onClick={() => (window.location.href = "https://d2c-aiagentspace.lovable.app/")}
+            onClick={() => navigate("/home")} 
             className="mb-4 text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />
