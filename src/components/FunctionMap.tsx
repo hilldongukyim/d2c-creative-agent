@@ -114,6 +114,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     "noa": {
       description: "Noa는 카피라이팅 전문가로서 매력적이고 효과적인 텍스트 콘텐츠를 작성합니다. 브랜드 보이스를 반영한 일관성 있는 메시지를 만들어냅니다.",
       personality: "전세계 언어에 능통하며, 창의적인 광고 카피 감각이 뛰어납니다."
+    },
+    "ava": {
+      description: "LG.com PDP를 적기에 업로드하기 위해 각 사업부 담당자들과 원활히 커뮤니케이션합니다.",
+      personality: "체계적이고 소통 능력이 뛰어나며, 업무 협업을 원활하게 진행하는 데 탁월합니다."
     }
   };
   const handleMouseEnter = (event: React.MouseEvent, name: string, role: string, teamTitle?: string) => {
@@ -166,9 +170,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         role: "Content QA Assistant",
         imageSrc: "/lovable-uploads/5f177a57-30d7-413c-bfc1-46dd6a011745.png"
       }, {
-        name: "Jason",
+        name: "Ava",
         role: "PDP Manager",
-        imageSrc: ""
+        imageSrc: "/lovable-uploads/ava-profile.png"
       }]
     }, {
       title: "GEO",
