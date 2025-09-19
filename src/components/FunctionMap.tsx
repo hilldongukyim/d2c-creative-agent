@@ -453,7 +453,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                   } else if (item.name === "Pip") {
                                     window.location.href = "/pip-qa";
                                   } else if (item.name === "Ollie") {
-                                    window.open("https://welcome-ollie-start.lovable.app/", "_blank");
+                                    window.location.href = "https://welcome-ollie-start.lovable.app/";
                                   } else {
                                     // For other profiles (Ben, Yumi, etc.), trigger the parent click handler
                                     onProfileClick?.(item.name);
