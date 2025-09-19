@@ -440,10 +440,14 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                 </div>)}
                             </div>
                           </div> : <div className="flex flex-wrap justify-center gap-3">
-                            {team.items.map(item => <div key={`${team.title}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1" onMouseEnter={e => handleMouseEnter(e, item.name, item.role)} onMouseLeave={handleMouseLeave} onClick={e => {
-                      e.stopPropagation();
-                      onProfileClick?.(item.name);
-                    }} role="button" tabIndex={0}>
+                             {team.items.map(item => <div key={`${team.title}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1" onMouseEnter={e => handleMouseEnter(e, item.name, item.role)} onMouseLeave={handleMouseLeave} onClick={e => {
+                       e.stopPropagation();
+                       // Skip popup for profiles that have direct URL redirections
+                       if (item.name === "Theo" || item.name === "Clara" || item.name === "Pip" || item.name === "Ollie") {
+                         return;
+                       }
+                       onProfileClick?.(item.name);
+                     }} role="button" tabIndex={0}>
                                 <div className={`relative h-12 w-12 md:h-14 md:w-14 rounded-full overflow-hidden cursor-pointer ${item.name === "Candy" || item.name === "Boris" ? "border-2 border-red-500" : ""}`} onClick={(e) => {
                                   e.stopPropagation();
                                   if (item.name === "Theo") {
