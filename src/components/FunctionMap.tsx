@@ -406,8 +406,8 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                            window.location.href = "https://welcome-ollie-start.lovable.app/";
                            return;
                          }
-                         // Handle On Hiring special case
-                         if (item.name === "On Hiring") {
+                         // Handle Ravi special case
+                         if (item.name === "Ravi") {
                            window.location.href = "https://request-page-craft.lovable.app/";
                            return;
                          }
@@ -438,8 +438,8 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                            window.location.href = "https://welcome-ollie-start.lovable.app/";
                            return;
                          }
-                         // Handle On Hiring special case
-                         if (item.name === "On Hiring") {
+                         // Handle Ravi special case
+                         if (item.name === "Ravi") {
                            window.location.href = "https://request-page-craft.lovable.app/";
                            return;
                          }
@@ -463,7 +463,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                              {team.items.map(item => <div key={`${team.title}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1" onMouseEnter={e => handleMouseEnter(e, item.name, item.role)} onMouseLeave={handleMouseLeave} onClick={e => {
                        e.stopPropagation();
                        // Skip popup for profiles that have direct URL redirections
-                       if (item.name === "Theo" || item.name === "Clara" || item.name === "Pip" || item.name === "Ollie" || item.name === "On Hiring") {
+                       if (item.name === "Theo" || item.name === "Clara" || item.name === "Pip" || item.name === "Ollie" || item.name === "Ravi") {
                          return;
                        }
                        onProfileClick?.(item.name);
@@ -476,7 +476,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                     window.open("https://blank-canvas-coupone.lovable.app/", "_blank");
                                   } else if (item.name === "Pip") {
                                     window.location.href = "/pip-qa";
-                                   } else if (item.name === "On Hiring") {
+                                   } else if (item.name === "Ravi") {
                                      window.location.href = "https://request-page-craft.lovable.app/";
                                   } else {
                                     // For other profiles (Ben, Yumi, etc.), trigger the parent click handler
