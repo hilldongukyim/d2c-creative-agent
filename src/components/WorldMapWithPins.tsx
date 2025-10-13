@@ -20,12 +20,12 @@ interface Country {
 }
 
 const countries: Country[] = [
-  { name: 'Peru', nameKo: '페루', x: 23, y: 62 },
-  { name: 'Argentina', nameKo: '아르헨티나', x: 30, y: 78 },
-  { name: 'Thailand', nameKo: '태국', x: 72, y: 52 },
-  { name: 'Egypt', nameKo: '이집트', x: 54, y: 45 },
-  { name: 'Panama', nameKo: '파나마', x: 22, y: 54 },
-  { name: 'Japan', nameKo: '일본', x: 82, y: 42 },
+  { name: 'Peru', nameKo: '페루', x: 24, y: 58 },
+  { name: 'Argentina', nameKo: '아르헨티나', x: 29, y: 74 },
+  { name: 'Thailand', nameKo: '태국', x: 73, y: 50 },
+  { name: 'Egypt', nameKo: '이집트', x: 54, y: 42 },
+  { name: 'Panama', nameKo: '파나마', x: 23, y: 51 },
+  { name: 'Japan', nameKo: '일본', x: 83, y: 38 },
 ];
 
 const WorldMapWithPins = () => {
