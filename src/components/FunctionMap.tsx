@@ -47,77 +47,77 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     videoUrl?: string;
   }> = {
     "vee": {
-      description: "Vee는 모든 AI 에이전트들의 중앙 지휘 센터 역할을 담당합니다. 복잡한 업무 흐름을 조율하고 각 팀 간의 협업을 최적화합니다.",
-      personality: "체계적이고 분석적이며, 전체적인 시각에서 문제를 해결하는 것을 선호합니다."
+      description: "Vee serves as the central command center for all AI agents, coordinating complex workflows and optimizing collaboration between teams.",
+      personality: "Systematic and analytical, prefers solving problems from a holistic perspective."
     },
     "candy": {
-      description: "Candy는 DAM 팀의 리더로서 팀원들의 업무를 조율하고 전체적인 프로젝트 방향을 설정합니다. 뛰어난 커뮤니케이션 능력과 리더십으로 팀의 효율성을 극대화합니다.",
-      personality: "카리스마가 있고 결단력이 강하며, 팀원들을 격려하고 동기부여하는 데 탁월합니다.",
+      description: "Candy leads the DAM team, coordinating team members' tasks and setting overall project direction. With excellent communication skills and leadership, maximizes team efficiency.",
+      personality: "Charismatic and decisive, excels at encouraging and motivating team members.",
       videoUrl: "/candy-video.mp4"
     },
     "maya": {
-      description: "Maya는 계정 생성 전문가로서 신규 DAM 사용자 온보딩 프로세스를 담당합니다.",
-      personality: "섬세하고 배려심이 깊으며, 사용자의 니즈를 정확히 파악하는 데 뛰어납니다."
+      description: "Maya is an account creation specialist responsible for onboarding new DAM users.",
+      personality: "Meticulous and considerate, excels at accurately understanding user needs."
     },
     "fiona": {
-      description: "Fiona는 계정 삭제 및 정리 업무를 전담하며, 데이터 보안과 개인정보 보호 규정을 준수하여 안전한 계정 관리를 수행합니다.",
-      personality: "신중하고 완벽주의적이며, 보안과 규정 준수에 대한 강한 책임감을 가지고 있습니다."
+      description: "Fiona is dedicated to account deletion and cleanup tasks, ensuring safe account management through compliance with data security and privacy regulations.",
+      personality: "Cautious and perfectionist, with strong responsibility for security and compliance."
     },
     "boris": {
-      description: "Boris는 프로모션 팀의 코디네이터로서 마케팅 캠페인 기획을 도우며, 전문화된 유관부서들을 연결시켜줍니다.",
-      personality: "언제나 돕고자 하는 자세로, 신속하고 효율적인 커뮤니케이션을 좋아합니다."
+      description: "Boris serves as the promotion team coordinator, assisting in marketing campaign planning and connecting specialized departments.",
+      personality: "Always ready to help, enjoys fast and efficient communication."
     },
     "ollie": {
-      description: "Ollie는 판매 분석 전문가로서 시장 동향과 고객 행동을 분석합니다. 데이터를 통해 비즈니스 인사이트를 도출하고 전략적 의사결정을 지원합니다.",
-      personality: "논리적이고 체계적이며, 숫자와 데이터에서 의미있는 패턴을 찾아내는 데 탁월합니다."
+      description: "Ollie is a sales analysis expert who analyzes market trends and customer behavior. Derives business insights from data and supports strategic decision-making.",
+      personality: "Logical and systematic, excels at finding meaningful patterns in numbers and data."
     },
     "ravi": {
-      description: "Ravi는 프로모션 구성 전문가로서 다양한 마케팅 도구와 플랫폼을 설정하고 관리합니다. 기술적 구현을 통해 마케팅 아이디어를 현실화합니다.",
-      personality: "기술적 사고를 가지고 있으며, 문제 해결에 대한 강한 집중력과 인내심을 보입니다."
+      description: "Ravi is a promotion configuration specialist who sets up and manages various marketing tools and platforms. Realizes marketing ideas through technical implementation.",
+      personality: "Has technical mindset, demonstrates strong focus and patience in problem-solving."
     },
     "yumi": {
-      description: "Yumi는 LG전자 브랜드 템플릿인 EI-Form 디자이너로서, 브랜드 가이드라인을 준수하는 깔끔하면서 직관적인 디자인을 만들어냅니다.",
-      personality: "요청 즉시 실행하며, 빠르고 효율적인 디자인에 관심을 가지고 있습니다."
+      description: "Yumi is an EI-Form designer for LG Electronics brand templates, creating clean and intuitive designs that comply with brand guidelines.",
+      personality: "Executes requests immediately, interested in fast and efficient design."
     },
     "ben": {
-      description: "Ben은 닷컴 PTO모델 갤러리 이미지를 제작합니다. 일관되면서 안정적인 퀄리티로 올바른 정보를 반영한 이미지를 생성합니다.",
-      personality: "닷컴 갤러리 이미지 영역에 대해서 관심이 많으며, 지속적으로 학습중입니다."
+      description: "Ben creates dotcom PTO model gallery images. Generates images reflecting accurate information with consistent and stable quality.",
+      personality: "Very interested in dotcom gallery image domain and continuously learning."
     },
     "pip": {
-      description: "Pip은 Content QA 전문가로서 제작된 콘텐츠가 Content Creation Guideline과 Brand Guideline에 적합하게 제작되었는지 검토하고, 올바른 콘텐츠 방향으로 제작할 수 있도록 가이드합니다.",
-      personality: "꼼꼼하고 세심하며, 브랜드 가이드라인과 품질 기준에 대한 깊은 이해를 바탕으로 정확한 피드백을 제공합니다."
+      description: "Pip is a Content QA specialist who reviews whether content is created according to Content Creation Guidelines and Brand Guidelines, and guides proper content creation direction.",
+      personality: "Meticulous and careful, provides accurate feedback based on deep understanding of brand guidelines and quality standards."
     },
     "orin": {
-      description: "Orin은 데이터 크롤러로서 웹상의 다양한 정보를 수집하고 정리합니다. 정확하고 신뢰할 수 있는 데이터를 확보하여 팀의 의사결정을 지원합니다.",
-      personality: "꼼꼼하고 인내심이 강하며, 정보의 정확성과 신뢰성을 중시합니다."
+      description: "Orin is a data crawler who collects and organizes various information from the web. Supports team decision-making by securing accurate and reliable data.",
+      personality: "Meticulous and patient, values information accuracy and reliability."
     },
     "dan": {
-      description: "Dan은 생성형AI가 검색 엔진이나 내부 검색 시슽메에서 더 잘 노출될 수 있도록, 이미지-비디오 컨텐츠의 최적의 메타정보를 제안합니다.",
-      personality: "탐험적이고 호기심이 많으며, 웹서핑을 즐겨합니다."
+      description: "Dan suggests optimal metadata for image-video content to ensure better exposure in search engines and internal search systems by generative AI.",
+      personality: "Exploratory and curious, enjoys web surfing."
     },
     "kai": {
-      description: "Kai는 배경 제거 전문가로서 이미지 편집과 후처리 작업을 담당합니다. 정밀한 기술력으로 깔끔하고 전문적인 이미지를 만들어냅니다.",
-      personality: "집중력이 뛰어나고 완벽주의적이며, 세밀한 작업을 좋아합니다."
+      description: "Kai is a background removal specialist responsible for image editing and post-processing. Creates clean and professional images with precise technical skills.",
+      personality: "Highly focused and perfectionist, enjoys detailed work."
     },
     "maple": {
-      description: "Maple은 피드백 수집 전문가로서 동료들의 의견을 체계적으로 수집하고 분석합니다.",
-      personality: "공감 능력이 뛰어나고 소통을 중시하며, 다른 사람의 의견을 경청하는 데 능숙합니다."
+      description: "Maple is a feedback collection specialist who systematically gathers and analyzes colleagues' opinions.",
+      personality: "Has excellent empathy, values communication, and is skilled at listening to others' opinions."
     },
     "mell": {
-      description: "Mell은 메일링 전문가로서 이메일로 모든 최종 딜리버리 및 안내 사항을 신속하고 정확하게 전달합니다.",
-      personality: "꼭 좋은 소식만 가져오진 않습니다. 그래도 정확한 소식을 들려줍니다."
+      description: "Mell is an email specialist who quickly and accurately delivers all final deliveries and notifications via email.",
+      personality: "Doesn't always bring good news. But delivers accurate news."
     },
     "theo": {
-      description: "법인/BU 담당자가 NPI 모델 진행 현황을 효율적으로 파악할 수 있도록, NPI 모델 데이터 조회와 분석을 지원하는 오퍼레이션 매니저입니다.",
-      personality: "체계적이고 신뢰할 수 있으며, 복잡한 데이터를 명확하게 정리하여 전달하는 데 탁월합니다."
+      description: "An operations manager who supports NPI model data inquiry and analysis so that legal entity/BU managers can efficiently track NPI model progress.",
+      personality: "Systematic and reliable, excels at clearly organizing and communicating complex data."
     },
     "noa": {
-      description: "Noa는 카피라이팅 전문가로서 매력적이고 효과적인 텍스트 콘텐츠를 작성합니다. 브랜드 보이스를 반영한 일관성 있는 메시지를 만들어냅니다.",
-      personality: "전세계 언어에 능통하며, 창의적인 광고 카피 감각이 뛰어납니다."
+      description: "Noa is a copywriting specialist who writes attractive and effective text content. Creates consistent messages that reflect brand voice.",
+      personality: "Fluent in languages worldwide, has excellent creative advertising copy sense."
     },
     "ava": {
-      description: "LG.com PDP를 적기에 업로드하기 위해 각 사업부 담당자들과 원활히 커뮤니케이션합니다.",
-      personality: "체계적이고 소통 능력이 뛰어나며, 업무 협업을 원활하게 진행하는 데 탁월합니다."
+      description: "Communicates smoothly with business unit managers to upload LG.com PDP in a timely manner.",
+      personality: "Systematic with excellent communication skills, excels at facilitating work collaboration."
     }
   };
   const handleMouseEnter = (event: React.MouseEvent, name: string, role: string, teamTitle?: string) => {
@@ -542,11 +542,11 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
           <div className="space-y-4">
             <div className="space-y-3">
               <div className="text-sm text-foreground leading-relaxed">
-                <strong>약력:</strong> {crewProfiles[hoveredProfile.name.toLowerCase()]?.description || `${hoveredProfile.name}는 ${hoveredProfile.role} 역할을 담당하고 있습니다.`}
+                <strong>Bio:</strong> {crewProfiles[hoveredProfile.name.toLowerCase()]?.description || `${hoveredProfile.name} is responsible for ${hoveredProfile.role} role.`}
               </div>
               
               {crewProfiles[hoveredProfile.name.toLowerCase()]?.personality && <div className="text-sm text-foreground leading-relaxed">
-                  <strong>성향:</strong> {crewProfiles[hoveredProfile.name.toLowerCase()].personality}
+                  <strong>Personality:</strong> {crewProfiles[hoveredProfile.name.toLowerCase()].personality}
                 </div>}
             </div>
           </div>
