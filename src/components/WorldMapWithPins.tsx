@@ -87,7 +87,7 @@ const WorldMapWithPins = () => {
           <img 
             src={worldMap} 
             alt="World Map" 
-            className="w-full h-auto opacity-80"
+            className="w-full h-auto"
           />
           
           {countries.map((country) => (
