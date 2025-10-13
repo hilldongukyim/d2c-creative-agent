@@ -4,10 +4,8 @@ import Logo from '@/components/Logo';
 import { useNavigate } from 'react-router-dom';
 import { Home } from 'lucide-react';
 import WorldMapWithPins from '@/components/WorldMapWithPins';
-
 const AllenQA = () => {
   const navigate = useNavigate();
-
   useEffect(() => {
     // Load ElevenLabs ConvAI widget script
     const script = document.createElement('script');
@@ -15,7 +13,6 @@ const AllenQA = () => {
     script.async = true;
     script.type = 'text/javascript';
     document.head.appendChild(script);
-
     return () => {
       // Cleanup script on unmount
       if (script.parentNode) {
@@ -23,20 +20,13 @@ const AllenQA = () => {
       }
     };
   }, []);
-
-  return (
-    <div className="min-h-screen bg-background">
+  return <div className="min-h-screen bg-background">
       {/* Logo - reusing existing component */}
       <Logo />
       
       {/* Home button */}
       <div className="fixed top-4 right-4 z-50">
-        <Button 
-          onClick={() => navigate('/home')}
-          variant="outline"
-          size="sm"
-          className="flex items-center gap-2"
-        >
+        <Button onClick={() => navigate('/home')} variant="outline" size="sm" className="flex items-center gap-2">
           <Home className="h-4 w-4" />
           Home
         </Button>
@@ -47,8 +37,8 @@ const AllenQA = () => {
         <div className="space-y-12">
           {/* Allen QA Assistant Section */}
           <div className="text-center space-y-6">
-            <h1 className="text-4xl font-bold text-foreground">Allen - Content QA Assistant</h1>
-            <p className="text-muted-foreground mb-8">음성으로 대화할 수 있는 콘텐츠 QA 어시스턴트입니다</p>
+            
+            
             <div className="flex justify-center">
               <elevenlabs-convai agent-id="agent_5701k4cze7cqff9vf8nz8hz7akaf"></elevenlabs-convai>
             </div>
@@ -56,9 +46,7 @@ const AllenQA = () => {
 
           {/* World Map Section */}
           <div className="mt-16">
-            <h2 className="text-3xl font-bold text-center text-foreground mb-8">
-              프로모션 배너 QA - 국가별 실행
-            </h2>
+            
             <p className="text-center text-muted-foreground mb-8">
               지도에서 국가를 선택하여 프로모션 배너 QA를 실행하세요
             </p>
@@ -66,8 +54,6 @@ const AllenQA = () => {
           </div>
         </div>
       </div>
-    </div>
-  );
+    </div>;
 };
-
 export default AllenQA;
