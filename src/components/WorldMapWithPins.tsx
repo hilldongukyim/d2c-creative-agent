@@ -13,33 +13,33 @@ interface Country {
 const countries: Country[] = [{
   name: 'Peru',
   nameKo: '페루',
-  x: 24,
+  x: 25,
   y: 58
 }, {
   name: 'Argentina',
   nameKo: '아르헨티나',
   x: 29,
-  y: 74
+  y: 75
 }, {
   name: 'Thailand',
   nameKo: '태국',
   x: 73,
-  y: 50
+  y: 48
 }, {
   name: 'Egypt',
   nameKo: '이집트',
   x: 54,
-  y: 42
+  y: 38
 }, {
   name: 'Panama',
   nameKo: '파나마',
-  x: 23,
-  y: 51
+  x: 24,
+  y: 49
 }, {
   name: 'Japan',
   nameKo: '일본',
-  x: 83,
-  y: 38
+  x: 84,
+  y: 36
 }];
 const WorldMapWithPins = () => {
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
@@ -91,13 +91,17 @@ const WorldMapWithPins = () => {
   return <>
       <div className="relative w-full h-full flex items-center justify-center">
         <div className="relative w-full max-w-6xl">
-          
+          <img 
+            src={worldMap} 
+            alt="World Map" 
+            className="w-full h-auto"
+          />
           
           {countries.map(country => <button key={country.name} onClick={() => handlePinClick(country)} className="absolute transform -translate-x-1/2 -translate-y-full hover:scale-125 transition-transform duration-200 focus:outline-none focus:ring-2 focus:ring-primary rounded-full" style={{
           left: `${country.x}%`,
           top: `${country.y}%`
         }} aria-label={`${country.nameKo} 선택`}>
-              <MapPin className="w-8 h-8 text-primary drop-shadow-lg" fill="currentColor" />
+              <MapPin className="w-8 h-8 text-red-500 drop-shadow-lg" fill="currentColor" />
             </button>)}
         </div>
       </div>
