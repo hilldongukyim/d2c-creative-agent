@@ -10,7 +10,7 @@ import {
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import worldMap from '@/assets/world-map.png';
+import worldMap from '@/assets/world-map-illustrated.png';
 
 interface Country {
   name: string;
