@@ -40,6 +40,36 @@ const countries: Country[] = [{
   nameKo: '일본',
   x: 84,
   y: 36
+}, {
+  name: 'United Kingdom',
+  nameKo: '영국',
+  x: 50,
+  y: 25
+}, {
+  name: 'Australia',
+  nameKo: '호주',
+  x: 82,
+  y: 72
+}, {
+  name: 'Canada',
+  nameKo: '캐나다',
+  x: 18,
+  y: 22
+}, {
+  name: 'Brazil',
+  nameKo: '브라질',
+  x: 30,
+  y: 65
+}, {
+  name: 'Germany',
+  nameKo: '독일',
+  x: 52,
+  y: 27
+}, {
+  name: 'Turkey',
+  nameKo: '터키',
+  x: 56,
+  y: 35
 }];
 const WorldMapWithPins = () => {
   const [selectedCountry, setSelectedCountry] = useState<Country | null>(null);
