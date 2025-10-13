@@ -48,7 +48,7 @@ const AllenQA = () => {
           <div className="mt-16">
             
             <p className="text-center text-muted-foreground mb-8">
-              지도에서 국가를 선택하여 프로모션 배너 QA를 실행하세요
+              Select a country on the map to run promotional banner QA
             </p>
             <WorldMapWithPins />
           </div>

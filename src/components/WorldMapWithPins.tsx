@@ -73,15 +73,15 @@ const WorldMapWithPins = () => {
         })
       });
       toast({
-        title: '프로모션 배너 QA 시작',
-        description: `${selectedCountry.nameKo} 프로모션 배너 QA가 시작되었습니다.`
+        title: 'Promotional Banner QA Started',
+        description: `Promotional banner QA for ${selectedCountry.name} has been initiated.`
       });
       setIsDialogOpen(false);
     } catch (error) {
       console.error('Error triggering workflow:', error);
       toast({
-        title: '오류 발생',
-        description: 'QA 워크플로우를 시작할 수 없습니다.',
+        title: 'Error Occurred',
+        description: 'Unable to start QA workflow.',
         variant: 'destructive'
       });
     } finally {
@@ -109,20 +109,20 @@ const WorldMapWithPins = () => {
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>프로모션 배너 QA 실행</DialogTitle>
+            <DialogTitle>Run Promotional Banner QA</DialogTitle>
             <DialogDescription>
               {selectedCountry && <>
-                  <span className="font-semibold text-foreground">{selectedCountry.nameKo}</span>
-                  의 프로모션 배너 QA를 진행하시겠습니까?
+                  Would you like to proceed with the promotional banner QA for{' '}
+                  <span className="font-semibold text-foreground">{selectedCountry.name}</span>?
                 </>}
             </DialogDescription>
           </DialogHeader>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDialogOpen(false)} disabled={isProcessing}>
-              취소
+              Cancel
             </Button>
             <Button onClick={handleConfirm} disabled={isProcessing}>
-              {isProcessing ? '실행 중...' : '실행'}
+              {isProcessing ? 'Running...' : 'Run'}
             </Button>
           </DialogFooter>
         </DialogContent>
