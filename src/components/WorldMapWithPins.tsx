@@ -86,7 +86,7 @@ const WorldMapWithPins = () => {
     if (!selectedCountry) return;
     setIsProcessing(true);
 
-    const webhookUrl = 'https://dev.eaip.lge.com/n8n/webhook/f58e7420-82ad-4a71-a986-98e64ec0b17e';
+    const webhookUrl = 'https://dev.eaip.lge.com/n8n/webhook/451634b2-ea5c-44a8-8cf5-2fe065a593b3';
     
     // Add country information as query parameters
     const params = new URLSearchParams({
