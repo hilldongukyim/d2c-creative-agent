@@ -56,21 +56,20 @@ const WorldMapWithPins = () => {
     if (!selectedCountry) return;
     setIsProcessing(true);
 
-    // TODO: n8n workflow webhook URL을 여기에 추가하세요
-    const webhookUrl = 'YOUR_N8N_WEBHOOK_URL_HERE';
+    const webhookUrl = 'https://dev.eaip.lge.com/n8n/webhook/663003b7-6e63-439a-967b-f1504573a90a';
+    
+    // Add country information as query parameters
+    const params = new URLSearchParams({
+      country: selectedCountry.name,
+      countryKo: selectedCountry.nameKo,
+      timestamp: new Date().toISOString()
+    });
+    
     try {
-      // n8n workflow 트리거
-      await fetch(webhookUrl, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        mode: 'no-cors',
-        body: JSON.stringify({
-          country: selectedCountry.name,
-          countryKo: selectedCountry.nameKo,
-          timestamp: new Date().toISOString()
-        })
+      // n8n workflow trigger using GET method
+      await fetch(`${webhookUrl}?${params.toString()}`, {
+        method: 'GET',
+        mode: 'no-cors'
       });
       toast({
         title: 'Promotional Banner QA Started',
