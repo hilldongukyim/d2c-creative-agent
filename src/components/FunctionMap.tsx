@@ -401,16 +401,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                 {team.items.slice(0, 1).map(item => <div key={`${team.title}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1" onMouseEnter={e => handleMouseEnter(e, item.name, item.role)} onMouseLeave={handleMouseLeave} onClick={e => {
                          e.stopPropagation();
                          console.log('Clicked profile:', item.name);
-                         // Handle Ollie special case
-                         if (item.name === "Ollie") {
-                           window.location.href = "https://welcome-ollie-start.lovable.app/";
-                           return;
-                         }
-                         // Handle Ravi special case
-                         if (item.name === "Ravi") {
-                           window.location.href = "https://request-page-craft.lovable.app/";
-                           return;
-                         }
                          onProfileClick?.(item.name);
                        }} role="button" tabIndex={0}>
                                   <div className={`relative h-12 w-12 md:h-14 md:w-14 rounded-full overflow-hidden ${item.name === "Candy" || item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
@@ -433,16 +423,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                 {team.items.slice(1).map(item => <div key={`${team.title}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1" onMouseEnter={e => handleMouseEnter(e, item.name, item.role)} onMouseLeave={handleMouseLeave} onClick={e => {
                          e.stopPropagation();
                          console.log('Clicked profile:', item.name);
-                         // Handle Ollie special case
-                         if (item.name === "Ollie") {
-                           window.location.href = "https://welcome-ollie-start.lovable.app/";
-                           return;
-                         }
-                         // Handle Ravi special case
-                         if (item.name === "Ravi") {
-                           window.location.href = "https://request-page-craft.lovable.app/";
-                           return;
-                         }
                          onProfileClick?.(item.name);
                        }} role="button" tabIndex={0}>
                                   <div className={`relative h-12 w-12 md:h-14 md:w-14 rounded-full overflow-hidden ${item.name === "Candy" || item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
@@ -462,27 +442,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                           </div> : <div className="flex flex-wrap justify-center gap-3">
                              {team.items.map(item => <div key={`${team.title}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1" onMouseEnter={e => handleMouseEnter(e, item.name, item.role)} onMouseLeave={handleMouseLeave} onClick={e => {
                        e.stopPropagation();
-                       // Skip popup for profiles that have direct URL redirections
-                       if (item.name === "Theo" || item.name === "Clara" || item.name === "Pip" || item.name === "Ollie" || item.name === "Ravi") {
-                         return;
-                       }
                        onProfileClick?.(item.name);
                      }} role="button" tabIndex={0}>
-                                <div className={`relative h-12 w-12 md:h-14 md:w-14 rounded-full overflow-hidden cursor-pointer ${item.name === "Candy" || item.name === "Boris" ? "border-2 border-red-500" : ""}`} onClick={(e) => {
-                                  e.stopPropagation();
-                                  if (item.name === "Theo") {
-                                    window.open("https://welcome-thanks-lim.lovable.app", "_blank");
-                                  } else if (item.name === "Clara") {
-                                    window.open("https://blank-canvas-coupone.lovable.app/", "_blank");
-                                  } else if (item.name === "Pip") {
-                                    window.location.href = "/pip-qa";
-                                   } else if (item.name === "Ravi") {
-                                     window.location.href = "https://request-page-craft.lovable.app/";
-                                  } else {
-                                    // For other profiles (Ben, Yumi, etc.), trigger the parent click handler
-                                    onProfileClick?.(item.name);
-                                  }
-                                }}>
+                                <div className={`relative h-12 w-12 md:h-14 md:w-14 rounded-full overflow-hidden ${item.name === "Candy" || item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
                                   {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{
                           backgroundColor: '#6B6B6B'
                         }}>
