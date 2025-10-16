@@ -80,7 +80,6 @@ const Home = () => {
     if (lower === "orin") return navigate("/crawling");
     if (lower === "allen") return navigate("/allen-qa");
     if (lower === "maya") return window.location.href = "https://maya-global-dam-account-creator.lovable.app/";
-    if (lower === "boris") return window.location.href = "https://request-page-craft.lovable.app/";
     setSelectedName(name);
     setComingSoonOpen(true);
   };
