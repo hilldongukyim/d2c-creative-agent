@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import Logo from '@/components/Logo';
 import { useNavigate } from 'react-router-dom';
 import { Home } from 'lucide-react';
-import WorldMapWithPins from '@/components/WorldMapWithPins';
+import InteractiveWorldMap from '@/components/InteractiveWorldMap';
 const AllenQA = () => {
   const navigate = useNavigate();
   useEffect(() => {
@@ -45,12 +45,14 @@ const AllenQA = () => {
           </div>
 
           {/* World Map Section */}
-          <div className="mt-16">
-            
-            <p className="text-center text-muted-foreground mb-8">
-              Select a country on the map to run promotional banner QA
+          <div className="mt-16 w-full">
+            <h2 className="text-2xl font-bold text-center mb-2" style={{ color: '#3C3C3C' }}>
+              Select a country to run promotional banner QA
+            </h2>
+            <p className="text-center text-gray-600 mb-8">
+              Type a country name to add pins and start QA workflows
             </p>
-            <WorldMapWithPins />
+            <InteractiveWorldMap />
           </div>
         </div>
       </div>
