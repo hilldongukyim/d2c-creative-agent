@@ -87,6 +87,10 @@ const Home = () => {
       window.open("https://request-page-craft.lovable.app/", "_blank");
       return;
     }
+    if (lower === "ollie") {
+      window.open("https://welcome-ollie-start.lovable.app/", "_blank");
+      return;
+    }
     setSelectedName(name);
     setComingSoonOpen(true);
   };
