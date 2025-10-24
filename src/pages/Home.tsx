@@ -91,6 +91,10 @@ const Home = () => {
       window.open("https://welcome-ollie-start.lovable.app/", "_blank");
       return;
     }
+    if (lower === "candy") {
+      window.open("https://candy-global-dam-product-owner.lovable.app/", "_blank");
+      return;
+    }
     setSelectedName(name);
     setComingSoonOpen(true);
   };
