@@ -95,6 +95,10 @@ const Home = () => {
       window.open("https://candy-global-dam-product-owner.lovable.app/", "_blank");
       return;
     }
+    if (lower === "clara") {
+      window.open("https://blank-canvas-coupone.lovable.app/", "_blank");
+      return;
+    }
     setSelectedName(name);
     setComingSoonOpen(true);
   };
