@@ -79,6 +79,10 @@ const Home = () => {
     if (lower === "ben") return navigate("/pto-gallery");
     if (lower === "orin") return navigate("/crawling");
     if (lower === "allen") return navigate("/allen-qa");
+    if (lower === "theo") {
+      window.open("https://welcome-thanks-lim.lovable.app/", "_blank");
+      return;
+    }
     setSelectedName(name);
     setComingSoonOpen(true);
   };
