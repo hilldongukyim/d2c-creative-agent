@@ -56,10 +56,13 @@ const OrgChartPage = () => {
       </Button>
       
       <div className="max-w-7xl mx-auto relative z-10">
-        
-
-        {/* Full Org Chart */}
-        
+        <div className="flex justify-center items-center">
+          <img 
+            src="/lovable-uploads/crew-introduction.png" 
+            alt="Introducing Crew - AI Twin Crew members including Ben, Candy, Maya, Ollie, Ravi, Clara, Orin, and Yumi"
+            className="w-full max-w-6xl rounded-lg shadow-2xl"
+          />
+        </div>
       </div>
     </div>;
 };
