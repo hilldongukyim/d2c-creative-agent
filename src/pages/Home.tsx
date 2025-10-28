@@ -108,7 +108,7 @@ const Home = () => {
       {/* Navigation buttons */}
       <div className="absolute top-6 right-6 z-20 flex gap-2">
         <Button onClick={() => navigate('/org-chart')} variant="outline" size="sm" className="text-muted-foreground border-muted-foreground/30 hover:bg-muted/20 hover:text-foreground transition-colors">
-          View Full Chart
+          Crew List
         </Button>
         <Button onClick={() => navigate('/')} variant="ghost" size="sm" className="hover:bg-muted/50 transition-colors">
           <ArrowLeft className="w-4 h-4 mr-2" />
