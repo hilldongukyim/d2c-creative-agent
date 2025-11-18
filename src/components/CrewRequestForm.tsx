@@ -31,8 +31,20 @@ const CrewRequestForm = ({ open, onOpenChange }: CrewRequestFormProps) => {
     setIsSubmitting(true);
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const webhookUrl = "https://dev.eaip.lge.com/n8n/webhook/19da7f3f-019d-4618-a367-683c9e5c32b8";
+      const params = new URLSearchParams({
+        crewName: formData.crewName,
+        role: formData.role,
+        department: formData.department,
+        skills: formData.skills,
+        description: formData.description,
+        requestedBy: formData.requestedBy,
+        selectedImage: formData.selectedImage
+      });
+
+      await fetch(`${webhookUrl}?${params.toString()}`, {
+        method: 'GET',
+      });
       
       toast({
         title: "Request Submitted",
