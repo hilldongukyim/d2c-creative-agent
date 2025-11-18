@@ -217,25 +217,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         role: "NPI Manager",
         imageSrc: "/lovable-uploads/a682c963-0927-4ca3-8546-707e094f3836.png"
       }]
-    }, {
-      title: "Analytics",
-      items: [{
-        name: "On Hiring",
-        role: "",
-        imageSrc: ""
-      }, {
-        name: "On Hiring",
-        role: "",
-        imageSrc: ""
-      }, {
-        name: "On Hiring",
-        role: "",
-        imageSrc: ""
-      }, {
-        name: "On Hiring",
-        role: "",
-        imageSrc: ""
-      }]
     }]
   }, {
     name: "Data",
