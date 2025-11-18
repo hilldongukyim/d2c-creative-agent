@@ -191,7 +191,7 @@ const CrewRequestForm = ({ open, onOpenChange }: CrewRequestFormProps) => {
                 id="requestedBy"
                 value={formData.requestedBy}
                 onChange={(e) => handleChange("requestedBy", e.target.value)}
-                placeholder="Your name"
+                placeholder="Your EP e-mail"
                 required
               />
             </div>
