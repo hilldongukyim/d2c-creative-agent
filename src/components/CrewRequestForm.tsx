@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 
 type CrewRequestFormProps = {
@@ -21,7 +22,8 @@ const CrewRequestForm = ({ open, onOpenChange }: CrewRequestFormProps) => {
     department: "",
     skills: "",
     description: "",
-    requestedBy: ""
+    requestedBy: "",
+    selectedImage: ""
   });
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -44,7 +46,8 @@ const CrewRequestForm = ({ open, onOpenChange }: CrewRequestFormProps) => {
         department: "",
         skills: "",
         description: "",
-        requestedBy: ""
+        requestedBy: "",
+        selectedImage: ""
       });
     } catch (error) {
       toast({
@@ -73,6 +76,28 @@ const CrewRequestForm = ({ open, onOpenChange }: CrewRequestFormProps) => {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-4">
+            <div>
+              <Label>Select Crew Image</Label>
+              <ScrollArea className="h-32 w-full rounded-md border p-2">
+                <div className="grid grid-cols-6 gap-2">
+                  {Array.from({ length: 30 }, (_, i) => (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => handleChange("selectedImage", `image-${i + 1}`)}
+                      className={`aspect-square rounded-md border-2 transition-all hover:border-primary ${
+                        formData.selectedImage === `image-${i + 1}` 
+                          ? "border-primary bg-primary/10" 
+                          : "border-border bg-muted"
+                      }`}
+                    >
+                      <span className="text-xs text-muted-foreground">{i + 1}</span>
+                    </button>
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+
             <div>
               <Label htmlFor="crewName">Crew Name *</Label>
               <Input
