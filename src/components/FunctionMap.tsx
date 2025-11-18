@@ -150,10 +150,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         name: "Maya",
         role: "Account Create",
         imageSrc: "/lovable-uploads/d67ab42c-85c8-480e-b65e-66a15abe8586.png"
-      }, {
-        name: "On Hiring",
-        role: "Account Delete",
-        imageSrc: ""
       }]
     }, {
       title: "Content",
@@ -187,10 +183,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         name: "Clara",
         role: "On-site Specialist",
         imageSrc: "/lovable-uploads/a4614e4b-7d0d-429f-8b4c-ddc8b85ee3ad.png"
-      }, {
-        name: "On Hiring",
-        role: "",
-        imageSrc: ""
       }]
     }]
   }, {
@@ -227,42 +219,15 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         role: "Data Crawler",
         imageSrc: "/lovable-uploads/1e050018-12f0-4df5-a7ae-c92735447a6d.png"
       }]
-    }, {
-      title: "Insight",
-      items: [{
-        name: "On Hiring",
-        role: "",
-        imageSrc: ""
-      }, {
-        name: "On Hiring",
-        role: "",
-        imageSrc: ""
-      }]
     }]
   }, {
     name: "Business",
     teams: [{
       title: "Sales",
-      items: [{
-        name: "On Hiring",
-        role: "",
-        imageSrc: ""
-      }, {
-        name: "On Hiring",
-        role: "",
-        imageSrc: ""
-      }]
+      items: []
     }, {
       title: "Strategy",
-      items: [{
-        name: "On Hiring",
-        role: "",
-        imageSrc: ""
-      }, {
-        name: "On Hiring",
-        role: "",
-        imageSrc: ""
-      }]
+      items: []
     }]
   }];
   const internTeam = {
@@ -272,17 +237,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       role: "Background Remover",
       imageSrc: "/lovable-uploads/84e535ab-1fa5-418e-93aa-73fa3b361219.png"
     }, {
-      name: "On Hiring",
-      role: "",
-      imageSrc: ""
-    }, {
       name: "Mell",
       role: "Mailing",
       imageSrc: "/lovable-uploads/5a6db127-b9e3-4f85-afbb-11b477555583.png"
-    }, {
-      name: "On Hiring",
-      role: "",
-      imageSrc: ""
     }]
   };
   const containerRef = useRef<HTMLElement | null>(null);
