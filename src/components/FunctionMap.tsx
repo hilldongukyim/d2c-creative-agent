@@ -306,10 +306,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
   };
   const containerRef = useRef<HTMLElement | null>(null);
   useEffect(() => {
-    // Clear previous dim states
+    // Clear previous dim states and highlights
     const allProfiles = containerRef.current?.querySelectorAll('[data-profile-name]');
     allProfiles?.forEach(el => {
-      el.classList.remove('search-dimmed', 'search-highlighted');
+      el.classList.remove('search-dimmed', 'search-highlighted', 'search-highlight', 'ring-2', 'ring-primary', 'bg-primary/10', 'pulse', 'bg-muted/40');
     });
 
     if (!highlightName) return;
