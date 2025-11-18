@@ -3,12 +3,14 @@ import { useEffect, useState } from "react";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { ArrowLeft, Search, UserPlus } from "lucide-react";
 import Logo from "@/components/Logo";
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import OrgChart from "../components/OrgChart";
 import FunctionMap from "../components/FunctionMap";
 import ContactOrder from "../components/ContactOrder";
+import CrewRequestForm from "../components/CrewRequestForm";
 const aliceProfile = "/lovable-uploads/d004c9d6-0491-459c-8639-7730374641aa.png";
 const benProfile = "/lovable-uploads/df1c4dd4-a06d-4d9c-981e-4463ad0b08dc.png";
 const leaderProfile = "/lovable-uploads/b9d1ddf6-1b17-41b4-9233-91642568cd3c.png";
@@ -17,6 +19,8 @@ const Home = () => {
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
   const [selectedName, setSelectedName] = useState<string | null>(null);
   const [highlightName, setHighlightName] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [crewFormOpen, setCrewFormOpen] = useState(false);
   useEffect(() => {
     const title = "Meet our AI Agents — 내부 업무를 돕는 지능형 팀";
     const desc = "Intelligent AI agents that accelerate internal work through clear structure and collaboration, delivering faster, more accurate results.";
@@ -122,9 +126,25 @@ const Home = () => {
           </p>
         </header>
 
-        {/* Org Chart Preview Section */}
-        <div className="mb-12">
-          
+        {/* Search and Action Bar */}
+        <div className="mb-8 flex gap-4 items-center justify-center">
+          <div className="relative flex-1 max-w-md">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+            <Input
+              type="text"
+              placeholder="Search crew members..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-10"
+            />
+          </div>
+          <Button 
+            onClick={() => setCrewFormOpen(true)}
+            className="gap-2"
+          >
+            <UserPlus className="w-4 h-4" />
+            Register Crew
+          </Button>
         </div>
 
         <section className="mt-12">
@@ -142,7 +162,7 @@ const Home = () => {
           <FunctionMap profiles={{
           yumi: aliceProfile,
           ben: benProfile
-        }} onProfileClick={handleProfileClick} highlightName={highlightName ?? undefined} />
+        }} onProfileClick={handleProfileClick} highlightName={searchTerm || highlightName || undefined} />
         </section>
       </div>
 
@@ -160,6 +180,9 @@ const Home = () => {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* Crew Registration Form */}
+      <CrewRequestForm open={crewFormOpen} onOpenChange={setCrewFormOpen} />
     </div>;
 };
 export default Home;
