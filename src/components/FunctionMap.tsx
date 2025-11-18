@@ -306,10 +306,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
   };
   const containerRef = useRef<HTMLElement | null>(null);
   useEffect(() => {
-    // Clear previous highlights
-    const prevHighlighted = containerRef.current?.querySelectorAll('.search-highlight');
-    prevHighlighted?.forEach(el => {
-      el.classList.remove('search-highlight', 'pulse', 'bg-muted/40', 'ring-2', 'ring-primary');
+    // Clear previous dim states
+    const allProfiles = containerRef.current?.querySelectorAll('[data-profile-name]');
+    allProfiles?.forEach(el => {
+      el.classList.remove('search-dimmed', 'search-highlighted');
     });
 
     if (!highlightName) return;
@@ -317,30 +317,33 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     const searchTerm = highlightName.toLowerCase().trim();
     if (!searchTerm) return;
 
-    // Find all matching profiles by name or role
-    const allProfiles = containerRef.current?.querySelectorAll('[data-profile-name]');
-    const matches: HTMLElement[] = [];
+    // Find all profiles and determine matches
+    const profileElements = containerRef.current?.querySelectorAll('[data-profile-name]');
+    let hasMatches = false;
     
-    allProfiles?.forEach(el => {
+    profileElements?.forEach(el => {
       const profileName = el.getAttribute('data-profile-name') || '';
       const roleText = el.querySelector('.text-xs.text-muted-foreground')?.textContent?.toLowerCase() || '';
       
       if (profileName.includes(searchTerm) || roleText.includes(searchTerm)) {
-        matches.push(el as HTMLElement);
+        // Mark as highlighted (no visual change, just for tracking)
+        el.classList.add('search-highlighted');
+        hasMatches = true;
+      } else {
+        // Dim non-matching profiles
+        el.classList.add('search-dimmed');
       }
     });
 
-    if (matches.length > 0) {
-      // Highlight all matches
-      matches.forEach(el => {
-        el.classList.add('search-highlight', 'ring-2', 'ring-primary', 'bg-primary/10');
-      });
-      
-      // Scroll to first match
-      matches[0].scrollIntoView({
-        behavior: 'smooth',
-        block: 'center'
-      });
+    // Scroll to first match
+    if (hasMatches) {
+      const firstMatch = containerRef.current?.querySelector('.search-highlighted');
+      if (firstMatch) {
+        firstMatch.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+      }
     }
   }, [highlightName]);
   return <section ref={containerRef} aria-label="Agent functions map" className="space-y-6">
