@@ -306,18 +306,41 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
   };
   const containerRef = useRef<HTMLElement | null>(null);
   useEffect(() => {
+    // Clear previous highlights
+    const prevHighlighted = containerRef.current?.querySelectorAll('.search-highlight');
+    prevHighlighted?.forEach(el => {
+      el.classList.remove('search-highlight', 'pulse', 'bg-muted/40', 'ring-2', 'ring-primary');
+    });
+
     if (!highlightName) return;
-    const selector = `[data-profile-name="${highlightName.toLowerCase()}"]`;
-    const el = containerRef.current?.querySelector(selector);
-    if (el instanceof HTMLElement) {
-      el.scrollIntoView({
+    
+    const searchTerm = highlightName.toLowerCase().trim();
+    if (!searchTerm) return;
+
+    // Find all matching profiles by name or role
+    const allProfiles = containerRef.current?.querySelectorAll('[data-profile-name]');
+    const matches: HTMLElement[] = [];
+    
+    allProfiles?.forEach(el => {
+      const profileName = el.getAttribute('data-profile-name') || '';
+      const roleText = el.querySelector('.text-xs.text-muted-foreground')?.textContent?.toLowerCase() || '';
+      
+      if (profileName.includes(searchTerm) || roleText.includes(searchTerm)) {
+        matches.push(el as HTMLElement);
+      }
+    });
+
+    if (matches.length > 0) {
+      // Highlight all matches
+      matches.forEach(el => {
+        el.classList.add('search-highlight', 'ring-2', 'ring-primary', 'bg-primary/10');
+      });
+      
+      // Scroll to first match
+      matches[0].scrollIntoView({
         behavior: 'smooth',
         block: 'center'
       });
-      el.classList.add('pulse', 'bg-muted/40');
-      window.setTimeout(() => {
-        el.classList.remove('pulse', 'bg-muted/40');
-      }, 1500);
     }
   }, [highlightName]);
   return <section ref={containerRef} aria-label="Agent functions map" className="space-y-6">
