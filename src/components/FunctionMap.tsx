@@ -211,7 +211,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       }]
     }]
   }, {
-    name: "Business",
+    name: "Data",
     teams: [{
       title: "Crawling",
       items: [{
@@ -219,6 +219,15 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         role: "Data Crawler",
         imageSrc: "/lovable-uploads/1e050018-12f0-4df5-a7ae-c92735447a6d.png"
       }]
+    }]
+  }, {
+    name: "Business",
+    teams: [{
+      title: "Sales",
+      items: []
+    }, {
+      title: "Strategy",
+      items: []
     }]
   }];
   const internTeam = {
