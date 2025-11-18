@@ -140,6 +140,7 @@ const Home = () => {
           </div>
           <Button 
             onClick={() => setCrewFormOpen(true)}
+            variant="outline"
             className="gap-2"
           >
             <UserPlus className="w-4 h-4" />
