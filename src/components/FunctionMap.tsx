@@ -325,7 +325,18 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       const profileName = el.getAttribute('data-profile-name') || '';
       const roleText = el.querySelector('.text-xs.text-muted-foreground')?.textContent?.toLowerCase() || '';
       
-      if (profileName.includes(searchTerm) || roleText.includes(searchTerm)) {
+      // Get crew profile data for bio and description
+      const crewData = crewProfiles[profileName];
+      const description = crewData?.description?.toLowerCase() || '';
+      const personality = crewData?.personality?.toLowerCase() || '';
+      
+      // Search across name, role, description, and personality
+      const isMatch = profileName.includes(searchTerm) || 
+                     roleText.includes(searchTerm) ||
+                     description.includes(searchTerm) ||
+                     personality.includes(searchTerm);
+      
+      if (isMatch) {
         // Mark as highlighted (no visual change, just for tracking)
         el.classList.add('search-highlighted');
         hasMatches = true;
