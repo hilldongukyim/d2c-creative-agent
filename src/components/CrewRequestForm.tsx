@@ -183,6 +183,12 @@ const CrewRequestForm = ({ open, onOpenChange }: CrewRequestFormProps) => {
                           alt="Tango profile" 
                           className="w-full h-full object-cover"
                         />
+                      ) : i === 11 ? (
+                        <img 
+                          src="/lovable-uploads/vee-profile.png" 
+                          alt="Vee profile" 
+                          className="w-full h-full object-cover"
+                        />
                       ) : (
                         <span className="text-xs text-muted-foreground">{i + 1}</span>
                       )}
