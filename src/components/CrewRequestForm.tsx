@@ -111,13 +111,21 @@ const CrewRequestForm = ({ open, onOpenChange }: CrewRequestFormProps) => {
                       key={i}
                       type="button"
                       onClick={() => handleChange("selectedImage", `image-${i + 1}`)}
-                      className={`aspect-square rounded-md border-2 transition-all hover:border-primary ${
+                      className={`aspect-square rounded-md border-2 transition-all hover:border-primary overflow-hidden ${
                         formData.selectedImage === `image-${i + 1}` 
                           ? "border-primary bg-primary/10" 
                           : "border-border bg-muted"
                       }`}
                     >
-                      <span className="text-xs text-muted-foreground">{i + 1}</span>
+                      {i === 0 ? (
+                        <img 
+                          src="/lovable-uploads/fiona-profile.png" 
+                          alt="Fiona profile" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-xs text-muted-foreground">{i + 1}</span>
+                      )}
                     </button>
                   ))}
                 </div>
