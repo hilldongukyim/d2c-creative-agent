@@ -147,6 +147,12 @@ const CrewRequestForm = ({ open, onOpenChange }: CrewRequestFormProps) => {
                           alt="Dan profile" 
                           className="w-full h-full object-cover"
                         />
+                      ) : i === 5 ? (
+                        <img 
+                          src="/lovable-uploads/juno-profile.png" 
+                          alt="Juno profile" 
+                          className="w-full h-full object-cover"
+                        />
                       ) : (
                         <span className="text-xs text-muted-foreground">{i + 1}</span>
                       )}
