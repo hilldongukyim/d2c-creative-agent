@@ -4,13 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Upload, Send, RefreshCw, Loader2, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface KaiBackgroundRemovalPopupProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
-
-const WEBHOOK_URL = "https://dev.eaip.lge.com/n8n/webhook/9634011e-6e81-418b-b1e1-55f6653a159d";
 
 const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
   open,
@@ -50,39 +49,33 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
 
       // Debug logging
       console.log("=== Kai Background Removal Request ===");
-      console.log("URL:", WEBHOOK_URL);
-      console.log("Method: POST");
       console.log("Email:", fullEmail);
       console.log("File Name:", selectedFile.name);
       console.log("File Type:", selectedFile.type);
       console.log("Image Base64 Length:", base64Image.length);
-      console.log("Sending POST request to n8n...");
+      console.log("Sending request via Edge Function proxy...");
 
-      const response = await fetch(WEBHOOK_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
+      const { data, error } = await supabase.functions.invoke('kai-proxy', {
+        body: {
           email: fullEmail,
           image: base64Image,
           fileName: selectedFile.name,
           fileType: selectedFile.type,
-        }),
+        },
       });
 
-      console.log("Response status:", response.status);
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
+      if (error) {
+        throw error;
       }
+
+      console.log("Response:", data);
       
       setIsSuccess(true);
       toast.success("Request sent successfully! Check your email soon.");
     } catch (error) {
       console.error("=== Request Error ===");
       console.error("Error details:", error);
-      toast.error("Failed to send request. Please check if n8n CORS is configured.");
+      toast.error("Failed to send request. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
