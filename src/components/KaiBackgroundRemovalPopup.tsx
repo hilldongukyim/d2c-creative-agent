@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Upload, Send, RefreshCw, Loader2, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 const WEBHOOK_URL = "https://dev.eaip.lge.com/n8n/webhook/9634011e-6e81-418b-b1e1-55f6653a159d";
 
@@ -31,30 +32,37 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
     }
   }, [selectedFile]);
 
-  const fileToBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (error) => reject(error);
-    });
-  };
-
   const handleSubmit = async () => {
     if (!selectedFile || !email.trim()) return;
 
     setIsSubmitting(true);
     try {
-      const base64Image = await fileToBase64(selectedFile);
       const fullEmail = `${email.trim()}@lge.com`;
+      const fileName = `${Date.now()}-${selectedFile.name}`;
 
       // Debug logging
       console.log("=== Kai Background Removal Request ===");
-      console.log("Method: Hidden Form Submit");
       console.log("Email:", fullEmail);
-      console.log("File Name:", selectedFile.name);
+      console.log("File Name:", fileName);
       console.log("File Type:", selectedFile.type);
-      console.log("Image Base64 Length:", base64Image.length);
+
+      // Upload image to Supabase storage
+      console.log("Uploading image to storage...");
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from('kai-images')
+        .upload(fileName, selectedFile);
+
+      if (uploadError) {
+        throw new Error(`Upload failed: ${uploadError.message}`);
+      }
+
+      // Get public URL
+      const { data: urlData } = supabase.storage
+        .from('kai-images')
+        .getPublicUrl(fileName);
+
+      const imageUrl = urlData.publicUrl;
+      console.log("Image uploaded, URL:", imageUrl);
 
       // Create hidden iframe for form submission (bypasses CORS)
       const iframeName = 'kai-submit-frame-' + Date.now();
@@ -63,19 +71,18 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
       iframe.style.display = 'none';
       document.body.appendChild(iframe);
 
-      // Create form
+      // Create form with only URL (much smaller payload)
       const form = document.createElement('form');
       form.method = 'POST';
       form.action = WEBHOOK_URL;
       form.target = iframeName;
       form.style.display = 'none';
 
-      // Add form fields
+      // Add form fields - only email and imageUrl
       const fields = {
         email: fullEmail,
-        image: base64Image,
+        imageUrl: imageUrl,
         fileName: selectedFile.name,
-        fileType: selectedFile.type,
       };
 
       Object.entries(fields).forEach(([key, value]) => {
@@ -95,7 +102,7 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
         document.body.removeChild(iframe);
       }, 5000);
 
-      console.log("Form submitted to hidden iframe");
+      console.log("Form submitted with imageUrl:", imageUrl);
       
       setIsSuccess(true);
       toast.success("Request sent successfully! Check your email soon.");
