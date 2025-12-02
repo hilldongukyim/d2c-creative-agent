@@ -173,13 +173,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         name: "Theo",
         role: "NPI Manager",
         imageSrc: "/lovable-uploads/a682c963-0927-4ca3-8546-707e094f3836.png"
-      }]
-    }]
-  }, {
-    name: "Data",
-    teams: [{
-      title: "Crawling",
-      items: [{
+      }, {
         name: "Orin",
         role: "Data Crawler",
         imageSrc: "/lovable-uploads/1e050018-12f0-4df5-a7ae-c92735447a6d.png"
