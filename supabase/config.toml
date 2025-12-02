@@ -1,0 +1,4 @@
+project_id = "evyjuxnninzuywytbbzt"
+
+[functions.kai-background-removal]
+verify_jwt = false

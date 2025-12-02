@@ -4,13 +4,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Upload, Send, RefreshCw, Loader2, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 interface KaiBackgroundRemovalPopupProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
-
-const WEBHOOK_URL = "https://dev.eaip.lge.com/n8n/webhook/9634011e-6e81-418b-b1e1-55f6653a159d";
 
 const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
   open,
@@ -48,38 +47,34 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
       const base64Image = await fileToBase64(selectedFile);
       const fullEmail = `${email.trim()}@lge.com`;
 
-      const payload = {
-        email: fullEmail,
-        image: base64Image,
-        fileName: selectedFile.name,
-        fileType: selectedFile.type,
-      };
-
       // Debug logging
-      console.log("=== Webhook Request Debug ===");
-      console.log("URL:", WEBHOOK_URL);
+      console.log("=== Kai Background Removal Request ===");
       console.log("Email:", fullEmail);
       console.log("File Name:", selectedFile.name);
       console.log("File Type:", selectedFile.type);
       console.log("Image Base64 Length:", base64Image.length);
-      console.log("Payload Size (bytes):", JSON.stringify(payload).length);
-      console.log("Sending request...");
+      console.log("Sending via Edge Function proxy...");
 
-      await fetch(WEBHOOK_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "text/plain",
+      const { data, error } = await supabase.functions.invoke('kai-background-removal', {
+        body: {
+          email: fullEmail,
+          image: base64Image,
+          fileName: selectedFile.name,
+          fileType: selectedFile.type,
         },
-        body: JSON.stringify(payload),
       });
 
-      console.log("Request sent (no-cors mode - cannot read response)");
+      if (error) {
+        console.error("Edge Function Error:", error);
+        throw error;
+      }
+
+      console.log("Response:", data);
       
       setIsSuccess(true);
       toast.success("Request sent successfully! Check your email soon.");
     } catch (error) {
-      console.error("=== Webhook Error ===");
+      console.error("=== Request Error ===");
       console.error("Error details:", error);
       toast.error("Failed to send request. Please try again.");
     } finally {
