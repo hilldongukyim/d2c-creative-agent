@@ -278,9 +278,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
             </div>
 
             {/* Division Headers */}
-            <div className="grid grid-cols-4 gap-6 mb-8 relative">
-              {/* Horizontal line connecting all divisions */}
-              <div className="absolute left-16 right-16 -top-4 h-0.5 bg-border"></div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 relative">
+              {/* Horizontal line connecting all divisions - hidden on mobile */}
+              <div className="hidden lg:block absolute left-16 right-16 -top-4 h-0.5 bg-border"></div>
               
               {/* Vertical lines separating divisions */}
               
@@ -387,8 +387,8 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         </div>
       </div>
 
-      {/* Hover Popup - Text Only */}
-      {hoveredProfile && <div className="fixed z-50 bg-card border border-border/20 rounded-xl p-6 shadow-xl max-w-sm animate-fade-in pointer-events-none" style={{
+      {/* Hover Popup - Text Only - Hidden on mobile */}
+      {hoveredProfile && <div className="hidden sm:block fixed z-50 bg-card border border-border/20 rounded-xl p-6 shadow-xl max-w-sm animate-fade-in pointer-events-none" style={{
       left: hoverPosition.x,
       top: hoverPosition.y,
       transform: hoverPosition.x < window.innerWidth / 2 ? 'translateY(-50%)' : 'translateX(-100%) translateY(-50%)'
