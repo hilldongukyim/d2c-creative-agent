@@ -120,8 +120,9 @@ const Home = () => {
       {/* Expanding circle animation */}
       <div className="max-w-6xl mx-auto relative z-10">
         <header className="text-center mb-12 pt-8">
-          <h1 className="text-5xl font-bold text-foreground mb-4">Meet AI Twin Crew</h1>
-          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+          <h1 className="font-bold text-foreground mb-4 text-2xl">Meet
+AI Twin Crew</h1>
+          <p className="text-muted-foreground max-w-2xl mx-auto text-xs">
             An intelligent agent team that helps and accelerates the work of internal employees. Through clear structure and collaboration, we deliver faster, more accurate results.
           </p>
         </header>
@@ -130,19 +131,9 @@ const Home = () => {
         <div className="mb-8 flex gap-4 items-center justify-center">
           <div className="relative flex-1 max-w-md">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-            <Input
-              type="text"
-              placeholder="Search crew members..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
+            <Input type="text" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10" placeholder="Search crew..." />
           </div>
-          <Button 
-            onClick={() => setCrewFormOpen(true)}
-            variant="outline"
-            className="gap-2"
-          >
+          <Button onClick={() => setCrewFormOpen(true)} variant="outline" className="gap-2">
             <UserPlus className="w-4 h-4" />
             Register Crew
           </Button>
