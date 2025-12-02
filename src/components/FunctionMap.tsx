@@ -50,15 +50,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       description: "Vee serves as the central command center for all AI agents, coordinating complex workflows and optimizing collaboration between teams.",
       personality: "Systematic and analytical, prefers solving problems from a holistic perspective."
     },
-    "candy": {
-      description: "Candy leads the DAM team, coordinating team members' tasks and setting overall project direction. With excellent communication skills and leadership, maximizes team efficiency.",
-      personality: "Charismatic and decisive, excels at encouraging and motivating team members.",
-      videoUrl: "/candy-video.mp4"
-    },
-    "maya": {
-      description: "Maya is an account creation specialist responsible for onboarding new DAM users.",
-      personality: "Meticulous and considerate, excels at accurately understanding user needs."
-    },
     "fiona": {
       description: "Fiona is dedicated to account deletion and cleanup tasks, ensuring safe account management through compliance with data security and privacy regulations.",
       personality: "Cautious and perfectionist, with strong responsibility for security and compliance."
@@ -141,17 +132,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
   const divisions = [{
     name: "Marketing",
     teams: [{
-      title: "DAM",
-      items: [{
-        name: "Candy",
-        role: "Team Leader & Coordinator",
-        imageSrc: "/lovable-uploads/12ea1acb-6641-4e73-85ef-14b102b12d30.png"
-      }, {
-        name: "Maya",
-        role: "Account Create",
-        imageSrc: "/lovable-uploads/d67ab42c-85c8-480e-b65e-66a15abe8586.png"
-      }]
-    }, {
       title: "Content",
       items: [{
         name: "Yumi",
