@@ -44,7 +44,7 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
           {/* Content - Positioned inside the monitor screen */}
           <div className="relative z-10 flex flex-col items-center justify-center h-full px-6">
             {/* Monitor content area - adjusted to fit inside the screen */}
-            <div className="flex flex-col items-center justify-center" style={{ marginTop: '-5%' }}>
+            <div className="flex flex-col items-center justify-center" style={{ marginTop: '-18%' }}>
               {/* Speech Bubble */}
               <div className="relative bg-background/95 backdrop-blur-sm rounded-lg p-5 mb-6 max-w-sm border border-primary/30 shadow-lg">
                 <p className="text-foreground text-center text-base leading-relaxed">
