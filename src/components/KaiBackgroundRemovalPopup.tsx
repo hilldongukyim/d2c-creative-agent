@@ -48,39 +48,38 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
       const base64Image = await fileToBase64(selectedFile);
       const fullEmail = `${email.trim()}@lge.com`;
 
-      // Build URL with query parameters
-      const params = new URLSearchParams({
-        email: fullEmail,
-        image: base64Image,
-        fileName: selectedFile.name,
-        fileType: selectedFile.type,
-      });
-      const requestUrl = `${WEBHOOK_URL}?${params.toString()}`;
-
       // Debug logging
       console.log("=== Kai Background Removal Request ===");
-      console.log("Method: GET");
+      console.log("Method: POST (no-cors)");
       console.log("Email:", fullEmail);
       console.log("File Name:", selectedFile.name);
       console.log("File Type:", selectedFile.type);
       console.log("Image Base64 Length:", base64Image.length);
 
-      const response = await fetch(requestUrl, {
-        method: "GET",
+      // Use no-cors mode to bypass CORS restrictions
+      // This sends the request but we can't read the response
+      await fetch(WEBHOOK_URL, {
+        method: "POST",
+        mode: "no-cors",
+        headers: {
+          "Content-Type": "text/plain",
+        },
+        body: JSON.stringify({
+          email: fullEmail,
+          image: base64Image,
+          fileName: selectedFile.name,
+          fileType: selectedFile.type,
+        }),
       });
 
-      console.log("Response status:", response.status);
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}`);
-      }
+      console.log("Request sent (no-cors mode - response not readable)");
       
       setIsSuccess(true);
-      toast.success("Request sent successfully! Check your email soon.");
+      toast.success("요청이 전송되었습니다! 곧 이메일을 확인해주세요.");
     } catch (error) {
       console.error("=== Request Error ===");
       console.error("Error details:", error);
-      toast.error("Failed to send request. Please try again.");
+      toast.error("요청 전송에 실패했습니다. 다시 시도해주세요.");
     } finally {
       setIsSubmitting(false);
     }
