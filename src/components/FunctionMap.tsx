@@ -142,7 +142,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         role: "Content QA Assistant",
         imageSrc: "/lovable-uploads/5f177a57-30d7-413c-bfc1-46dd6a011745.png"
       }, {
-      name: "Ava",
+        name: "Ava",
         role: "PDP Manager",
         imageSrc: "/lovable-uploads/ava-profile.png"
       }, {
@@ -200,31 +200,24 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     allProfiles?.forEach(el => {
       el.classList.remove('search-dimmed', 'search-highlighted', 'search-highlight', 'ring-2', 'ring-primary', 'bg-primary/10', 'pulse', 'bg-muted/40');
     });
-
     if (!highlightName) return;
-    
     const searchTerm = highlightName.toLowerCase().trim();
     if (!searchTerm) return;
 
     // Find all profiles and determine matches
     const profileElements = containerRef.current?.querySelectorAll('[data-profile-name]');
     let hasMatches = false;
-    
     profileElements?.forEach(el => {
       const profileName = el.getAttribute('data-profile-name') || '';
       const roleText = el.querySelector('.text-xs.text-muted-foreground')?.textContent?.toLowerCase() || '';
-      
+
       // Get crew profile data for bio and description
       const crewData = crewProfiles[profileName];
       const description = crewData?.description?.toLowerCase() || '';
       const personality = crewData?.personality?.toLowerCase() || '';
-      
+
       // Search across name, role, description, and personality
-      const isMatch = profileName.includes(searchTerm) || 
-                     roleText.includes(searchTerm) ||
-                     description.includes(searchTerm) ||
-                     personality.includes(searchTerm);
-      
+      const isMatch = profileName.includes(searchTerm) || roleText.includes(searchTerm) || description.includes(searchTerm) || personality.includes(searchTerm);
       if (isMatch) {
         // Mark as highlighted (no visual change, just for tracking)
         el.classList.add('search-highlighted');
@@ -275,7 +268,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                     <img src="/lovable-uploads/a8109d06-3cdd-4319-ae43-a6f78550e7db.png" alt="D2C Leader profile image" className="h-full w-full object-cover" loading="lazy" />
                   </div>
                   <div className="mt-2">
-                    <div className="text-sm font-semibold text-foreground">D2C Leader</div>
+                    <div className="text-sm font-semibold text-foreground">D2C Overseas Sales and Marketing Group</div>
                     
                   </div>
                 </div>
@@ -325,10 +318,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                             {/* First row - Candy only */}
                             <div className="flex justify-center">
                                 {team.items.slice(0, 1).map(item => <div key={`${team.title}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1" onMouseEnter={e => handleMouseEnter(e, item.name, item.role)} onMouseLeave={handleMouseLeave} onClick={e => {
-                         e.stopPropagation();
-                         console.log('Clicked profile:', item.name);
-                         onProfileClick?.(item.name);
-                       }} role="button" tabIndex={0}>
+                        e.stopPropagation();
+                        console.log('Clicked profile:', item.name);
+                        onProfileClick?.(item.name);
+                      }} role="button" tabIndex={0}>
                                   <div className={`relative h-12 w-12 md:h-14 md:w-14 rounded-full overflow-hidden ${item.name === "Candy" || item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
                                     {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{
                             backgroundColor: '#6B6B6B'
@@ -347,10 +340,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                             {/* Second row - Maya and On Hiring */}
                             <div className="flex justify-center gap-3">
                                 {team.items.slice(1).map(item => <div key={`${team.title}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1" onMouseEnter={e => handleMouseEnter(e, item.name, item.role)} onMouseLeave={handleMouseLeave} onClick={e => {
-                         e.stopPropagation();
-                         console.log('Clicked profile:', item.name);
-                         onProfileClick?.(item.name);
-                       }} role="button" tabIndex={0}>
+                        e.stopPropagation();
+                        console.log('Clicked profile:', item.name);
+                        onProfileClick?.(item.name);
+                      }} role="button" tabIndex={0}>
                                   <div className={`relative h-12 w-12 md:h-14 md:w-14 rounded-full overflow-hidden ${item.name === "Candy" || item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
                                     {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{
                             backgroundColor: '#6B6B6B'
@@ -367,9 +360,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                             </div>
                           </div> : <div className="flex flex-wrap justify-center gap-3">
                              {team.items.map(item => <div key={`${team.title}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1" onMouseEnter={e => handleMouseEnter(e, item.name, item.role)} onMouseLeave={handleMouseLeave} onClick={e => {
-                       e.stopPropagation();
-                       onProfileClick?.(item.name);
-                     }} role="button" tabIndex={0}>
+                      e.stopPropagation();
+                      onProfileClick?.(item.name);
+                    }} role="button" tabIndex={0}>
                                 <div className={`relative h-12 w-12 md:h-14 md:w-14 rounded-full overflow-hidden ${item.name === "Candy" || item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
                                   {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{
                           backgroundColor: '#6B6B6B'
