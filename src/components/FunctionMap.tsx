@@ -105,6 +105,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     "ava": {
       description: "Checks and reports SKU-level status to ensure timely upload of LG.com PDP.",
       personality: "Systematic with excellent communication skills, excels at facilitating work collaboration. PDP Tracker, SKU status."
+    },
+    "luna": {
+      description: "Creates audiences and offers in Adobe Target using natural language input.",
+      personality: "Innovative and efficient, excels at automating complex marketing workflows. API Integration, Natural Language-Based Rule Setup, Offer in Adobe Target, Audience Automation."
     }
   };
   const handleMouseEnter = (event: React.MouseEvent, name: string, role: string, teamTitle?: string) => {
@@ -160,6 +164,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         name: "Clara",
         role: "On-site Specialist",
         imageSrc: "/lovable-uploads/a4614e4b-7d0d-429f-8b4c-ddc8b85ee3ad.png"
+      }, {
+        name: "Luna",
+        role: "Personalized Marketing Expert",
+        imageSrc: "/lovable-uploads/luna-profile.png"
       }]
     }]
   }, {
