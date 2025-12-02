@@ -48,27 +48,27 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
       const base64Image = await fileToBase64(selectedFile);
       const fullEmail = `${email.trim()}@lge.com`;
 
-      // Build URL with query parameters
-      const params = new URLSearchParams({
-        email: fullEmail,
-        image: base64Image,
-        fileName: selectedFile.name,
-        fileType: selectedFile.type,
-      });
-      const requestUrl = `${WEBHOOK_URL}?${params.toString()}`;
-
       // Debug logging
       console.log("=== Kai Background Removal Request ===");
       console.log("URL:", WEBHOOK_URL);
-      console.log("Method: GET");
+      console.log("Method: POST");
       console.log("Email:", fullEmail);
       console.log("File Name:", selectedFile.name);
       console.log("File Type:", selectedFile.type);
       console.log("Image Base64 Length:", base64Image.length);
-      console.log("Sending GET request to n8n...");
+      console.log("Sending POST request to n8n...");
 
-      const response = await fetch(requestUrl, {
-        method: "GET",
+      const response = await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: fullEmail,
+          image: base64Image,
+          fileName: selectedFile.name,
+          fileType: selectedFile.type,
+        }),
       });
 
       console.log("Response status:", response.status);
