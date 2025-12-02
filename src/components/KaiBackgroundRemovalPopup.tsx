@@ -50,32 +50,31 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
 
       // Debug logging
       console.log("=== Kai Background Removal Request ===");
-      console.log("Method: POST (no-cors)");
+      console.log("Method: sendBeacon");
       console.log("Email:", fullEmail);
       console.log("File Name:", selectedFile.name);
       console.log("File Type:", selectedFile.type);
       console.log("Image Base64 Length:", base64Image.length);
 
-      // Use no-cors mode to bypass CORS restrictions
-      // This sends the request but we can't read the response
-      await fetch(WEBHOOK_URL, {
-        method: "POST",
-        mode: "no-cors",
-        headers: {
-          "Content-Type": "text/plain",
-        },
-        body: JSON.stringify({
-          email: fullEmail,
-          image: base64Image,
-          fileName: selectedFile.name,
-          fileType: selectedFile.type,
-        }),
+      const payload = JSON.stringify({
+        email: fullEmail,
+        image: base64Image,
+        fileName: selectedFile.name,
+        fileType: selectedFile.type,
       });
 
-      console.log("Request sent (no-cors mode - response not readable)");
-      
-      setIsSuccess(true);
-      toast.success("요청이 전송되었습니다! 곧 이메일을 확인해주세요.");
+      // Use sendBeacon for cross-origin requests without CORS issues
+      const blob = new Blob([payload], { type: 'application/json' });
+      const success = navigator.sendBeacon(WEBHOOK_URL, blob);
+
+      console.log("sendBeacon result:", success);
+
+      if (success) {
+        setIsSuccess(true);
+        toast.success("요청이 전송되었습니다! 곧 이메일을 확인해주세요.");
+      } else {
+        throw new Error("sendBeacon failed");
+      }
     } catch (error) {
       console.error("=== Request Error ===");
       console.error("Error details:", error);
