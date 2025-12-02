@@ -109,6 +109,10 @@ const Home = () => {
       setKaiPopupOpen(true);
       return;
     }
+    if (lower === "noa") {
+      window.open("https://aiagent.pimds.aws.lge.com/", "_blank");
+      return;
+    }
     setSelectedName(name);
     setComingSoonOpen(true);
   };
