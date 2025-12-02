@@ -151,7 +151,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         imageSrc: "/lovable-uploads/ava-profile.png"
       }]
     }, {
-      title: "On-site",
+      title: "On-Site Marketing Team",
       items: [{
         name: "Clara",
         role: "On-site Specialist",
