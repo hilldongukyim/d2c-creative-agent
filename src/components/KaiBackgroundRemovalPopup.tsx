@@ -64,45 +64,23 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
       const imageUrl = urlData.publicUrl;
       console.log("Image uploaded, URL:", imageUrl);
 
-      // Create hidden iframe for form submission (bypasses CORS)
-      const iframeName = 'kai-submit-frame-' + Date.now();
-      const iframe = document.createElement('iframe');
-      iframe.name = iframeName;
-      iframe.style.display = 'none';
-      document.body.appendChild(iframe);
-
-      // Create form with only URL (much smaller payload)
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = WEBHOOK_URL;
-      form.target = iframeName;
-      form.style.display = 'none';
-
-      // Add form fields - only email and imageUrl
-      const fields = {
-        email: fullEmail,
-        imageUrl: imageUrl,
-        fileName: selectedFile.name,
-      };
-
-      Object.entries(fields).forEach(([key, value]) => {
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.name = key;
-        input.value = value;
-        form.appendChild(input);
+      // Send JSON POST request to n8n webhook
+      console.log("Sending JSON POST to webhook...");
+      const response = await fetch(WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          email: fullEmail,
+          imageUrl: imageUrl,
+          fileName: selectedFile.name,
+        }),
       });
 
-      document.body.appendChild(form);
-      form.submit();
-
-      // Clean up after a delay
-      setTimeout(() => {
-        document.body.removeChild(form);
-        document.body.removeChild(iframe);
-      }, 5000);
-
-      console.log("Form submitted with imageUrl:", imageUrl);
+      console.log("Webhook response status:", response.status);
+      const responseText = await response.text();
+      console.log("Webhook response:", responseText);
       
       setIsSuccess(true);
       toast.success("Request sent successfully! Check your email soon.");
