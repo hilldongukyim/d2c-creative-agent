@@ -117,6 +117,10 @@ const Home = () => {
       window.open("https://pdptracker.lovable.app", "_blank");
       return;
     }
+    if (lower === "luna") {
+      window.open("https://luna-marketing.lovable.app", "_blank");
+      return;
+    }
     setSelectedName(name);
     setComingSoonOpen(true);
   };
