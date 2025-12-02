@@ -133,9 +133,9 @@ AI Twin Crew</h1>
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
             <Input type="text" value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10" placeholder="Search crew..." />
           </div>
-          <Button onClick={() => setCrewFormOpen(true)} variant="outline" className="gap-2">
+          <Button onClick={() => setCrewFormOpen(true)} variant="outline" className="gap-2 px-3 sm:px-4">
             <UserPlus className="w-4 h-4" />
-            Register Crew
+            <span className="hidden sm:inline">Register Crew</span>
           </Button>
         </div>
 
