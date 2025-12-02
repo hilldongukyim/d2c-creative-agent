@@ -103,8 +103,8 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       personality: "Organized and detail-oriented, excels at managing complex product data. Product Catalog, Review syndication, Data extract."
     },
     "ava": {
-      description: "Communicates smoothly with business unit managers to upload LG.com PDP in a timely manner.",
-      personality: "Systematic with excellent communication skills, excels at facilitating work collaboration."
+      description: "Checks and reports SKU-level status to ensure timely upload of LG.com PDP.",
+      personality: "Systematic with excellent communication skills, excels at facilitating work collaboration. PDP Tracker, SKU status."
     }
   };
   const handleMouseEnter = (event: React.MouseEvent, name: string, role: string, teamTitle?: string) => {

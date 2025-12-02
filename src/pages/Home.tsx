@@ -113,6 +113,10 @@ const Home = () => {
       window.open("https://aiagent.pimds.aws.lge.com/", "_blank");
       return;
     }
+    if (lower === "ava") {
+      window.open("https://pdptracker.lovable.app", "_blank");
+      return;
+    }
     setSelectedName(name);
     setComingSoonOpen(true);
   };
