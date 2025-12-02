@@ -117,19 +117,24 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
                     <p className="text-foreground text-center text-sm mb-3">
                       Is this the correct image? 🤔<br />
                       <span className="text-muted-foreground text-xs">
-                        Enter your email to receive the result!
+                        Enter your ID to receive the result!
                       </span>
                     </p>
 
-                    {/* Email Input */}
+                    {/* Email Input with @lge.com suffix */}
                     <div className="space-y-3">
-                      <Input
-                        type="email"
-                        placeholder="Enter your email address"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                        className="bg-background border-primary/30 text-foreground placeholder:text-muted-foreground"
-                      />
+                      <div className="flex items-center">
+                        <Input
+                          type="text"
+                          placeholder="your.id"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          className="bg-background border-primary/30 text-foreground placeholder:text-muted-foreground rounded-r-none border-r-0"
+                        />
+                        <span className="bg-muted text-muted-foreground px-3 h-10 flex items-center text-sm border border-primary/30 rounded-r-md">
+                          @lge.com
+                        </span>
+                      </div>
                       <div className="flex gap-2">
                         <Button
                           onClick={handleReselect}
