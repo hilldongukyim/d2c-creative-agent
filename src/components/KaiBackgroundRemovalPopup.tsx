@@ -170,11 +170,11 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
                     <div className="mb-4">
                       <CheckCircle className="w-8 h-8 text-green-500 mx-auto mb-2" />
                       <p className="text-foreground text-base font-medium mb-1">
-                        요청을 잘 받았어요! 🎉
+                        Got your request! 🎉
                       </p>
                       <p className="text-muted-foreground text-sm">
-                        배경 제거 작업 후<br />
-                        곧 메일로 보내드릴게요 ✨
+                        I'll remove the background<br />
+                        and send it to your email soon ✨
                       </p>
                     </div>
 
@@ -185,14 +185,14 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
                         variant="outline"
                         className="flex-1 border-primary/30"
                       >
-                        닫기
+                        Close
                       </Button>
                       <Button
                         onClick={handleReselect}
                         className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
                       >
                         <RefreshCw className="w-4 h-4 mr-1" />
-                        다른 이미지
+                        New Image
                       </Button>
                     </div>
                   </div>
