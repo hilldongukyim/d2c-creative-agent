@@ -120,8 +120,9 @@ const Home = () => {
       {/* Expanding circle animation */}
       <div className="max-w-6xl mx-auto relative z-10">
         <header className="text-center mb-12 pt-8">
-          <h1 className="font-bold text-foreground mb-4 text-2xl">Meet
-AI Twin Crew</h1>
+          <h1 className="font-bold text-foreground mb-4 text-2xl">
+            Meet<br className="sm:hidden" /> AI Twin Crew
+          </h1>
           <p className="text-muted-foreground max-w-2xl mx-auto text-xs">
             An intelligent agent team that helps and accelerates the work of internal employees. Through clear structure and collaboration, we deliver faster, more accurate results.
           </p>
