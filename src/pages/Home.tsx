@@ -136,7 +136,7 @@ const Home = () => {
           </div>
           <Button onClick={() => setCrewFormOpen(true)} variant="outline" className="gap-2 px-3 sm:px-4">
             <UserPlus className="w-4 h-4" />
-            <span className="hidden sm:inline">Register Crew</span>
+            <span className="hidden sm:inline">Register</span>
           </Button>
         </div>
 
