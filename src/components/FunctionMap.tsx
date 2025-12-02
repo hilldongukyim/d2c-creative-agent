@@ -109,6 +109,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     "luna": {
       description: "Creates audiences and offers in Adobe Target using natural language input.",
       personality: "Innovative and efficient, excels at automating complex marketing workflows. API Integration, Natural Language-Based Rule Setup, Offer in Adobe Target, Audience Automation."
+    },
+    "clara": {
+      description: "Creates personalized images by crawling SKU data.",
+      personality: "Creative and detail-oriented, excels at automating image production workflows. SKU Crawling, Image Creation, Image Resize, Image Combination."
     }
   };
   const handleMouseEnter = (event: React.MouseEvent, name: string, role: string, teamTitle?: string) => {
@@ -162,7 +166,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       title: "On-Site Marketing Team",
       items: [{
         name: "Clara",
-        role: "On-site Specialist",
+        role: "Personalized Content Consultant",
         imageSrc: "/lovable-uploads/a4614e4b-7d0d-429f-8b4c-ddc8b85ee3ad.png"
       }, {
         name: "Luna",
