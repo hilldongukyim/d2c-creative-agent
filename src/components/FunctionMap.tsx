@@ -142,9 +142,13 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         role: "Content QA Assistant",
         imageSrc: "/lovable-uploads/5f177a57-30d7-413c-bfc1-46dd6a011745.png"
       }, {
-        name: "Ava",
+      name: "Ava",
         role: "PDP Manager",
         imageSrc: "/lovable-uploads/ava-profile.png"
+      }, {
+        name: "Kai",
+        role: "Background Remover",
+        imageSrc: "/lovable-uploads/84e535ab-1fa5-418e-93aa-73fa3b361219.png"
       }]
     }, {
       title: "On-Site Marketing Team",
@@ -191,11 +195,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
   }];
   const internTeam = {
     title: "Intern",
-    items: [{
-      name: "Kai",
-      role: "Background Remover",
-      imageSrc: "/lovable-uploads/84e535ab-1fa5-418e-93aa-73fa3b361219.png"
-    }]
+    items: []
   };
   const containerRef = useRef<HTMLElement | null>(null);
   useEffect(() => {
