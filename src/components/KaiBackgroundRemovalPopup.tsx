@@ -157,6 +157,50 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
                     Upload Image
                   </Button>
                 </>
+              ) : isSuccess ? (
+                <>
+                  {/* Success State */}
+                  <div className="bg-background/95 backdrop-blur-sm rounded-lg p-5 border border-primary/30 shadow-lg w-full max-w-sm text-center">
+                    {/* Kai Profile Image */}
+                    <div className="mb-4">
+                      <img
+                        src="/lovable-uploads/kai-profile.png"
+                        alt="Kai"
+                        className="w-24 h-24 rounded-full mx-auto object-cover border-2 border-primary/30"
+                      />
+                    </div>
+                    
+                    {/* Success Message */}
+                    <div className="mb-4">
+                      <CheckCircle className="w-8 h-8 text-green-500 mx-auto mb-2" />
+                      <p className="text-foreground text-base font-medium mb-1">
+                        요청을 잘 받았어요! 🎉
+                      </p>
+                      <p className="text-muted-foreground text-sm">
+                        배경 제거 작업 후<br />
+                        곧 메일로 보내드릴게요 ✨
+                      </p>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={() => onOpenChange(false)}
+                        variant="outline"
+                        className="flex-1 border-primary/30"
+                      >
+                        닫기
+                      </Button>
+                      <Button
+                        onClick={handleReselect}
+                        className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
+                      >
+                        <RefreshCw className="w-4 h-4 mr-1" />
+                        다른 이미지
+                      </Button>
+                    </div>
+                  </div>
+                </>
               ) : (
                 <>
                   {/* Preview State */}
@@ -203,18 +247,13 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
                         </Button>
                         <Button
                           onClick={handleSubmit}
-                          disabled={!email.trim() || isSubmitting || isSuccess}
+                          disabled={!email.trim() || isSubmitting}
                           className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
                         >
                           {isSubmitting ? (
                             <>
                               <Loader2 className="w-4 h-4 mr-1 animate-spin" />
                               Sending...
-                            </>
-                          ) : isSuccess ? (
-                            <>
-                              <CheckCircle className="w-4 h-4 mr-1" />
-                              Sent!
                             </>
                           ) : (
                             <>
