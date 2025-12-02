@@ -71,14 +71,14 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
 
       if (success) {
         setIsSuccess(true);
-        toast.success("요청이 전송되었습니다! 곧 이메일을 확인해주세요.");
+        toast.success("Request sent successfully! Check your email soon.");
       } else {
         throw new Error("sendBeacon failed");
       }
     } catch (error) {
       console.error("=== Request Error ===");
       console.error("Error details:", error);
-      toast.error("요청 전송에 실패했습니다. 다시 시도해주세요.");
+      toast.error("Failed to send request. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
