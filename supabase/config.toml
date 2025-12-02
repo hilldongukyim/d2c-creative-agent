@@ -2,3 +2,6 @@ project_id = "evyjuxnninzuywytbbzt"
 
 [functions.kai-background-removal]
 verify_jwt = false
+
+[functions.kai-proxy]
+verify_jwt = false
