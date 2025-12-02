@@ -128,7 +128,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
   const divisions = [{
     name: "Marketing",
     teams: [{
-      title: "Content",
+      title: "Content Team",
       items: [{
         name: "Yumi",
         role: "El-Form Designer",
