@@ -184,7 +184,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       }]
     }]
   }, {
-    name: "Business",
+    name: "Data Intelligence",
     teams: [{
       title: "Sales",
       items: []
