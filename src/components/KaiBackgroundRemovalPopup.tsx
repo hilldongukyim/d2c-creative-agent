@@ -50,31 +50,55 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
 
       // Debug logging
       console.log("=== Kai Background Removal Request ===");
-      console.log("Method: sendBeacon");
+      console.log("Method: Hidden Form Submit");
       console.log("Email:", fullEmail);
       console.log("File Name:", selectedFile.name);
       console.log("File Type:", selectedFile.type);
       console.log("Image Base64 Length:", base64Image.length);
 
-      const payload = JSON.stringify({
+      // Create hidden iframe for form submission (bypasses CORS)
+      const iframeName = 'kai-submit-frame-' + Date.now();
+      const iframe = document.createElement('iframe');
+      iframe.name = iframeName;
+      iframe.style.display = 'none';
+      document.body.appendChild(iframe);
+
+      // Create form
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = WEBHOOK_URL;
+      form.target = iframeName;
+      form.style.display = 'none';
+
+      // Add form fields
+      const fields = {
         email: fullEmail,
         image: base64Image,
         fileName: selectedFile.name,
         fileType: selectedFile.type,
+      };
+
+      Object.entries(fields).forEach(([key, value]) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = key;
+        input.value = value;
+        form.appendChild(input);
       });
 
-      // Use sendBeacon for cross-origin requests without CORS issues
-      const blob = new Blob([payload], { type: 'application/json' });
-      const success = navigator.sendBeacon(WEBHOOK_URL, blob);
+      document.body.appendChild(form);
+      form.submit();
 
-      console.log("sendBeacon result:", success);
+      // Clean up after a delay
+      setTimeout(() => {
+        document.body.removeChild(form);
+        document.body.removeChild(iframe);
+      }, 5000);
 
-      if (success) {
-        setIsSuccess(true);
-        toast.success("Request sent successfully! Check your email soon.");
-      } else {
-        throw new Error("sendBeacon failed");
-      }
+      console.log("Form submitted to hidden iframe");
+      
+      setIsSuccess(true);
+      toast.success("Request sent successfully! Check your email soon.");
     } catch (error) {
       console.error("=== Request Error ===");
       console.error("Error details:", error);
