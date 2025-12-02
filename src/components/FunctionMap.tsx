@@ -403,16 +403,8 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       top: hoverPosition.y,
       transform: hoverPosition.x < window.innerWidth / 2 ? 'translateY(-50%)' : 'translateX(-100%) translateY(-50%)'
     }}>
-          <div className="space-y-4">
-            <div className="space-y-3">
-              <div className="text-sm text-foreground leading-relaxed">
-                <strong>Bio:</strong> {crewProfiles[hoveredProfile.name.toLowerCase()]?.description || `${hoveredProfile.name} is responsible for ${hoveredProfile.role} role.`}
-              </div>
-              
-              {crewProfiles[hoveredProfile.name.toLowerCase()]?.personality && <div className="text-sm text-foreground leading-relaxed">
-                  <strong>Personality:</strong> {crewProfiles[hoveredProfile.name.toLowerCase()].personality}
-                </div>}
-            </div>
+          <div className="text-sm text-foreground leading-relaxed">
+            {crewProfiles[hoveredProfile.name.toLowerCase()]?.description || `${hoveredProfile.name} is responsible for ${hoveredProfile.role} role.`}
           </div>
         </div>}
     </section>;
