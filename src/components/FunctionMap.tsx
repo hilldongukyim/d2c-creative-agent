@@ -352,7 +352,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                         console.log('Clicked profile:', item.name);
                         onProfileClick?.(item.name);
                       }} role="button" tabIndex={0}>
-                                  <div className={`relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden ${item.name === "Candy" || item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
+                                  <div className={`relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden ${item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
                                     {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{
                             backgroundColor: '#6B6B6B'
                           }}>
@@ -374,7 +374,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                         console.log('Clicked profile:', item.name);
                         onProfileClick?.(item.name);
                       }} role="button" tabIndex={0}>
-                                  <div className={`relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden ${item.name === "Candy" || item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
+                                  <div className={`relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden ${item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
                                     {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{
                             backgroundColor: '#6B6B6B'
                           }}>
@@ -393,7 +393,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                       e.stopPropagation();
                       onProfileClick?.(item.name);
                     }} role="button" tabIndex={0}>
-                                <div className={`relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden ${item.name === "Candy" || item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
+                                <div className={`relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden ${item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
                                   {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{
                           backgroundColor: '#6B6B6B'
                         }}>
