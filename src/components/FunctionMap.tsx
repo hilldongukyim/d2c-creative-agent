@@ -159,7 +159,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       }]
     }]
   }, {
-    name: "Platform",
+    name: "Digital Platform",
     teams: [{
       title: "Platform Operation Team",
       items: [{
