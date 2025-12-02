@@ -310,7 +310,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                         </div>
                       </div>
                       <div className="mt-1">
-                        <div className="text-xs font-medium text-foreground">{division.name} Division Leader</div>
+                        <div className="text-xs font-medium text-foreground">Division Leader</div>
                       </div>
                     </div>
                   </div>
