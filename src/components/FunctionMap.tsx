@@ -193,10 +193,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       items: []
     }]
   }];
-  const internTeam = {
-    title: "Intern",
-    items: []
-  };
   const containerRef = useRef<HTMLElement | null>(null);
   useEffect(() => {
     // Clear previous dim states and highlights
@@ -394,33 +390,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                 </div>)}
             </div>
 
-            {/* Intern Team - Independent Section */}
-            <div className="pt-1">
-              <div className="text-center mb-6">
-                <div className="text-foreground rounded-lg px-6 py-3 font-bold text-lg inline-block">
-                  {internTeam.title}
-                </div>
-              </div>
-              <div className="bg-card border border-border/20 rounded-xl p-6 shadow-sm max-w-2xl mx-auto">
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  {internTeam.items.map(item => <div key={`intern-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1" onMouseEnter={e => handleMouseEnter(e, item.name, item.role, "Intern")} onMouseLeave={handleMouseLeave} onClick={e => {
-                  e.stopPropagation();
-                  onProfileClick?.(item.name);
-                }} role="button" tabIndex={0}>
-                       <div className="relative h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden">
-                         {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{
-                      backgroundColor: '#6B6B6B'
-                    }}>
-                           </div>}
-                       </div>
-                       <div className="mt-2">
-                         <div className="text-sm font-medium text-foreground">{item.name}</div>
-                         {item.role && <div className="text-xs text-muted-foreground">{item.role}</div>}
-                       </div>
-                    </div>)}
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
