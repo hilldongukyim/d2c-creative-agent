@@ -91,8 +91,8 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       personality: "Highly focused and perfectionist, enjoys detailed work."
     },
     "maple": {
-      description: "Maple is a feedback collection specialist who systematically gathers and analyzes colleagues' opinions.",
-      personality: "Has excellent empathy, values communication, and is skilled at listening to others' opinions."
+      description: "Maple crawls live content from LG.COM. Currently, only homepage hero banners can be viewed, but we plan to gradually expand to bring various content from different pages.",
+      personality: "Meticulous and patient, excels at systematic data collection. Content Crawling, LG.COM, Hero Banner, Web Scraping."
     },
     "theo": {
       description: "An operations manager who supports NPI model data inquiry and analysis so that legal entity/BU managers can efficiently track NPI model progress.",
@@ -150,9 +150,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         role: "PTO Image Creator",
         imageSrc: profiles.ben
       }, {
-        name: "Allen",
-        role: "Content QA Assistant",
-        imageSrc: "/lovable-uploads/5f177a57-30d7-413c-bfc1-46dd6a011745.png"
+        name: "Maple",
+        role: "Content Crawler",
+        imageSrc: "/lovable-uploads/maple-profile.png"
       }, {
         name: "Ava",
         role: "PDP Manager",
