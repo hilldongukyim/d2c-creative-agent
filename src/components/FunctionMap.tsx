@@ -99,8 +99,8 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       personality: "Systematic and reliable, excels at clearly organizing and communicating complex data."
     },
     "noa": {
-      description: "Noa is a copywriting specialist who writes attractive and effective text content. Creates consistent messages that reflect brand voice.",
-      personality: "Fluent in languages worldwide, has excellent creative advertising copy sense."
+      description: "Noa helps with practical work based on product information from PIM (Product Information Management). Data extraction and product catalog creation are also possible.",
+      personality: "Organized and detail-oriented, excels at managing complex product data. Product Catalog, Review syndication, Data extract."
     },
     "ava": {
       description: "Communicates smoothly with business unit managers to upload LG.com PDP in a timely manner.",
@@ -149,6 +149,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         name: "Kai",
         role: "Background Remover",
         imageSrc: "/lovable-uploads/84e535ab-1fa5-418e-93aa-73fa3b361219.png"
+      }, {
+        name: "Noa",
+        role: "Product Information Manager",
+        imageSrc: "/lovable-uploads/noa-profile.png"
       }]
     }, {
       title: "On-Site Marketing Team",
