@@ -48,8 +48,9 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
       const base64Image = await fileToBase64(selectedFile);
       const fullEmail = `${email.trim()}@lge.com`;
 
-      const response = await fetch(WEBHOOK_URL, {
+      await fetch(WEBHOOK_URL, {
         method: "POST",
+        mode: "no-cors",
         headers: {
           "Content-Type": "application/json",
         },
@@ -61,12 +62,9 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
         }),
       });
 
-      if (response.ok) {
-        setIsSuccess(true);
-        toast.success("Request sent successfully! Check your email soon.");
-      } else {
-        throw new Error("Failed to send request");
-      }
+      // With no-cors mode, we can't read the response, but the request is sent
+      setIsSuccess(true);
+      toast.success("Request sent successfully! Check your email soon.");
     } catch (error) {
       console.error("Error sending request:", error);
       toast.error("Failed to send request. Please try again.");
