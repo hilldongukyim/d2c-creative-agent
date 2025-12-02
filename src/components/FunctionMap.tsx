@@ -94,10 +94,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       description: "Maple is a feedback collection specialist who systematically gathers and analyzes colleagues' opinions.",
       personality: "Has excellent empathy, values communication, and is skilled at listening to others' opinions."
     },
-    "mell": {
-      description: "Mell is an email specialist who quickly and accurately delivers all final deliveries and notifications via email.",
-      personality: "Doesn't always bring good news. But delivers accurate news."
-    },
     "theo": {
       description: "An operations manager who supports NPI model data inquiry and analysis so that legal entity/BU managers can efficiently track NPI model progress.",
       personality: "Systematic and reliable, excels at clearly organizing and communicating complex data."
@@ -205,10 +201,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       name: "Kai",
       role: "Background Remover",
       imageSrc: "/lovable-uploads/84e535ab-1fa5-418e-93aa-73fa3b361219.png"
-    }, {
-      name: "Mell",
-      role: "Mailing",
-      imageSrc: "/lovable-uploads/5a6db127-b9e3-4f85-afbb-11b477555583.png"
     }]
   };
   const containerRef = useRef<HTMLElement | null>(null);
