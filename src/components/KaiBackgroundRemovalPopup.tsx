@@ -2,12 +2,15 @@ import React, { useRef, useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Upload, Send, RefreshCw } from "lucide-react";
+import { Upload, Send, RefreshCw, Loader2, CheckCircle } from "lucide-react";
+import { toast } from "sonner";
 
 interface KaiBackgroundRemovalPopupProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
 }
+
+const WEBHOOK_URL = "https://dev.eaip.lge.com/n8n/webhook/9634011e-6e81-418b-b1e1-55f6653a159d";
 
 const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
   open,
@@ -16,6 +19,8 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [email, setEmail] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -26,10 +31,47 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
     }
   }, [selectedFile]);
 
-  const handleSubmit = () => {
-    if (selectedFile && email) {
-      console.log("Submitting:", { file: selectedFile.name, email });
-      // TODO: Implement background removal and email sending
+  const fileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
+  const handleSubmit = async () => {
+    if (!selectedFile || !email.trim()) return;
+
+    setIsSubmitting(true);
+    try {
+      const base64Image = await fileToBase64(selectedFile);
+      const fullEmail = `${email.trim()}@lge.com`;
+
+      const response = await fetch(WEBHOOK_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: fullEmail,
+          image: base64Image,
+          fileName: selectedFile.name,
+          fileType: selectedFile.type,
+        }),
+      });
+
+      if (response.ok) {
+        setIsSuccess(true);
+        toast.success("Request sent successfully! Check your email soon.");
+      } else {
+        throw new Error("Failed to send request");
+      }
+    } catch (error) {
+      console.error("Error sending request:", error);
+      toast.error("Failed to send request. Please try again.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -37,6 +79,7 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
     const file = e.target.files?.[0];
     if (file) {
       setSelectedFile(file);
+      setIsSuccess(false);
     }
   };
 
@@ -48,6 +91,7 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
     setSelectedFile(null);
     setPreviewUrl(null);
     setEmail("");
+    setIsSuccess(false);
   };
 
   return (
@@ -146,11 +190,25 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
                         </Button>
                         <Button
                           onClick={handleSubmit}
-                          disabled={!email}
+                          disabled={!email.trim() || isSubmitting || isSuccess}
                           className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
                         >
-                          <Send className="w-4 h-4 mr-1" />
-                          Request
+                          {isSubmitting ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                              Sending...
+                            </>
+                          ) : isSuccess ? (
+                            <>
+                              <CheckCircle className="w-4 h-4 mr-1" />
+                              Sent!
+                            </>
+                          ) : (
+                            <>
+                              <Send className="w-4 h-4 mr-1" />
+                              Request
+                            </>
+                          )}
                         </Button>
                       </div>
                     </div>
