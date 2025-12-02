@@ -41,49 +41,49 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
           {/* Overlay for better readability */}
           <div className="absolute inset-0 bg-black/30" />
 
-          {/* Content */}
+          {/* Content - Positioned inside the monitor screen */}
           <div className="relative z-10 flex flex-col items-center justify-center h-full px-6">
-            {/* Speech Bubble */}
-            <div className="relative bg-white/95 backdrop-blur-sm rounded-2xl p-6 mb-8 max-w-md shadow-xl">
-              {/* Speech bubble tail */}
-              <div className="absolute -bottom-3 left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-[12px] border-l-transparent border-r-[12px] border-r-transparent border-t-[12px] border-t-white/95" />
-              
-              <p className="text-gray-800 text-center text-lg font-medium leading-relaxed">
-                안녕하세요! 👋<br />
-                배경을 제거하고 싶은 이미지를<br />
-                아래 버튼을 눌러 업로드해 주세요!<br />
-                <span className="text-sm text-gray-600 mt-2 block">
-                  배경이 제거된 PNG 이미지를<br />
-                  이메일로 보내드릴게요 ✨
-                </span>
-              </p>
-            </div>
-
-            {/* Upload Button */}
-            <input
-              type="file"
-              ref={fileInputRef}
-              onChange={handleFileSelect}
-              accept="image/*"
-              className="hidden"
-            />
-            <Button
-              onClick={handleUploadClick}
-              size="lg"
-              className="bg-white text-gray-900 hover:bg-gray-100 shadow-lg px-8 py-6 text-lg font-semibold rounded-xl transition-all hover:scale-105"
-            >
-              <Upload className="w-5 h-5 mr-2" />
-              이미지 업로드하기
-            </Button>
-
-            {/* Selected file indicator */}
-            {selectedFile && (
-              <div className="mt-4 bg-white/90 backdrop-blur-sm rounded-lg px-4 py-2 shadow-md">
-                <p className="text-gray-700 text-sm">
-                  선택된 파일: <span className="font-medium">{selectedFile.name}</span>
+            {/* Monitor content area - adjusted to fit inside the screen */}
+            <div className="flex flex-col items-center justify-center" style={{ marginTop: '-5%' }}>
+              {/* Speech Bubble */}
+              <div className="relative bg-black/80 backdrop-blur-sm rounded-lg p-5 mb-6 max-w-sm border border-green-400/50">
+                <p className="text-green-400 text-center text-base font-mono leading-relaxed">
+                  Hey there! 👋<br />
+                  Upload an image you want<br />
+                  the background removed from!<br />
+                  <span className="text-sm text-green-300/80 mt-2 block">
+                    I'll send you a PNG with<br />
+                    the background removed via email ✨
+                  </span>
                 </p>
               </div>
-            )}
+
+              {/* Upload Button */}
+              <input
+                type="file"
+                ref={fileInputRef}
+                onChange={handleFileSelect}
+                accept="image/*"
+                className="hidden"
+              />
+              <Button
+                onClick={handleUploadClick}
+                size="lg"
+                className="bg-green-400 text-black hover:bg-green-300 shadow-lg px-6 py-5 text-base font-mono font-semibold rounded-lg transition-all hover:scale-105 border-2 border-green-300"
+              >
+                <Upload className="w-5 h-5 mr-2" />
+                Upload Image
+              </Button>
+
+              {/* Selected file indicator */}
+              {selectedFile && (
+                <div className="mt-4 bg-black/80 backdrop-blur-sm rounded-lg px-4 py-2 border border-green-400/50">
+                  <p className="text-green-400 text-sm font-mono">
+                    Selected: <span className="font-medium">{selectedFile.name}</span>
+                  </p>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </DialogContent>
