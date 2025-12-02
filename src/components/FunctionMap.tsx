@@ -113,6 +113,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     "clara": {
       description: "Creates personalized images by crawling SKU data.",
       personality: "Creative and detail-oriented, excels at automating image production workflows. SKU Crawling, Image Creation, Image Resize, Image Combination."
+    },
+    "candy": {
+      description: "Oversees DAM user guides, tutorials, and on-boarding.",
+      personality: "Organized and supportive, excels at managing digital assets and guiding users. Digital Asset Management, AEM, DAM On-Boarding, DAM Guide."
     }
   };
   const handleMouseEnter = (event: React.MouseEvent, name: string, role: string, teamTitle?: string) => {
@@ -161,6 +165,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         name: "Noa",
         role: "Product Information Manager",
         imageSrc: "/lovable-uploads/noa-profile.png"
+      }, {
+        name: "Candy",
+        role: "DAM Product Owner",
+        imageSrc: "/lovable-uploads/candy-profile.png"
       }]
     }, {
       title: "On-Site Marketing Team",
