@@ -30,7 +30,7 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl w-[95vw] h-[80vh] p-0 overflow-hidden border-none">
+      <DialogContent className="max-w-[90vmin] w-[90vmin] h-[90vmin] p-0 overflow-hidden border-none aspect-square">
         {/* Background Image */}
         <div
           className="relative w-full h-full bg-cover bg-center bg-no-repeat"
