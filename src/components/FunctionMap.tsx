@@ -299,12 +299,18 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                   {/* Division Leader */}
                   <div className="flex justify-center mb-4 pb-6">
                     <div className="flex flex-col items-center">
-                      <div className="relative h-12 w-12 rounded-full overflow-hidden">
-                        <div className="h-full w-full flex items-center justify-center text-white text-sm font-medium" style={{
+                      <div className="relative h-12 w-12">
+                        <div className="h-full w-full rounded-full overflow-hidden flex items-center justify-center text-white text-sm font-medium" style={{
                       backgroundColor: '#F87171'
                     }}>
                           {division.name.charAt(0)}
                         </div>
+                        {/* Leader Badge */}
+                        <img 
+                          src="/lovable-uploads/leader-badge.png" 
+                          alt="Leader badge" 
+                          className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full border border-background"
+                        />
                       </div>
                       <div className="mt-1">
                         <div className="text-xs font-medium text-foreground">Division Leader</div>
