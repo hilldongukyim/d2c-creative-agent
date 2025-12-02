@@ -1,7 +1,8 @@
 import React, { useRef, useState } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Upload } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Upload, Send } from "lucide-react";
 
 interface KaiBackgroundRemovalPopupProps {
   open: boolean;
@@ -13,7 +14,15 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
   onOpenChange,
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [email, setEmail] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleSubmit = () => {
+    if (selectedFile && email) {
+      console.log("Submitting:", { file: selectedFile.name, email });
+      // TODO: Implement background removal and email sending
+    }
+  };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -75,12 +84,29 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
                 Upload Image
               </Button>
 
-              {/* Selected file indicator */}
+              {/* Selected file indicator and email input */}
               {selectedFile && (
-                <div className="mt-4 bg-background/95 backdrop-blur-sm rounded-lg px-4 py-2 border border-primary/30">
-                  <p className="text-foreground text-sm">
+                <div className="mt-4 bg-background/95 backdrop-blur-sm rounded-lg p-4 border border-primary/30 w-full max-w-sm">
+                  <p className="text-foreground text-sm mb-3">
                     Selected: <span className="font-medium">{selectedFile.name}</span>
                   </p>
+                  <div className="space-y-3">
+                    <Input
+                      type="email"
+                      placeholder="Enter your email address"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="bg-background border-primary/30 text-foreground placeholder:text-muted-foreground"
+                    />
+                    <Button
+                      onClick={handleSubmit}
+                      disabled={!email}
+                      className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
+                    >
+                      <Send className="w-4 h-4 mr-2" />
+                      Send to Email
+                    </Button>
+                  </div>
                 </div>
               )}
             </div>
