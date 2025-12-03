@@ -294,7 +294,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
             {/* D2C Header */}
             <div className="text-center mb-4 relative">
               <div className="flex justify-center mb-6">
-                <div className="text-sm font-semibold text-foreground">D2C Overseas Sales and Marketing Group</div>
+                <div className="text-lg font-semibold text-foreground">D2C Overseas Sales and Marketing Group</div>
               </div>
             </div>
 
