@@ -19,12 +19,21 @@ const CrewRequestForm = ({ open, onOpenChange }: CrewRequestFormProps) => {
   const [formData, setFormData] = useState({
     crewName: "",
     role: "",
-    department: "",
+    division: "",
+    team: "",
     skills: "",
     description: "",
+    agentUrl: "",
+    comment: "",
     requestedBy: "",
     selectedImage: ""
   });
+
+  const teamsByDivision: Record<string, string[]> = {
+    marketing: ["On-Site Marketing Team", "Content Team"],
+    "digital-platform": ["Platform Operation Team", "Platform Development Team"],
+    "data-intelligence": ["Data Analysis Team", "AI Development Team"],
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,9 +44,12 @@ const CrewRequestForm = ({ open, onOpenChange }: CrewRequestFormProps) => {
       const params = new URLSearchParams({
         crewName: formData.crewName,
         role: formData.role,
-        department: formData.department,
+        division: formData.division,
+        team: formData.team,
         skills: formData.skills,
         description: formData.description,
+        agentUrl: formData.agentUrl,
+        comment: formData.comment,
         requestedBy: formData.requestedBy,
         selectedImage: formData.selectedImage
       });
@@ -59,9 +71,12 @@ const CrewRequestForm = ({ open, onOpenChange }: CrewRequestFormProps) => {
       setFormData({
         crewName: "",
         role: "",
-        department: "",
+        division: "",
+        team: "",
         skills: "",
         description: "",
+        agentUrl: "",
+        comment: "",
         requestedBy: "",
         selectedImage: ""
       });
@@ -75,9 +90,12 @@ const CrewRequestForm = ({ open, onOpenChange }: CrewRequestFormProps) => {
       setFormData({
         crewName: "",
         role: "",
-        department: "",
+        division: "",
+        team: "",
         skills: "",
         description: "",
+        agentUrl: "",
+        comment: "",
         requestedBy: "",
         selectedImage: ""
       });
@@ -293,17 +311,33 @@ const CrewRequestForm = ({ open, onOpenChange }: CrewRequestFormProps) => {
             </div>
 
             <div>
-              <Label htmlFor="department">Department *</Label>
-              <Select value={formData.department} onValueChange={(value) => handleChange("department", value)} required>
+              <Label htmlFor="division">Division *</Label>
+              <Select value={formData.division} onValueChange={(value) => {
+                handleChange("division", value);
+                handleChange("team", "");
+              }} required>
                 <SelectTrigger>
-                  <SelectValue placeholder="Select department" />
+                  <SelectValue placeholder="Select division" />
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="marketing">Marketing</SelectItem>
-                  <SelectItem value="platform">Platform</SelectItem>
-                  <SelectItem value="data">Data</SelectItem>
-                  <SelectItem value="business">Business</SelectItem>
-                  <SelectItem value="operations">Operations</SelectItem>
+                  <SelectItem value="digital-platform">Digital Platform</SelectItem>
+                  <SelectItem value="data-intelligence">Data Intelligence</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            <div>
+              <Label htmlFor="team">Team *</Label>
+              <Select value={formData.team} onValueChange={(value) => handleChange("team", value)} required>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select team" />
+                </SelectTrigger>
+                <SelectContent>
+                  {formData.division && teamsByDivision[formData.division]?.map((team) => (
+                    <SelectItem key={team} value={team}>{team}</SelectItem>
+                  ))}
+                  <SelectItem value="new-team">+ Create New Team</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -328,6 +362,27 @@ const CrewRequestForm = ({ open, onOpenChange }: CrewRequestFormProps) => {
                 placeholder="Describe the crew member's responsibilities and capabilities..."
                 className="min-h-[100px]"
                 required
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="agentUrl">Agent URL (Optional)</Label>
+              <Input
+                id="agentUrl"
+                value={formData.agentUrl}
+                onChange={(e) => handleChange("agentUrl", e.target.value)}
+                placeholder="https://..."
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="comment">Comment to Reviewer (Optional)</Label>
+              <Textarea
+                id="comment"
+                value={formData.comment}
+                onChange={(e) => handleChange("comment", e.target.value)}
+                placeholder="검토자에게 전달하고 싶은 내용이 있다면 자유롭게 작성해주세요..."
+                className="min-h-[80px]"
               />
             </div>
 
