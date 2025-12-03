@@ -6,8 +6,6 @@ import { Upload, Send, RefreshCw, Loader2, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
-const WEBHOOK_URL = "https://dev.eaip.lge.com/n8n/webhook/9634011e-6e81-418b-b1e1-55f6653a159d";
-
 interface KaiBackgroundRemovalPopupProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -64,23 +62,21 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
       const imageUrl = urlData.publicUrl;
       console.log("Image uploaded, URL:", imageUrl);
 
-      // Send JSON POST request to n8n webhook
-      console.log("Sending JSON POST to webhook...");
-      const response = await fetch(WEBHOOK_URL, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
+      // Send request via Edge Function proxy (bypasses CORS)
+      console.log("Sending request via Edge Function proxy...");
+      const { data, error: invokeError } = await supabase.functions.invoke('kai-webhook-proxy', {
+        body: {
           email: fullEmail,
           imageUrl: imageUrl,
           fileName: selectedFile.name,
-        }),
+        },
       });
 
-      console.log("Webhook response status:", response.status);
-      const responseText = await response.text();
-      console.log("Webhook response:", responseText);
+      if (invokeError) {
+        throw new Error(`Proxy error: ${invokeError.message}`);
+      }
+
+      console.log("Proxy response:", data);
       
       setIsSuccess(true);
       toast.success("Request sent successfully! Check your email soon.");
