@@ -191,8 +191,8 @@ const CrewRequestForm = ({ open, onOpenChange }: CrewRequestFormProps) => {
                         />
                       ) : i === 12 ? (
                         <img 
-                          src="/lovable-uploads/luna-profile.png" 
-                          alt="Luna profile" 
+                          src="/lovable-uploads/crew-image-13.png" 
+                          alt="Crew image 13" 
                           className="w-full h-full object-cover"
                         />
                       ) : i === 13 ? (
