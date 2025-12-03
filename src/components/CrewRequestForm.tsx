@@ -225,6 +225,12 @@ const CrewRequestForm = ({ open, onOpenChange }: CrewRequestFormProps) => {
                           alt="Crew image 20" 
                           className="w-full h-full object-cover"
                         />
+                      ) : i === 21 ? (
+                        <img 
+                          src="/lovable-uploads/crew-image-22.png" 
+                          alt="Crew image 22" 
+                          className="w-full h-full object-cover"
+                        />
                       ) : (
                         <span className="text-xs text-muted-foreground">{i + 1}</span>
                       )}
