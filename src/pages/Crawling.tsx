@@ -15,7 +15,7 @@ const Crawling = () => {
   const { toast } = useToast();
  
   useEffect(() => {
-    document.title = "Orin - Price Crawler";
+    document.title = "Mateo - Crawler";
   }, []);
 
   const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -123,20 +123,20 @@ const Crawling = () => {
         </div>
 
         <div className="bg-card border border-border rounded-xl shadow-lg p-6 min-h-[600px] flex flex-col relative z-10">
-          {/* Orin Profile */}
+          {/* Mateo Profile */}
           <div className="flex items-center gap-4 mb-6 pb-4 border-b border-border">
             <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-primary/20">
               <img
-                src="/lovable-uploads/492f6b28-9886-4137-89ce-b5265fb1e4b6.png"
-                alt="Orin price crawler profile image"
+                src="/lovable-uploads/mateo-profile.png"
+                alt="Mateo crawler profile image"
                 className="w-full h-full object-cover object-center scale-110"
                 loading="lazy"
                 decoding="async"
               />
             </div>
             <div>
-              <h1 className="font-semibold text-lg text-foreground">Orin</h1>
-              <p className="text-sm text-muted-foreground">Price Crawler</p>
+              <h1 className="font-semibold text-lg text-foreground">Mateo</h1>
+              <p className="text-sm text-muted-foreground">Crawler</p>
             </div>
           </div>
 

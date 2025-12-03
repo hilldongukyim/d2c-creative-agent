@@ -78,9 +78,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       description: "Pip is a Content QA specialist who reviews whether content is created according to Content Creation Guidelines and Brand Guidelines, and guides proper content creation direction.",
       personality: "Meticulous and careful, provides accurate feedback based on deep understanding of brand guidelines and quality standards."
     },
-    "orin": {
-      description: "Orin is a data crawler who collects and organizes various information from the web. Supports team decision-making by securing accurate and reliable data.",
-      personality: "Meticulous and patient, values information accuracy and reliability."
+    "mateo": {
+      description: "Mateo avoids repetitive manual tasks. Upload an Excel template to perform crawling based on models and retailers, enabling trend analysis through competitor and own product data.",
+      personality: "Competitor Crawling, Product Crawling, Data DB, Trend Analysis, Excel Template."
     },
     "dan": {
       description: "Dan suggests optimal metadata for image-video content to ensure better exposure in search engines and internal search systems by generative AI.",
@@ -202,9 +202,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         role: "NPI Manager",
         imageSrc: "/lovable-uploads/a682c963-0927-4ca3-8546-707e094f3836.png"
       }, {
-        name: "Orin",
-        role: "Data Crawler",
-        imageSrc: "/lovable-uploads/1e050018-12f0-4df5-a7ae-c92735447a6d.png"
+        name: "Mateo",
+        role: "Crawler",
+        imageSrc: "/lovable-uploads/mateo-profile.png"
       }]
     }]
   }, {
