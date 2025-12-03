@@ -185,8 +185,8 @@ const CrewRequestForm = ({ open, onOpenChange }: CrewRequestFormProps) => {
                         />
                       ) : i === 11 ? (
                         <img 
-                          src="/lovable-uploads/vee-profile.png" 
-                          alt="Vee profile" 
+                          src="/lovable-uploads/crew-image-12.png" 
+                          alt="Crew image 12" 
                           className="w-full h-full object-cover"
                         />
                       ) : i === 12 ? (
