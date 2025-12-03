@@ -167,8 +167,8 @@ const CrewRequestForm = ({ open, onOpenChange }: CrewRequestFormProps) => {
                         />
                       ) : i === 8 ? (
                         <img 
-                          src="/lovable-uploads/maple-profile.png" 
-                          alt="Maple profile" 
+                          src="/lovable-uploads/crew-image-9.png" 
+                          alt="Crew image 9" 
                           className="w-full h-full object-cover"
                         />
                       ) : i === 9 ? (
