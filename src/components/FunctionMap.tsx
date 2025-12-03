@@ -294,21 +294,11 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
           
           {/* Organizational Chart */}
           <div className="space-y-8">
-            {/* D2C Leader */}
+            {/* D2C Header */}
             <div className="text-center mb-4 relative">
               <div className="flex justify-center mb-6">
-                <div className="flex flex-col items-center">
-                  <div className="relative h-16 w-16 rounded-full overflow-hidden border-2 border-primary">
-                    <img src="/lovable-uploads/a8109d06-3cdd-4319-ae43-a6f78550e7db.png" alt="D2C Leader profile image" className="h-full w-full object-cover" loading="lazy" />
-                  </div>
-                  <div className="mt-2">
-                    <div className="text-sm font-semibold text-foreground">D2C Overseas Sales and Marketing Group</div>
-                    
-                  </div>
-                </div>
+                <div className="text-sm font-semibold text-foreground">D2C Overseas Sales and Marketing Group</div>
               </div>
-              {/* Vertical line from D2C Leader */}
-              
             </div>
 
             {/* Division Headers */}
