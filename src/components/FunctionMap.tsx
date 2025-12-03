@@ -222,9 +222,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     teams: [{
       title: "Global Data Insight Team",
       items: []
-    }, {
-      title: "Strategy",
-      items: []
     }]
   }];
   const containerRef = useRef<HTMLElement | null>(null);
