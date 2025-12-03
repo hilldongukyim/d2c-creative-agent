@@ -40,11 +40,12 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     y: 0
   });
 
-  // Crew member profiles with descriptions and personality traits
+  // Crew member profiles with descriptions, personality traits, and admin info
   const crewProfiles: Record<string, {
     description: string;
     personality: string;
     videoUrl?: string;
+    admin?: { name: string; email: string };
   }> = {
     "vee": {
       description: "Vee serves as the central command center for all AI agents, coordinating complex workflows and optimizing collaboration between teams.",
@@ -68,11 +69,13 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     },
     "yumi": {
       description: "Yumi is an EI-Form designer for LG Electronics brand templates, creating clean and intuitive designs that comply with brand guidelines.",
-      personality: "Executes requests immediately, interested in fast and efficient design."
+      personality: "Executes requests immediately, interested in fast and efficient design.",
+      admin: { name: "Donguk Yim", email: "donguk.yim@lge.com" }
     },
     "ben": {
       description: "Ben creates dotcom PTO model gallery images. Generates images reflecting accurate information with consistent and stable quality.",
-      personality: "Very interested in dotcom gallery image domain and continuously learning."
+      personality: "Very interested in dotcom gallery image domain and continuously learning.",
+      admin: { name: "Donguk Yim", email: "donguk.yim@lge.com" }
     },
     "pip": {
       description: "Pip is a Content QA specialist who reviews whether content is created according to Content Creation Guidelines and Brand Guidelines, and guides proper content creation direction.",
@@ -80,7 +83,8 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     },
     "mateo": {
       description: "Mateo avoids repetitive manual tasks. Upload an Excel template to perform crawling based on models and retailers, enabling trend analysis through competitor and own product data.",
-      personality: "Competitor Crawling, Product Crawling, Data DB, Trend Analysis, Excel Template."
+      personality: "Competitor Crawling, Product Crawling, Data DB, Trend Analysis, Excel Template.",
+      admin: { name: "Hyunsoo Park", email: "hyunsoo9.park@lge.com" }
     },
     "dan": {
       description: "Dan suggests optimal metadata for image-video content to ensure better exposure in search engines and internal search systems by generative AI.",
@@ -88,11 +92,13 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     },
     "kai": {
       description: "Kai is a background removal specialist responsible for image editing and post-processing. Creates clean and professional images with precise technical skills.",
-      personality: "Highly focused and perfectionist, enjoys detailed work."
+      personality: "Highly focused and perfectionist, enjoys detailed work.",
+      admin: { name: "Donguk Yim", email: "donguk.yim@lge.com" }
     },
     "maple": {
       description: "Maple crawls live content from LG.COM. Currently, only homepage hero banners can be viewed, but we plan to gradually expand to bring various content from different pages.",
-      personality: "Meticulous and patient, excels at systematic data collection. Content Crawling, LG.COM, Hero Banner, Web Scraping."
+      personality: "Meticulous and patient, excels at systematic data collection. Content Crawling, LG.COM, Hero Banner, Web Scraping.",
+      admin: { name: "Donguk Yim", email: "donguk.yim@lge.com" }
     },
     "theo": {
       description: "An operations manager who supports NPI model data inquiry and analysis so that legal entity/BU managers can efficiently track NPI model progress.",
@@ -100,7 +106,8 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     },
     "noa": {
       description: "Noa helps with practical work based on product information from PIM (Product Information Management). Data extraction and product catalog creation are also possible.",
-      personality: "Organized and detail-oriented, excels at managing complex product data. Product Catalog, Review syndication, Data extract."
+      personality: "Organized and detail-oriented, excels at managing complex product data. Product Catalog, Review syndication, Data extract.",
+      admin: { name: "Jaeho Lee", email: "jaeho10.lee@lge.com" }
     },
     "ava": {
       description: "Checks and reports SKU-level status to ensure timely upload of LG.com PDP.",
@@ -108,15 +115,18 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     },
     "luna": {
       description: "Creates audiences and offers in Adobe Target using natural language input.",
-      personality: "Innovative and efficient, excels at automating complex marketing workflows. API Integration, Natural Language-Based Rule Setup, Offer in Adobe Target, Audience Automation."
+      personality: "Innovative and efficient, excels at automating complex marketing workflows. API Integration, Natural Language-Based Rule Setup, Offer in Adobe Target, Audience Automation.",
+      admin: { name: "Yuseon Han", email: "yuseon.han@lge.com" }
     },
     "clara": {
       description: "Creates personalized images by crawling SKU data.",
-      personality: "Creative and detail-oriented, excels at automating image production workflows. SKU Crawling, Image Creation, Image Resize, Image Combination."
+      personality: "Creative and detail-oriented, excels at automating image production workflows. SKU Crawling, Image Creation, Image Resize, Image Combination.",
+      admin: { name: "Yuseon Han", email: "yuseon.han@lge.com" }
     },
     "candy": {
       description: "Oversees DAM user guides, tutorials, and on-boarding.",
-      personality: "Organized and supportive, excels at managing digital assets and guiding users. Digital Asset Management, AEM, DAM On-Boarding, DAM Guide."
+      personality: "Organized and supportive, excels at managing digital assets and guiding users. Digital Asset Management, AEM, DAM On-Boarding, DAM Guide.",
+      admin: { name: "Yunju bak", email: "yunju.bak@lge.com" }
     }
   };
   const handleMouseEnter = (event: React.MouseEvent, name: string, role: string, teamTitle?: string) => {
@@ -441,6 +451,11 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
           <div className="text-sm text-foreground leading-relaxed">
             {crewProfiles[hoveredProfile.name.toLowerCase()]?.description || `${hoveredProfile.name} is responsible for ${hoveredProfile.role} role.`}
           </div>
+          {crewProfiles[hoveredProfile.name.toLowerCase()]?.admin && (
+            <div className="mt-3 pt-3 border-t border-border/30 text-xs text-muted-foreground">
+              <span>Admin: {crewProfiles[hoveredProfile.name.toLowerCase()]?.admin?.name}, {crewProfiles[hoveredProfile.name.toLowerCase()]?.admin?.email}</span>
+            </div>
+          )}
         </div>}
     </section>;
 };
