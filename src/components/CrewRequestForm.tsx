@@ -213,10 +213,22 @@ const CrewRequestForm = ({ open, onOpenChange }: CrewRequestFormProps) => {
                           alt="Crew image 16" 
                           className="w-full h-full object-cover"
                         />
+                      ) : i === 16 ? (
+                        <img 
+                          src="/lovable-uploads/crew-image-17.png" 
+                          alt="Crew image 17" 
+                          className="w-full h-full object-cover"
+                        />
                       ) : i === 17 ? (
                         <img 
                           src="/lovable-uploads/crew-image-18.png" 
                           alt="Crew image 18" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : i === 18 ? (
+                        <img 
+                          src="/lovable-uploads/crew-image-19.png" 
+                          alt="Crew image 19" 
                           className="w-full h-full object-cover"
                         />
                       ) : i === 19 ? (
@@ -225,10 +237,28 @@ const CrewRequestForm = ({ open, onOpenChange }: CrewRequestFormProps) => {
                           alt="Crew image 20" 
                           className="w-full h-full object-cover"
                         />
+                      ) : i === 20 ? (
+                        <img 
+                          src="/lovable-uploads/crew-image-21.png" 
+                          alt="Crew image 21" 
+                          className="w-full h-full object-cover"
+                        />
                       ) : i === 21 ? (
                         <img 
                           src="/lovable-uploads/crew-image-22.png" 
                           alt="Crew image 22" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : i === 22 ? (
+                        <img 
+                          src="/lovable-uploads/crew-image-23.png" 
+                          alt="Crew image 23" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : i === 23 ? (
+                        <img 
+                          src="/lovable-uploads/crew-image-24.png" 
+                          alt="Crew image 24" 
                           className="w-full h-full object-cover"
                         />
                       ) : (
