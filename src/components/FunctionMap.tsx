@@ -195,17 +195,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
   }, {
     name: "Digital Platform",
     teams: [{
-      title: "Platform Operation Team",
-      items: [{
-        name: "Ollie",
-        role: "Sales Analyst",
-        imageSrc: "/lovable-uploads/a2300ba9-4de6-4adc-88fd-b80baa1bdff7.png"
-      }, {
-        name: "Ravi",
-        role: "Promotion Configurator",
-        imageSrc: "/lovable-uploads/d18ff2c4-e8c7-4c44-b38c-74bb66e23393.png"
-      }]
-    }, {
       title: "Platform Development Team",
       items: [{
         name: "Theo",
@@ -215,6 +204,17 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         name: "Mateo",
         role: "Crawler",
         imageSrc: "/lovable-uploads/mateo-profile.png"
+      }]
+    }, {
+      title: "Platform Operation Team",
+      items: [{
+        name: "Ollie",
+        role: "Sales Analyst",
+        imageSrc: "/lovable-uploads/a2300ba9-4de6-4adc-88fd-b80baa1bdff7.png"
+      }, {
+        name: "Ravi",
+        role: "Promotion Configurator",
+        imageSrc: "/lovable-uploads/d18ff2c4-e8c7-4c44-b38c-74bb66e23393.png"
       }]
     }]
   }, {
