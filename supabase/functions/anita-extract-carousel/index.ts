@@ -5,110 +5,106 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Extract ONLY the FIRST/TOP product gallery carousel images
-// Target: div.cmp-carousel__item.swiper-slide.c-carousel__item > div > div > div > img
+// Extract product gallery images from the TOP carousel
+// Selector: #swiper-wrapper-* > div.cmp-carousel__item.swiper-slide.c-carousel__item > div > div > div > img
 function extractCarouselImages(html: string, baseUrl: string): string[] {
   const images: string[] = [];
   const seen = new Set<string>();
 
-  console.log("=== Extracting TOP gallery images only ===");
+  console.log("=== Extracting TOP gallery images ===");
+  console.log("Target: swiper-wrapper > cmp-carousel__item > div > div > div > img");
 
   const addImage = (src: string, source: string) => {
     if (!src || seen.has(src)) return false;
     
+    // Skip small/thumbnail images
+    if (src.includes('thum') || src.includes('thumbnail')) return false;
+    if (src.includes('180x180') || src.includes('100x100')) return false;
+    if (src.includes('placeholder') || src.includes('loading')) return false;
+    
     // Skip non-product images
     if (src.includes('logo') || src.endsWith('.svg')) return false;
-    if (src.includes('thum-') || src.includes('thumbnail')) return false;
-    if (src.includes('180x180') || src.includes('100x100') || src.includes('450x450')) return false;
-    if (src.includes('placeholder') || src.includes('loading')) return false;
-    if (src.includes('qrcode') || src.includes('qr-code') || src.includes('QR')) return false;
+    if (src.includes('qrcode') || src.includes('qr-code')) return false;
     if (src.includes('icon') || src.includes('badge') || src.includes('flag')) return false;
     
-    // CRITICAL: Skip feature/USP promotional images
+    // Skip feature/promotional images
     if (src.includes('/features/')) return false;
-    if (src.includes('/usp/') || src.includes('/USP/')) return false;
-    if (src.includes('-feature') || src.includes('_feature')) return false;
+    if (src.includes('/usp/')) return false;
     
     seen.add(src);
     const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
     images.push(fullUrl);
-    console.log(`✓ Gallery Image [${images.length}]:`, fullUrl.substring(0, 150));
+    console.log(`✓ Image [${images.length}]:`, fullUrl);
     return true;
   };
 
-  // Strategy: Find the FIRST swiper-wrapper in the HTML (this is the main product gallery)
-  // Look for the first occurrence of swiper-wrapper with carousel items
+  // Step 1: Find the FIRST swiper-wrapper (main product gallery at top of page)
+  const swiperMatch = html.match(/(<div[^>]*id="swiper-wrapper-[^"]*"[^>]*>)([\s\S]*?)(<div[^>]*class="[^"]*swiper-button|<div[^>]*class="[^"]*swiper-pagination)/i);
   
-  // Find position of first swiper-wrapper
-  const firstSwiperPos = html.indexOf('id="swiper-wrapper-');
-  if (firstSwiperPos === -1) {
-    console.log("No swiper-wrapper found");
+  if (!swiperMatch) {
+    console.log("No swiper-wrapper found with standard boundary");
+    // Try alternative: just find first swiper-wrapper
+    const altMatch = html.match(/<div[^>]*id="swiper-wrapper-[^"]*"[^>]*>([\s\S]{1,100000})/i);
+    if (altMatch) {
+      console.log("Found swiper-wrapper (alt method)");
+    }
     return images;
   }
 
-  console.log(`First swiper-wrapper at position: ${firstSwiperPos}`);
-  
-  // Extract a chunk starting from the first swiper-wrapper (limit to avoid other carousels)
-  // The main gallery is typically contained within a few thousand characters
-  const startChunk = html.substring(firstSwiperPos, firstSwiperPos + 50000);
-  
-  // Find end of this swiper (next section or swiper-pagination/button)
-  const endMarkers = ['swiper-pagination', 'swiper-button-next', 'class="c-navigation'];
-  let endPos = startChunk.length;
-  for (const marker of endMarkers) {
-    const pos = startChunk.indexOf(marker);
-    if (pos > 0 && pos < endPos) {
-      endPos = pos;
-    }
-  }
-  
-  const galleryChunk = startChunk.substring(0, endPos);
-  console.log(`Gallery chunk size: ${galleryChunk.length}`);
+  const swiperContent = swiperMatch[2];
+  console.log(`Swiper content length: ${swiperContent.length}`);
 
-  // Find all carousel items in this chunk
-  // Pattern: class="cmp-carousel__item swiper-slide c-carousel__item"
-  const itemRegex = /<div[^>]*class="cmp-carousel__item\s+swiper-slide\s+c-carousel__item[^"]*"[^>]*>([\s\S]*?)(?=<div[^>]*class="cmp-carousel__item\s+swiper-slide|<div[^>]*class="[^"]*swiper-pagination|$)/gi;
+  // Step 2: Split content by carousel items
+  // Each item starts with: <div class="cmp-carousel__item swiper-slide c-carousel__item
+  const items = swiperContent.split(/<div[^>]*class="cmp-carousel__item\s+swiper-slide\s+c-carousel__item[^"]*"[^>]*>/i);
   
-  let match;
-  let itemCount = 0;
-  
-  while ((match = itemRegex.exec(galleryChunk)) !== null) {
-    itemCount++;
-    const itemContent = match[1];
-    console.log(`Processing carousel item ${itemCount}, content length: ${itemContent.length}`);
+  console.log(`Found ${items.length - 1} carousel items`);
+
+  // Process each item (skip first split part as it's before first item)
+  for (let i = 1; i < items.length && i <= 20; i++) {
+    const itemContent = items[i];
+    console.log(`Item ${i}: ${itemContent.length} chars`);
     
-    // Extract img elements
-    const imgMatches = itemContent.matchAll(/<img[^>]*(?:src|data-src)="([^"]+)"[^>]*>/gi);
-    for (const imgMatch of imgMatches) {
-      addImage(imgMatch[1], `carousel-${itemCount}`);
-    }
+    // Look for img inside the nested div structure: > div > div > div > img
+    // The img can have src, data-src, or data-lazy-src
     
-    // Also try picture > source srcset
-    const srcsetMatches = itemContent.matchAll(/<source[^>]*srcset="([^"]+)"[^>]*>/gi);
-    for (const srcMatch of srcsetMatches) {
-      const srcset = srcMatch[1];
-      const parts = srcset.split(',').map(s => s.trim());
-      const highRes = parts[parts.length - 1]?.split(' ')[0];
-      if (highRes) {
-        addImage(highRes, `carousel-${itemCount}-srcset`);
+    // Method 1: Look for img with various src attributes
+    const imgSrcRegex = /<img[^>]*\s(?:src|data-src|data-lazy-src)="([^"]+)"[^>]*>/gi;
+    let imgMatch;
+    
+    while ((imgMatch = imgSrcRegex.exec(itemContent)) !== null) {
+      const src = imgMatch[1];
+      // Prioritize larger/medium/gallery images
+      if (src.includes('medium') || src.includes('large') || src.includes('gallery') || 
+          src.includes('pdp') || src.includes('1600') || src.includes('1200') ||
+          src.includes('1100') || src.includes('1000') || src.includes('800')) {
+        addImage(src, `item-${i}-priority`);
+      } else if (!src.includes('450x450') && !src.includes('small')) {
+        addImage(src, `item-${i}`);
       }
     }
-  }
-
-  console.log(`Found ${itemCount} carousel items, ${images.length} valid images`);
-
-  if (images.length > 0) {
-    return images;
-  }
-
-  // Fallback: Look for images with "gallery" or "pdp" or "medium" or "large" in path
-  console.log("Trying fallback: look for gallery/pdp images...");
-  const galleryImgRegex = /<img[^>]*(?:src|data-src)="([^"]*(?:gallery|pdp|medium|large)[^"]*\.(?:jpg|jpeg|png|webp)[^"]*)"/gi;
-  let galleryMatch;
-  const firstPortion = html.substring(0, Math.floor(html.length / 4));
-  
-  while ((galleryMatch = galleryImgRegex.exec(firstPortion)) !== null) {
-    addImage(galleryMatch[1], 'gallery-fallback');
+    
+    // Method 2: Look for picture > source with srcset
+    const srcsetRegex = /<source[^>]*srcset="([^"]+)"[^>]*>/gi;
+    let srcsetMatch;
+    
+    while ((srcsetMatch = srcsetRegex.exec(itemContent)) !== null) {
+      const srcset = srcsetMatch[1];
+      // Get the highest resolution image (last in srcset list)
+      const parts = srcset.split(',').map(s => s.trim());
+      for (const part of parts) {
+        const url = part.split(' ')[0];
+        if (url && (url.includes('1600') || url.includes('1200') || url.includes('1100') || 
+                    url.includes('large') || url.includes('medium') || url.includes('desktop'))) {
+          addImage(url, `item-${i}-srcset`);
+        }
+      }
+      // Also add the last one (highest res)
+      const lastUrl = parts[parts.length - 1]?.split(' ')[0];
+      if (lastUrl) {
+        addImage(lastUrl, `item-${i}-srcset-last`);
+      }
+    }
   }
 
   console.log(`=== Total gallery images: ${images.length} ===`);
@@ -186,7 +182,7 @@ serve(async (req) => {
       body: JSON.stringify({
         url: url,
         formats: ["rawHtml"],
-        waitFor: 12000,
+        waitFor: 15000, // Wait longer for carousel to fully load
       }),
     });
 
