@@ -175,7 +175,7 @@ const ConfirmationWithScreenshots = ({
     // Layout settings with safe margins
     const isPBP = width === 2010;
     const plusSize = isPBP ? 120 : 40;
-    const safeMargin = isPBP ? 100 : 30;
+    const safeMargin = isPBP ? 120 : 40;
     const plusGap = isPBP ? 40 : 15;
     
     // Determine layout for 450x450 based on product image orientation
