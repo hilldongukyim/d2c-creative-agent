@@ -227,7 +227,8 @@ const MaplePDP = () => {
     setPendingUrl(null);
   };
 
-  const handleDownloadScreenshot = (screenshotUrl: string) => {
+  const handleDownloadScreenshot = (e: React.MouseEvent, screenshotUrl: string) => {
+    e.stopPropagation();
     const link = document.createElement("a");
     link.href = screenshotUrl;
     link.download = `maple-screenshot-${Date.now()}.png`;
@@ -255,8 +256,7 @@ const MaplePDP = () => {
             size="sm"
             className="absolute top-4 left-4 bg-white/10 border-white/20 text-white hover:bg-white/20"
             onClick={(e) => {
-              e.stopPropagation();
-              handleDownloadScreenshot(fullscreenImage);
+              handleDownloadScreenshot(e, fullscreenImage);
             }}
           >
             <Download className="w-4 h-4 mr-2" />
@@ -323,7 +323,7 @@ const MaplePDP = () => {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => handleDownloadScreenshot(message.screenshot!)}
+                              onClick={(e) => handleDownloadScreenshot(e, message.screenshot!)}
                               className="flex items-center gap-2"
                             >
                               <Download className="w-4 h-4" />
