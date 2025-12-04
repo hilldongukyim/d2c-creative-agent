@@ -5,82 +5,133 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Extract carousel images from the specific gallery selector:
-// #swiper-wrapper-* > div.cmp-carousel__item.swiper-slide.c-carousel__item > div > div > div > img
+// Extract carousel images from the MAIN PRODUCT gallery only
+// Target: The first/primary swiper carousel on the page (product gallery)
 function extractCarouselImages(html: string, baseUrl: string): string[] {
   const images: string[] = [];
   const seen = new Set<string>();
 
-  // Find the swiper-wrapper container and extract images from it
-  // Pattern: swiper-wrapper containing divs with all three classes: cmp-carousel__item, swiper-slide, c-carousel__item
-  const swiperWrapperRegex = /<div[^>]*id="swiper-wrapper-[^"]*"[^>]*class="[^"]*swiper-wrapper[^"]*"[^>]*>([\s\S]*?)<\/div>\s*(?:<div[^>]*class="[^"]*swiper-button|<\/div>)/gi;
-  
-  const wrapperMatch = swiperWrapperRegex.exec(html);
-  
-  if (wrapperMatch) {
-    const wrapperContent = wrapperMatch[1];
-    console.log("Found swiper-wrapper content, length:", wrapperContent.length);
-    
-    // Extract images from slides that have all required classes
-    const slideImgRegex = /<div[^>]*class="[^"]*cmp-carousel__item[^"]*swiper-slide[^"]*c-carousel__item[^"]*"[^>]*>[\s\S]*?<img[^>]*(?:src|data-src)="([^"]+)"[^>]*>/gi;
-    
-    let match;
-    while ((match = slideImgRegex.exec(wrapperContent)) !== null) {
-      const src = match[1];
-      if (src && !src.includes('logo') && !src.endsWith('.svg') && !seen.has(src)) {
-        seen.add(src);
-        const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
-        images.push(fullUrl);
-        console.log("Found gallery image:", fullUrl);
-      }
-    }
-  }
-  
-  // Fallback: If no images found, try a more direct approach
-  if (images.length === 0) {
-    console.log("Trying fallback extraction...");
-    
-    // Look for the specific class combination pattern
-    const fallbackRegex = /<div[^>]*class="(?:[^"]*\s)?cmp-carousel__item(?:\s[^"]*)?swiper-slide(?:\s[^"]*)?c-carousel__item[^"]*"[^>]*>[\s\S]*?<img[^>]*(?:src|data-src)="([^"]+)"[^>]*>/gi;
-    
-    let match;
-    while ((match = fallbackRegex.exec(html)) !== null) {
-      const src = match[1];
-      if (src && !src.includes('logo') && !src.endsWith('.svg') && !seen.has(src)) {
-        seen.add(src);
-        const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
-        images.push(fullUrl);
-        console.log("Found gallery image (fallback):", fullUrl);
-      }
-    }
-  }
+  console.log("Starting image extraction...");
 
-  // Second fallback: Match class order variations
-  if (images.length === 0) {
-    console.log("Trying second fallback...");
+  // Strategy 1: Find the FIRST swiper-wrapper with id pattern (main product gallery)
+  // The main gallery usually has id like "swiper-wrapper-XXXX" and is the first one
+  const firstSwiperMatch = html.match(/<div[^>]*id="swiper-wrapper-[a-f0-9]+"[^>]*class="[^"]*swiper-wrapper[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<div[^>]*class="[^"]*swiper-(?:button|pagination)/i);
+  
+  if (firstSwiperMatch) {
+    const wrapperContent = firstSwiperMatch[1];
+    console.log("Found first swiper-wrapper, extracting images...");
     
-    // Classes might be in different order
-    const patterns = [
-      /<div[^>]*class="[^"]*c-carousel__item[^"]*cmp-carousel__item[^"]*swiper-slide[^"]*"[^>]*>[\s\S]*?<img[^>]*(?:src|data-src)="([^"]+)"[^>]*>/gi,
-      /<div[^>]*class="[^"]*swiper-slide[^"]*cmp-carousel__item[^"]*c-carousel__item[^"]*"[^>]*>[\s\S]*?<img[^>]*(?:src|data-src)="([^"]+)"[^>]*>/gi,
-    ];
-    
-    for (const pattern of patterns) {
-      let match;
-      while ((match = pattern.exec(html)) !== null) {
-        const src = match[1];
-        if (src && !src.includes('logo') && !src.endsWith('.svg') && !seen.has(src)) {
+    // Extract all img src from this specific carousel
+    const imgRegex = /<img[^>]*(?:src|data-src)="([^"]+)"[^>]*>/gi;
+    let match;
+    while ((match = imgRegex.exec(wrapperContent)) !== null) {
+      const src = match[1];
+      if (src && !src.includes('logo') && !src.endsWith('.svg') && !seen.has(src)) {
+        // Filter out thumbnails and small images - we want gallery/high-res images
+        if (!src.includes('thum-') && !src.includes('thumbnail') && !src.includes('180x180')) {
           seen.add(src);
           const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
           images.push(fullUrl);
-          console.log("Found gallery image (fallback 2):", fullUrl);
+          console.log("Found main gallery image:", fullUrl.substring(0, 100));
         }
       }
-      if (images.length > 0) break;
     }
   }
 
-  console.log(`Total gallery images found: ${images.length}`);
+  // Strategy 2: Look for product gallery section specifically
+  if (images.length === 0) {
+    console.log("Trying product gallery section extraction...");
+    
+    // Look for common product gallery container patterns
+    const galleryPatterns = [
+      /<section[^>]*class="[^"]*(?:product-gallery|pdp-gallery|gallery-section)[^"]*"[^>]*>([\s\S]*?)<\/section>/gi,
+      /<div[^>]*class="[^"]*(?:product-gallery|pdp-gallery|gallery-main)[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<div[^>]*class="[^"]*(?:product-info|pdp-info)/gi,
+    ];
+    
+    for (const pattern of galleryPatterns) {
+      const sectionMatch = pattern.exec(html);
+      if (sectionMatch) {
+        const sectionContent = sectionMatch[1];
+        const imgRegex = /<img[^>]*(?:src|data-src)="([^"]+)"[^>]*>/gi;
+        let match;
+        while ((match = imgRegex.exec(sectionContent)) !== null) {
+          const src = match[1];
+          if (src && !src.includes('logo') && !src.endsWith('.svg') && !seen.has(src)) {
+            if (!src.includes('thum-') && !src.includes('thumbnail') && !src.includes('180x180')) {
+              seen.add(src);
+              const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
+              images.push(fullUrl);
+              console.log("Found gallery image (section):", fullUrl.substring(0, 100));
+            }
+          }
+        }
+        if (images.length > 0) break;
+      }
+    }
+  }
+
+  // Strategy 3: Find carousel items with all three classes, but STOP after first carousel ends
+  if (images.length === 0) {
+    console.log("Trying carousel item extraction with boundary detection...");
+    
+    // First, find where the main product section ends (usually marked by product info/specs section)
+    const productSectionEndPatterns = [
+      /class="[^"]*(?:product-info|pdp-info|product-details|spec-section|related-products)/i,
+      /<section[^>]*class="[^"]*(?:related|recommend|you-may-also)/i,
+    ];
+    
+    let htmlToSearch = html;
+    for (const pattern of productSectionEndPatterns) {
+      const endMatch = html.match(pattern);
+      if (endMatch && endMatch.index) {
+        // Only search in the first part of the HTML (before related products)
+        htmlToSearch = html.substring(0, endMatch.index);
+        console.log("Limited search area to first", endMatch.index, "characters");
+        break;
+      }
+    }
+    
+    // Now extract from the limited area
+    const slideImgRegex = /<div[^>]*class="[^"]*cmp-carousel__item[^"]*swiper-slide[^"]*c-carousel__item[^"]*"[^>]*>[\s\S]*?<img[^>]*(?:src|data-src)="([^"]+)"[^>]*>/gi;
+    
+    let match;
+    while ((match = slideImgRegex.exec(htmlToSearch)) !== null) {
+      const src = match[1];
+      if (src && !src.includes('logo') && !src.endsWith('.svg') && !seen.has(src)) {
+        if (!src.includes('thum-') && !src.includes('thumbnail') && !src.includes('180x180') && !src.includes('450x450')) {
+          seen.add(src);
+          const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
+          images.push(fullUrl);
+          console.log("Found carousel image:", fullUrl.substring(0, 100));
+        }
+      }
+    }
+  }
+
+  // Strategy 4: Final fallback - look for high-res product images with specific patterns
+  if (images.length === 0) {
+    console.log("Final fallback: looking for high-res gallery images...");
+    
+    // Look for images with gallery in path or large dimensions in filename
+    const highResRegex = /<img[^>]*(?:src|data-src)="([^"]*(?:gallery|large|zoom|hero|main)[^"]*\.(?:jpg|jpeg|png|webp))"[^>]*>/gi;
+    
+    let match;
+    let count = 0;
+    while ((match = highResRegex.exec(html)) !== null && count < 10) {
+      const src = match[1];
+      if (src && !src.includes('logo') && !src.endsWith('.svg') && !seen.has(src)) {
+        if (!src.includes('thum-') && !src.includes('thumbnail') && !src.includes('180x180')) {
+          seen.add(src);
+          const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
+          images.push(fullUrl);
+          console.log("Found high-res image:", fullUrl.substring(0, 100));
+          count++;
+        }
+      }
+    }
+  }
+
+  console.log(`Total main gallery images found: ${images.length}`);
   return images;
 }
 
@@ -108,7 +159,7 @@ serve(async (req) => {
       });
     }
 
-    console.log("Extracting gallery carousel images from URL:", url);
+    console.log("Extracting MAIN gallery carousel images from URL:", url);
 
     const response = await fetch("https://api.firecrawl.dev/v1/scrape", {
       method: "POST",
