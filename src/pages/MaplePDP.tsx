@@ -163,17 +163,17 @@ const MaplePDP = () => {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 flex flex-col">
       {/* Header */}
-      <header className="h-14 border-b border-slate-200 bg-white flex items-center px-4 justify-between">
-        <Button variant="ghost" size="icon" onClick={() => navigate("/home")} className="text-slate-500 hover:text-slate-900">
+      <header className="h-14 border-b border-border bg-background/80 backdrop-blur-sm flex items-center px-4 justify-between">
+        <Button variant="ghost" size="icon" onClick={() => navigate("/home")} className="text-muted-foreground hover:text-foreground">
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <div className="flex items-center gap-2">
           <img src="/lovable-uploads/maple-profile.png" alt="Maple" className="w-7 h-7 rounded-full" />
-          <span className="font-semibold text-slate-800">Maple</span>
+          <span className="font-semibold text-foreground">Maple</span>
         </div>
-        <Button variant="ghost" size="icon" onClick={handleNewChat} className="text-slate-500 hover:text-slate-900">
+        <Button variant="ghost" size="icon" onClick={handleNewChat} className="text-muted-foreground hover:text-foreground">
           <RotateCcw className="w-5 h-5" />
         </Button>
       </header>
@@ -183,8 +183,8 @@ const MaplePDP = () => {
         {messages.length === 0 ? (
           <div className="h-full flex flex-col items-center justify-center px-4">
             <img src="/lovable-uploads/maple-profile.png" alt="Maple" className="w-16 h-16 rounded-full mb-4" />
-            <h1 className="text-2xl font-semibold text-slate-800 mb-2">Maple PDP Curator</h1>
-            <p className="text-slate-500 text-center max-w-md">
+            <h1 className="text-2xl font-semibold text-foreground mb-2">Maple PDP Curator</h1>
+            <p className="text-muted-foreground text-center max-w-md">
               Enter a product page URL you want to analyze.<br />
               I'll provide product features and recommendations.
             </p>
@@ -196,11 +196,11 @@ const MaplePDP = () => {
                 {message.role === "assistant" ? (
                   <div className="flex gap-3">
                     <img src="/lovable-uploads/maple-profile.png" alt="Maple" className="w-8 h-8 rounded-full flex-shrink-0 mt-1" />
-                    <div className="text-slate-700 leading-relaxed whitespace-pre-wrap">{message.content || <Loader2 className="w-4 h-4 animate-spin text-slate-400" />}</div>
+                    <div className="text-foreground leading-relaxed whitespace-pre-wrap">{message.content || <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}</div>
                   </div>
                 ) : (
-                  <div className="bg-slate-200 rounded-2xl px-4 py-2.5 max-w-[85%]">
-                    <p className="text-slate-800 whitespace-pre-wrap break-all">{message.content}</p>
+                  <div className="bg-secondary rounded-2xl px-4 py-2.5 max-w-[85%]">
+                    <p className="text-foreground whitespace-pre-wrap break-all">{message.content}</p>
                   </div>
                 )}
               </div>
@@ -211,16 +211,16 @@ const MaplePDP = () => {
       </div>
 
       {/* Input */}
-      <div className="border-t border-slate-200 bg-white p-4">
+      <div className="border-t border-border bg-background/80 backdrop-blur-sm p-4">
         <div className="max-w-3xl mx-auto">
-          <div className="relative flex items-end gap-2 bg-slate-100 rounded-2xl px-4 py-3">
+          <div className="relative flex items-end gap-2 bg-secondary rounded-2xl px-4 py-3">
             <Textarea
               ref={textareaRef}
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Enter a PDP URL..."
-              className="flex-1 bg-transparent border-0 resize-none focus-visible:ring-0 p-0 min-h-[24px] max-h-[200px] text-slate-800 placeholder:text-slate-400"
+              className="flex-1 bg-transparent border-0 resize-none focus-visible:ring-0 p-0 min-h-[24px] max-h-[200px] text-foreground placeholder:text-muted-foreground"
               rows={1}
               disabled={isLoading}
             />
@@ -228,12 +228,12 @@ const MaplePDP = () => {
               onClick={handleSend}
               disabled={isLoading || !input.trim()}
               size="icon"
-              className="h-8 w-8 rounded-full bg-slate-900 hover:bg-slate-800 disabled:bg-slate-300 flex-shrink-0"
+              className="h-8 w-8 rounded-full bg-foreground hover:bg-foreground/90 disabled:bg-muted flex-shrink-0"
             >
               {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
             </Button>
           </div>
-          <p className="text-xs text-slate-400 text-center mt-2">Maple analyzes product pages and provides curation insights</p>
+          <p className="text-xs text-muted-foreground text-center mt-2">Maple analyzes product pages and provides curation insights</p>
         </div>
       </div>
     </div>
