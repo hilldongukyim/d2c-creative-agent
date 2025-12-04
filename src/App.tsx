@@ -12,6 +12,7 @@ import PipQA from "./pages/PipQA";
 import AllenQA from "./pages/AllenQA";
 import NotFound from "./pages/NotFound";
 import Crawling from "./pages/Crawling";
+import MaplePDP from "./pages/MaplePDP";
 
 const queryClient = new QueryClient();
 
@@ -29,6 +30,7 @@ const App = () => (
         <Route path="/pip-qa" element={<PipQA />} />
         <Route path="/allen-qa" element={<AllenQA />} />
         <Route path="/crawling" element={<Crawling />} />
+        <Route path="/maple-pdp" element={<MaplePDP />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
