@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import FirecrawlApp from "https://esm.sh/@mendable/firecrawl-js@4.7.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -32,27 +31,45 @@ serve(async (req) => {
 
     console.log("Scraping URL:", url);
     
-    const firecrawl = new FirecrawlApp({ apiKey: FIRECRAWL_API_KEY });
-    
-    const response = await firecrawl.scrapeUrl(url, {
-      formats: ["markdown"],
-      onlyMainContent: true,
+    // Use Firecrawl REST API directly
+    const response = await fetch("https://api.firecrawl.dev/v1/scrape", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${FIRECRAWL_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        url: url,
+        formats: ["markdown"],
+        onlyMainContent: true,
+      }),
     });
 
-    if (!response.success) {
-      console.error("Firecrawl scrape failed:", response);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error("Firecrawl API error:", response.status, errorText);
       return new Response(JSON.stringify({ error: "Failed to scrape URL" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
-    console.log("Scrape successful, content length:", response.markdown?.length || 0);
+    const data = await response.json();
+    
+    if (!data.success) {
+      console.error("Firecrawl scrape failed:", data);
+      return new Response(JSON.stringify({ error: data.error || "Scrape failed" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    console.log("Scrape successful, content length:", data.data?.markdown?.length || 0);
 
     return new Response(JSON.stringify({ 
       success: true, 
-      content: response.markdown || "",
-      metadata: response.metadata || {}
+      content: data.data?.markdown || "",
+      metadata: data.data?.metadata || {}
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
