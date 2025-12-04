@@ -1,24 +1,49 @@
-import { removeBackground as imglyRemoveBackground } from "@imgly/background-removal";
+import { supabase } from "@/integrations/supabase/client";
 
 export const removeBackground = async (imageElement: HTMLImageElement): Promise<Blob> => {
   try {
-    console.log('Starting background removal with imgly...');
+    console.log('Starting background removal with Fotor API...');
     
-    // Convert image element to blob
-    const response = await fetch(imageElement.src);
-    const imageBlob = await response.blob();
+    // Convert image to base64
+    const canvas = document.createElement('canvas');
+    canvas.width = imageElement.naturalWidth;
+    canvas.height = imageElement.naturalHeight;
+    const ctx = canvas.getContext('2d')!;
+    ctx.drawImage(imageElement, 0, 0);
     
-    console.log('Image blob size:', imageBlob.size);
+    const base64 = canvas.toDataURL('image/png').split(',')[1];
+    console.log('Image converted to base64, length:', base64.length);
     
-    // Remove background using imgly
-    const resultBlob = await imglyRemoveBackground(imageBlob, {
-      progress: (key, current, total) => {
-        console.log(`Progress: ${key} - ${current}/${total}`);
-      },
+    // Call edge function
+    const { data, error } = await supabase.functions.invoke('fotor-background-removal', {
+      body: { imageBase64: base64 },
     });
+
+    if (error) {
+      console.error('Edge function error:', error);
+      throw new Error(error.message || 'Failed to remove background');
+    }
+
+    if (data.error) {
+      throw new Error(data.error);
+    }
+
+    // Fotor returns base64 image in result
+    const resultBase64 = data.image || data.result || data.output;
+    if (!resultBase64) {
+      console.error('Unexpected Fotor response:', data);
+      throw new Error('No image returned from Fotor API');
+    }
+
+    // Convert base64 back to blob
+    const binaryString = atob(resultBase64);
+    const bytes = new Uint8Array(binaryString.length);
+    for (let i = 0; i < binaryString.length; i++) {
+      bytes[i] = binaryString.charCodeAt(i);
+    }
     
     console.log('Background removal complete');
-    return resultBlob;
+    return new Blob([bytes], { type: 'image/png' });
   } catch (error) {
     console.error('Error removing background:', error);
     throw error;

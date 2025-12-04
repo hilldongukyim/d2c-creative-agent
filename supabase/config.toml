@@ -14,3 +14,6 @@ verify_jwt = false
 
 [functions.maple-pdp-analyze]
 verify_jwt = false
+
+[functions.fotor-background-removal]
+verify_jwt = false
