@@ -332,25 +332,6 @@ const PTOGallery = () => {
                 </div>
               )}
 
-              {/* Error State */}
-              {submissionStatus === 'failure' && (
-                <div className="text-center space-y-4 animate-fade-in">
-                  <div className="w-24 h-24 mx-auto">
-                    <div className="w-full h-full bg-red-100 dark:bg-red-950/30 rounded-full flex items-center justify-center border-4 border-red-200 dark:border-red-800/50">
-                      <span className="text-2xl">❌</span>
-                    </div>
-                  </div>
-                  <p className="text-lg font-medium text-red-600 dark:text-red-400">Transmission failed</p>
-                  <p className="text-sm text-muted-foreground">Please try again.</p>
-                  <Button 
-                    onClick={() => setSubmissionStatus(null)}
-                    size="sm"
-                    className="mt-2"
-                  >
-                    Try Again
-                  </Button>
-                </div>
-              )}
             </div>
 
             {/* URL Validation Error */}
