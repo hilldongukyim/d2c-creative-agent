@@ -5,13 +5,13 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Extract carousel images using specific CSS selector pattern
-// Target: #swiper-wrapper-* > div.cmp-carousel__item.swiper-slide.c-carousel__item > div > div > div > img
+// Extract ALL carousel images from div.cmp-carousel__item.swiper-slide.c-carousel__item > div > div > div > img
 function extractCarouselImages(html: string, baseUrl: string): string[] {
   const images: string[] = [];
   const seen = new Set<string>();
 
-  console.log("Starting image extraction with specific selector pattern...");
+  console.log("Starting image extraction...");
+  console.log("Target: div.cmp-carousel__item.swiper-slide.c-carousel__item > div > div > div > img");
 
   const addImage = (src: string, source: string) => {
     if (!src || seen.has(src)) return false;
@@ -23,90 +23,75 @@ function extractCarouselImages(html: string, baseUrl: string): string[] {
     seen.add(src);
     const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
     images.push(fullUrl);
-    console.log(`Found image (${source}):`, fullUrl.substring(0, 150));
+    console.log(`Found image [${images.length}] (${source}):`, fullUrl.substring(0, 150));
     return true;
   };
 
-  // Strategy 1: Find first swiper-wrapper and extract ALL carousel item images
-  // Pattern: #swiper-wrapper-* > div.cmp-carousel__item.swiper-slide.c-carousel__item > div > div > div > img
-  const swiperWrapperMatch = html.match(/<div[^>]*id="swiper-wrapper-[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<\/div>\s*<div[^>]*class="[^"]*swiper-button/i);
+  // Primary Strategy: Find ALL divs with classes cmp-carousel__item + swiper-slide + c-carousel__item
+  // Then extract img from nested div > div > div > img structure
+  // Class order may vary, so we check for all three classes regardless of order
   
-  if (swiperWrapperMatch) {
-    console.log("Found swiper-wrapper with button boundary");
-    const wrapperContent = swiperWrapperMatch[1];
+  // Split HTML into potential carousel item blocks
+  const carouselItemRegex = /<div[^>]*class="([^"]*cmp-carousel__item[^"]*)"[^>]*>([\s\S]*?)(?=<div[^>]*class="[^"]*cmp-carousel__item|<\/section>|<section|$)/gi;
+  let itemMatch;
+  
+  while ((itemMatch = carouselItemRegex.exec(html)) !== null) {
+    const classAttr = itemMatch[1];
+    const content = itemMatch[2];
     
-    // Find all divs with the specific class combination
-    const itemRegex = /<div[^>]*class="cmp-carousel__item\s+swiper-slide\s+c-carousel__item[^"]*"[^>]*>([\s\S]*?)(?=<div[^>]*class="cmp-carousel__item\s+swiper-slide|$)/gi;
-    let itemMatch;
-    
-    while ((itemMatch = itemRegex.exec(wrapperContent)) !== null) {
-      // Find img inside nested div > div > div > img
-      const imgMatch = itemMatch[1].match(/<div[^>]*>\s*<div[^>]*>\s*<div[^>]*>\s*<img[^>]*(?:data-src|src)="([^"]+)"/i);
-      if (imgMatch) {
-        addImage(imgMatch[1], 'exact-pattern');
+    // Check if this div has all required classes
+    if (classAttr.includes('swiper-slide') && classAttr.includes('c-carousel__item')) {
+      console.log("Found carousel item with matching classes");
+      
+      // Look for img inside div > div > div > img pattern
+      // The img can have src or data-src attribute
+      const nestedImgRegex = /<div[^>]*>\s*<div[^>]*>\s*<div[^>]*>\s*<img[^>]*(?:src|data-src)="([^"]+)"[^>]*>/gi;
+      let imgMatch;
+      
+      while ((imgMatch = nestedImgRegex.exec(content)) !== null) {
+        addImage(imgMatch[1], 'nested-div-img');
+      }
+      
+      // Also try direct img search within the carousel item (fallback)
+      if (images.length === 0) {
+        const directImgRegex = /<img[^>]*(?:src|data-src)="([^"]+)"[^>]*>/gi;
+        let directMatch;
+        while ((directMatch = directImgRegex.exec(content)) !== null) {
+          addImage(directMatch[1], 'direct-img');
+        }
       }
     }
   }
 
   if (images.length > 0) {
-    console.log(`Found ${images.length} images from exact swiper pattern`);
+    console.log(`Found ${images.length} images from carousel items`);
     return images;
   }
 
-  // Strategy 2: Alternative - find all cmp-carousel__item with swiper-slide and c-carousel__item classes
-  const altRegex = /<div[^>]*class="[^"]*cmp-carousel__item[^"]*swiper-slide[^"]*c-carousel__item[^"]*"[^>]*>[\s\S]*?<img[^>]*(?:data-src|src)="([^"]+)"[^>]*>/gi;
-  let altMatch;
+  // Fallback Strategy: Simpler regex for swiper-slide with c-carousel__item
+  console.log("Trying fallback strategy...");
+  const fallbackRegex = /<div[^>]*class="[^"]*swiper-slide[^"]*c-carousel__item[^"]*"[^>]*>[\s\S]*?<img[^>]*(?:src|data-src)="([^"]+)"[^>]*>/gi;
+  let fallbackMatch;
   
-  while ((altMatch = altRegex.exec(html)) !== null) {
-    addImage(altMatch[1], 'alt-carousel');
+  while ((fallbackMatch = fallbackRegex.exec(html)) !== null) {
+    addImage(fallbackMatch[1], 'fallback');
   }
 
   if (images.length > 0) {
-    console.log(`Found ${images.length} images from alternative carousel pattern`);
+    console.log(`Found ${images.length} images from fallback pattern`);
     return images;
   }
 
-  // Strategy 2: Alternative pattern - look for swiper-slide with c-carousel__item class
-  const altCarouselRegex = /<div[^>]*class="[^"]*swiper-slide[^"]*c-carousel__item[^"]*"[^>]*>[\s\S]*?<img[^>]*(?:data-src|src)="([^"]+)"[^>]*>/gi;
-  let altMatch;
-  
-  while ((altMatch = altCarouselRegex.exec(html)) !== null) {
-    addImage(altMatch[1], 'alt-carousel');
-  }
-
-  if (images.length > 0) {
-    console.log(`Found ${images.length} images from alternative carousel pattern`);
-    return images;
-  }
-
-  // Strategy 3: Look for LG's picture elements with srcset (for responsive images)
-  const pictureRegex = /<div[^>]*class="[^"]*cmp-carousel__item[^"]*"[^>]*>[\s\S]*?<picture[^>]*>[\s\S]*?<source[^>]*srcset="([^"]+)"[\s\S]*?<\/picture>/gi;
-  let pictureMatch;
-  
-  while ((pictureMatch = pictureRegex.exec(html)) !== null) {
-    const srcset = pictureMatch[1];
-    const srcsetParts = srcset.split(',').map(s => s.trim());
-    const lastSrc = srcsetParts[srcsetParts.length - 1]?.split(' ')[0];
-    if (lastSrc) {
-      addImage(lastSrc, 'carousel-picture');
-    }
-  }
-
-  if (images.length > 0) {
-    console.log(`Found ${images.length} images from carousel picture elements`);
-    return images;
-  }
-
-  // Strategy 4: Broader swiper-slide search in first portion
+  // Last resort: Look for any swiper-slide images in first half of page
+  console.log("Trying last resort strategy...");
   const firstHalf = html.substring(0, Math.floor(html.length / 2));
-  const broadSwiperRegex = /<div[^>]*class="[^"]*swiper-slide[^"]*"[^>]*>[\s\S]*?<img[^>]*(?:data-src|src)="([^"]+\.(?:jpg|jpeg|png|webp)[^"]*)"[^>]*>/gi;
-  let broadMatch;
+  const lastResortRegex = /<div[^>]*class="[^"]*swiper-slide[^"]*"[^>]*>[\s\S]*?<img[^>]*(?:src|data-src)="([^"]+\.(?:jpg|jpeg|png|webp)[^"]*)"[^>]*>/gi;
+  let lastMatch;
   
-  while ((broadMatch = broadSwiperRegex.exec(firstHalf)) !== null) {
-    const src = broadMatch[1];
-    // Filter out non-product images
+  while ((lastMatch = lastResortRegex.exec(firstHalf)) !== null) {
+    const src = lastMatch[1];
     if (!src.includes('usp') && !src.includes('USP') && !src.includes('feature') && !src.includes('icon')) {
-      addImage(src, 'broad-swiper');
+      addImage(src, 'last-resort');
     }
   }
 
@@ -187,7 +172,7 @@ serve(async (req) => {
       body: JSON.stringify({
         url: url,
         formats: ["rawHtml"],
-        waitFor: 10000, // Wait for dynamic carousel to load
+        waitFor: 10000,
       }),
     });
 
