@@ -63,8 +63,8 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       description: "Ollie is a sales analysis expert who analyzes market trends and customer behavior. Derives business insights from data and supports strategic decision-making.",
       personality: "Logical and systematic, excels at finding meaningful patterns in numbers and data."
     },
-    "ravi": {
-      description: "Ravi is a promotion configuration specialist who sets up and manages various marketing tools and platforms. Realizes marketing ideas through technical implementation.",
+    "levi": {
+      description: "Levi is a promotion configuration specialist who sets up and manages various marketing tools and platforms. Realizes marketing ideas through technical implementation.",
       personality: "Has technical mindset, demonstrates strong focus and patience in problem-solving."
     },
     "yumi": {
@@ -212,9 +212,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         role: "Sales Analyst",
         imageSrc: "/lovable-uploads/a2300ba9-4de6-4adc-88fd-b80baa1bdff7.png"
       }, {
-        name: "Ravi",
+        name: "Levi",
         role: "Promotion Configurator",
-        imageSrc: "/lovable-uploads/d18ff2c4-e8c7-4c44-b38c-74bb66e23393.png"
+        imageSrc: "/lovable-uploads/levi-profile.png"
       }]
     }]
   }, {
