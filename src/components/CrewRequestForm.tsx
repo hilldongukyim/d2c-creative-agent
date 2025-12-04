@@ -7,6 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 type CrewRequestFormProps = {
   open: boolean;
@@ -61,11 +62,26 @@ const CrewRequestForm = ({ open, onOpenChange }: CrewRequestFormProps) => {
       }).catch(() => {
         // Ignore errors - the request is still sent to the webhook
       });
-      
-      toast({
-        title: "Request Submitted",
-        description: "Your crew registration request has been sent to the webhook.",
+
+      // Send email notification
+      const { data: emailData, error: emailError } = await supabase.functions.invoke('send-crew-request-email', {
+        body: formData,
       });
+
+      if (emailError) {
+        console.error('Email send error:', emailError);
+        toast({
+          title: "Request Submitted",
+          description: "Your request has been sent, but email notification failed.",
+          variant: "destructive"
+        });
+      } else {
+        console.log('Email sent successfully:', emailData);
+        toast({
+          title: "Request Submitted",
+          description: "Your crew registration request has been sent and email notification delivered.",
+        });
+      }
       
       onOpenChange(false);
       setFormData({
@@ -81,23 +97,11 @@ const CrewRequestForm = ({ open, onOpenChange }: CrewRequestFormProps) => {
         selectedImage: ""
       });
     } catch (error) {
+      console.error('Submit error:', error);
       toast({
-        title: "Request Sent",
-        description: "Your request has been sent to the webhook.",
-      });
-      
-      onOpenChange(false);
-      setFormData({
-        crewName: "",
-        role: "",
-        division: "",
-        team: "",
-        skills: "",
-        description: "",
-        agentUrl: "",
-        comment: "",
-        requestedBy: "",
-        selectedImage: ""
+        title: "Error",
+        description: "Failed to submit request. Please try again.",
+        variant: "destructive"
       });
     } finally {
       setIsSubmitting(false);
