@@ -125,6 +125,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       description: "Oversees DAM user guides, tutorials, and on-boarding.",
       personality: "Organized and supportive, excels at managing digital assets and guiding users. Digital Asset Management, AEM, DAM On-Boarding, DAM Guide.",
       admin: { name: "Yunju bak", email: "yunju.bak@lge.com" }
+    },
+    "anita": {
+      description: "Anita is a Lifestyle Artist who creates compelling lifestyle content and visual storytelling for marketing campaigns.",
+      personality: "Creative and artistic, excels at capturing lifestyle moments and brand aesthetics. Lifestyle Content, Visual Storytelling, Brand Aesthetics."
     }
   };
   const handleMouseEnter = (event: React.MouseEvent, name: string, role: string, teamTitle?: string) => {
@@ -174,9 +178,13 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         role: "Product Information Manager",
         imageSrc: "/lovable-uploads/noa-profile.png"
       }, {
-      name: "Candy",
+        name: "Candy",
         role: "DAM Tutor",
         imageSrc: "/lovable-uploads/candy-profile.png"
+      }, {
+        name: "Anita",
+        role: "Lifestyle Artist",
+        imageSrc: "/lovable-uploads/anita-profile.png"
       }]
     }, {
       title: "On-Site Marketing Team",
