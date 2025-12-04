@@ -1,10 +1,9 @@
 import React, { useRef, useState, useEffect } from "react";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Upload, Send, RefreshCw, Loader2, CheckCircle } from "lucide-react";
+import { Upload, Download, RefreshCw, Loader2, CheckCircle } from "lucide-react";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { removeBackground, loadImage, downloadBlob } from "@/utils/backgroundRemoval";
 
 interface KaiBackgroundRemovalPopupProps {
   open: boolean;
@@ -17,9 +16,9 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
 }) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [email, setEmail] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [processedBlob, setProcessedBlob] = useState<Blob | null>(null);
+  const [processedUrl, setProcessedUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
@@ -30,70 +29,50 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
     }
   }, [selectedFile]);
 
-  const handleSubmit = async () => {
-    if (!selectedFile || !email.trim()) return;
-
-    setIsSubmitting(true);
-    try {
-      const fullEmail = `${email.trim()}@lge.com`;
-      const fileName = `${Date.now()}-${selectedFile.name}`;
-
-      // Debug logging
-      console.log("=== Kai Background Removal Request ===");
-      console.log("Email:", fullEmail);
-      console.log("File Name:", fileName);
-      console.log("File Type:", selectedFile.type);
-
-      // Upload image to Supabase storage
-      console.log("Uploading image to storage...");
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('kai-images')
-        .upload(fileName, selectedFile);
-
-      if (uploadError) {
-        throw new Error(`Upload failed: ${uploadError.message}`);
-      }
-
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from('kai-images')
-        .getPublicUrl(fileName);
-
-      const imageUrl = urlData.publicUrl;
-      console.log("Image uploaded, URL:", imageUrl);
-
-      // Send request via Edge Function proxy (bypasses CORS)
-      console.log("Sending request via Edge Function proxy...");
-      const { data, error: invokeError } = await supabase.functions.invoke('kai-webhook-proxy', {
-        body: {
-          email: fullEmail,
-          imageUrl: imageUrl,
-          fileName: selectedFile.name,
-        },
-      });
-
-      if (invokeError) {
-        throw new Error(`Proxy error: ${invokeError.message}`);
-      }
-
-      console.log("Proxy response:", data);
-      
-      setIsSuccess(true);
-      toast.success("Request sent successfully! Check your email soon.");
-    } catch (error) {
-      console.error("=== Request Error ===");
-      console.error("Error details:", error);
-      toast.error("Failed to send request. Please try again.");
-    } finally {
-      setIsSubmitting(false);
+  useEffect(() => {
+    if (processedBlob) {
+      const url = URL.createObjectURL(processedBlob);
+      setProcessedUrl(url);
+      return () => URL.revokeObjectURL(url);
     }
+  }, [processedBlob]);
+
+  const handleProcess = async () => {
+    if (!selectedFile) return;
+
+    setIsProcessing(true);
+    try {
+      console.log("=== Kai Background Removal ===");
+      console.log("Processing file:", selectedFile.name);
+
+      const imageElement = await loadImage(selectedFile);
+      const resultBlob = await removeBackground(imageElement);
+      
+      setProcessedBlob(resultBlob);
+      toast.success("Background removed successfully!");
+    } catch (error) {
+      console.error("=== Processing Error ===");
+      console.error("Error details:", error);
+      toast.error("Failed to remove background. Please try again.");
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  const handleDownload = () => {
+    if (!processedBlob || !selectedFile) return;
+    
+    const originalName = selectedFile.name.replace(/\.[^/.]+$/, "");
+    downloadBlob(processedBlob, `${originalName}_no_bg.png`);
+    toast.success("Image downloaded!");
   };
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       setSelectedFile(file);
-      setIsSuccess(false);
+      setProcessedBlob(null);
+      setProcessedUrl(null);
     }
   };
 
@@ -104,8 +83,8 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
   const handleReselect = () => {
     setSelectedFile(null);
     setPreviewUrl(null);
-    setEmail("");
-    setIsSuccess(false);
+    setProcessedBlob(null);
+    setProcessedUrl(null);
   };
 
   return (
@@ -135,8 +114,8 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
                       Upload an image you want<br />
                       the background removed from!<br />
                       <span className="text-sm text-muted-foreground mt-2 block">
-                        I'll send you a PNG with<br />
-                        the background removed via email ✨
+                        I'll remove it instantly<br />
+                        and you can download the result ✨
                       </span>
                     </p>
                   </div>
@@ -158,46 +137,43 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
                     Upload Image
                   </Button>
                 </>
-              ) : isSuccess ? (
+              ) : processedBlob ? (
                 <>
-                  {/* Success State */}
-                  <div className="bg-background/95 backdrop-blur-sm rounded-lg p-5 border border-primary/30 shadow-lg w-full max-w-sm text-center">
-                    {/* Kai Profile Image */}
-                    <div className="mb-4">
+                  {/* Success State with Result */}
+                  <div className="bg-background/95 backdrop-blur-sm rounded-lg p-4 border border-primary/30 shadow-lg w-full max-w-sm text-center">
+                    {/* Result Preview */}
+                    <div className="mb-3 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PHJlY3Qgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiBmaWxsPSIjZGRkIi8+PHJlY3QgeD0iMTAiIHk9IjEwIiB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIGZpbGw9IiNkZGQiLz48L3N2Zz4=')] rounded-md">
                       <img
-                        src="/lovable-uploads/kai-profile.png"
-                        alt="Kai"
-                        className="w-24 h-24 rounded-full mx-auto object-cover border-2 border-primary/30"
+                        src={processedUrl || ""}
+                        alt="Result"
+                        className="w-full h-32 object-contain rounded-md"
                       />
                     </div>
                     
                     {/* Success Message */}
-                    <div className="mb-4">
-                      <CheckCircle className="w-8 h-8 text-green-500 mx-auto mb-2" />
-                      <p className="text-foreground text-base font-medium mb-1">
-                        Got your request! 🎉
-                      </p>
-                      <p className="text-muted-foreground text-sm">
-                        I'll remove the background<br />
-                        and send it to your email soon ✨
+                    <div className="mb-3">
+                      <CheckCircle className="w-6 h-6 text-green-500 mx-auto mb-1" />
+                      <p className="text-foreground text-sm font-medium">
+                        Background removed! 🎉
                       </p>
                     </div>
 
                     {/* Action Buttons */}
                     <div className="flex gap-2">
                       <Button
-                        onClick={() => onOpenChange(false)}
+                        onClick={handleReselect}
                         variant="outline"
                         className="flex-1 border-primary/30"
                       >
-                        Close
-                      </Button>
-                      <Button
-                        onClick={handleReselect}
-                        className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
-                      >
                         <RefreshCw className="w-4 h-4 mr-1" />
                         New Image
+                      </Button>
+                      <Button
+                        onClick={handleDownload}
+                        className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
+                      >
+                        <Download className="w-4 h-4 mr-1" />
+                        Download
                       </Button>
                     </div>
                   </div>
@@ -217,54 +193,42 @@ const KaiBackgroundRemovalPopup: React.FC<KaiBackgroundRemovalPopupProps> = ({
                     
                     {/* Confirmation Message */}
                     <p className="text-foreground text-center text-sm mb-3">
-                      Is this the correct image? 🤔<br />
-                      <span className="text-muted-foreground text-xs">
-                        Enter your ID to receive the result!
-                      </span>
+                      Ready to remove background? 🤔
                     </p>
 
-                    {/* Email Input with @lge.com suffix */}
-                    <div className="space-y-3">
-                      <div className="flex items-center">
-                        <Input
-                          type="text"
-                          placeholder="your.id"
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          className="bg-background border-primary/30 text-foreground placeholder:text-muted-foreground rounded-r-none border-r-0"
-                        />
-                        <span className="bg-muted text-muted-foreground px-3 h-10 flex items-center text-sm border border-primary/30 rounded-r-md">
-                          @lge.com
-                        </span>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button
-                          onClick={handleReselect}
-                          variant="outline"
-                          className="flex-1 border-primary/30"
-                        >
-                          <RefreshCw className="w-4 h-4 mr-1" />
-                          Re-upload
-                        </Button>
-                        <Button
-                          onClick={handleSubmit}
-                          disabled={!email.trim() || isSubmitting}
-                          className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
-                        >
-                          {isSubmitting ? (
-                            <>
-                              <Loader2 className="w-4 h-4 mr-1 animate-spin" />
-                              Sending...
-                            </>
-                          ) : (
-                            <>
-                              <Send className="w-4 h-4 mr-1" />
-                              Request
-                            </>
-                          )}
-                        </Button>
-                      </div>
+                    {/* Action Buttons */}
+                    <div className="flex gap-2">
+                      <Button
+                        onClick={handleReselect}
+                        variant="outline"
+                        className="flex-1 border-primary/30"
+                      >
+                        <RefreshCw className="w-4 h-4 mr-1" />
+                        Re-upload
+                      </Button>
+                      <Button
+                        onClick={handleProcess}
+                        disabled={isProcessing}
+                        className="flex-1 bg-primary text-primary-foreground hover:bg-primary/90"
+                      >
+                        {isProcessing ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                            Processing...
+                          </>
+                        ) : (
+                          <>
+                            Remove BG
+                          </>
+                        )}
+                      </Button>
                     </div>
+                    
+                    {isProcessing && (
+                      <p className="text-muted-foreground text-xs text-center mt-2">
+                        First time may take longer to load the model...
+                      </p>
+                    )}
                   </div>
                   
                   {/* Hidden file input for reselect */}
