@@ -5,128 +5,117 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Extract carousel images from the MAIN PRODUCT gallery only
-// Target: The first/primary swiper carousel on the page (product gallery)
+// Extract carousel images from the MAIN PRODUCT gallery
 function extractCarouselImages(html: string, baseUrl: string): string[] {
   const images: string[] = [];
   const seen = new Set<string>();
 
   console.log("Starting image extraction...");
 
-  // Strategy 1: Find the FIRST swiper-wrapper with id pattern (main product gallery)
-  // The main gallery usually has id like "swiper-wrapper-XXXX" and is the first one
-  const firstSwiperMatch = html.match(/<div[^>]*id="swiper-wrapper-[a-f0-9]+"[^>]*class="[^"]*swiper-wrapper[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<div[^>]*class="[^"]*swiper-(?:button|pagination)/i);
+  // Helper to add image if valid
+  const addImage = (src: string, source: string) => {
+    if (!src || seen.has(src)) return false;
+    if (src.includes('logo') || src.endsWith('.svg')) return false;
+    if (src.includes('thum-') || src.includes('thumbnail')) return false;
+    if (src.includes('180x180') || src.includes('100x100')) return false;
+    if (src.includes('placeholder') || src.includes('loading')) return false;
+    
+    seen.add(src);
+    const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
+    images.push(fullUrl);
+    console.log(`Found image (${source}):`, fullUrl.substring(0, 120));
+    return true;
+  };
+
+  // Strategy 1: Look for LG's specific gallery structure
+  // LG uses picture elements with source srcset for responsive images
+  // Pattern: <picture><source srcset="..."><img src="..."></picture>
+  const pictureRegex = /<picture[^>]*>[\s\S]*?<source[^>]*srcset="([^"]+)"[\s\S]*?<\/picture>/gi;
+  let pictureMatch;
+  let pictureCount = 0;
   
-  if (firstSwiperMatch) {
-    const wrapperContent = firstSwiperMatch[1];
-    console.log("Found first swiper-wrapper, extracting images...");
-    
-    // Extract all img src from this specific carousel
-    const imgRegex = /<img[^>]*(?:src|data-src)="([^"]+)"[^>]*>/gi;
-    let match;
-    while ((match = imgRegex.exec(wrapperContent)) !== null) {
-      const src = match[1];
-      if (src && !src.includes('logo') && !src.endsWith('.svg') && !seen.has(src)) {
-        // Filter out thumbnails and small images - we want gallery/high-res images
-        if (!src.includes('thum-') && !src.includes('thumbnail') && !src.includes('180x180')) {
-          seen.add(src);
-          const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
-          images.push(fullUrl);
-          console.log("Found main gallery image:", fullUrl.substring(0, 100));
-        }
-      }
+  // Only look in the first third of the HTML (where product gallery typically is)
+  const firstThird = html.substring(0, Math.floor(html.length / 3));
+  
+  while ((pictureMatch = pictureRegex.exec(firstThird)) !== null && pictureCount < 15) {
+    const srcset = pictureMatch[1];
+    // Get the highest resolution image from srcset
+    const srcsetParts = srcset.split(',').map(s => s.trim());
+    const lastSrc = srcsetParts[srcsetParts.length - 1]?.split(' ')[0];
+    if (lastSrc && addImage(lastSrc, 'picture-srcset')) {
+      pictureCount++;
     }
   }
 
-  // Strategy 2: Look for product gallery section specifically
-  if (images.length === 0) {
-    console.log("Trying product gallery section extraction...");
-    
-    // Look for common product gallery container patterns
-    const galleryPatterns = [
-      /<section[^>]*class="[^"]*(?:product-gallery|pdp-gallery|gallery-section)[^"]*"[^>]*>([\s\S]*?)<\/section>/gi,
-      /<div[^>]*class="[^"]*(?:product-gallery|pdp-gallery|gallery-main)[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<div[^>]*class="[^"]*(?:product-info|pdp-info)/gi,
-    ];
-    
-    for (const pattern of galleryPatterns) {
-      const sectionMatch = pattern.exec(html);
-      if (sectionMatch) {
-        const sectionContent = sectionMatch[1];
-        const imgRegex = /<img[^>]*(?:src|data-src)="([^"]+)"[^>]*>/gi;
-        let match;
-        while ((match = imgRegex.exec(sectionContent)) !== null) {
-          const src = match[1];
-          if (src && !src.includes('logo') && !src.endsWith('.svg') && !seen.has(src)) {
-            if (!src.includes('thum-') && !src.includes('thumbnail') && !src.includes('180x180')) {
-              seen.add(src);
-              const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
-              images.push(fullUrl);
-              console.log("Found gallery image (section):", fullUrl.substring(0, 100));
-            }
-          }
-        }
-        if (images.length > 0) break;
-      }
+  if (images.length > 0) {
+    console.log(`Found ${images.length} images from picture elements`);
+    return images;
+  }
+
+  // Strategy 2: Look for swiper/carousel with data-src or src attributes
+  // Common pattern for LG product galleries
+  const swiperSlideRegex = /<div[^>]*class="[^"]*swiper-slide[^"]*"[^>]*>[\s\S]*?<img[^>]*(?:data-src|src)="([^"]+)"[^>]*>/gi;
+  let slideMatch;
+  
+  while ((slideMatch = swiperSlideRegex.exec(firstThird)) !== null) {
+    addImage(slideMatch[1], 'swiper-slide');
+  }
+
+  if (images.length > 0) {
+    console.log(`Found ${images.length} images from swiper slides`);
+    return images;
+  }
+
+  // Strategy 3: Look for gallery/zoom images (high-res product photos)
+  const galleryImgRegex = /<img[^>]*(?:data-src|src)="([^"]*(?:gallery|zoom|large|hero|pdp|product)[^"]*\.(?:jpg|jpeg|png|webp)[^"]*)"/gi;
+  let galleryMatch;
+  
+  while ((galleryMatch = galleryImgRegex.exec(firstThird)) !== null) {
+    addImage(galleryMatch[1], 'gallery-pattern');
+  }
+
+  if (images.length > 0) {
+    console.log(`Found ${images.length} images from gallery pattern`);
+    return images;
+  }
+
+  // Strategy 4: Look for images with specific LG DAM patterns
+  // LG uses /content/dam/channel/wcms/ for product images
+  const lgDamRegex = /<img[^>]*(?:data-src|src)="([^"]*\/content\/dam\/channel\/wcms\/[^"]*(?:gallery|pdp|product|medium|large)[^"]*\.(?:jpg|jpeg|png|webp)[^"]*)"/gi;
+  let lgMatch;
+  
+  while ((lgMatch = lgDamRegex.exec(html)) !== null) {
+    // Skip promotional/USP images
+    if (!lgMatch[1].includes('usp') && !lgMatch[1].includes('USP') && !lgMatch[1].includes('feature')) {
+      addImage(lgMatch[1], 'lg-dam');
     }
   }
 
-  // Strategy 3: Find carousel items with all three classes, but STOP after first carousel ends
-  if (images.length === 0) {
-    console.log("Trying carousel item extraction with boundary detection...");
-    
-    // First, find where the main product section ends (usually marked by product info/specs section)
-    const productSectionEndPatterns = [
-      /class="[^"]*(?:product-info|pdp-info|product-details|spec-section|related-products)/i,
-      /<section[^>]*class="[^"]*(?:related|recommend|you-may-also)/i,
-    ];
-    
-    let htmlToSearch = html;
-    for (const pattern of productSectionEndPatterns) {
-      const endMatch = html.match(pattern);
-      if (endMatch && endMatch.index) {
-        // Only search in the first part of the HTML (before related products)
-        htmlToSearch = html.substring(0, endMatch.index);
-        console.log("Limited search area to first", endMatch.index, "characters");
-        break;
-      }
-    }
-    
-    // Now extract from the limited area
-    const slideImgRegex = /<div[^>]*class="[^"]*cmp-carousel__item[^"]*swiper-slide[^"]*c-carousel__item[^"]*"[^>]*>[\s\S]*?<img[^>]*(?:src|data-src)="([^"]+)"[^>]*>/gi;
-    
-    let match;
-    while ((match = slideImgRegex.exec(htmlToSearch)) !== null) {
-      const src = match[1];
-      if (src && !src.includes('logo') && !src.endsWith('.svg') && !seen.has(src)) {
-        if (!src.includes('thum-') && !src.includes('thumbnail') && !src.includes('180x180') && !src.includes('450x450')) {
-          seen.add(src);
-          const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
-          images.push(fullUrl);
-          console.log("Found carousel image:", fullUrl.substring(0, 100));
-        }
-      }
-    }
+  if (images.length > 0) {
+    console.log(`Found ${images.length} images from LG DAM pattern`);
+    return images;
   }
 
-  // Strategy 4: Final fallback - look for high-res product images with specific patterns
-  if (images.length === 0) {
-    console.log("Final fallback: looking for high-res gallery images...");
-    
-    // Look for images with gallery in path or large dimensions in filename
-    const highResRegex = /<img[^>]*(?:src|data-src)="([^"]*(?:gallery|large|zoom|hero|main)[^"]*\.(?:jpg|jpeg|png|webp))"[^>]*>/gi;
-    
-    let match;
-    let count = 0;
-    while ((match = highResRegex.exec(html)) !== null && count < 10) {
-      const src = match[1];
-      if (src && !src.includes('logo') && !src.endsWith('.svg') && !seen.has(src)) {
-        if (!src.includes('thum-') && !src.includes('thumbnail') && !src.includes('180x180')) {
-          seen.add(src);
-          const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
-          images.push(fullUrl);
-          console.log("Found high-res image:", fullUrl.substring(0, 100));
-          count++;
-        }
+  // Strategy 5: Broader search for product images in first portion of page
+  const broadRegex = /<img[^>]*(?:data-src|src)="([^"]+\.(?:jpg|jpeg|png|webp)(?:\?[^"]*)?)"[^>]*>/gi;
+  let broadMatch;
+  let count = 0;
+  
+  while ((broadMatch = broadRegex.exec(firstThird)) !== null && count < 20) {
+    const src = broadMatch[1];
+    // Filter out small thumbnails, icons, and promotional content
+    if (!src.includes('icon') && 
+        !src.includes('flag') && 
+        !src.includes('badge') &&
+        !src.includes('btn') &&
+        !src.includes('button') &&
+        !src.includes('arrow') &&
+        !src.includes('social') &&
+        !src.includes('350x350') && // Skip small promotional images
+        !src.includes('usp') &&
+        !src.includes('USP')) {
+      if (addImage(src, 'broad-search')) {
+        count++;
       }
     }
   }
@@ -166,15 +155,14 @@ function extractProductName(html: string, url: string): string {
 }
 
 function cleanProductName(name: string): string {
-  // Remove common suffixes, special characters, and clean up
   return name
-    .replace(/\s*[|\-–—]\s*LG.*$/i, '') // Remove "| LG..." or "- LG..."
-    .replace(/\s*[|\-–—]\s*Buy.*$/i, '') // Remove "| Buy..."
-    .replace(/[<>:"/\\|?*]/g, '') // Remove invalid filename chars
-    .replace(/\s+/g, '_') // Replace spaces with underscores
-    .replace(/_+/g, '_') // Remove multiple underscores
-    .replace(/^_|_$/g, '') // Remove leading/trailing underscores
-    .substring(0, 50) // Limit length
+    .replace(/\s*[|\-–—]\s*LG.*$/i, '')
+    .replace(/\s*[|\-–—]\s*Buy.*$/i, '')
+    .replace(/[<>:"/\\|?*]/g, '')
+    .replace(/\s+/g, '_')
+    .replace(/_+/g, '_')
+    .replace(/^_|_$/g, '')
+    .substring(0, 50)
     .trim() || 'product';
 }
 
@@ -202,7 +190,7 @@ serve(async (req) => {
       });
     }
 
-    console.log("Extracting MAIN gallery carousel images from URL:", url);
+    console.log("Extracting MAIN gallery images from URL:", url);
 
     const response = await fetch("https://api.firecrawl.dev/v1/scrape", {
       method: "POST",
@@ -213,7 +201,7 @@ serve(async (req) => {
       body: JSON.stringify({
         url: url,
         formats: ["rawHtml"],
-        waitFor: 5000,
+        waitFor: 8000, // Increased wait time for dynamic content
       }),
     });
 
@@ -242,6 +230,7 @@ serve(async (req) => {
     const images = extractCarouselImages(html, url);
     const productName = extractProductName(html, url);
     console.log("Extracted product name:", productName);
+    console.log("Total images extracted:", images.length);
 
     return new Response(JSON.stringify({
       success: true,
