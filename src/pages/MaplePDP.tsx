@@ -69,7 +69,7 @@ const MaplePDP = () => {
       if (!isValidUrl(trimmedInput)) {
         setMessages((prev) => [
           ...prev,
-          { role: "assistant", content: "유효한 URL을 입력해주세요.\n예: https://www.lg.com/us/product/..." },
+          { role: "assistant", content: "Please enter a valid URL.\nExample: https://www.lg.com/us/product/..." },
         ]);
         setIsLoading(false);
         return;
@@ -81,7 +81,7 @@ const MaplePDP = () => {
       } catch {
         setMessages((prev) => [
           ...prev,
-          { role: "assistant", content: "페이지를 가져올 수 없어요. CORS 정책으로 접근이 제한될 수 있습니다.\n\n페이지의 주요 내용을 직접 복사해서 붙여넣어 주세요." },
+          { role: "assistant", content: "Unable to fetch the page. Access may be restricted due to CORS policy.\n\nPlease copy and paste the main content of the page directly." },
         ]);
         setIsLoading(false);
         return;
@@ -143,8 +143,8 @@ const MaplePDP = () => {
       }
     } catch (error) {
       console.error("Error:", error);
-      toast({ title: "오류 발생", description: "분석 중 오류가 발생했습니다.", variant: "destructive" });
-      setMessages((prev) => [...prev, { role: "assistant", content: "분석 중 오류가 발생했어요. 다시 시도해주세요." }]);
+      toast({ title: "Error", description: "An error occurred during analysis.", variant: "destructive" });
+      setMessages((prev) => [...prev, { role: "assistant", content: "An error occurred during analysis. Please try again." }]);
     } finally {
       setIsLoading(false);
     }
@@ -185,8 +185,8 @@ const MaplePDP = () => {
             <img src="/lovable-uploads/maple-profile.png" alt="Maple" className="w-16 h-16 rounded-full mb-4" />
             <h1 className="text-2xl font-semibold text-slate-800 mb-2">Maple PDP Curator</h1>
             <p className="text-slate-500 text-center max-w-md">
-              분석하고 싶은 제품 페이지 URL을 입력해주세요.<br />
-              제품의 특징과 추천 포인트를 알려드릴게요.
+              Enter a product page URL you want to analyze.<br />
+              I'll provide product features and recommendations.
             </p>
           </div>
         ) : (
@@ -219,7 +219,7 @@ const MaplePDP = () => {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
-              placeholder="PDP URL을 입력하세요..."
+              placeholder="Enter a PDP URL..."
               className="flex-1 bg-transparent border-0 resize-none focus-visible:ring-0 p-0 min-h-[24px] max-h-[200px] text-slate-800 placeholder:text-slate-400"
               rows={1}
               disabled={isLoading}
@@ -233,7 +233,7 @@ const MaplePDP = () => {
               {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
             </Button>
           </div>
-          <p className="text-xs text-slate-400 text-center mt-2">Maple은 제품 페이지를 분석하여 큐레이션 정보를 제공합니다</p>
+          <p className="text-xs text-slate-400 text-center mt-2">Maple analyzes product pages and provides curation insights</p>
         </div>
       </div>
     </div>
