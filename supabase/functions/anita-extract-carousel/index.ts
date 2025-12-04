@@ -5,64 +5,74 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Extract all carousel images from HTML
-function extractAllCarouselImages(html: string, baseUrl: string): string[] {
+// Extract all carousel images matching the specific selector pattern:
+// #swiper-wrapper-* > div.cmp-carousel__item.swiper-slide.c-carousel__item > div > div > div > img
+function extractCarouselImages(html: string, baseUrl: string): string[] {
   const images: string[] = [];
   const seen = new Set<string>();
 
-  // Pattern 1: swiper-slide images
-  const swiperRegex = /<div[^>]*class="[^"]*swiper-slide[^"]*"[^>]*>[\s\S]*?<img[^>]*src="([^"]+)"[^>]*>/gi;
+  // Pattern to match the specific carousel structure
+  // Looking for: swiper-wrapper containing cmp-carousel__item with swiper-slide and c-carousel__item classes
+  const carouselRegex = /<div[^>]*id="swiper-wrapper[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<\/div>\s*<\/div>/gi;
+  
+  // Find all swiper-slide items with the specific class combination
+  const slideRegex = /<div[^>]*class="[^"]*cmp-carousel__item[^"]*swiper-slide[^"]*c-carousel__item[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<\/div>\s*<\/div>\s*<\/div>/gi;
+  
   let match;
-  while ((match = swiperRegex.exec(html)) !== null) {
+  
+  // Method 1: Look for the nested img structure within carousel items
+  const imgInCarouselRegex = /<div[^>]*class="[^"]*(?:cmp-carousel__item|swiper-slide|c-carousel__item)[^"]*"[^>]*>[\s\S]*?<div[^>]*>[\s\S]*?<div[^>]*>[\s\S]*?<div[^>]*>[\s\S]*?<img[^>]*src="([^"]+)"[^>]*>/gi;
+  
+  while ((match = imgInCarouselRegex.exec(html)) !== null) {
     const src = match[1];
     if (src && !src.includes('logo') && !src.endsWith('.svg') && !seen.has(src)) {
       seen.add(src);
-      images.push(src.startsWith('http') ? src : new URL(src, baseUrl).href);
+      const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
+      images.push(fullUrl);
+      console.log("Found carousel image (method 1):", fullUrl);
     }
   }
 
-  // Pattern 2: cmp-carousel__item images
-  const carouselRegex = /<div[^>]*class="[^"]*cmp-carousel__item[^"]*"[^>]*>[\s\S]*?<img[^>]*src="([^"]+)"[^>]*>/gi;
-  while ((match = carouselRegex.exec(html)) !== null) {
+  // Method 2: More flexible pattern for swiper slides with images
+  const swiperSlideImgRegex = /<div[^>]*class="[^"]*swiper-slide[^"]*"[^>]*>[\s\S]*?<img[^>]*src="([^"]+)"[^>]*>/gi;
+  
+  while ((match = swiperSlideImgRegex.exec(html)) !== null) {
     const src = match[1];
     if (src && !src.includes('logo') && !src.endsWith('.svg') && !seen.has(src)) {
       seen.add(src);
-      images.push(src.startsWith('http') ? src : new URL(src, baseUrl).href);
+      const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
+      images.push(fullUrl);
+      console.log("Found carousel image (method 2):", fullUrl);
     }
   }
 
-  // Pattern 3: data-srcset or srcset attributes (for lazy-loaded images)
-  const srcsetRegex = /(?:data-)?srcset="([^"]+)"/gi;
-  while ((match = srcsetRegex.exec(html)) !== null) {
-    const srcset = match[1];
-    // Get the largest image from srcset
-    const sources = srcset.split(',').map(s => s.trim().split(' ')[0]);
-    sources.forEach(src => {
-      if (src && !src.includes('logo') && !src.endsWith('.svg') && !seen.has(src)) {
-        // Filter for product images (usually larger than thumbnails)
-        if (src.includes('/product/') || src.includes('/gallery/') || src.includes('pdp')) {
-          seen.add(src);
-          images.push(src.startsWith('http') ? src : new URL(src, baseUrl).href);
-        }
-      }
-    });
-  }
-
-  // Pattern 4: General product gallery images
-  const galleryRegex = /<img[^>]*(?:class="[^"]*(?:gallery|product|carousel)[^"]*")?[^>]*src="([^"]+)"[^>]*>/gi;
-  while ((match = galleryRegex.exec(html)) !== null) {
+  // Method 3: Look for data-src attributes (lazy loaded images)
+  const dataSrcRegex = /<div[^>]*class="[^"]*swiper-slide[^"]*"[^>]*>[\s\S]*?<img[^>]*data-src="([^"]+)"[^>]*>/gi;
+  
+  while ((match = dataSrcRegex.exec(html)) !== null) {
     const src = match[1];
     if (src && !src.includes('logo') && !src.endsWith('.svg') && !seen.has(src)) {
-      // Filter for likely product images
-      if (src.includes('/product/') || src.includes('/gallery/') || src.includes('pdp') || 
-          src.includes('image') && (src.includes('.png') || src.includes('.jpg') || src.includes('.webp'))) {
-        seen.add(src);
-        images.push(src.startsWith('http') ? src : new URL(src, baseUrl).href);
-      }
+      seen.add(src);
+      const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
+      images.push(fullUrl);
+      console.log("Found carousel image (method 3 - data-src):", fullUrl);
     }
   }
 
-  console.log(`Found ${images.length} unique carousel images`);
+  // Method 4: Extract all images from cmp-carousel__item containers
+  const cmpCarouselImgRegex = /<div[^>]*class="[^"]*cmp-carousel__item[^"]*"[^>]*>[\s\S]*?<img[^>]*(?:src|data-src)="([^"]+)"[^>]*>/gi;
+  
+  while ((match = cmpCarouselImgRegex.exec(html)) !== null) {
+    const src = match[1];
+    if (src && !src.includes('logo') && !src.endsWith('.svg') && !seen.has(src)) {
+      seen.add(src);
+      const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
+      images.push(fullUrl);
+      console.log("Found carousel image (method 4):", fullUrl);
+    }
+  }
+
+  console.log(`Total unique carousel images found: ${images.length}`);
   return images;
 }
 
@@ -101,7 +111,7 @@ serve(async (req) => {
       body: JSON.stringify({
         url: url,
         formats: ["rawHtml"],
-        waitFor: 5000, // Wait longer for JS rendering
+        waitFor: 5000,
       }),
     });
 
@@ -127,8 +137,7 @@ serve(async (req) => {
     const html = data.data?.rawHtml || "";
     console.log("HTML length:", html.length);
 
-    const images = extractAllCarouselImages(html, url);
-    console.log("Extracted images:", images);
+    const images = extractCarouselImages(html, url);
 
     return new Response(JSON.stringify({
       success: true,
