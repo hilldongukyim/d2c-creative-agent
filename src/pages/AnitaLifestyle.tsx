@@ -14,12 +14,13 @@ const AnitaLifestyle = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [isUpscaling, setIsUpscaling] = useState(false);
+  const [isResizing, setIsResizing] = useState(false);
   const [carouselImages, setCarouselImages] = useState<string[]>([]);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isUpscaled, setIsUpscaled] = useState(false);
   const [step, setStep] = useState<"input" | "select" | "result">("input");
-  const [aspectRatio, setAspectRatio] = useState<"16:9" | "1:1" | "9:16">("16:9");
+  const [currentAspectRatio, setCurrentAspectRatio] = useState<"16:9" | "1:1" | "9:16">("16:9");
 
   const handleExtractImages = async () => {
     if (!url) {
@@ -59,7 +60,7 @@ const AnitaLifestyle = () => {
     setIsGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke("anita-generate-lifestyle", {
-        body: { imageUrl: selectedImage, aspectRatio },
+        body: { imageUrl: selectedImage, aspectRatio: "16:9" },
       });
 
       if (error) throw error;
@@ -68,6 +69,7 @@ const AnitaLifestyle = () => {
       }
 
       setGeneratedImage(`data:image/png;base64,${data.imageBase64}`);
+      setCurrentAspectRatio("16:9");
       setStep("result");
       toast.success("Lifestyle image generated!");
     } catch (error) {
@@ -83,7 +85,8 @@ const AnitaLifestyle = () => {
 
     const link = document.createElement("a");
     link.href = generatedImage;
-    link.download = isUpscaled ? "anita-lifestyle-4k.png" : "anita-lifestyle-image.png";
+    const suffix = isUpscaled ? "-4k" : `-${currentAspectRatio.replace(":", "x")}`;
+    link.download = `anita-lifestyle${suffix}.png`;
     link.click();
     toast.success("Image downloaded!");
   };
@@ -120,11 +123,37 @@ const AnitaLifestyle = () => {
     setGeneratedImage(null);
     setIsUpscaled(false);
     setStep("input");
-    setAspectRatio("16:9");
+    setCurrentAspectRatio("16:9");
+  };
+
+  const handleResize = async (newRatio: "16:9" | "1:1" | "9:16") => {
+    if (!generatedImage || newRatio === currentAspectRatio) return;
+
+    setIsResizing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("anita-resize-lifestyle", {
+        body: { imageBase64: generatedImage, aspectRatio: newRatio },
+      });
+
+      if (error) throw error;
+      if (!data.success || !data.imageBase64) {
+        throw new Error(data.error || "Failed to resize image");
+      }
+
+      setGeneratedImage(`data:image/png;base64,${data.imageBase64}`);
+      setCurrentAspectRatio(newRatio);
+      setIsUpscaled(false);
+      toast.success(`Resized to ${newRatio}!`);
+    } catch (error) {
+      console.error("Error resizing image:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to resize image");
+    } finally {
+      setIsResizing(false);
+    }
   };
 
   const getAspectRatioLabel = () => {
-    switch (aspectRatio) {
+    switch (currentAspectRatio) {
       case "1:1": return "1080×1080";
       case "9:16": return "1080×1920";
       case "16:9": return "1920×1080";
@@ -255,38 +284,6 @@ const AnitaLifestyle = () => {
               </div>
             </Card>
 
-            {/* Aspect Ratio Selection */}
-            <div className="flex items-center justify-center gap-2 mb-4">
-              <span className="text-sm text-gray-600 mr-2">Aspect Ratio:</span>
-              <Button
-                variant={aspectRatio === "16:9" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setAspectRatio("16:9")}
-                className={aspectRatio === "16:9" ? "bg-purple-500 hover:bg-purple-600" : ""}
-              >
-                <RectangleHorizontal className="w-4 h-4 mr-1" />
-                16:9
-              </Button>
-              <Button
-                variant={aspectRatio === "1:1" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setAspectRatio("1:1")}
-                className={aspectRatio === "1:1" ? "bg-purple-500 hover:bg-purple-600" : ""}
-              >
-                <Square className="w-4 h-4 mr-1" />
-                1:1
-              </Button>
-              <Button
-                variant={aspectRatio === "9:16" ? "default" : "outline"}
-                size="sm"
-                onClick={() => setAspectRatio("9:16")}
-                className={aspectRatio === "9:16" ? "bg-purple-500 hover:bg-purple-600" : ""}
-              >
-                <RectangleVertical className="w-4 h-4 mr-1" />
-                9:16
-              </Button>
-            </div>
-
             <div className="flex gap-4 justify-center">
               <Button variant="outline" onClick={handleReset}>
                 Start Over
@@ -336,13 +333,52 @@ const AnitaLifestyle = () => {
               </div>
             </Card>
 
-            {isUpscaling && (
+            {(isUpscaling || isResizing) && (
               <Card className="p-6 bg-white/80 backdrop-blur-sm text-center">
                 <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-purple-500" />
-                <p className="text-gray-600">Upscaling to 4K resolution...</p>
+                <p className="text-gray-600">
+                  {isUpscaling ? "Upscaling to 4K resolution..." : "Resizing image..."}
+                </p>
                 <p className="text-sm text-gray-500 mt-2">This may take up to 30 seconds</p>
               </Card>
             )}
+
+            {/* Aspect Ratio Resize Options */}
+            <Card className="p-4 bg-white/80 backdrop-blur-sm">
+              <div className="flex items-center justify-center gap-3 flex-wrap">
+                <span className="text-sm text-gray-600">Resize to:</span>
+                <Button
+                  variant={currentAspectRatio === "16:9" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handleResize("16:9")}
+                  disabled={isResizing || isUpscaling || currentAspectRatio === "16:9"}
+                  className={currentAspectRatio === "16:9" ? "bg-purple-500 hover:bg-purple-600" : ""}
+                >
+                  <RectangleHorizontal className="w-4 h-4 mr-1" />
+                  16:9
+                </Button>
+                <Button
+                  variant={currentAspectRatio === "1:1" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handleResize("1:1")}
+                  disabled={isResizing || isUpscaling || currentAspectRatio === "1:1"}
+                  className={currentAspectRatio === "1:1" ? "bg-purple-500 hover:bg-purple-600" : ""}
+                >
+                  <Square className="w-4 h-4 mr-1" />
+                  1:1
+                </Button>
+                <Button
+                  variant={currentAspectRatio === "9:16" ? "default" : "outline"}
+                  size="sm"
+                  onClick={() => handleResize("9:16")}
+                  disabled={isResizing || isUpscaling || currentAspectRatio === "9:16"}
+                  className={currentAspectRatio === "9:16" ? "bg-purple-500 hover:bg-purple-600" : ""}
+                >
+                  <RectangleVertical className="w-4 h-4 mr-1" />
+                  9:16
+                </Button>
+              </div>
+            </Card>
 
             <div className="flex gap-4 justify-center flex-wrap">
               <Button variant="outline" onClick={handleReset}>
@@ -351,7 +387,7 @@ const AnitaLifestyle = () => {
               {!isUpscaled && (
                 <Button
                   onClick={handleUpscale}
-                  disabled={isUpscaling}
+                  disabled={isUpscaling || isResizing}
                   variant="outline"
                   className="border-purple-300 text-purple-600 hover:bg-purple-50"
                 >
@@ -370,10 +406,11 @@ const AnitaLifestyle = () => {
               )}
               <Button
                 onClick={handleDownload}
+                disabled={isResizing || isUpscaling}
                 className="bg-purple-500 hover:bg-purple-600"
               >
                 <Download className="w-4 h-4 mr-2" />
-                Download {isUpscaled ? "4K" : ""} Image
+                Download
               </Button>
             </div>
           </div>

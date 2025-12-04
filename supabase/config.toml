@@ -35,3 +35,6 @@ verify_jwt = false
 
 [functions.anita-upscale]
 verify_jwt = false
+
+[functions.anita-resize-lifestyle]
+verify_jwt = false
