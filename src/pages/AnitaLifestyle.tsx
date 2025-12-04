@@ -1,15 +1,19 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, Loader2, Download, Search, Sparkles, ZoomIn, Square, RectangleVertical, RectangleHorizontal, Film, RefreshCw, Camera } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { ArrowLeft, Loader2, Download, Search, Sparkles, ZoomIn, Square, RectangleVertical, RectangleHorizontal, Film, RefreshCw, Camera, Smartphone } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import Logo from "@/components/Logo";
+import { useIsMobile } from "@/hooks/use-mobile";
+import { QRCodeSVG } from "qrcode.react";
 
 const AnitaLifestyle = () => {
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   const [url, setUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
@@ -28,6 +32,11 @@ const AnitaLifestyle = () => {
   const [customHeight, setCustomHeight] = useState("");
   const [productName, setProductName] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // QR code dialog state
+  const [showQRDialog, setShowQRDialog] = useState(false);
+  const [sessionId, setSessionId] = useState<string | null>(null);
+  const [isWaitingForMobile, setIsWaitingForMobile] = useState(false);
 
   const handleExtractImages = async () => {
     if (!url) {
@@ -156,14 +165,74 @@ const AnitaLifestyle = () => {
     setIsUpscaled(false);
     setStep("input");
     setCurrentAspectRatio("16:9");
+    setSessionId(null);
+    setShowQRDialog(false);
+    setIsWaitingForMobile(false);
   };
 
+  // Generate session ID and setup Realtime listener for QR code flow
   const handleCameraClick = () => {
     if (!selectedImage) {
       toast.error("Please select a product image first");
       return;
     }
-    fileInputRef.current?.click();
+
+    if (isMobile) {
+      // Mobile: directly open camera
+      fileInputRef.current?.click();
+    } else {
+      // PC: show QR code dialog
+      const newSessionId = crypto.randomUUID();
+      setSessionId(newSessionId);
+      setShowQRDialog(true);
+      setIsWaitingForMobile(true);
+    }
+  };
+
+  // Setup Realtime channel when QR dialog is shown
+  useEffect(() => {
+    if (!sessionId || !showQRDialog) return;
+
+    const channel = supabase.channel(`anita-camera-${sessionId}`);
+
+    channel
+      .on("broadcast", { event: "mobile-ready" }, () => {
+        console.log("Mobile device connected, sending product info");
+        // Send product info to mobile
+        channel.send({
+          type: "broadcast",
+          event: "product-info",
+          payload: {
+            productImageUrl: selectedImage,
+            productName,
+          },
+        });
+        toast.success("Mobile device connected!");
+      })
+      .on("broadcast", { event: "photo-result" }, (payload) => {
+        console.log("Received photo result from mobile:", payload);
+        const { imageBase64, productName: receivedProductName } = payload.payload;
+        
+        setGeneratedImage(`data:image/png;base64,${imageBase64}`);
+        setCurrentAspectRatio("custom");
+        setStep("result");
+        setShowQRDialog(false);
+        setIsWaitingForMobile(false);
+        toast.success("Photo received from mobile!");
+      })
+      .subscribe((status) => {
+        console.log("PC channel status:", status);
+      });
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [sessionId, showQRDialog, selectedImage, productName]);
+
+  // Get QR code URL
+  const getQRCodeUrl = () => {
+    const baseUrl = window.location.origin;
+    return `${baseUrl}/anita-camera/${sessionId}`;
   };
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -709,6 +778,49 @@ const AnitaLifestyle = () => {
           </div>
         )}
       </div>
+
+      {/* QR Code Dialog for PC users */}
+      <Dialog open={showQRDialog} onOpenChange={(open) => {
+        setShowQRDialog(open);
+        if (!open) {
+          setIsWaitingForMobile(false);
+          setSessionId(null);
+        }
+      }}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Smartphone className="w-5 h-5" />
+              Scan with your phone
+            </DialogTitle>
+            <DialogDescription>
+              Scan this QR code with your phone camera to take a photo
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex flex-col items-center gap-4 py-4">
+            {sessionId && (
+              <div className="p-4 bg-white rounded-lg border">
+                <QRCodeSVG
+                  value={getQRCodeUrl()}
+                  size={200}
+                  level="H"
+                  includeMargin
+                />
+              </div>
+            )}
+            {isWaitingForMobile && (
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Waiting for mobile device...
+              </div>
+            )}
+            <p className="text-xs text-gray-500 text-center">
+              Open your camera app and point it at the QR code.<br />
+              The photo you take will appear here automatically.
+            </p>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
