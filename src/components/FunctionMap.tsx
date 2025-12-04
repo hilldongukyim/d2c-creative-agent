@@ -65,7 +65,8 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     },
     "levi": {
       description: "Levi is a promotion configuration specialist who sets up and manages various marketing tools and platforms. Realizes marketing ideas through technical implementation.",
-      personality: "Has technical mindset, demonstrates strong focus and patience in problem-solving."
+      personality: "Has technical mindset, demonstrates strong focus and patience in problem-solving.",
+      admin: { name: "RPA OP Team", email: "rpa.opteam@lgepartner.com" }
     },
     "yumi": {
       description: "Yumi is an EI-Form designer for LG Electronics brand templates, creating clean and intuitive designs that comply with brand guidelines.",
