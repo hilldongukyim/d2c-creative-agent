@@ -13,24 +13,29 @@ function extractCarouselImages(html: string, baseUrl: string): string[] {
   console.log("=== Extracting TOP gallery images ===");
 
   const addImage = (src: string, source: string) => {
-    if (!src || seen.has(src)) return false;
+    if (!src) {
+      console.log(`[${source}] Empty src`);
+      return false;
+    }
     
-    // Skip small/thumbnail images
-    if (src.includes('thum') || src.includes('thumbnail')) return false;
-    if (src.includes('180x180') || src.includes('100x100')) return false;
-    if (src.includes('placeholder') || src.includes('loading')) return false;
+    // Normalize URL - remove /jcr:content/... suffix if present
+    let cleanSrc = src;
+    const jcrIndex = src.indexOf('/jcr:content');
+    if (jcrIndex > 0) {
+      cleanSrc = src.substring(0, jcrIndex);
+    }
     
-    // Skip non-product images
-    if (src.includes('logo') || src.endsWith('.svg')) return false;
-    if (src.includes('qrcode') || src.includes('qr-code')) return false;
-    if (src.includes('icon') || src.includes('badge') || src.includes('flag')) return false;
+    if (seen.has(cleanSrc)) {
+      return false;
+    }
     
-    // Skip feature/promotional images
-    if (src.includes('/features/')) return false;
-    if (src.includes('/usp/')) return false;
+    // Only apply minimal filters
+    if (cleanSrc.endsWith('.svg')) return false;
+    if (cleanSrc.includes('logo')) return false;
+    if (cleanSrc.includes('qrcode') || cleanSrc.includes('qr-code')) return false;
     
-    seen.add(src);
-    const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
+    seen.add(cleanSrc);
+    const fullUrl = cleanSrc.startsWith('http') ? cleanSrc : new URL(cleanSrc, baseUrl).href;
     images.push(fullUrl);
     console.log(`✓ Image [${images.length}]:`, fullUrl);
     return true;
@@ -46,9 +51,6 @@ function extractCarouselImages(html: string, baseUrl: string): string[] {
 
   const swiperContent = swiperMatch[2];
   console.log(`Swiper content length: ${swiperContent.length}`);
-  
-  // DEBUG: Log first 500 chars of swiper content
-  console.log("Swiper content preview:", swiperContent.substring(0, 500));
 
   // Step 2: Split content by carousel items
   const items = swiperContent.split(/<div[^>]*class="cmp-carousel__item\s+swiper-slide\s+c-carousel__item[^"]*"[^>]*>/i);
@@ -58,63 +60,36 @@ function extractCarouselImages(html: string, baseUrl: string): string[] {
   // Process each item
   for (let i = 1; i < items.length && i <= 20; i++) {
     const itemContent = items[i];
-    console.log(`Item ${i}: ${itemContent.length} chars`);
     
-    // DEBUG: Log first 300 chars of first 3 items to see structure
-    if (i <= 3) {
-      console.log(`Item ${i} preview:`, itemContent.substring(0, 300));
-    }
-    
-    // Method 1: Find ALL img tags regardless of attribute
-    const allImgRegex = /<img([^>]*)>/gi;
-    let imgTagMatch;
-    
-    while ((imgTagMatch = allImgRegex.exec(itemContent)) !== null) {
-      const imgAttrs = imgTagMatch[1];
-      console.log(`Item ${i} img attrs:`, imgAttrs.substring(0, 200));
-      
-      // Try to extract src from various attributes
-      const srcMatch = imgAttrs.match(/(?:src|data-src|data-lazy-src|data-original)="([^"]+)"/i);
-      if (srcMatch) {
-        addImage(srcMatch[1], `item-${i}-img`);
+    // Find img with src attribute - simple direct extraction
+    const imgSrcMatch = itemContent.match(/<img[^>]*\ssrc="([^"]+)"/i);
+    if (imgSrcMatch) {
+      console.log(`Item ${i} found src:`, imgSrcMatch[1].substring(0, 100));
+      addImage(imgSrcMatch[1], `item-${i}`);
+    } else {
+      // Try data-src
+      const dataSrcMatch = itemContent.match(/<img[^>]*\sdata-src="([^"]+)"/i);
+      if (dataSrcMatch) {
+        console.log(`Item ${i} found data-src:`, dataSrcMatch[1].substring(0, 100));
+        addImage(dataSrcMatch[1], `item-${i}-data`);
       }
-      
-      // Also check srcset
-      const srcsetMatch = imgAttrs.match(/srcset="([^"]+)"/i);
-      if (srcsetMatch) {
-        const parts = srcsetMatch[1].split(',').map(s => s.trim());
-        const lastUrl = parts[parts.length - 1]?.split(' ')[0];
-        if (lastUrl) {
-          addImage(lastUrl, `item-${i}-srcset`);
-        }
-      }
-    }
-    
-    // Method 2: Look for picture > source with srcset
-    const sourceRegex = /<source[^>]*srcset="([^"]+)"[^>]*>/gi;
-    let sourceMatch;
-    
-    while ((sourceMatch = sourceRegex.exec(itemContent)) !== null) {
-      const srcset = sourceMatch[1];
-      const parts = srcset.split(',').map(s => s.trim());
-      const lastUrl = parts[parts.length - 1]?.split(' ')[0];
-      if (lastUrl) {
-        console.log(`Item ${i} source srcset:`, lastUrl.substring(0, 100));
-        addImage(lastUrl, `item-${i}-source`);
-      }
-    }
-    
-    // Method 3: Look for any URL that looks like an image
-    const urlRegex = /["'](https?:\/\/[^"']*\.(?:jpg|jpeg|png|webp)[^"']*)["']/gi;
-    let urlMatch;
-    
-    while ((urlMatch = urlRegex.exec(itemContent)) !== null) {
-      addImage(urlMatch[1], `item-${i}-url`);
     }
   }
 
-  console.log(`=== Total gallery images: ${images.length} ===`);
-  return images;
+  // Remove duplicates that differ only by /jcr:content suffix
+  const uniqueImages: string[] = [];
+  const baseUrls = new Set<string>();
+  
+  for (const img of images) {
+    const baseUrl = img.replace(/\/jcr:content.*$/, '');
+    if (!baseUrls.has(baseUrl)) {
+      baseUrls.add(baseUrl);
+      uniqueImages.push(img);
+    }
+  }
+
+  console.log(`=== Total unique gallery images: ${uniqueImages.length} ===`);
+  return uniqueImages;
 }
 
 // Extract product name from HTML
@@ -122,7 +97,6 @@ function extractProductName(html: string, url: string): string {
   const ogTitleMatch = html.match(/<meta[^>]*property="og:title"[^>]*content="([^"]+)"/i) ||
                        html.match(/<meta[^>]*content="([^"]+)"[^>]*property="og:title"/i);
   if (ogTitleMatch) {
-    console.log("Found og:title:", ogTitleMatch[1]);
     return cleanProductName(ogTitleMatch[1]);
   }
 
@@ -170,7 +144,6 @@ serve(async (req) => {
 
     const FIRECRAWL_API_KEY = Deno.env.get("FIRECRAWL_API_KEY");
     if (!FIRECRAWL_API_KEY) {
-      console.error("FIRECRAWL_API_KEY is not configured");
       return new Response(JSON.stringify({ error: "Firecrawl API key not configured" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -193,8 +166,6 @@ serve(async (req) => {
     });
 
     if (!response.ok) {
-      const errorText = await response.text();
-      console.error("Firecrawl API error:", response.status, errorText);
       return new Response(JSON.stringify({ error: "Failed to scrape URL" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -204,7 +175,6 @@ serve(async (req) => {
     const data = await response.json();
 
     if (!data.success) {
-      console.error("Firecrawl scrape failed:", data);
       return new Response(JSON.stringify({ error: "Scrape failed" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -216,7 +186,6 @@ serve(async (req) => {
 
     const images = extractCarouselImages(html, url);
     const productName = extractProductName(html, url);
-    console.log("Extracted product name:", productName);
     console.log("Total images extracted:", images.length);
 
     return new Response(JSON.stringify({
@@ -227,7 +196,7 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error in anita-extract-carousel:", error);
+    console.error("Error:", error);
     return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Extract failed" }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
