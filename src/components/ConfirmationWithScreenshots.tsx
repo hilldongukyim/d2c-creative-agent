@@ -167,19 +167,19 @@ const ConfirmationWithScreenshots = ({
       loadImage(secondImgSrc),
     ]);
     
-    // Layout settings - maximize image size, minimal plus sign
+    // Layout settings - maximize product images
     const isPC = width === 2010;
-    const plusSize = isPC ? 120 : 40; // Smaller plus sign
-    const margin = isPC ? 10 : 4; // Minimal outer margin
-    const plusGap = isPC ? 8 : 3; // Minimal gap between image and + sign
+    const plusSize = isPC ? 200 : 50; // Restored plus sign size
+    const margin = isPC ? 5 : 2; // Minimal outer margin
+    const plusGap = isPC ? 5 : 2; // Minimal gap between image and + sign
     
-    // Calculate available space for each image - give more room to images
+    // Calculate available space for each image - maximize usage
     const plusAreaWidth = plusSize + plusGap * 2;
     const availableWidth = width - margin * 2 - plusAreaWidth;
     const imgAreaWidth = availableWidth / 2;
     const imgAreaHeight = height - margin * 2;
     
-    // Calculate aspect ratios and scale to fit (use full available area)
+    // Calculate aspect ratios and scale to fit
     const mainRatio = mainImg.width / mainImg.height;
     const secondRatio = secondImg.width / secondImg.height;
     
@@ -225,7 +225,7 @@ const ConfirmationWithScreenshots = ({
     if (!mainImage || !secondImage) return;
     
     setIsProcessing(true);
-    setProcessingStatus('Step 1/5: Removing backgrounds...');
+    setProcessingStatus('Step 1/4: Removing backgrounds...');
     
     try {
       // Step 1: Remove backgrounds using Fotor API
@@ -243,20 +243,21 @@ const ConfirmationWithScreenshots = ({
         return;
       }
 
-      setProcessingStatus('Step 2/5: Cropping transparent areas from main product...');
+      // Step 2: Scale to fit product images (crop transparent areas)
+      setProcessingStatus('Step 2/4: Scaling product images to fit...');
       const croppedMain = await cropTransparentPixels(data.mainImage);
-      
-      setProcessingStatus('Step 3/5: Cropping transparent areas from second product...');
       const croppedSecond = await cropTransparentPixels(data.secondImage);
       
-      // Step 4 & 5: Create composite images
-      setProcessingStatus('Step 4/5: Creating PC version (2010×1334)...');
+      // Step 3: Analyze and place images in correct layout
+      setProcessingStatus('Step 3/4: Analyzing layout and compositing...');
       const pcDataUrl = await createCompositeImage(croppedMain, croppedSecond, 2010, 1334);
       setPcImage(pcDataUrl);
-      
-      setProcessingStatus('Step 5/5: Creating Mobile version (450×450)...');
       const mobileDataUrl = await createCompositeImage(croppedMain, croppedSecond, 450, 450);
       setMobileImage(mobileDataUrl);
+      
+      // Step 4: Finalizing
+      setProcessingStatus('Step 4/4: Finalizing...');
+      await new Promise(resolve => setTimeout(resolve, 500)); // Brief pause for UX
       
       setProcessingStatus('✅ Complete!');
       setIsProcessing(false);
@@ -270,19 +271,18 @@ const ConfirmationWithScreenshots = ({
 
   const createFinalImages = async (mainSrc: string, secondSrc: string) => {
     try {
-      setProcessingStatus('Step 2/5: Cropping main product...');
+      setProcessingStatus('Step 2/4: Scaling product images to fit...');
       const croppedMain = await cropTransparentPixels(mainSrc);
-      
-      setProcessingStatus('Step 3/5: Cropping second product...');
       const croppedSecond = await cropTransparentPixels(secondSrc);
       
-      setProcessingStatus('Step 4/5: Creating PC version...');
+      setProcessingStatus('Step 3/4: Analyzing layout and compositing...');
       const pcDataUrl = await createCompositeImage(croppedMain, croppedSecond, 2010, 1334);
       setPcImage(pcDataUrl);
-      
-      setProcessingStatus('Step 5/5: Creating Mobile version...');
       const mobileDataUrl = await createCompositeImage(croppedMain, croppedSecond, 450, 450);
       setMobileImage(mobileDataUrl);
+      
+      setProcessingStatus('Step 4/4: Finalizing...');
+      await new Promise(resolve => setTimeout(resolve, 500));
       
       setProcessingStatus('✅ Complete!');
       setIsProcessing(false);
