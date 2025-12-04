@@ -69,7 +69,7 @@ const Home = () => {
       return;
     }
     const name = _agent.toLowerCase();
-    const highlightable = new Set(["yumi", "ben", "carmen", "candy", "maya", "theo", "fiona", "tango", "juno", "luna", "fern", "pip", "kai", "noa", "boris", "levi"]);
+    const highlightable = new Set(["yumi", "ben", "carmen", "candy", "maya", "fiona", "tango", "juno", "luna", "fern", "pip", "kai", "noa", "boris", "levi"]);
     if (highlightable.has(name)) {
       setHighlightName(_agent);
       setComingSoonOpen(false);
@@ -85,10 +85,6 @@ const Home = () => {
     if (lower === "ben") return navigate("/pto-gallery");
     if (lower === "mateo") return navigate("/crawling");
     if (lower === "allen") return navigate("/allen-qa");
-    if (lower === "theo") {
-      window.open("https://welcome-thanks-lim.lovable.app/", "_blank");
-      return;
-    }
     if (lower === "levi") {
       window.open("https://request-page-craft.lovable.app/", "_blank");
       return;
