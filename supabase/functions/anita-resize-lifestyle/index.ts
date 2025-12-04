@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageBase64, aspectRatio } = await req.json();
+    const { imageBase64, aspectRatio, customWidth, customHeight } = await req.json();
 
     if (!imageBase64) {
       throw new Error("Image base64 is required");
@@ -22,28 +22,59 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY not configured");
     }
 
-    // Determine dimensions based on aspect ratio
+    // Determine dimensions - custom dimensions take priority
     let width: number, height: number, orientation: string;
-    switch (aspectRatio) {
-      case "1:1":
-        width = 1080;
-        height = 1080;
-        orientation = "square";
-        break;
-      case "9:16":
-        width = 1080;
-        height = 1920;
-        orientation = "vertical portrait";
-        break;
-      case "16:9":
-      default:
-        width = 1920;
-        height = 1080;
+    
+    if (customWidth && customHeight) {
+      width = customWidth;
+      height = customHeight;
+      if (width > height) {
         orientation = "horizontal landscape";
-        break;
+      } else if (height > width) {
+        orientation = "vertical portrait";
+      } else {
+        orientation = "square";
+      }
+    } else {
+      switch (aspectRatio) {
+        case "1:1":
+          width = 1080;
+          height = 1080;
+          orientation = "square";
+          break;
+        case "9:16":
+          width = 1080;
+          height = 1920;
+          orientation = "vertical portrait";
+          break;
+        case "16:9":
+        default:
+          width = 1920;
+          height = 1080;
+          orientation = "horizontal landscape";
+          break;
+      }
     }
 
-    console.log(`Resizing lifestyle image to ${aspectRatio} (${width}x${height}) - ${orientation}`);
+    // Determine product positioning based on orientation
+    let productPosition: string;
+    let textOverlayArea: string;
+    
+    if (width > height) {
+      // Landscape - product on the right, text area on the left
+      productPosition = "on the RIGHT side of the image";
+      textOverlayArea = "the LEFT side should have clean space for text overlay";
+    } else if (height > width) {
+      // Portrait - product at the bottom, text area on top
+      productPosition = "at the BOTTOM of the image";
+      textOverlayArea = "the TOP area should have clean space for text overlay";
+    } else {
+      // Square - product slightly to the right or center-right
+      productPosition = "slightly to the RIGHT of center";
+      textOverlayArea = "the LEFT side should have some space for potential text overlay";
+    }
+
+    console.log(`Resizing lifestyle image to ${width}x${height} - ${orientation}, product ${productPosition}`);
 
     // Extract base64 data from data URL if present
     let cleanBase64 = imageBase64;
@@ -54,19 +85,24 @@ serve(async (req) => {
       }
     }
 
-    const prompt = `Transform this lifestyle product image to a ${orientation} format (${aspectRatio} aspect ratio, ${width}x${height} pixels).
+    const prompt = `Transform this lifestyle product image to a ${orientation} format (${width}x${height} pixels).
 
-IMPORTANT INSTRUCTIONS:
-1. The product in the image MUST remain completely visible - do NOT crop or cut any part of the product
-2. Intelligently extend or recompose the background/surroundings to fill the new ${orientation} canvas
-3. Keep the product as the main focal point, naturally positioned within the new frame
-4. Maintain the same lighting, color palette, and professional photography style
-5. The extended areas should blend seamlessly with the existing image
-6. Generate the final image at exactly ${width} pixels wide and ${height} pixels tall
+CRITICAL POSITIONING REQUIREMENTS:
+1. Identify the main product/subject in the image
+2. Position the product ${productPosition} - this is VERY IMPORTANT for text overlay purposes
+3. ${textOverlayArea}
+4. The product MUST remain FULLY VISIBLE - do NOT crop or cut any part of the product
 
-${aspectRatio === "9:16" ? "For this vertical format: extend the scene vertically, adding more environment above and/or below the product while keeping the product fully visible and prominent." : ""}
-${aspectRatio === "1:1" ? "For this square format: create a balanced composition with the product centered, extending the background equally on sides if needed." : ""}
-${aspectRatio === "16:9" ? "For this wide horizontal format: extend the scene horizontally, adding more of the lifestyle environment to the left and/or right while keeping the product as the central focus." : ""}`;
+COMPOSITION GUIDELINES:
+- Extend the background/environment naturally to fill the new canvas
+- Keep the same lighting, color palette, and professional photography aesthetic
+- The product should be the focal point but positioned ${productPosition}
+- Create a balanced composition that allows for marketing text to be added later
+- The extended areas should blend seamlessly with the existing image
+
+OUTPUT REQUIREMENTS:
+- Generate the final image at exactly ${width} pixels wide and ${height} pixels tall
+- Maintain high quality and professional appearance`;
 
     console.log("Sending request to Lovable AI for resize...");
 
@@ -127,14 +163,14 @@ ${aspectRatio === "16:9" ? "For this wide horizontal format: extend the scene ho
       throw new Error("Invalid image format from Lovable AI");
     }
 
-    console.log(`Successfully resized image to ${aspectRatio}`);
+    console.log(`Successfully resized image to ${width}x${height}`);
 
     return new Response(
       JSON.stringify({
         success: true,
         imageBase64: base64Match[1],
         dimensions: { width, height },
-        aspectRatio,
+        orientation,
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
