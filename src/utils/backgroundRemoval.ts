@@ -28,22 +28,25 @@ export const removeBackground = async (imageElement: HTMLImageElement): Promise<
       throw new Error(data.error);
     }
 
-    // Fotor returns base64 image in result
-    const resultBase64 = data.image || data.result || data.output;
-    if (!resultBase64) {
-      console.error('Unexpected Fotor response:', data);
-      throw new Error('No image returned from Fotor API');
+    // Fotor returns a URL to the result image
+    const resultUrl = data.resultUrl;
+    if (!resultUrl) {
+      console.error('Unexpected response:', data);
+      throw new Error('No result URL returned from Fotor API');
     }
 
-    // Convert base64 back to blob
-    const binaryString = atob(resultBase64);
-    const bytes = new Uint8Array(binaryString.length);
-    for (let i = 0; i < binaryString.length; i++) {
-      bytes[i] = binaryString.charCodeAt(i);
+    console.log('Downloading result from:', resultUrl);
+
+    // Download the result image
+    const imageResponse = await fetch(resultUrl);
+    if (!imageResponse.ok) {
+      throw new Error('Failed to download result image');
     }
     
-    console.log('Background removal complete');
-    return new Blob([bytes], { type: 'image/png' });
+    const resultBlob = await imageResponse.blob();
+    console.log('Background removal complete, blob size:', resultBlob.size);
+    
+    return resultBlob;
   } catch (error) {
     console.error('Error removing background:', error);
     throw error;
