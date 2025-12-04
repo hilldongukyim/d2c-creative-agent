@@ -44,16 +44,28 @@ const MaplePDP = () => {
   };
 
   const fetchPageContent = async (url: string): Promise<string> => {
-    try {
-      const response = await fetch(url);
-      const html = await response.text();
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(html, "text/html");
-      doc.querySelectorAll("script, style, noscript").forEach((el) => el.remove());
-      return (doc.body?.innerText || "").slice(0, 10000);
-    } catch {
-      throw new Error("페이지를 가져올 수 없습니다.");
+    const response = await fetch(
+      `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/maple-scrape`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({ url }),
+      }
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to scrape page");
     }
+
+    const data = await response.json();
+    if (!data.success) {
+      throw new Error(data.error || "Scrape failed");
+    }
+
+    return data.content.slice(0, 15000);
   };
 
   const handleSend = async () => {
@@ -78,10 +90,11 @@ const MaplePDP = () => {
       let htmlContent: string;
       try {
         htmlContent = await fetchPageContent(trimmedInput);
-      } catch {
+      } catch (error) {
+        console.error("Scrape error:", error);
         setMessages((prev) => [
           ...prev,
-          { role: "assistant", content: "Unable to fetch the page. Access may be restricted due to CORS policy.\n\nPlease copy and paste the main content of the page directly." },
+          { role: "assistant", content: "Unable to fetch the page content. Please check if the URL is correct and try again." },
         ]);
         setIsLoading(false);
         return;
