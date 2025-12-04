@@ -1,14 +1,12 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Send, Undo2, Camera, Check } from "lucide-react";
+import { ArrowLeft, Send, Undo2, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef } from "react";
 import ConfirmationWithScreenshots from "@/components/ConfirmationWithScreenshots";
 const benProfile = "/lovable-uploads/ben-profile-v2.png";
 
 interface FormData {
-  email: string;
   mainProductUrl: string;
   secondProductUrl: string;
   mainEnergyLabel?: string;
@@ -27,72 +25,18 @@ const PTOGallery = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<FormData>({
-    email: '',
     mainProductUrl: '',
     secondProductUrl: ''
   });
-  const [userInput, setUserInput] = useState<string>('');
+  const [mainUrlInput, setMainUrlInput] = useState('');
+  const [secondUrlInput, setSecondUrlInput] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submissionStatus, setSubmissionStatus] = useState<'success' | 'failure' | null>(null);
   const [showVideo, setShowVideo] = useState(false);
-  const [showEnergyLabelHelp, setShowEnergyLabelHelp] = useState(false);
   const [urlValidationError, setUrlValidationError] = useState<string | null>(null);
-  const [isEuropeanCountry, setIsEuropeanCountry] = useState<boolean | null>(null);
   const webhookUrl = 'https://dev.eaip.lge.com/n8n/webhook/0d1d1ae9-c63d-4402-b7a5-124a886eb108';
   const conversationRef = useRef<HTMLDivElement>(null);
 
-  // European countries (in various languages)
-  const europeanCountries = [
-    // English
-    'albania', 'andorra', 'armenia', 'austria', 'azerbaijan', 'belarus', 'belgium', 'bosnia and herzegovina', 
-    'bulgaria', 'croatia', 'cyprus', 'czech republic', 'denmark', 'estonia', 'finland', 'france', 'georgia', 
-    'germany', 'greece', 'hungary', 'iceland', 'ireland', 'italy', 'kazakhstan', 'kosovo', 'latvia', 
-    'liechtenstein', 'lithuania', 'luxembourg', 'malta', 'moldova', 'monaco', 'montenegro', 'netherlands', 
-    'north macedonia', 'norway', 'poland', 'portugal', 'romania', 'russia', 'san marino', 'serbia', 
-    'slovakia', 'slovenia', 'spain', 'sweden', 'switzerland', 'turkey', 'ukraine', 'united kingdom', 'uk', 'vatican city',
-    // Korean
-    '독일', '프랑스', '이탈리아', '스페인', '네덜란드', '벨기에', '오스트리아', '스위스', '포르투갈', '그리스', 
-    '폴란드', '체코', '헝가리', '슬로바키아', '슬로베니아', '크로아티아', '루마니아', '불가리아', '덴마크', 
-    '스웨덴', '핀란드', '노르웨이', '아이슬란드', '아일랜드', '영국', '룩셈부르크', '몰타', '키프로스',
-    // Spanish  
-    'alemania', 'francia', 'italia', 'españa', 'países bajos', 'bélgica', 'austria', 'suiza', 'portugal', 
-    'grecia', 'polonia', 'república checa', 'hungría', 'eslovaquia', 'eslovenia', 'croacia', 'rumania', 
-    'bulgaria', 'dinamarca', 'suecia', 'finlandia', 'noruega', 'islandia', 'irlanda', 'reino unido',
-    // French
-    'allemagne', 'france', 'italie', 'espagne', 'pays-bas', 'belgique', 'autriche', 'suisse', 'portugal', 
-    'grèce', 'pologne', 'république tchèque', 'hongrie', 'slovaquie', 'slovénie', 'croatie', 'roumanie', 
-    'bulgarie', 'danemark', 'suède', 'finlande', 'norvège', 'islande', 'irlande', 'royaume-uni',
-    // German
-    'deutschland', 'frankreich', 'italien', 'spanien', 'niederlande', 'belgien', 'österreich', 'schweiz', 
-    'portugal', 'griechenland', 'polen', 'tschechien', 'ungarn', 'slowakei', 'slowenien', 'kroatien', 
-    'rumänien', 'bulgarien', 'dänemark', 'schweden', 'finnland', 'norwegen', 'island', 'irland', 'vereinigtes königreich',
-    // Italian
-    'germania', 'francia', 'italia', 'spagna', 'paesi bassi', 'belgio', 'austria', 'svizzera', 'portogallo', 
-    'grecia', 'polonia', 'repubblica ceca', 'ungheria', 'slovacchia', 'slovenia', 'croazia', 'romania', 
-    'bulgaria', 'danimarca', 'svezia', 'finlandia', 'norvegia', 'islanda', 'irlanda', 'regno unito',
-    // Dutch
-    'duitsland', 'frankrijk', 'italië', 'spanje', 'nederland', 'belgië', 'oostenrijk', 'zwitserland', 
-    'portugal', 'griekenland', 'polen', 'tsjechië', 'hongarije', 'slowakije', 'slovenië', 'kroatië', 
-    'roemenië', 'bulgarije', 'denemarken', 'zweden', 'finland', 'noorwegen', 'ijsland', 'ierland', 'verenigd koninkrijk',
-    // Portuguese
-    'alemanha', 'frança', 'itália', 'espanha', 'países baixos', 'bélgica', 'áustria', 'suíça', 'portugal', 
-    'grécia', 'polónia', 'república checa', 'hungria', 'eslováquia', 'eslovénia', 'croácia', 'roménia', 
-    'bulgária', 'dinamarca', 'suécia', 'finlândia', 'noruega', 'islândia', 'irlanda', 'reino unido',
-    // Polish
-    'niemcy', 'francja', 'włochy', 'hiszpania', 'holandia', 'belgia', 'austria', 'szwajcaria', 'portugalia', 
-    'grecja', 'polska', 'czechy', 'węgry', 'słowacja', 'słowenia', 'chorwacja', 'rumunia', 'bułgaria', 
-    'dania', 'szwecja', 'finlandia', 'norwegia', 'islandia', 'irlandia', 'wielka brytania',
-    // Czech
-    'německo', 'francie', 'itálie', 'španělsko', 'nizozemsko', 'belgie', 'rakousko', 'švýcarsko', 'portugalsko', 
-    'řecko', 'polsko', 'česko', 'maďarsko', 'slovensko', 'slovinsko', 'chorvatsko', 'rumunsko', 'bulharsko', 
-    'dánsko', 'švédsko', 'finsko', 'norsko', 'island', 'irsko', 'spojené království'
-  ];
-
-  const energyLabels = [
-    'A+++D_D', 'A+++D_C', 'A+++D_B', 'A+++D_A+++', 'A+++D_A++', 'A+++D_A+', 'A+++D_A',
-    'AG_G', 'AG_F', 'AG_E', 'AG_D', 'AG_C', 'AG_B', 'AG_A',
-    'A+F_F', 'A+F_E', 'A+F_D', 'A+F_C', 'A+F_B', 'A+F_A+', 'A+F_A'
-  ];
 
   const conversations: ConversationItem[] = [
     {
@@ -100,24 +44,10 @@ const PTOGallery = () => {
       content: "Hello! I'm Ben 🐕 I'll help you create a PTO gallery. Let me ask you a few questions to build the perfect gallery for you! 😊"
     },
     {
-      type: 'ben-question',
-      content: "First, could you please provide your EP ID?",
-      field: 'email'
-    },
-    {
-      type: 'ben-message',
-      content: "Awesome! I'll remember this ID and send you the gallery once it's completed! 😊"
-    },
-    {
-      type: 'ben-question',
-      content: "Please paste the product detail page URL for the main model (the product that will be displayed on the left side of the gallery).",
-      field: 'mainProductUrl',
+      type: 'ben-dual-url',
+      content: "Please paste the PDP URLs for both products.\n\n• Main product (left side of gallery)\n• Second product (right side of gallery)",
+      field: 'dualUrls',
       exampleUrl: "https://www.lg.com/es/tv-y-barras-de-sonido/oled-evo/oled83c5elb-esb/"
-    },
-    {
-      type: 'ben-question',
-      content: "Now please paste the product detail page URL for the second product (which will be positioned on the right side)!",
-      field: 'secondProductUrl'
     },
     {
       type: 'ben-confirmation',
@@ -135,7 +65,7 @@ const PTOGallery = () => {
     if (conversationRef.current) {
       conversationRef.current.scrollTop = conversationRef.current.scrollHeight;
     }
-  }, [currentStep, showEnergyLabelHelp, urlValidationError]);
+  }, [currentStep, urlValidationError]);
 
   // Auto-proceed for Ben's messages
   useEffect(() => {
@@ -150,82 +80,41 @@ const PTOGallery = () => {
     }
   }, [currentStep, conversations.length]);
 
-  // Energy label help timer - only for clicks, not mouse movement
-  useEffect(() => {
-    const currentConversation = conversations[currentStep];
-    if (currentConversation?.type === 'ben-energy-label') {
-      setShowEnergyLabelHelp(false);
-      const timer = setTimeout(() => {
-        setShowEnergyLabelHelp(true);
-      }, 10000);
-      
-      // Reset timer on any click
-      const handleClick = () => {
-        setShowEnergyLabelHelp(false);
-        clearTimeout(timer);
-      };
-      
-      document.addEventListener('click', handleClick);
-      
-      return () => {
-        clearTimeout(timer);
-        document.removeEventListener('click', handleClick);
-      };
-    }
-  }, [currentStep, conversations]);
-
   const handleNext = () => {
     if (currentStep < conversations.length - 1) {
       setCurrentStep(prev => prev + 1);
-      setUserInput('');
     }
   };
 
   const handleGoBack = () => {
     if (currentStep > 0) {
       setCurrentStep(prev => prev - 1);
-      setUserInput('');
-      setShowEnergyLabelHelp(false);
     }
   };
 
   const handleInputSubmit = () => {
     const currentConversation = conversations[currentStep];
-    if (currentConversation.field) {
-      // URL validation for product URLs
-      if ((currentConversation.field === 'mainProductUrl' || currentConversation.field === 'secondProductUrl') && 
-          !userInput?.startsWith('https://www.lg.com/')) {
-        setUrlValidationError('Please make sure you provided a valid LG product URL that starts with "https://www.lg.com/"');
+    if (currentConversation.field === 'dualUrls') {
+      // Validate both URLs
+      if (!mainUrlInput?.startsWith('https://www.lg.com/')) {
+        setUrlValidationError('Main product URL must start with "https://www.lg.com/"');
+        return;
+      }
+      if (!secondUrlInput?.startsWith('https://www.lg.com/')) {
+        setUrlValidationError('Second product URL must start with "https://www.lg.com/"');
         return;
       }
       
       setUrlValidationError(null);
-      // Handle email input specially
-      if (currentConversation.field === 'email') {
-        setFormData(prev => ({
-          ...prev,
-          email: userInput + '@lge.com'
-        }));
-      } else {
-        setFormData(prev => ({
-          ...prev,
-          [currentConversation.field]: userInput
-        }));
-      }
-    }
-    setTimeout(handleNext, 300);
-  };
-
-  const handleEnergyLabelSelect = (label: string) => {
-    const currentConversation = conversations[currentStep];
-    if (currentConversation.field) {
       setFormData(prev => ({
         ...prev,
-        [currentConversation.field]: label
+        mainProductUrl: mainUrlInput,
+        secondProductUrl: secondUrlInput
       }));
+      setTimeout(handleNext, 300);
     }
-    setTimeout(handleNext, 300);
   };
+
 
   const handleSubmit = async () => {
     if (!webhookUrl || isSubmitting) {
@@ -237,7 +126,6 @@ const PTOGallery = () => {
     try {
       // GET 방식으로 URL 파라미터 구성
       const params = new URLSearchParams({
-        email: formData.email,
         productAUrl: formData.mainProductUrl,
         productBUrl: formData.secondProductUrl,
       });
@@ -268,7 +156,7 @@ const PTOGallery = () => {
 
 
   const currentConversation = conversations[currentStep];
-  const isQuestion = currentConversation?.type.includes('question');
+  const isDualUrlInput = currentConversation?.type === 'ben-dual-url';
   const isConfirmation = currentConversation?.type === 'ben-confirmation';
 
   return (
@@ -472,52 +360,34 @@ const PTOGallery = () => {
               </div>
             )}
 
-            {/* Input Area */}
-            {isQuestion && !isSubmitting && !submissionStatus && (
-              <div className="mt-4 flex gap-2">
-                {currentConversation.field === 'email' ? (
-                  <div className="flex-1 relative">
-                    <div className="relative flex items-center">
-                      <Input
-                        value={userInput}
-                        onChange={(e) => setUserInput(e.target.value)}
-                        placeholder="  "
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter' && userInput.trim()) {
-                            handleInputSubmit();
-                          }
-                        }}
-                        className="pr-2"
-                        style={{ paddingRight: `${(userInput.length ? userInput.length * 8 : 0) + 80}px` }}
-                      />
-                      <span 
-                        className="absolute text-muted-foreground pointer-events-none"
-                        style={{ left: `${userInput.length * 8 + 12}px`, top: '50%', transform: 'translateY(-50%)' }}
-                      >
-                        @lge.com
-                      </span>
-                    </div>
-                  </div>
-                ) : (
+            {/* Input Area - Dual URL Input */}
+            {isDualUrlInput && !isSubmitting && !submissionStatus && (
+              <div className="mt-4 space-y-3">
+                <div className="space-y-2">
+                  <label className="text-xs text-muted-foreground">Main Product URL (Left)</label>
                   <Input
-                    value={userInput}
-                    onChange={(e) => setUserInput(e.target.value)}
-                    placeholder={`Enter your ${currentConversation.field === 'mainProductUrl' || currentConversation.field === 'secondProductUrl' ? 'product URL' : 'response'}...`}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && userInput.trim()) {
-                        handleInputSubmit();
-                      }
-                    }}
-                    className="flex-1"
+                    value={mainUrlInput}
+                    onChange={(e) => setMainUrlInput(e.target.value)}
+                    placeholder="https://www.lg.com/..."
+                    className="w-full"
                   />
-                )}
+                </div>
+                <div className="space-y-2">
+                  <label className="text-xs text-muted-foreground">Second Product URL (Right)</label>
+                  <Input
+                    value={secondUrlInput}
+                    onChange={(e) => setSecondUrlInput(e.target.value)}
+                    placeholder="https://www.lg.com/..."
+                    className="w-full"
+                  />
+                </div>
                 <Button 
                   onClick={handleInputSubmit}
-                  disabled={!userInput.trim()}
-                  size="icon"
-                  className="shrink-0"
+                  disabled={!mainUrlInput.trim() || !secondUrlInput.trim()}
+                  className="w-full"
                 >
-                  <Send className="h-4 w-4" />
+                  <Send className="h-4 w-4 mr-2" />
+                  Submit
                 </Button>
               </div>
             )}
