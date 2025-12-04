@@ -265,8 +265,8 @@ const MaplePDP = () => {
                         {message.content || <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}
                       </div>
                       {message.screenshot && (
-                        <div className="mt-3 rounded-lg overflow-hidden border border-border">
-                          <img src={message.screenshot} alt="Page Screenshot" className="w-full" />
+                        <div className="mt-3 rounded-lg overflow-hidden border border-border max-w-sm">
+                          <img src={message.screenshot} alt="Page Screenshot" className="w-full max-h-[400px] object-contain object-top bg-secondary" />
                         </div>
                       )}
                     </div>
