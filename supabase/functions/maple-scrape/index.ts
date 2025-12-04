@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { url } = await req.json();
+    const { url, mode } = await req.json();
     
     if (!url) {
       return new Response(JSON.stringify({ error: "URL is required" }), {
@@ -29,9 +29,17 @@ serve(async (req) => {
       });
     }
 
-    console.log("Scraping URL:", url);
+    console.log("Scraping URL:", url, "Mode:", mode);
     
-    // Use Firecrawl REST API directly
+    // Configure formats based on mode
+    let formats: string[] = ["markdown"];
+    let screenshotOptions: any = undefined;
+    
+    if (mode === "screenshot") {
+      formats = ["screenshot"];
+      screenshotOptions = { fullPage: true };
+    }
+
     const response = await fetch("https://api.firecrawl.dev/v1/scrape", {
       method: "POST",
       headers: {
@@ -40,8 +48,9 @@ serve(async (req) => {
       },
       body: JSON.stringify({
         url: url,
-        formats: ["markdown"],
-        onlyMainContent: true,
+        formats: formats,
+        onlyMainContent: mode !== "screenshot",
+        ...(screenshotOptions && { screenshot: screenshotOptions }),
       }),
     });
 
@@ -64,11 +73,12 @@ serve(async (req) => {
       });
     }
 
-    console.log("Scrape successful, content length:", data.data?.markdown?.length || 0);
+    console.log("Scrape successful, mode:", mode);
 
     return new Response(JSON.stringify({ 
       success: true, 
       content: data.data?.markdown || "",
+      screenshot: data.data?.screenshot || null,
       metadata: data.data?.metadata || {}
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
