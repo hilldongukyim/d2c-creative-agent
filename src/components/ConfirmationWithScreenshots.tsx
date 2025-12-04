@@ -167,17 +167,17 @@ const ConfirmationWithScreenshots = ({
       loadImage(secondImgSrc),
     ]);
     
-    // Layout settings - maximize product images
+    // Layout settings - no margins, images extend to edges
     const isPC = width === 2010;
-    const plusSize = isPC ? 200 : 50; // Restored plus sign size
-    const margin = isPC ? 5 : 2; // Minimal outer margin
+    const plusSize = isPC ? 200 : 50;
+    const margin = 0; // No outer margin
     const plusGap = isPC ? 5 : 2; // Minimal gap between image and + sign
     
-    // Calculate available space for each image - maximize usage
+    // Calculate available space for each image
     const plusAreaWidth = plusSize + plusGap * 2;
-    const availableWidth = width - margin * 2 - plusAreaWidth;
+    const availableWidth = width - plusAreaWidth;
     const imgAreaWidth = availableWidth / 2;
-    const imgAreaHeight = height - margin * 2;
+    const imgAreaHeight = height;
     
     // Calculate aspect ratios and scale to fit
     const mainRatio = mainImg.width / mainImg.height;
