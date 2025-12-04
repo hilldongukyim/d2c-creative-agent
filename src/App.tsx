@@ -13,6 +13,7 @@ import AllenQA from "./pages/AllenQA";
 import NotFound from "./pages/NotFound";
 import Crawling from "./pages/Crawling";
 import MaplePDP from "./pages/MaplePDP";
+import AnitaLifestyle from "./pages/AnitaLifestyle";
 
 const queryClient = new QueryClient();
 
@@ -31,6 +32,7 @@ const App = () => (
         <Route path="/allen-qa" element={<AllenQA />} />
         <Route path="/crawling" element={<Crawling />} />
         <Route path="/maple-pdp" element={<MaplePDP />} />
+        <Route path="/anita-lifestyle" element={<AnitaLifestyle />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
