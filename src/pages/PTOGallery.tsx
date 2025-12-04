@@ -5,7 +5,7 @@ import { ArrowLeft, Send, Undo2, Camera, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef, useMemo } from "react";
 import ConfirmationWithScreenshots from "@/components/ConfirmationWithScreenshots";
-const benProfile = "/lovable-uploads/df1c4dd4-a06d-4d9c-981e-4463ad0b08dc.png";
+const benProfile = "/lovable-uploads/ben-profile-new.png";
 
 interface FormData {
   email: string;
@@ -337,7 +337,7 @@ const PTOGallery = () => {
                 <img 
                   src={benProfile} 
                   alt="Ben" 
-                  className="w-full h-full object-cover object-[center_60%] scale-150 brightness-125" 
+                  className="w-full h-full object-cover scale-125" 
                 />
               </div>
               <div>
@@ -416,7 +416,7 @@ const PTOGallery = () => {
                         <img 
                           src={benProfile} 
                           alt="Ben working" 
-                          className="w-full h-full object-cover object-[center_60%] scale-150 brightness-125" 
+                          className="w-full h-full object-cover scale-125" 
                         />
                       </div>
                       {/* Working Indicator */}
