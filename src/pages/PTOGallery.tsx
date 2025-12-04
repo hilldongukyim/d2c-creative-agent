@@ -337,7 +337,7 @@ const PTOGallery = () => {
                 <img 
                   src={benProfile} 
                   alt="Ben" 
-                  className="w-full h-full object-cover scale-125" 
+                  className="w-full h-full object-cover scale-[2.5]" 
                 />
               </div>
               <div>
@@ -416,7 +416,7 @@ const PTOGallery = () => {
                         <img 
                           src={benProfile} 
                           alt="Ben working" 
-                          className="w-full h-full object-cover scale-125" 
+                          className="w-full h-full object-cover scale-[2.5]" 
                         />
                       </div>
                       {/* Working Indicator */}
