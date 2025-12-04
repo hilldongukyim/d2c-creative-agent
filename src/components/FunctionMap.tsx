@@ -59,10 +59,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       description: "Boris serves as the promotion team coordinator, assisting in marketing campaign planning and connecting specialized departments.",
       personality: "Always ready to help, enjoys fast and efficient communication."
     },
-    "ollie": {
-      description: "Ollie is a sales analysis expert who analyzes market trends and customer behavior. Derives business insights from data and supports strategic decision-making.",
-      personality: "Logical and systematic, excels at finding meaningful patterns in numbers and data."
-    },
     "levi": {
       description: "Levi is a promotion configuration specialist who sets up and manages various marketing tools and platforms. Realizes marketing ideas through technical implementation.",
       personality: "Has technical mindset, demonstrates strong focus and patience in problem-solving.",
@@ -210,10 +206,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     }, {
       title: "Platform Operation Team",
       items: [{
-        name: "Ollie",
-        role: "Sales Analyst",
-        imageSrc: "/lovable-uploads/a2300ba9-4de6-4adc-88fd-b80baa1bdff7.png"
-      }, {
         name: "Levi",
         role: "Promotion Configurator",
         imageSrc: "/lovable-uploads/levi-profile.png"

@@ -69,7 +69,7 @@ const Home = () => {
       return;
     }
     const name = _agent.toLowerCase();
-    const highlightable = new Set(["yumi", "ben", "carmen", "candy", "maya", "theo", "fiona", "tango", "juno", "luna", "fern", "pip", "kai", "noa", "boris", "ollie", "levi"]);
+    const highlightable = new Set(["yumi", "ben", "carmen", "candy", "maya", "theo", "fiona", "tango", "juno", "luna", "fern", "pip", "kai", "noa", "boris", "levi"]);
     if (highlightable.has(name)) {
       setHighlightName(_agent);
       setComingSoonOpen(false);
@@ -91,10 +91,6 @@ const Home = () => {
     }
     if (lower === "levi") {
       window.open("https://request-page-craft.lovable.app/", "_blank");
-      return;
-    }
-    if (lower === "ollie") {
-      window.open("https://welcome-ollie-start.lovable.app/", "_blank");
       return;
     }
     if (lower === "candy") {
