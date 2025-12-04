@@ -1,10 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Send, Loader2 } from "lucide-react";
+import { ArrowLeft, Send, Loader2, RotateCcw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import Logo from "@/components/Logo";
 
 interface Message {
   role: "user" | "assistant";
@@ -15,14 +14,10 @@ const MaplePDP = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: "assistant",
-      content: "안녕하세요! 저는 Maple이에요 🍁\n\nPDP(Product Detail Page) URL을 보내주시면, 해당 제품 페이지를 분석해서 제품 큐레이션을 도와드릴게요.\n\n어떤 제품이 궁금하신가요?",
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -31,6 +26,13 @@ const MaplePDP = () => {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 200) + "px";
+    }
+  }, [input]);
 
   const isValidUrl = (text: string): boolean => {
     try {
@@ -47,13 +49,9 @@ const MaplePDP = () => {
       const html = await response.text();
       const parser = new DOMParser();
       const doc = parser.parseFromString(html, "text/html");
-      
       doc.querySelectorAll("script, style, noscript").forEach((el) => el.remove());
-      
-      const textContent = doc.body?.innerText || "";
-      return textContent.slice(0, 10000);
-    } catch (error) {
-      console.error("Failed to fetch page:", error);
+      return (doc.body?.innerText || "").slice(0, 10000);
+    } catch {
       throw new Error("페이지를 가져올 수 없습니다.");
     }
   };
@@ -71,32 +69,20 @@ const MaplePDP = () => {
       if (!isValidUrl(trimmedInput)) {
         setMessages((prev) => [
           ...prev,
-          {
-            role: "assistant",
-            content: "유효한 URL을 입력해주세요. 예: https://www.lg.com/us/product/...",
-          },
+          { role: "assistant", content: "유효한 URL을 입력해주세요.\n예: https://www.lg.com/us/product/..." },
         ]);
         setIsLoading(false);
         return;
       }
 
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: "페이지를 분석 중이에요... 🔍" },
-      ]);
-
       let htmlContent: string;
       try {
         htmlContent = await fetchPageContent(trimmedInput);
-      } catch (error) {
-        setMessages((prev) => {
-          const newMessages = [...prev];
-          newMessages[newMessages.length - 1] = {
-            role: "assistant",
-            content: `죄송해요, 페이지를 가져오는데 실패했어요. CORS 정책으로 인해 직접 접근이 제한될 수 있어요.\n\n대신 페이지의 주요 내용을 직접 복사해서 붙여넣어 주시겠어요?`,
-          };
-          return newMessages;
-        });
+      } catch {
+        setMessages((prev) => [
+          ...prev,
+          { role: "assistant", content: "페이지를 가져올 수 없어요. CORS 정책으로 접근이 제한될 수 있습니다.\n\n페이지의 주요 내용을 직접 복사해서 붙여넣어 주세요." },
+        ]);
         setIsLoading(false);
         return;
       }
@@ -113,20 +99,14 @@ const MaplePDP = () => {
         }
       );
 
-      if (!response.ok) {
-        throw new Error("AI 분석에 실패했습니다.");
-      }
+      if (!response.ok) throw new Error("AI 분석 실패");
 
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
       let assistantContent = "";
 
       if (reader) {
-        setMessages((prev) => {
-          const newMessages = [...prev];
-          newMessages[newMessages.length - 1] = { role: "assistant", content: "" };
-          return newMessages;
-        });
+        setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
 
         let buffer = "";
         while (true) {
@@ -141,8 +121,7 @@ const MaplePDP = () => {
             buffer = buffer.slice(newlineIndex + 1);
 
             if (line.endsWith("\r")) line = line.slice(0, -1);
-            if (line.startsWith(":") || line.trim() === "") continue;
-            if (!line.startsWith("data: ")) continue;
+            if (line.startsWith(":") || line.trim() === "" || !line.startsWith("data: ")) continue;
 
             const jsonStr = line.slice(6).trim();
             if (jsonStr === "[DONE]") break;
@@ -154,131 +133,108 @@ const MaplePDP = () => {
                 assistantContent += content;
                 setMessages((prev) => {
                   const newMessages = [...prev];
-                  newMessages[newMessages.length - 1] = {
-                    role: "assistant",
-                    content: assistantContent,
-                  };
+                  newMessages[newMessages.length - 1] = { role: "assistant", content: assistantContent };
                   return newMessages;
                 });
               }
-            } catch {
-              // Incomplete JSON
-            }
+            } catch {}
           }
         }
       }
     } catch (error) {
       console.error("Error:", error);
-      toast({
-        title: "오류 발생",
-        description: "분석 중 오류가 발생했습니다. 다시 시도해주세요.",
-        variant: "destructive",
-      });
-      setMessages((prev) => {
-        const newMessages = [...prev];
-        if (newMessages[newMessages.length - 1]?.role === "assistant") {
-          newMessages[newMessages.length - 1] = {
-            role: "assistant",
-            content: "죄송해요, 분석 중 오류가 발생했어요. 다시 시도해주세요.",
-          };
-        }
-        return newMessages;
-      });
+      toast({ title: "오류 발생", description: "분석 중 오류가 발생했습니다.", variant: "destructive" });
+      setMessages((prev) => [...prev, { role: "assistant", content: "분석 중 오류가 발생했어요. 다시 시도해주세요." }]);
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter" && !e.shiftKey) {
+      e.preventDefault();
+      handleSend();
+    }
+  };
+
+  const handleNewChat = () => {
+    setMessages([]);
+    setInput("");
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-slate-100 flex flex-col">
+    <div className="min-h-screen bg-slate-50 flex flex-col">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 bg-white/80 backdrop-blur-sm">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => navigate("/home")}
-          className="text-slate-600 hover:text-slate-900"
-        >
-          <ArrowLeft className="w-4 h-4" />
+      <header className="h-14 border-b border-slate-200 bg-white flex items-center px-4 justify-between">
+        <Button variant="ghost" size="icon" onClick={() => navigate("/home")} className="text-slate-500 hover:text-slate-900">
+          <ArrowLeft className="w-5 h-5" />
         </Button>
         <div className="flex items-center gap-2">
-          <img
-            src="/lovable-uploads/maple-profile.png"
-            alt="Maple"
-            className="w-8 h-8 rounded-full border border-slate-200"
-          />
-          <span className="font-medium text-slate-800">Maple</span>
+          <img src="/lovable-uploads/maple-profile.png" alt="Maple" className="w-7 h-7 rounded-full" />
+          <span className="font-semibold text-slate-800">Maple</span>
         </div>
-        <Logo />
-      </div>
+        <Button variant="ghost" size="icon" onClick={handleNewChat} className="text-slate-500 hover:text-slate-900">
+          <RotateCcw className="w-5 h-5" />
+        </Button>
+      </header>
 
-      {/* Chat Messages */}
-      <div className="flex-1 overflow-y-auto px-4 py-6 space-y-4">
-        {messages.map((message, index) => (
-          <div
-            key={index}
-            className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}
-          >
-            <div
-              className={`max-w-[80%] md:max-w-[70%] rounded-2xl px-4 py-3 ${
-                message.role === "user"
-                  ? "bg-slate-900 text-white rounded-br-md"
-                  : "bg-white border border-slate-200 text-slate-800 rounded-bl-md shadow-sm"
-              }`}
-            >
-              {message.role === "assistant" && (
-                <div className="flex items-center gap-2 mb-2 pb-2 border-b border-slate-100">
-                  <img
-                    src="/lovable-uploads/maple-profile.png"
-                    alt="Maple"
-                    className="w-5 h-5 rounded-full"
-                  />
-                  <span className="text-xs font-medium text-slate-500">Maple</span>
-                </div>
-              )}
-              <p className="whitespace-pre-wrap text-sm leading-relaxed">{message.content}</p>
-            </div>
+      {/* Messages */}
+      <div className="flex-1 overflow-y-auto">
+        {messages.length === 0 ? (
+          <div className="h-full flex flex-col items-center justify-center px-4">
+            <img src="/lovable-uploads/maple-profile.png" alt="Maple" className="w-16 h-16 rounded-full mb-4" />
+            <h1 className="text-2xl font-semibold text-slate-800 mb-2">Maple PDP Curator</h1>
+            <p className="text-slate-500 text-center max-w-md">
+              분석하고 싶은 제품 페이지 URL을 입력해주세요.<br />
+              제품의 특징과 추천 포인트를 알려드릴게요.
+            </p>
           </div>
-        ))}
-        {isLoading && messages[messages.length - 1]?.role === "user" && (
-          <div className="flex justify-start">
-            <div className="bg-white border border-slate-200 rounded-2xl rounded-bl-md px-4 py-3 shadow-sm">
-              <div className="flex items-center gap-2">
-                <Loader2 className="w-4 h-4 animate-spin text-slate-400" />
-                <span className="text-sm text-slate-500">분석 중...</span>
+        ) : (
+          <div className="max-w-3xl mx-auto py-6 px-4">
+            {messages.map((message, index) => (
+              <div key={index} className={`mb-6 ${message.role === "user" ? "flex justify-end" : ""}`}>
+                {message.role === "assistant" ? (
+                  <div className="flex gap-3">
+                    <img src="/lovable-uploads/maple-profile.png" alt="Maple" className="w-8 h-8 rounded-full flex-shrink-0 mt-1" />
+                    <div className="text-slate-700 leading-relaxed whitespace-pre-wrap">{message.content || <Loader2 className="w-4 h-4 animate-spin text-slate-400" />}</div>
+                  </div>
+                ) : (
+                  <div className="bg-slate-200 rounded-2xl px-4 py-2.5 max-w-[85%]">
+                    <p className="text-slate-800 whitespace-pre-wrap break-all">{message.content}</p>
+                  </div>
+                )}
               </div>
-            </div>
+            ))}
+            <div ref={messagesEndRef} />
           </div>
         )}
-        <div ref={messagesEndRef} />
       </div>
 
-      {/* Input Area */}
-      <div className="border-t border-slate-200 bg-white/80 backdrop-blur-sm px-4 py-4">
-        <div className="max-w-3xl mx-auto flex gap-2">
-          <Input
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleSend()}
-            placeholder="PDP URL을 입력하세요..."
-            className="flex-1 border-slate-200 focus:border-slate-400"
-            disabled={isLoading}
-          />
-          <Button
-            onClick={handleSend}
-            disabled={isLoading || !input.trim()}
-            className="bg-slate-900 hover:bg-slate-800 text-white px-4"
-          >
-            {isLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin" />
-            ) : (
-              <Send className="w-4 h-4" />
-            )}
-          </Button>
+      {/* Input */}
+      <div className="border-t border-slate-200 bg-white p-4">
+        <div className="max-w-3xl mx-auto">
+          <div className="relative flex items-end gap-2 bg-slate-100 rounded-2xl px-4 py-3">
+            <Textarea
+              ref={textareaRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="PDP URL을 입력하세요..."
+              className="flex-1 bg-transparent border-0 resize-none focus-visible:ring-0 p-0 min-h-[24px] max-h-[200px] text-slate-800 placeholder:text-slate-400"
+              rows={1}
+              disabled={isLoading}
+            />
+            <Button
+              onClick={handleSend}
+              disabled={isLoading || !input.trim()}
+              size="icon"
+              className="h-8 w-8 rounded-full bg-slate-900 hover:bg-slate-800 disabled:bg-slate-300 flex-shrink-0"
+            >
+              {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
+            </Button>
+          </div>
+          <p className="text-xs text-slate-400 text-center mt-2">Maple은 제품 페이지를 분석하여 큐레이션 정보를 제공합니다</p>
         </div>
-        <p className="text-xs text-slate-400 text-center mt-2">
-          제품 페이지 URL을 입력하면 Maple이 분석해드려요
-        </p>
       </div>
     </div>
   );
