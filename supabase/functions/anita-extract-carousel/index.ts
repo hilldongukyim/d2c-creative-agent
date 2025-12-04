@@ -6,13 +6,11 @@ const corsHeaders = {
 };
 
 // Extract product gallery images from the TOP carousel
-// Selector: #swiper-wrapper-* > div.cmp-carousel__item.swiper-slide.c-carousel__item > div > div > div > img
 function extractCarouselImages(html: string, baseUrl: string): string[] {
   const images: string[] = [];
   const seen = new Set<string>();
 
   console.log("=== Extracting TOP gallery images ===");
-  console.log("Target: swiper-wrapper > cmp-carousel__item > div > div > div > img");
 
   const addImage = (src: string, source: string) => {
     if (!src || seen.has(src)) return false;
@@ -38,72 +36,80 @@ function extractCarouselImages(html: string, baseUrl: string): string[] {
     return true;
   };
 
-  // Step 1: Find the FIRST swiper-wrapper (main product gallery at top of page)
+  // Step 1: Find the FIRST swiper-wrapper
   const swiperMatch = html.match(/(<div[^>]*id="swiper-wrapper-[^"]*"[^>]*>)([\s\S]*?)(<div[^>]*class="[^"]*swiper-button|<div[^>]*class="[^"]*swiper-pagination)/i);
   
   if (!swiperMatch) {
-    console.log("No swiper-wrapper found with standard boundary");
-    // Try alternative: just find first swiper-wrapper
-    const altMatch = html.match(/<div[^>]*id="swiper-wrapper-[^"]*"[^>]*>([\s\S]{1,100000})/i);
-    if (altMatch) {
-      console.log("Found swiper-wrapper (alt method)");
-    }
+    console.log("No swiper-wrapper found");
     return images;
   }
 
   const swiperContent = swiperMatch[2];
   console.log(`Swiper content length: ${swiperContent.length}`);
+  
+  // DEBUG: Log first 500 chars of swiper content
+  console.log("Swiper content preview:", swiperContent.substring(0, 500));
 
   // Step 2: Split content by carousel items
-  // Each item starts with: <div class="cmp-carousel__item swiper-slide c-carousel__item
   const items = swiperContent.split(/<div[^>]*class="cmp-carousel__item\s+swiper-slide\s+c-carousel__item[^"]*"[^>]*>/i);
   
   console.log(`Found ${items.length - 1} carousel items`);
 
-  // Process each item (skip first split part as it's before first item)
+  // Process each item
   for (let i = 1; i < items.length && i <= 20; i++) {
     const itemContent = items[i];
     console.log(`Item ${i}: ${itemContent.length} chars`);
     
-    // Look for img inside the nested div structure: > div > div > div > img
-    // The img can have src, data-src, or data-lazy-src
+    // DEBUG: Log first 300 chars of first 3 items to see structure
+    if (i <= 3) {
+      console.log(`Item ${i} preview:`, itemContent.substring(0, 300));
+    }
     
-    // Method 1: Look for img with various src attributes
-    const imgSrcRegex = /<img[^>]*\s(?:src|data-src|data-lazy-src)="([^"]+)"[^>]*>/gi;
-    let imgMatch;
+    // Method 1: Find ALL img tags regardless of attribute
+    const allImgRegex = /<img([^>]*)>/gi;
+    let imgTagMatch;
     
-    while ((imgMatch = imgSrcRegex.exec(itemContent)) !== null) {
-      const src = imgMatch[1];
-      // Prioritize larger/medium/gallery images
-      if (src.includes('medium') || src.includes('large') || src.includes('gallery') || 
-          src.includes('pdp') || src.includes('1600') || src.includes('1200') ||
-          src.includes('1100') || src.includes('1000') || src.includes('800')) {
-        addImage(src, `item-${i}-priority`);
-      } else if (!src.includes('450x450') && !src.includes('small')) {
-        addImage(src, `item-${i}`);
+    while ((imgTagMatch = allImgRegex.exec(itemContent)) !== null) {
+      const imgAttrs = imgTagMatch[1];
+      console.log(`Item ${i} img attrs:`, imgAttrs.substring(0, 200));
+      
+      // Try to extract src from various attributes
+      const srcMatch = imgAttrs.match(/(?:src|data-src|data-lazy-src|data-original)="([^"]+)"/i);
+      if (srcMatch) {
+        addImage(srcMatch[1], `item-${i}-img`);
+      }
+      
+      // Also check srcset
+      const srcsetMatch = imgAttrs.match(/srcset="([^"]+)"/i);
+      if (srcsetMatch) {
+        const parts = srcsetMatch[1].split(',').map(s => s.trim());
+        const lastUrl = parts[parts.length - 1]?.split(' ')[0];
+        if (lastUrl) {
+          addImage(lastUrl, `item-${i}-srcset`);
+        }
       }
     }
     
     // Method 2: Look for picture > source with srcset
-    const srcsetRegex = /<source[^>]*srcset="([^"]+)"[^>]*>/gi;
-    let srcsetMatch;
+    const sourceRegex = /<source[^>]*srcset="([^"]+)"[^>]*>/gi;
+    let sourceMatch;
     
-    while ((srcsetMatch = srcsetRegex.exec(itemContent)) !== null) {
-      const srcset = srcsetMatch[1];
-      // Get the highest resolution image (last in srcset list)
+    while ((sourceMatch = sourceRegex.exec(itemContent)) !== null) {
+      const srcset = sourceMatch[1];
       const parts = srcset.split(',').map(s => s.trim());
-      for (const part of parts) {
-        const url = part.split(' ')[0];
-        if (url && (url.includes('1600') || url.includes('1200') || url.includes('1100') || 
-                    url.includes('large') || url.includes('medium') || url.includes('desktop'))) {
-          addImage(url, `item-${i}-srcset`);
-        }
-      }
-      // Also add the last one (highest res)
       const lastUrl = parts[parts.length - 1]?.split(' ')[0];
       if (lastUrl) {
-        addImage(lastUrl, `item-${i}-srcset-last`);
+        console.log(`Item ${i} source srcset:`, lastUrl.substring(0, 100));
+        addImage(lastUrl, `item-${i}-source`);
       }
+    }
+    
+    // Method 3: Look for any URL that looks like an image
+    const urlRegex = /["'](https?:\/\/[^"']*\.(?:jpg|jpeg|png|webp)[^"']*)["']/gi;
+    let urlMatch;
+    
+    while ((urlMatch = urlRegex.exec(itemContent)) !== null) {
+      addImage(urlMatch[1], `item-${i}-url`);
     }
   }
 
@@ -182,7 +188,7 @@ serve(async (req) => {
       body: JSON.stringify({
         url: url,
         formats: ["rawHtml"],
-        waitFor: 15000, // Wait longer for carousel to fully load
+        waitFor: 15000,
       }),
     });
 
