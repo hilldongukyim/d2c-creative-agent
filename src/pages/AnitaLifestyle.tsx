@@ -1,9 +1,9 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, Loader2, Download, Search, Sparkles, ZoomIn, Square, RectangleVertical, RectangleHorizontal, Film, RefreshCw } from "lucide-react";
+import { ArrowLeft, Loader2, Download, Search, Sparkles, ZoomIn, Square, RectangleVertical, RectangleHorizontal, Film, RefreshCw, Camera } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import Logo from "@/components/Logo";
@@ -16,6 +16,7 @@ const AnitaLifestyle = () => {
   const [isUpscaling, setIsUpscaling] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
   const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);
+  const [isCompositing, setIsCompositing] = useState(false);
   const [carouselImages, setCarouselImages] = useState<string[]>([]);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
@@ -26,6 +27,7 @@ const AnitaLifestyle = () => {
   const [customWidth, setCustomWidth] = useState("");
   const [customHeight, setCustomHeight] = useState("");
   const [productName, setProductName] = useState("");
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleExtractImages = async () => {
     if (!url) {
@@ -154,6 +156,58 @@ const AnitaLifestyle = () => {
     setIsUpscaled(false);
     setStep("input");
     setCurrentAspectRatio("16:9");
+  };
+
+  const handleCameraClick = () => {
+    if (!selectedImage) {
+      toast.error("Please select a product image first");
+      return;
+    }
+    fileInputRef.current?.click();
+  };
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !selectedImage) return;
+
+    // Reset input so same file can be selected again
+    e.target.value = "";
+
+    // Convert file to base64
+    const reader = new FileReader();
+    reader.onload = async () => {
+      const backgroundImageBase64 = reader.result as string;
+      
+      setIsCompositing(true);
+      setIsUpscaled(false);
+      setGeneratedVideoUrl(null);
+      
+      try {
+        const { data, error } = await supabase.functions.invoke("anita-photo-composite", {
+          body: { 
+            productImageUrl: selectedImage,
+            backgroundImageBase64 
+          },
+        });
+
+        if (error) throw error;
+        if (!data.success || !data.imageBase64) {
+          throw new Error(data.error || "Failed to composite image");
+        }
+
+        setGeneratedImage(`data:image/png;base64,${data.imageBase64}`);
+        setCurrentAspectRatio("custom");
+        setStep("result");
+        toast.success("Product composited into your photo!");
+      } catch (error) {
+        console.error("Error compositing photo:", error);
+        toast.error(error instanceof Error ? error.message : "Failed to composite image");
+      } finally {
+        setIsCompositing(false);
+      }
+    };
+    
+    reader.readAsDataURL(file);
   };
 
   const handleGenerateVideo = async () => {
@@ -381,13 +435,23 @@ const AnitaLifestyle = () => {
               </div>
             </Card>
 
-            <div className="flex gap-4 justify-center">
+            {/* Hidden file input for camera/gallery */}
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              onChange={handlePhotoUpload}
+              className="hidden"
+            />
+
+            <div className="flex gap-4 justify-center flex-wrap">
               <Button variant="outline" onClick={handleReset}>
                 Start Over
               </Button>
               <Button
                 onClick={handleGenerateLifestyle}
-                disabled={!selectedImage || isGenerating}
+                disabled={!selectedImage || isGenerating || isCompositing}
                 className="bg-purple-500 hover:bg-purple-600"
               >
                 {isGenerating ? (
@@ -398,7 +462,25 @@ const AnitaLifestyle = () => {
                 ) : (
                   <>
                     <Sparkles className="w-4 h-4 mr-2" />
-                    Generate Lifestyle Image
+                    Generate Lifestyle
+                  </>
+                )}
+              </Button>
+              <Button
+                onClick={handleCameraClick}
+                disabled={!selectedImage || isGenerating || isCompositing}
+                variant="outline"
+                className="border-teal-300 text-teal-600 hover:bg-teal-50"
+              >
+                {isCompositing ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    Compositing...
+                  </>
+                ) : (
+                  <>
+                    <Camera className="w-4 h-4 mr-2" />
+                    Use My Photo
                   </>
                 )}
               </Button>
@@ -409,6 +491,14 @@ const AnitaLifestyle = () => {
                 <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-purple-500" />
                 <p className="text-gray-600">Removing background and generating lifestyle scene...</p>
                 <p className="text-sm text-gray-500 mt-2">This may take up to 30 seconds</p>
+              </Card>
+            )}
+
+            {isCompositing && (
+              <Card className="p-6 bg-white/80 backdrop-blur-sm text-center">
+                <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-teal-500" />
+                <p className="text-gray-600">Removing product background and compositing into your photo...</p>
+                <p className="text-sm text-gray-500 mt-2">This may take up to 60 seconds</p>
               </Card>
             )}
           </div>
