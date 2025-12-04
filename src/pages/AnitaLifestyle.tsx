@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, Loader2, Download, Search, Sparkles } from "lucide-react";
+import { ArrowLeft, Loader2, Download, Search, Sparkles, ZoomIn } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import Logo from "@/components/Logo";
@@ -13,9 +13,11 @@ const AnitaLifestyle = () => {
   const [url, setUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isUpscaling, setIsUpscaling] = useState(false);
   const [carouselImages, setCarouselImages] = useState<string[]>([]);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [isUpscaled, setIsUpscaled] = useState(false);
   const [step, setStep] = useState<"input" | "select" | "result">("input");
 
   const handleExtractImages = async () => {
@@ -80,9 +82,34 @@ const AnitaLifestyle = () => {
 
     const link = document.createElement("a");
     link.href = generatedImage;
-    link.download = "anita-lifestyle-image.png";
+    link.download = isUpscaled ? "anita-lifestyle-4k.png" : "anita-lifestyle-image.png";
     link.click();
     toast.success("Image downloaded!");
+  };
+
+  const handleUpscale = async () => {
+    if (!generatedImage) return;
+
+    setIsUpscaling(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("anita-upscale", {
+        body: { imageBase64: generatedImage },
+      });
+
+      if (error) throw error;
+      if (!data.success || !data.imageBase64) {
+        throw new Error(data.error || "Failed to upscale image");
+      }
+
+      setGeneratedImage(`data:image/png;base64,${data.imageBase64}`);
+      setIsUpscaled(true);
+      toast.success("Image upscaled to 4K!");
+    } catch (error) {
+      console.error("Error upscaling image:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to upscale image");
+    } finally {
+      setIsUpscaling(false);
+    }
   };
 
   const handleReset = () => {
@@ -90,6 +117,7 @@ const AnitaLifestyle = () => {
     setCarouselImages([]);
     setSelectedImage(null);
     setGeneratedImage(null);
+    setIsUpscaled(false);
     setStep("input");
   };
 
@@ -255,7 +283,7 @@ const AnitaLifestyle = () => {
           <div className="space-y-4">
             <Card className="p-6 bg-white/80 backdrop-blur-sm">
               <h3 className="text-lg font-medium text-gray-800 mb-4">
-                Generated Lifestyle Image (1920×1080)
+                Generated Lifestyle Image {isUpscaled ? "(4K - 3840×2160)" : "(1920×1080)"}
               </h3>
               <div className="rounded-lg overflow-hidden border border-gray-200">
                 <img
@@ -266,16 +294,44 @@ const AnitaLifestyle = () => {
               </div>
             </Card>
 
-            <div className="flex gap-4 justify-center">
+            {isUpscaling && (
+              <Card className="p-6 bg-white/80 backdrop-blur-sm text-center">
+                <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-purple-500" />
+                <p className="text-gray-600">Upscaling to 4K resolution...</p>
+                <p className="text-sm text-gray-500 mt-2">This may take up to 30 seconds</p>
+              </Card>
+            )}
+
+            <div className="flex gap-4 justify-center flex-wrap">
               <Button variant="outline" onClick={handleReset}>
                 Create Another
               </Button>
+              {!isUpscaled && (
+                <Button
+                  onClick={handleUpscale}
+                  disabled={isUpscaling}
+                  variant="outline"
+                  className="border-purple-300 text-purple-600 hover:bg-purple-50"
+                >
+                  {isUpscaling ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                      Upscaling...
+                    </>
+                  ) : (
+                    <>
+                      <ZoomIn className="w-4 h-4 mr-2" />
+                      Upscale to 4K
+                    </>
+                  )}
+                </Button>
+              )}
               <Button
                 onClick={handleDownload}
                 className="bg-purple-500 hover:bg-purple-600"
               >
                 <Download className="w-4 h-4 mr-2" />
-                Download Image
+                Download {isUpscaled ? "4K" : ""} Image
               </Button>
             </div>
           </div>
