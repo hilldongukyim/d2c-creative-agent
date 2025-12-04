@@ -8,3 +8,9 @@ verify_jwt = false
 
 [functions.kai-webhook-proxy]
 verify_jwt = false
+
+[functions.maple-scrape]
+verify_jwt = false
+
+[functions.maple-pdp-analyze]
+verify_jwt = false
