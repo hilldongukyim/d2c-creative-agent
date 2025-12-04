@@ -86,8 +86,7 @@ const ConfirmationWithScreenshots = ({
     mainImgSrc: string,
     secondImgSrc: string,
     width: number,
-    height: number,
-    layout: 'horizontal' | 'vertical'
+    height: number
   ): Promise<string> => {
     const canvas = document.createElement('canvas');
     canvas.width = width;
@@ -106,106 +105,56 @@ const ConfirmationWithScreenshots = ({
       loadImage(secondImgSrc),
     ]);
     
-    if (layout === 'horizontal') {
-      // PC layout: side by side
-      const imgWidth = (width - 120) / 2; // Leave space for + sign
-      const imgHeight = height * 0.7;
-      const mainX = 30;
-      const secondX = width - imgWidth - 30;
-      const imgY = (height - imgHeight) / 2;
-      
-      // Calculate aspect ratios and scale
-      const mainRatio = mainImg.width / mainImg.height;
-      const secondRatio = secondImg.width / secondImg.height;
-      
-      let mainDrawWidth = imgWidth;
-      let mainDrawHeight = mainDrawWidth / mainRatio;
-      if (mainDrawHeight > imgHeight) {
-        mainDrawHeight = imgHeight;
-        mainDrawWidth = mainDrawHeight * mainRatio;
-      }
-      
-      let secondDrawWidth = imgWidth;
-      let secondDrawHeight = secondDrawWidth / secondRatio;
-      if (secondDrawHeight > imgHeight) {
-        secondDrawHeight = imgHeight;
-        secondDrawWidth = secondDrawHeight * secondRatio;
-      }
-      
-      // Draw images centered in their areas
-      ctx.drawImage(
-        mainImg,
-        mainX + (imgWidth - mainDrawWidth) / 2,
-        imgY + (imgHeight - mainDrawHeight) / 2,
-        mainDrawWidth,
-        mainDrawHeight
-      );
-      
-      ctx.drawImage(
-        secondImg,
-        secondX + (imgWidth - secondDrawWidth) / 2,
-        imgY + (imgHeight - secondDrawHeight) / 2,
-        secondDrawWidth,
-        secondDrawHeight
-      );
-      
-      // Draw + sign in center
-      ctx.fillStyle = '#000000';
-      ctx.font = 'bold 120px Arial';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('+', width / 2, height / 2);
-      
-    } else {
-      // Mobile layout: stacked vertically
-      const imgHeight = (height - 80) / 2; // Leave space for + sign
-      const imgWidth = width * 0.8;
-      const imgX = (width - imgWidth) / 2;
-      const mainY = 20;
-      const secondY = height - imgHeight - 20;
-      
-      // Calculate aspect ratios and scale
-      const mainRatio = mainImg.width / mainImg.height;
-      const secondRatio = secondImg.width / secondImg.height;
-      
-      let mainDrawWidth = imgWidth;
-      let mainDrawHeight = mainDrawWidth / mainRatio;
-      if (mainDrawHeight > imgHeight) {
-        mainDrawHeight = imgHeight;
-        mainDrawWidth = mainDrawHeight * mainRatio;
-      }
-      
-      let secondDrawWidth = imgWidth;
-      let secondDrawHeight = secondDrawWidth / secondRatio;
-      if (secondDrawHeight > imgHeight) {
-        secondDrawHeight = imgHeight;
-        secondDrawWidth = secondDrawHeight * secondRatio;
-      }
-      
-      // Draw images centered in their areas
-      ctx.drawImage(
-        mainImg,
-        imgX + (imgWidth - mainDrawWidth) / 2,
-        mainY + (imgHeight - mainDrawHeight) / 2,
-        mainDrawWidth,
-        mainDrawHeight
-      );
-      
-      ctx.drawImage(
-        secondImg,
-        imgX + (imgWidth - secondDrawWidth) / 2,
-        secondY + (imgHeight - secondDrawHeight) / 2,
-        secondDrawWidth,
-        secondDrawHeight
-      );
-      
-      // Draw + sign in center
-      ctx.fillStyle = '#000000';
-      ctx.font = 'bold 60px Arial';
-      ctx.textAlign = 'center';
-      ctx.textBaseline = 'middle';
-      ctx.fillText('+', width / 2, height / 2);
+    // Always horizontal layout (side by side)
+    const plusSize = width === 2010 ? 240 : 60; // 2x bigger for PC
+    const gap = plusSize + 40; // Space for + sign
+    const imgWidth = (width - gap) / 2;
+    const imgHeight = height * 0.8;
+    const mainX = 0;
+    const secondX = width - imgWidth;
+    const imgY = (height - imgHeight) / 2;
+    
+    // Calculate aspect ratios and scale
+    const mainRatio = mainImg.width / mainImg.height;
+    const secondRatio = secondImg.width / secondImg.height;
+    
+    let mainDrawWidth = imgWidth;
+    let mainDrawHeight = mainDrawWidth / mainRatio;
+    if (mainDrawHeight > imgHeight) {
+      mainDrawHeight = imgHeight;
+      mainDrawWidth = mainDrawHeight * mainRatio;
     }
+    
+    let secondDrawWidth = imgWidth;
+    let secondDrawHeight = secondDrawWidth / secondRatio;
+    if (secondDrawHeight > imgHeight) {
+      secondDrawHeight = imgHeight;
+      secondDrawWidth = secondDrawHeight * secondRatio;
+    }
+    
+    // Draw images centered in their areas
+    ctx.drawImage(
+      mainImg,
+      mainX + (imgWidth - mainDrawWidth) / 2,
+      imgY + (imgHeight - mainDrawHeight) / 2,
+      mainDrawWidth,
+      mainDrawHeight
+    );
+    
+    ctx.drawImage(
+      secondImg,
+      secondX + (imgWidth - secondDrawWidth) / 2,
+      imgY + (imgHeight - secondDrawHeight) / 2,
+      secondDrawWidth,
+      secondDrawHeight
+    );
+    
+    // Draw + sign in center
+    ctx.fillStyle = '#000000';
+    ctx.font = `bold ${plusSize}px Arial`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('+', width / 2, height / 2);
     
     return canvas.toDataURL('image/png');
   };
@@ -250,12 +199,12 @@ const ConfirmationWithScreenshots = ({
     try {
       // Create PC version (2010x1334, horizontal)
       setProcessingStatus('Creating PC version...');
-      const pcDataUrl = await createCompositeImage(mainSrc, secondSrc, 2010, 1334, 'horizontal');
+      const pcDataUrl = await createCompositeImage(mainSrc, secondSrc, 2010, 1334);
       setPcImage(pcDataUrl);
       
-      // Create Mobile version (450x450, vertical)
+      // Create Mobile version (450x450, horizontal)
       setProcessingStatus('Creating Mobile version...');
-      const mobileDataUrl = await createCompositeImage(mainSrc, secondSrc, 450, 450, 'vertical');
+      const mobileDataUrl = await createCompositeImage(mainSrc, secondSrc, 450, 450);
       setMobileImage(mobileDataUrl);
       
       setProcessingStatus('Complete!');
