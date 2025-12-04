@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { encode as base64Encode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -23,7 +24,7 @@ async function pollTaskResult(taskId: string, apiKey: string, maxAttempts = 30):
     }
 
     const result = await response.json();
-    console.log('Poll result:', JSON.stringify(result));
+    console.log('Poll result status:', result.data?.status);
 
     if (result.code !== '000') {
       throw new Error(`Task error: ${result.msg}`);
@@ -32,18 +33,15 @@ async function pollTaskResult(taskId: string, apiKey: string, maxAttempts = 30):
     const status = result.data?.status;
     
     if (status === 1) {
-      // Task completed
       const resultUrl = result.data?.resultUrl;
       if (!resultUrl) {
         throw new Error('No result URL in completed task');
       }
       return resultUrl;
     } else if (status === 2) {
-      // Task failed
       throw new Error('Background removal task failed');
     }
     
-    // status === 0, still processing - wait and retry
     await new Promise(resolve => setTimeout(resolve, 2000));
   }
   
@@ -68,7 +66,6 @@ serve(async (req) => {
     }
 
     console.log('Creating background removal task...');
-    console.log('Image base64 length:', imageBase64.length);
 
     // Step 1: Create background removal task
     const createResponse = await fetch(`${FOTOR_API_BASE}/v1/aiart/backgroundremover`, {
@@ -83,16 +80,13 @@ serve(async (req) => {
       }),
     });
 
-    console.log('Create task response status:', createResponse.status);
-
     if (!createResponse.ok) {
       const errorText = await createResponse.text();
       console.error('Fotor API error:', errorText);
-      throw new Error(`Fotor API error: ${createResponse.status} - ${errorText}`);
+      throw new Error(`Fotor API error: ${createResponse.status}`);
     }
 
     const createResult = await createResponse.json();
-    console.log('Create task result:', JSON.stringify(createResult));
 
     if (createResult.code !== '000') {
       throw new Error(`Failed to create task: ${createResult.msg}`);
@@ -109,9 +103,22 @@ serve(async (req) => {
     const resultUrl = await pollTaskResult(taskId, FOTOR_API_KEY);
     console.log('Result URL:', resultUrl);
 
+    // Step 3: Download the result image and return as base64
+    console.log('Downloading result image...');
+    const imageResponse = await fetch(resultUrl);
+    if (!imageResponse.ok) {
+      throw new Error('Failed to download result image');
+    }
+
+    const imageArrayBuffer = await imageResponse.arrayBuffer();
+    const imageUint8Array = new Uint8Array(imageArrayBuffer);
+    const resultImageBase64 = base64Encode(imageUint8Array);
+    
+    console.log('Image downloaded and converted to base64, length:', resultImageBase64.length);
+
     return new Response(JSON.stringify({ 
       success: true,
-      resultUrl 
+      imageBase64: resultImageBase64
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
