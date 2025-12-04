@@ -11,29 +11,36 @@ interface PodcastSegment {
   estimatedDuration: number; // in seconds
 }
 
-function extractCarouselImages(htmlContent: string, baseUrl: string): string[] {
+function extractCarouselImages(markdownContent: string, baseUrl: string): string[] {
   const images: string[] = [];
   
-  // Extract image URLs from various patterns
+  // Extract image URLs from markdown format: ![alt](url) or just URLs
   const imgPatterns = [
-    /src="([^"]*(?:carousel|gallery|product|hero)[^"]*\.(?:jpg|jpeg|png|webp)[^"]*)"/gi,
-    /data-src="([^"]*(?:carousel|gallery|product|hero)[^"]*\.(?:jpg|jpeg|png|webp)[^"]*)"/gi,
-    /srcset="([^"]*(?:carousel|gallery|product)[^"]*\.(?:jpg|jpeg|png|webp)[^"]*)"/gi,
-    /src="([^"]*\/[^"]*\.(?:jpg|jpeg|png|webp))"/gi,
+    // Markdown image syntax: ![alt](url)
+    /!\[[^\]]*\]\(([^)]+)\)/gi,
+    // Direct URLs ending with image extensions
+    /(https?:\/\/[^\s"'<>]+\.(?:jpg|jpeg|png|webp|gif)(?:\?[^\s"'<>]*)?)/gi,
+    // URLs in parentheses or brackets
+    /\((https?:\/\/[^\s)]+\.(?:jpg|jpeg|png|webp|gif)[^)]*)\)/gi,
   ];
   
   for (const pattern of imgPatterns) {
     let match;
-    while ((match = pattern.exec(htmlContent)) !== null) {
+    while ((match = pattern.exec(markdownContent)) !== null) {
       let url = match[1];
-      // Handle srcset - take first URL
-      if (url.includes(',')) {
-        url = url.split(',')[0].trim().split(' ')[0];
-      }
+      
       // Skip thumbnails and small images
-      if (url.includes('thum') || url.includes('180x180') || url.includes('50x50') || url.includes('icon')) {
+      if (url.includes('thum') || url.includes('180x180') || url.includes('50x50') || 
+          url.includes('icon') || url.includes('logo') || url.includes('badge') ||
+          url.includes('placeholder') || url.includes('spinner')) {
         continue;
       }
+      
+      // Prefer larger images
+      if (url.includes('450x450') && !url.includes('1600') && !url.includes('1200')) {
+        continue;
+      }
+      
       // Make absolute URL
       if (url.startsWith('//')) {
         url = 'https:' + url;
@@ -43,14 +50,20 @@ function extractCarouselImages(htmlContent: string, baseUrl: string): string[] {
           url = urlObj.origin + url;
         } catch {}
       }
+      
+      // Clean URL (remove trailing stuff)
+      url = url.split(')')[0].split(' ')[0];
+      
       if (url.startsWith('http') && !images.includes(url)) {
         images.push(url);
       }
     }
   }
   
-  // Return first 5-8 images max for the video
-  return images.slice(0, 8);
+  console.log("Extracted images:", images);
+  
+  // Return first 6 images max for the video
+  return images.slice(0, 6);
 }
 
 async function generateVideoPodcastScript(
