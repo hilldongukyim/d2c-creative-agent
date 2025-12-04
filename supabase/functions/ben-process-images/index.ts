@@ -6,8 +6,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const FOTOR_API_BASE = 'https://api-b.fotor.com';
-
 async function downloadImageAsBase64(imageUrl: string): Promise<string> {
   console.log("Downloading image:", imageUrl);
   const response = await fetch(imageUrl);
@@ -21,104 +19,38 @@ async function downloadImageAsBase64(imageUrl: string): Promise<string> {
   return base64;
 }
 
-async function removeBackgroundWithFotor(imageUrl: string, apiKey: string): Promise<string> {
-  console.log("Processing image:", imageUrl);
+async function removeBackgroundWithRemoveBg(imageUrl: string, apiKey: string): Promise<string> {
+  console.log("Processing image with Remove.bg:", imageUrl);
 
   // Step 1: Download image and convert to base64
   const imageBase64 = await downloadImageAsBase64(imageUrl);
 
-  // Step 2: Create the background removal task with base64 (like working fotor-background-removal)
-  console.log("Creating Fotor task...");
-  const createResponse = await fetch(`${FOTOR_API_BASE}/v1/aiart/backgroundremover`, {
-    method: "POST",
+  // Step 2: Call Remove.bg API
+  console.log("Calling Remove.bg API...");
+  const formData = new FormData();
+  formData.append('image_file_b64', imageBase64);
+  formData.append('size', 'auto');
+
+  const response = await fetch('https://api.remove.bg/v1.0/removebg', {
+    method: 'POST',
     headers: {
-      "Authorization": `Bearer ${apiKey}`,
-      "Content-Type": "application/json",
+      'X-Api-Key': apiKey,
     },
-    body: JSON.stringify({
-      userImageUrl: `data:image/png;base64,${imageBase64}`,
-      action: 'auto',
-    }),
+    body: formData,
   });
 
-  if (!createResponse.ok) {
-    const errorText = await createResponse.text();
-    console.error("Fotor create task error:", createResponse.status, errorText);
-    throw new Error(`Failed to create Fotor task: ${createResponse.status}`);
-  }
-
-  const createData = await createResponse.json();
-  console.log("Fotor task created, taskId:", createData.data?.taskId);
-
-  if (createData.code !== '000') {
-    throw new Error(`Failed to create task: ${createData.msg}`);
-  }
-
-  const taskId = createData.data?.taskId;
-  if (!taskId) {
-    throw new Error("No taskId returned from Fotor");
-  }
-
-  // Step 3: Poll for task completion
-  let attempts = 0;
-  const maxAttempts = 30;
-  
-  while (attempts < maxAttempts) {
-    await new Promise(resolve => setTimeout(resolve, 2000));
-    
-    console.log(`Polling task ${taskId}, attempt ${attempts + 1}/${maxAttempts}`);
-    
-    const statusResponse = await fetch(`${FOTOR_API_BASE}/v1/aiart/tasks/${taskId}`, {
-      method: "GET",
-      headers: {
-        "Authorization": `Bearer ${apiKey}`,
-      },
-    });
-
-    if (!statusResponse.ok) {
-      console.error("Fotor status check error:", statusResponse.status);
-      attempts++;
-      continue;
-    }
-
-    const statusData = await statusResponse.json();
-    console.log("Fotor task status:", statusData.data?.status);
-
-    if (statusData.code !== '000') {
-      throw new Error(`Task error: ${statusData.msg}`);
-    }
-
-    const status = statusData.data?.status;
-    
-    // status 1 = completed, status 2 = failed
-    if (status === 1) {
-      const resultUrl = statusData.data?.resultUrl;
-      if (!resultUrl) {
-        throw new Error('No result URL in completed task');
-      }
-      console.log("Background removed, result URL:", resultUrl);
-      return resultUrl;
-    } else if (status === 2) {
-      throw new Error("Fotor task failed");
-    }
-
-    attempts++;
-  }
-
-  throw new Error("Fotor task timed out");
-}
-
-async function fetchImageAsBase64(url: string): Promise<string> {
-  console.log("Downloading result image:", url);
-  const response = await fetch(url);
   if (!response.ok) {
-    throw new Error(`Failed to fetch image: ${response.status}`);
+    const errorText = await response.text();
+    console.error("Remove.bg API error:", response.status, errorText);
+    throw new Error(`Remove.bg API error: ${response.status}`);
   }
-  const arrayBuffer = await response.arrayBuffer();
-  const uint8Array = new Uint8Array(arrayBuffer);
-  const base64 = base64Encode(uint8Array);
-  console.log("Result image downloaded, base64 length:", base64.length);
-  return `data:image/png;base64,${base64}`;
+
+  // Get the result image as base64
+  const resultBuffer = await response.arrayBuffer();
+  const resultBase64 = base64Encode(new Uint8Array(resultBuffer));
+  
+  console.log("Background removed, result base64 length:", resultBase64.length);
+  return `data:image/png;base64,${resultBase64}`;
 }
 
 serve(async (req) => {
@@ -136,9 +68,9 @@ serve(async (req) => {
       });
     }
 
-    const FOTOR_API_KEY = Deno.env.get("FOTOR_API_KEY");
-    if (!FOTOR_API_KEY) {
-      throw new Error("FOTOR_API_KEY not configured");
+    const REMOVE_BG_API_KEY = Deno.env.get("REMOVE_BG_API_KEY");
+    if (!REMOVE_BG_API_KEY) {
+      throw new Error("REMOVE_BG_API_KEY not configured");
     }
 
     console.log("Processing images:");
@@ -147,16 +79,10 @@ serve(async (req) => {
 
     // Remove backgrounds from both images sequentially to avoid rate limits
     console.log("Processing main image...");
-    const mainResultUrl = await removeBackgroundWithFotor(mainImageUrl, FOTOR_API_KEY);
+    const mainBase64 = await removeBackgroundWithRemoveBg(mainImageUrl, REMOVE_BG_API_KEY);
     
     console.log("Processing second image...");
-    const secondResultUrl = await removeBackgroundWithFotor(secondImageUrl, FOTOR_API_KEY);
-
-    // Fetch the result images and convert to base64
-    const [mainBase64, secondBase64] = await Promise.all([
-      fetchImageAsBase64(mainResultUrl),
-      fetchImageAsBase64(secondResultUrl),
-    ]);
+    const secondBase64 = await removeBackgroundWithRemoveBg(secondImageUrl, REMOVE_BG_API_KEY);
 
     console.log("Both images processed successfully");
 

@@ -6,48 +6,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const FOTOR_API_BASE = 'https://api-b.fotor.com';
-
-async function pollTaskResult(taskId: string, apiKey: string, maxAttempts = 30): Promise<string> {
-  for (let i = 0; i < maxAttempts; i++) {
-    console.log(`Polling task ${taskId}, attempt ${i + 1}/${maxAttempts}`);
-    
-    const response = await fetch(`${FOTOR_API_BASE}/v1/aiart/tasks/${taskId}`, {
-      method: 'GET',
-      headers: {
-        'Authorization': `Bearer ${apiKey}`,
-      },
-    });
-
-    if (!response.ok) {
-      throw new Error(`Failed to poll task: ${response.status}`);
-    }
-
-    const result = await response.json();
-    console.log('Poll result status:', result.data?.status);
-
-    if (result.code !== '000') {
-      throw new Error(`Task error: ${result.msg}`);
-    }
-
-    const status = result.data?.status;
-    
-    if (status === 1) {
-      const resultUrl = result.data?.resultUrl;
-      if (!resultUrl) {
-        throw new Error('No result URL in completed task');
-      }
-      return resultUrl;
-    } else if (status === 2) {
-      throw new Error('Background removal task failed');
-    }
-    
-    await new Promise(resolve => setTimeout(resolve, 2000));
-  }
-  
-  throw new Error('Task timeout - background removal took too long');
-}
-
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
@@ -55,78 +13,56 @@ serve(async (req) => {
 
   try {
     const { imageBase64 } = await req.json();
-    
+
     if (!imageBase64) {
-      throw new Error('No image provided');
+      return new Response(
+        JSON.stringify({ error: 'imageBase64 is required' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
     }
 
-    const FOTOR_API_KEY = Deno.env.get('FOTOR_API_KEY');
-    if (!FOTOR_API_KEY) {
-      throw new Error('FOTOR_API_KEY not configured');
+    const REMOVE_BG_API_KEY = Deno.env.get('REMOVE_BG_API_KEY');
+    if (!REMOVE_BG_API_KEY) {
+      throw new Error('REMOVE_BG_API_KEY not configured');
     }
 
-    console.log('Creating background removal task...');
+    console.log('Processing image with Remove.bg API...');
+    console.log('Input base64 length:', imageBase64.length);
 
-    // Step 1: Create background removal task
-    const createResponse = await fetch(`${FOTOR_API_BASE}/v1/aiart/backgroundremover`, {
+    // Create form data for Remove.bg API
+    const formData = new FormData();
+    formData.append('image_file_b64', imageBase64);
+    formData.append('size', 'auto');
+
+    const response = await fetch('https://api.remove.bg/v1.0/removebg', {
       method: 'POST',
       headers: {
-        'Authorization': `Bearer ${FOTOR_API_KEY}`,
-        'Content-Type': 'application/json',
+        'X-Api-Key': REMOVE_BG_API_KEY,
       },
-      body: JSON.stringify({
-        userImageUrl: `data:image/png;base64,${imageBase64}`,
-        action: 'auto',
-      }),
+      body: formData,
     });
 
-    if (!createResponse.ok) {
-      const errorText = await createResponse.text();
-      console.error('Fotor API error:', errorText);
-      throw new Error(`Fotor API error: ${createResponse.status}`);
+    if (!response.ok) {
+      const errorText = await response.text();
+      console.error('Remove.bg API error:', response.status, errorText);
+      throw new Error(`Remove.bg API error: ${response.status} - ${errorText}`);
     }
 
-    const createResult = await createResponse.json();
+    // Get the result image as binary
+    const resultBuffer = await response.arrayBuffer();
+    const resultBase64 = base64Encode(new Uint8Array(resultBuffer));
 
-    if (createResult.code !== '000') {
-      throw new Error(`Failed to create task: ${createResult.msg}`);
-    }
+    console.log('Background removed successfully, result length:', resultBase64.length);
 
-    const taskId = createResult.data?.taskId;
-    if (!taskId) {
-      throw new Error('No taskId returned');
-    }
-
-    console.log('Task created:', taskId);
-
-    // Step 2: Poll for result
-    const resultUrl = await pollTaskResult(taskId, FOTOR_API_KEY);
-    console.log('Result URL:', resultUrl);
-
-    // Step 3: Download the result image and return as base64
-    console.log('Downloading result image...');
-    const imageResponse = await fetch(resultUrl);
-    if (!imageResponse.ok) {
-      throw new Error('Failed to download result image');
-    }
-
-    const imageArrayBuffer = await imageResponse.arrayBuffer();
-    const imageUint8Array = new Uint8Array(imageArrayBuffer);
-    const resultImageBase64 = base64Encode(imageUint8Array);
-    
-    console.log('Image downloaded and converted to base64, length:', resultImageBase64.length);
-
-    return new Response(JSON.stringify({ 
-      success: true,
-      imageBase64: resultImageBase64
-    }), {
-      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-    });
+    return new Response(
+      JSON.stringify({ imageBase64: resultBase64 }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
 
   } catch (error) {
-    console.error('Error:', error.message);
+    console.error('Error in background removal:', error);
     return new Response(
-      JSON.stringify({ error: error.message }),
+      JSON.stringify({ error: error instanceof Error ? error.message : 'Processing failed' }),
       { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
   }
