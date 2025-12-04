@@ -105,49 +105,49 @@ const ConfirmationWithScreenshots = ({
       loadImage(secondImgSrc),
     ]);
     
-    // Always horizontal layout (side by side)
-    const plusSize = width === 2010 ? 240 : 60; // 2x bigger for PC
-    const gap = plusSize + 40; // Space for + sign
-    const imgWidth = (width - gap) / 2;
-    const imgHeight = height * 0.8;
-    const mainX = 0;
-    const secondX = width - imgWidth;
-    const imgY = (height - imgHeight) / 2;
+    // Layout settings - maximize image size while keeping + visible
+    const isPC = width === 2010;
+    const plusSize = isPC ? 240 : 60;
+    const margin = isPC ? 40 : 15; // outer margin
+    const plusGap = isPC ? 30 : 10; // gap between image and + sign
     
-    // Calculate aspect ratios and scale
+    // Calculate available space for each image
+    const plusAreaWidth = plusSize + plusGap * 2;
+    const availableWidth = width - margin * 2 - plusAreaWidth;
+    const imgAreaWidth = availableWidth / 2;
+    const imgAreaHeight = height - margin * 2;
+    
+    // Calculate aspect ratios and scale to fit
     const mainRatio = mainImg.width / mainImg.height;
     const secondRatio = secondImg.width / secondImg.height;
     
-    let mainDrawWidth = imgWidth;
+    let mainDrawWidth = imgAreaWidth;
     let mainDrawHeight = mainDrawWidth / mainRatio;
-    if (mainDrawHeight > imgHeight) {
-      mainDrawHeight = imgHeight;
+    if (mainDrawHeight > imgAreaHeight) {
+      mainDrawHeight = imgAreaHeight;
       mainDrawWidth = mainDrawHeight * mainRatio;
     }
     
-    let secondDrawWidth = imgWidth;
+    let secondDrawWidth = imgAreaWidth;
     let secondDrawHeight = secondDrawWidth / secondRatio;
-    if (secondDrawHeight > imgHeight) {
-      secondDrawHeight = imgHeight;
+    if (secondDrawHeight > imgAreaHeight) {
+      secondDrawHeight = imgAreaHeight;
       secondDrawWidth = secondDrawHeight * secondRatio;
     }
     
-    // Draw images centered in their areas
-    ctx.drawImage(
-      mainImg,
-      mainX + (imgWidth - mainDrawWidth) / 2,
-      imgY + (imgHeight - mainDrawHeight) / 2,
-      mainDrawWidth,
-      mainDrawHeight
-    );
+    // Position images - left image right-aligned in its area, right image left-aligned
+    const leftAreaEnd = margin + imgAreaWidth;
+    const rightAreaStart = width - margin - imgAreaWidth;
     
-    ctx.drawImage(
-      secondImg,
-      secondX + (imgWidth - secondDrawWidth) / 2,
-      imgY + (imgHeight - secondDrawHeight) / 2,
-      secondDrawWidth,
-      secondDrawHeight
-    );
+    const mainX = leftAreaEnd - mainDrawWidth; // right-align in left area
+    const mainY = (height - mainDrawHeight) / 2;
+    
+    const secondX = rightAreaStart; // left-align in right area
+    const secondY = (height - secondDrawHeight) / 2;
+    
+    // Draw images
+    ctx.drawImage(mainImg, mainX, mainY, mainDrawWidth, mainDrawHeight);
+    ctx.drawImage(secondImg, secondX, secondY, secondDrawWidth, secondDrawHeight);
     
     // Draw + sign in center
     ctx.fillStyle = '#000000';
