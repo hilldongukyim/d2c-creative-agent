@@ -82,6 +82,63 @@ const ConfirmationWithScreenshots = ({
     });
   };
 
+  // Crop transparent pixels from image and return trimmed base64
+  const cropTransparentPixels = async (imageSrc: string): Promise<string> => {
+    const img = await loadImage(imageSrc);
+    const canvas = document.createElement('canvas');
+    canvas.width = img.width;
+    canvas.height = img.height;
+    const ctx = canvas.getContext('2d')!;
+    ctx.drawImage(img, 0, 0);
+    
+    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    const data = imageData.data;
+    
+    let minX = canvas.width, minY = canvas.height, maxX = 0, maxY = 0;
+    
+    // Find bounding box of non-transparent pixels
+    for (let y = 0; y < canvas.height; y++) {
+      for (let x = 0; x < canvas.width; x++) {
+        const alpha = data[(y * canvas.width + x) * 4 + 3];
+        if (alpha > 10) { // threshold for non-transparent
+          minX = Math.min(minX, x);
+          minY = Math.min(minY, y);
+          maxX = Math.max(maxX, x);
+          maxY = Math.max(maxY, y);
+        }
+      }
+    }
+    
+    // If no visible pixels found, return original
+    if (minX >= maxX || minY >= maxY) {
+      return imageSrc;
+    }
+    
+    // Add small padding (2px)
+    const padding = 2;
+    minX = Math.max(0, minX - padding);
+    minY = Math.max(0, minY - padding);
+    maxX = Math.min(canvas.width - 1, maxX + padding);
+    maxY = Math.min(canvas.height - 1, maxY + padding);
+    
+    const cropWidth = maxX - minX + 1;
+    const cropHeight = maxY - minY + 1;
+    
+    // Create cropped canvas
+    const croppedCanvas = document.createElement('canvas');
+    croppedCanvas.width = cropWidth;
+    croppedCanvas.height = cropHeight;
+    const croppedCtx = croppedCanvas.getContext('2d')!;
+    
+    croppedCtx.drawImage(
+      canvas,
+      minX, minY, cropWidth, cropHeight,
+      0, 0, cropWidth, cropHeight
+    );
+    
+    return croppedCanvas.toDataURL('image/png');
+  };
+
   const createCompositeImage = async (
     mainImgSrc: string,
     secondImgSrc: string,
@@ -197,14 +254,21 @@ const ConfirmationWithScreenshots = ({
 
   const createFinalImages = async (mainSrc: string, secondSrc: string) => {
     try {
+      // Crop transparent pixels from both images first
+      setProcessingStatus('Cropping transparent areas...');
+      const [croppedMain, croppedSecond] = await Promise.all([
+        cropTransparentPixels(mainSrc),
+        cropTransparentPixels(secondSrc)
+      ]);
+      
       // Create PC version (2010x1334, horizontal)
       setProcessingStatus('Creating PC version...');
-      const pcDataUrl = await createCompositeImage(mainSrc, secondSrc, 2010, 1334);
+      const pcDataUrl = await createCompositeImage(croppedMain, croppedSecond, 2010, 1334);
       setPcImage(pcDataUrl);
       
       // Create Mobile version (450x450, horizontal)
       setProcessingStatus('Creating Mobile version...');
-      const mobileDataUrl = await createCompositeImage(mainSrc, secondSrc, 450, 450);
+      const mobileDataUrl = await createCompositeImage(croppedMain, croppedSecond, 450, 450);
       setMobileImage(mobileDataUrl);
       
       setProcessingStatus('Complete!');
