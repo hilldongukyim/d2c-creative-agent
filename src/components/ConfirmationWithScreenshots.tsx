@@ -15,12 +15,14 @@ interface ConfirmationWithScreenshotsProps {
   setFormData: React.Dispatch<React.SetStateAction<FormData>>;
   onGoBack: () => void;
   onSubmit: () => void;
+  onReset?: () => void;
 }
 
 const ConfirmationWithScreenshots = ({ 
   formData, 
   onGoBack, 
-  onSubmit 
+  onSubmit,
+  onReset 
 }: ConfirmationWithScreenshotsProps) => {
   const [mainImage, setMainImage] = useState<string | null>(null);
   const [secondImage, setSecondImage] = useState<string | null>(null);
@@ -434,11 +436,13 @@ const ConfirmationWithScreenshots = ({
               setBgRemovedMain(null);
               setBgRemovedSecond(null);
               setShowBgRemovedPreview(false);
-              onSubmit();
+              if (onReset) {
+                onReset();
+              }
             }}
             className="w-full"
           >
-            Create Another Gallery
+            Create Another PTO Image
           </Button>
         </div>
       </div>

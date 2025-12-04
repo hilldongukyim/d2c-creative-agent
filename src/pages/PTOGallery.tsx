@@ -154,6 +154,15 @@ const PTOGallery = () => {
     }
   };
 
+  const handleReset = () => {
+    setCurrentStep(0);
+    setFormData({ mainProductUrl: '', secondProductUrl: '' });
+    setMainUrlInput('');
+    setSecondUrlInput('');
+    setSubmissionStatus(null);
+    setShowVideo(false);
+    setUrlValidationError(null);
+  };
 
   const currentConversation = conversations[currentStep];
   const isDualUrlInput = currentConversation?.type === 'ben-dual-url';
@@ -279,6 +288,7 @@ const PTOGallery = () => {
                       setFormData={setFormData}
                       onGoBack={handleGoBack}
                       onSubmit={handleSubmit}
+                      onReset={handleReset}
                     />
                   )}
 
