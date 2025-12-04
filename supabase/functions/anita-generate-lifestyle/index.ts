@@ -107,15 +107,55 @@ async function removeBackground(imageUrl: string, fotorApiKey: string): Promise<
   return base64Encode(new Uint8Array(resultArrayBuffer));
 }
 
-async function generateLifestyleImage(productImageBase64: string, lovableApiKey: string): Promise<string> {
+async function generateLifestyleImage(productImageBase64: string, lovableApiKey: string, aspectRatio: string = "16:9"): Promise<string> {
   console.log("Generating lifestyle image with Lovable AI...");
 
-  const prompt = `Create a beautiful lifestyle marketing image at 1920x1080 resolution. 
-Place this product naturally in an elegant, modern living room setting with soft natural lighting. 
-The scene should feel aspirational and premium - think high-end interior design magazine style.
-Include subtle lifestyle elements like plants, books, or decorative items in the background.
-The product should be the clear focal point but integrated seamlessly into the environment.
-Use warm, inviting colors and professional photography aesthetics.`;
+  // Determine dimensions based on aspect ratio
+  let width: number, height: number;
+  switch (aspectRatio) {
+    case "1:1":
+      width = 1080;
+      height = 1080;
+      break;
+    case "9:16":
+      width = 1080;
+      height = 1920;
+      break;
+    case "16:9":
+    default:
+      width = 1920;
+      height = 1080;
+      break;
+  }
+
+  const prompt = `You are a professional lifestyle photographer and product placement specialist.
+
+TASK: Create a stunning lifestyle marketing image at ${width}x${height} resolution (${aspectRatio} aspect ratio).
+
+INSTRUCTIONS:
+1. First, analyze the product in the image - identify what type of product it is (electronics, appliance, furniture, etc.)
+2. Based on the product type, determine the ideal target persona:
+   - Premium electronics → Modern professional, tech-savvy lifestyle
+   - Home appliances → Family-oriented, comfortable modern home
+   - Beauty/personal care → Wellness-focused, self-care lifestyle
+   - Kitchen appliances → Culinary enthusiast, home chef lifestyle
+   - Audio/Visual equipment → Entertainment lover, music/movie enthusiast
+
+3. Create a lifestyle scene that:
+   - Matches the identified persona's aspirational environment
+   - Places the product naturally as if in actual use or display
+   - Uses appropriate lighting for the product type (warm for home, bright for tech)
+   - Includes contextual elements that tell a story about the user's lifestyle
+   - Feels like a high-end catalog or magazine advertisement
+
+4. Technical requirements:
+   - Professional photography quality
+   - Natural, realistic lighting with subtle shadows
+   - Product should be clearly visible but integrated into the scene
+   - Background should complement, not distract from the product
+   - Color harmony between product and environment
+
+Generate the lifestyle image now.`;
 
   const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
@@ -145,7 +185,6 @@ Use warm, inviting colors and professional photography aesthetics.`;
       modalities: ["image", "text"],
     }),
   });
-
   if (!response.ok) {
     const errorText = await response.text();
     console.error("Lovable AI error:", response.status, errorText);
@@ -182,7 +221,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageUrl } = await req.json();
+    const { imageUrl, aspectRatio = "16:9" } = await req.json();
 
     if (!imageUrl) {
       throw new Error("Image URL is required");
@@ -198,7 +237,7 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY not configured");
     }
 
-    console.log("Starting lifestyle image generation for:", imageUrl);
+    console.log("Starting lifestyle image generation for:", imageUrl, "with aspect ratio:", aspectRatio);
 
     // Step 1: Remove background
     console.log("Step 1: Removing background...");
@@ -207,7 +246,7 @@ serve(async (req) => {
 
     // Step 2: Generate lifestyle image with Lovable AI
     console.log("Step 2: Generating lifestyle image...");
-    const lifestyleImageBase64 = await generateLifestyleImage(productImageBase64, LOVABLE_API_KEY);
+    const lifestyleImageBase64 = await generateLifestyleImage(productImageBase64, LOVABLE_API_KEY, aspectRatio);
     console.log("Lifestyle image generated, length:", lifestyleImageBase64.length);
 
     return new Response(

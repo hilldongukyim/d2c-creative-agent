@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, Loader2, Download, Search, Sparkles, ZoomIn } from "lucide-react";
+import { ArrowLeft, Loader2, Download, Search, Sparkles, ZoomIn, Square, RectangleVertical, RectangleHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import Logo from "@/components/Logo";
@@ -19,6 +19,7 @@ const AnitaLifestyle = () => {
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [isUpscaled, setIsUpscaled] = useState(false);
   const [step, setStep] = useState<"input" | "select" | "result">("input");
+  const [aspectRatio, setAspectRatio] = useState<"16:9" | "1:1" | "9:16">("16:9");
 
   const handleExtractImages = async () => {
     if (!url) {
@@ -58,7 +59,7 @@ const AnitaLifestyle = () => {
     setIsGenerating(true);
     try {
       const { data, error } = await supabase.functions.invoke("anita-generate-lifestyle", {
-        body: { imageUrl: selectedImage },
+        body: { imageUrl: selectedImage, aspectRatio },
       });
 
       if (error) throw error;
@@ -119,6 +120,15 @@ const AnitaLifestyle = () => {
     setGeneratedImage(null);
     setIsUpscaled(false);
     setStep("input");
+    setAspectRatio("16:9");
+  };
+
+  const getAspectRatioLabel = () => {
+    switch (aspectRatio) {
+      case "1:1": return "1080×1080";
+      case "9:16": return "1080×1920";
+      case "16:9": return "1920×1080";
+    }
   };
 
   return (
@@ -245,6 +255,38 @@ const AnitaLifestyle = () => {
               </div>
             </Card>
 
+            {/* Aspect Ratio Selection */}
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <span className="text-sm text-gray-600 mr-2">Aspect Ratio:</span>
+              <Button
+                variant={aspectRatio === "16:9" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setAspectRatio("16:9")}
+                className={aspectRatio === "16:9" ? "bg-purple-500 hover:bg-purple-600" : ""}
+              >
+                <RectangleHorizontal className="w-4 h-4 mr-1" />
+                16:9
+              </Button>
+              <Button
+                variant={aspectRatio === "1:1" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setAspectRatio("1:1")}
+                className={aspectRatio === "1:1" ? "bg-purple-500 hover:bg-purple-600" : ""}
+              >
+                <Square className="w-4 h-4 mr-1" />
+                1:1
+              </Button>
+              <Button
+                variant={aspectRatio === "9:16" ? "default" : "outline"}
+                size="sm"
+                onClick={() => setAspectRatio("9:16")}
+                className={aspectRatio === "9:16" ? "bg-purple-500 hover:bg-purple-600" : ""}
+              >
+                <RectangleVertical className="w-4 h-4 mr-1" />
+                9:16
+              </Button>
+            </div>
+
             <div className="flex gap-4 justify-center">
               <Button variant="outline" onClick={handleReset}>
                 Start Over
@@ -283,7 +325,7 @@ const AnitaLifestyle = () => {
           <div className="space-y-4">
             <Card className="p-6 bg-white/80 backdrop-blur-sm">
               <h3 className="text-lg font-medium text-gray-800 mb-4">
-                Generated Lifestyle Image {isUpscaled ? "(4K - 3840×2160)" : "(1920×1080)"}
+                Generated Lifestyle Image {isUpscaled ? "(4K)" : `(${getAspectRatioLabel()})`}
               </h3>
               <div className="rounded-lg overflow-hidden border border-gray-200">
                 <img
