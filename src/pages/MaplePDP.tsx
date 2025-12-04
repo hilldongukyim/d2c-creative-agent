@@ -229,10 +229,15 @@ const MaplePDP = () => {
 
   const handleDownloadScreenshot = (e: React.MouseEvent, screenshotUrl: string) => {
     e.stopPropagation();
+    e.preventDefault();
+    
+    // Create a temporary anchor and trigger download
     const link = document.createElement("a");
     link.href = screenshotUrl;
     link.download = `maple-screenshot-${Date.now()}.png`;
+    document.body.appendChild(link);
     link.click();
+    document.body.removeChild(link);
   };
 
   return (
