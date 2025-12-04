@@ -60,7 +60,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       personality: "Always ready to help, enjoys fast and efficient communication."
     },
     "levi": {
-      description: "Levi is a promotion configuration specialist who sets up and manages various marketing tools and platforms. Realizes marketing ideas through technical implementation.",
+      description: "Levi automates promotion workflows by processing uploaded forms or chatbot inputs. He handles promotion page creation by sending data to RPA systems that input promotion details into the platform, and generates discount coupons for products during campaigns through the same automated pipeline.",
       personality: "Has technical mindset, demonstrates strong focus and patience in problem-solving.",
       admin: { name: "RPA OP Team", email: "rpa.opteam@lgepartner.com" }
     },
