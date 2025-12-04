@@ -97,10 +97,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       personality: "Meticulous and patient, excels at systematic data collection. Content Crawling, LG.COM, Hero Banner, Web Scraping.",
       admin: { name: "Donguk Yim", email: "donguk.yim@lge.com" }
     },
-    "theo": {
-      description: "An operations manager who supports NPI model data inquiry and analysis so that legal entity/BU managers can efficiently track NPI model progress.",
-      personality: "Systematic and reliable, excels at clearly organizing and communicating complex data."
-    },
     "noa": {
       description: "Noa helps with practical work based on product information from PIM (Product Information Management). Data extraction and product catalog creation are also possible.",
       personality: "Organized and detail-oriented, excels at managing complex product data. Product Catalog, Review syndication, Data extract.",
@@ -195,10 +191,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     teams: [{
       title: "Platform Development Team",
       items: [{
-        name: "Theo",
-        role: "NPI Manager",
-        imageSrc: "/lovable-uploads/a682c963-0927-4ca3-8546-707e094f3836.png"
-      }, {
         name: "Mateo",
         role: "Crawler",
         imageSrc: "/lovable-uploads/mateo-profile.png"
