@@ -110,7 +110,7 @@ const AnitaLifestyle = () => {
 
     const link = document.createElement("a");
     link.href = generatedImage;
-    const filename = `${getDateString()}_${productName}_${getSizeString()}.png`;
+    const filename = `${getDateString()}_lifestyle_${productName}_${getSizeString()}.png`;
     link.download = filename;
     link.click();
     toast.success("Image downloaded!");
