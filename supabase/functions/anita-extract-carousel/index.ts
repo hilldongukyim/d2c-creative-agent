@@ -5,110 +5,113 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Extract ALL carousel images from the FIRST swiper-wrapper only (main product gallery)
-// Target: #swiper-wrapper-* > div.cmp-carousel__item.swiper-slide.c-carousel__item > div > div > div > img
+// Extract ONLY the FIRST/TOP product gallery carousel images
+// Target: div.cmp-carousel__item.swiper-slide.c-carousel__item > div > div > div > img
 function extractCarouselImages(html: string, baseUrl: string): string[] {
   const images: string[] = [];
   const seen = new Set<string>();
 
-  console.log("=== Starting image extraction ===");
+  console.log("=== Extracting TOP gallery images only ===");
 
   const addImage = (src: string, source: string) => {
     if (!src || seen.has(src)) return false;
+    
     // Skip non-product images
     if (src.includes('logo') || src.endsWith('.svg')) return false;
     if (src.includes('thum-') || src.includes('thumbnail')) return false;
-    if (src.includes('180x180') || src.includes('100x100')) return false;
+    if (src.includes('180x180') || src.includes('100x100') || src.includes('450x450')) return false;
     if (src.includes('placeholder') || src.includes('loading')) return false;
     if (src.includes('qrcode') || src.includes('qr-code') || src.includes('QR')) return false;
     if (src.includes('icon') || src.includes('badge') || src.includes('flag')) return false;
     
+    // CRITICAL: Skip feature/USP promotional images
+    if (src.includes('/features/')) return false;
+    if (src.includes('/usp/') || src.includes('/USP/')) return false;
+    if (src.includes('-feature') || src.includes('_feature')) return false;
+    
     seen.add(src);
     const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
     images.push(fullUrl);
-    console.log(`✓ Image [${images.length}]:`, fullUrl.substring(0, 120));
+    console.log(`✓ Gallery Image [${images.length}]:`, fullUrl.substring(0, 150));
     return true;
   };
 
-  // Step 1: Find the FIRST swiper-wrapper section (main product gallery)
-  // The ID pattern is: swiper-wrapper-XXXXXXX
-  const swiperWrapperMatch = html.match(/<div[^>]*id="(swiper-wrapper-[^"]+)"[^>]*class="swiper-wrapper"[^>]*>([\s\S]*?)(?=<div[^>]*class="[^"]*swiper-pagination|<div[^>]*class="[^"]*swiper-button|<\/div>\s*<\/div>\s*<\/div>)/i);
+  // Strategy: Find the FIRST swiper-wrapper in the HTML (this is the main product gallery)
+  // Look for the first occurrence of swiper-wrapper with carousel items
   
-  if (swiperWrapperMatch) {
-    const wrapperId = swiperWrapperMatch[1];
-    const wrapperContent = swiperWrapperMatch[2];
-    console.log(`Found swiper-wrapper: #${wrapperId}`);
-    console.log(`Wrapper content length: ${wrapperContent.length}`);
+  // Find position of first swiper-wrapper
+  const firstSwiperPos = html.indexOf('id="swiper-wrapper-');
+  if (firstSwiperPos === -1) {
+    console.log("No swiper-wrapper found");
+    return images;
+  }
+
+  console.log(`First swiper-wrapper at position: ${firstSwiperPos}`);
+  
+  // Extract a chunk starting from the first swiper-wrapper (limit to avoid other carousels)
+  // The main gallery is typically contained within a few thousand characters
+  const startChunk = html.substring(firstSwiperPos, firstSwiperPos + 50000);
+  
+  // Find end of this swiper (next section or swiper-pagination/button)
+  const endMarkers = ['swiper-pagination', 'swiper-button-next', 'class="c-navigation'];
+  let endPos = startChunk.length;
+  for (const marker of endMarkers) {
+    const pos = startChunk.indexOf(marker);
+    if (pos > 0 && pos < endPos) {
+      endPos = pos;
+    }
+  }
+  
+  const galleryChunk = startChunk.substring(0, endPos);
+  console.log(`Gallery chunk size: ${galleryChunk.length}`);
+
+  // Find all carousel items in this chunk
+  // Pattern: class="cmp-carousel__item swiper-slide c-carousel__item"
+  const itemRegex = /<div[^>]*class="cmp-carousel__item\s+swiper-slide\s+c-carousel__item[^"]*"[^>]*>([\s\S]*?)(?=<div[^>]*class="cmp-carousel__item\s+swiper-slide|<div[^>]*class="[^"]*swiper-pagination|$)/gi;
+  
+  let match;
+  let itemCount = 0;
+  
+  while ((match = itemRegex.exec(galleryChunk)) !== null) {
+    itemCount++;
+    const itemContent = match[1];
+    console.log(`Processing carousel item ${itemCount}, content length: ${itemContent.length}`);
     
-    // Step 2: Find all carousel items with class pattern: cmp-carousel__item swiper-slide c-carousel__item
-    const itemMatches = wrapperContent.matchAll(/<div[^>]*class="cmp-carousel__item[^"]*swiper-slide[^"]*c-carousel__item[^"]*"[^>]*>([\s\S]*?)(?=<div[^>]*class="cmp-carousel__item[^"]*swiper-slide|$)/gi);
+    // Extract img elements
+    const imgMatches = itemContent.matchAll(/<img[^>]*(?:src|data-src)="([^"]+)"[^>]*>/gi);
+    for (const imgMatch of imgMatches) {
+      addImage(imgMatch[1], `carousel-${itemCount}`);
+    }
     
-    let itemCount = 0;
-    for (const itemMatch of itemMatches) {
-      itemCount++;
-      const itemContent = itemMatch[1];
-      
-      // Step 3: Extract img from this carousel item
-      // Try multiple patterns:
-      
-      // Pattern A: Direct img with src or data-src (most common)
-      const imgMatches = itemContent.matchAll(/<img[^>]*(?:src|data-src)="([^"]+)"[^>]*>/gi);
-      for (const imgMatch of imgMatches) {
-        addImage(imgMatch[1], `item-${itemCount}`);
+    // Also try picture > source srcset
+    const srcsetMatches = itemContent.matchAll(/<source[^>]*srcset="([^"]+)"[^>]*>/gi);
+    for (const srcMatch of srcsetMatches) {
+      const srcset = srcMatch[1];
+      const parts = srcset.split(',').map(s => s.trim());
+      const highRes = parts[parts.length - 1]?.split(' ')[0];
+      if (highRes) {
+        addImage(highRes, `carousel-${itemCount}-srcset`);
       }
-      
-      // Pattern B: Picture element with source srcset
-      const pictureMatches = itemContent.matchAll(/<picture[^>]*>[\s\S]*?<source[^>]*srcset="([^"]+)"[\s\S]*?<\/picture>/gi);
-      for (const picMatch of pictureMatches) {
-        const srcset = picMatch[1];
-        // Get the last (highest res) image from srcset
-        const srcsetParts = srcset.split(',').map(s => s.trim());
-        const highResSrc = srcsetParts[srcsetParts.length - 1]?.split(' ')[0];
-        if (highResSrc) {
-          addImage(highResSrc, `item-${itemCount}-picture`);
-        }
-      }
     }
-    
-    console.log(`Processed ${itemCount} carousel items`);
-    
-    if (images.length > 0) {
-      console.log(`=== Found ${images.length} product images ===`);
-      return images;
-    }
-  } else {
-    console.log("No swiper-wrapper with class found, trying alternative...");
   }
 
-  // Fallback: Try to find swiper-wrapper by ID only
-  const altMatch = html.match(/<div[^>]*id="swiper-wrapper-[^"]*"[^>]*>([\s\S]*?)(?=<div[^>]*id="swiper-wrapper-|<div[^>]*class="[^"]*swiper-pagination)/i);
+  console.log(`Found ${itemCount} carousel items, ${images.length} valid images`);
+
+  if (images.length > 0) {
+    return images;
+  }
+
+  // Fallback: Look for images with "gallery" or "pdp" or "medium" or "large" in path
+  console.log("Trying fallback: look for gallery/pdp images...");
+  const galleryImgRegex = /<img[^>]*(?:src|data-src)="([^"]*(?:gallery|pdp|medium|large)[^"]*\.(?:jpg|jpeg|png|webp)[^"]*)"/gi;
+  let galleryMatch;
+  const firstPortion = html.substring(0, Math.floor(html.length / 4));
   
-  if (altMatch) {
-    console.log("Found swiper-wrapper by ID pattern");
-    const content = altMatch[1];
-    
-    // Find all img elements within
-    const allImgs = content.matchAll(/<img[^>]*(?:src|data-src)="([^"]+)"[^>]*>/gi);
-    for (const img of allImgs) {
-      addImage(img[1], 'fallback-img');
-    }
-    
-    if (images.length > 0) {
-      console.log(`=== Found ${images.length} images via fallback ===`);
-      return images;
-    }
+  while ((galleryMatch = galleryImgRegex.exec(firstPortion)) !== null) {
+    addImage(galleryMatch[1], 'gallery-fallback');
   }
 
-  // Last resort: Find images in any cmp-carousel__item in the first quarter of the page
-  console.log("Trying last resort: first quarter of page...");
-  const firstQuarter = html.substring(0, Math.floor(html.length / 4));
-  const lastResortMatches = firstQuarter.matchAll(/<div[^>]*class="[^"]*cmp-carousel__item[^"]*"[^>]*>[\s\S]*?<img[^>]*(?:src|data-src)="([^"]+)"[^>]*>/gi);
-  
-  for (const match of lastResortMatches) {
-    addImage(match[1], 'last-resort');
-  }
-
-  console.log(`=== Total images: ${images.length} ===`);
+  console.log(`=== Total gallery images: ${images.length} ===`);
   return images;
 }
 
@@ -183,7 +186,7 @@ serve(async (req) => {
       body: JSON.stringify({
         url: url,
         formats: ["rawHtml"],
-        waitFor: 12000, // Increased wait time
+        waitFor: 12000,
       }),
     });
 
