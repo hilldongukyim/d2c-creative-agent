@@ -191,13 +191,13 @@ const OrgChart: React.FC<OrgChartProps> = ({ leader, profiles, onAgentClick, dam
                 </div>
               </div>
             </div>
-            <div onClick={() => onAgentClick('Ravi', '')} className="group cursor-pointer rounded-md p-3 transition hover:bg-muted/30">
+            <div onClick={() => onAgentClick('Levi', '')} className="group cursor-pointer rounded-md p-3 transition hover:bg-muted/30">
               <div className="flex items-center gap-3">
                 <div className="relative h-12 w-12 rounded-full overflow-hidden transition-transform duration-200 group-hover:scale-110">
-                  <img src="/lovable-uploads/d18ff2c4-e8c7-4c44-b38c-74bb66e23393.png" alt="Ravi profile image" className="h-full w-full object-cover" loading="lazy" />
+                  <img src="/lovable-uploads/levi-profile.png" alt="Levi profile image" className="h-full w-full object-cover" loading="lazy" />
                 </div>
                 <div>
-                  <div className="font-medium text-foreground">Ravi</div>
+                  <div className="font-medium text-foreground">Levi</div>
                   <div className="text-xs text-muted-foreground">Platform</div>
                 </div>
               </div>
