@@ -1,96 +1,24 @@
-import { AutoModel, AutoProcessor, RawImage, env } from '@huggingface/transformers';
-
-// Configure transformers.js
-env.allowLocalModels = false;
-env.useBrowserCache = true;
-
-let model: any = null;
-let processor: any = null;
-
-const loadModel = async () => {
-  if (!model || !processor) {
-    console.log('Loading RMBG model...');
-    
-    // Try WebGPU first, fallback to WASM
-    let device: 'webgpu' | 'wasm' = 'wasm';
-    try {
-      if ('gpu' in navigator) {
-        const gpu = await (navigator as any).gpu?.requestAdapter();
-        if (gpu) {
-          device = 'webgpu';
-          console.log('Using WebGPU');
-        }
-      }
-    } catch (e) {
-      console.log('WebGPU not available, using WASM');
-    }
-
-    model = await AutoModel.from_pretrained('briaai/RMBG-1.4', {
-      device,
-      dtype: 'fp32',
-    });
-    processor = await AutoProcessor.from_pretrained('briaai/RMBG-1.4');
-    console.log('Model loaded successfully');
-  }
-  return { model, processor };
-};
+import { removeBackground as imglyRemoveBackground } from "@imgly/background-removal";
 
 export const removeBackground = async (imageElement: HTMLImageElement): Promise<Blob> => {
   try {
-    console.log('Starting background removal process...');
+    console.log('Starting background removal with imgly...');
     
-    const { model, processor } = await loadModel();
+    // Convert image element to blob
+    const response = await fetch(imageElement.src);
+    const imageBlob = await response.blob();
     
-    // Load image using RawImage
-    const image = await RawImage.fromURL(imageElement.src);
-    console.log('Image loaded:', image.width, 'x', image.height);
+    console.log('Image blob size:', imageBlob.size);
     
-    // Preprocess image
-    const { pixel_values } = await processor(image);
-    console.log('Image preprocessed');
-    
-    // Predict mask
-    const { output } = await model({ input: pixel_values });
-    console.log('Mask predicted');
-    
-    // Post-process mask
-    const maskData = await RawImage.fromTensor(output[0].mul(255).to('uint8')).resize(image.width, image.height);
-    
-    // Create output canvas
-    const canvas = document.createElement('canvas');
-    canvas.width = image.width;
-    canvas.height = image.height;
-    const ctx = canvas.getContext('2d')!;
-    
-    // Draw original image
-    ctx.drawImage(imageElement, 0, 0);
-    
-    // Get image data and apply mask
-    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-    const data = imageData.data;
-    
-    for (let i = 0; i < maskData.data.length; i++) {
-      data[i * 4 + 3] = maskData.data[i]; // Apply mask to alpha channel
-    }
-    
-    ctx.putImageData(imageData, 0, 0);
-    console.log('Mask applied successfully');
-    
-    // Convert to blob
-    return new Promise((resolve, reject) => {
-      canvas.toBlob(
-        (blob) => {
-          if (blob) {
-            console.log('Successfully created final blob');
-            resolve(blob);
-          } else {
-            reject(new Error('Failed to create blob'));
-          }
-        },
-        'image/png',
-        1.0
-      );
+    // Remove background using imgly
+    const resultBlob = await imglyRemoveBackground(imageBlob, {
+      progress: (key, current, total) => {
+        console.log(`Progress: ${key} - ${current}/${total}`);
+      },
     });
+    
+    console.log('Background removal complete');
+    return resultBlob;
   } catch (error) {
     console.error('Error removing background:', error);
     throw error;
