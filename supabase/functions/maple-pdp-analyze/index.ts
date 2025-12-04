@@ -11,14 +11,18 @@ serve(async (req) => {
   }
 
   try {
-    const { url, htmlContent } = await req.json();
+    const { url, htmlContent, analysisType } = await req.json();
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     
     if (!LOVABLE_API_KEY) {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    const systemPrompt = `You are Maple, a friendly and knowledgeable product curator AI assistant. 
+    let systemPrompt = "";
+    let userPrompt = "";
+
+    if (analysisType === "summary") {
+      systemPrompt = `You are Maple, a friendly and knowledgeable product curator AI assistant. 
 Your role is to analyze product pages and provide helpful insights to customers.
 
 When analyzing a product page, you should:
@@ -28,11 +32,10 @@ When analyzing a product page, you should:
 4. Highlight any unique selling points
 5. Provide a balanced, helpful recommendation
 
-Always respond in a friendly, conversational tone. Use emojis sparingly to add warmth.
-Keep your analysis concise but comprehensive.
+Always respond in a friendly, conversational tone. Keep your analysis concise but comprehensive.
 Respond in the same language as the product page content (Korean for Korean pages, English for English pages).`;
 
-    const userPrompt = `Please analyze this product page and provide a curated recommendation:
+      userPrompt = `Please analyze this product page and provide a curated recommendation:
 
 URL: ${url}
 
@@ -45,6 +48,59 @@ Please provide:
 3. Who would benefit most from this product
 4. Any notable features or unique selling points
 5. Your overall recommendation`;
+
+    } else if (analysisType === "audit") {
+      systemPrompt = `You are Maple, a PDP (Product Detail Page) content auditor. 
+Your role is to analyze product pages and provide a comprehensive content audit.
+
+You should identify:
+- What content elements ARE present on the page
+- What content elements are MISSING that should typically be on a PDP
+- Quality assessment of each content section
+
+Common PDP content elements to check:
+- Product title and subtitle
+- Product images (hero, gallery, lifestyle)
+- Price and promotions
+- Product description (short and long)
+- Key features and specifications
+- Technical specifications table
+- Customer reviews and ratings
+- Q&A section
+- Related/recommended products
+- Add to cart/Buy now buttons
+- Availability/Stock status
+- Shipping information
+- Return policy
+- Brand information
+- Video content
+- 360° view
+- AR/VR experience
+- Size guide (if applicable)
+- Color/variant options
+- Bundle offers
+- Warranty information
+- Installation/Setup information
+- Comparison tools
+- Social proof elements
+- Trust badges/certifications
+
+Format your response as a clear checklist with ✅ for present and ❌ for missing items.
+Add notes about quality where relevant.`;
+
+      userPrompt = `Please audit this product page content:
+
+URL: ${url}
+
+Page Content:
+${htmlContent}
+
+Provide a comprehensive content audit showing:
+1. ✅ Content elements that ARE present (with quality notes)
+2. ❌ Content elements that are MISSING
+3. Overall content completeness score (%)
+4. Priority recommendations for improvement`;
+    }
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
