@@ -363,7 +363,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                         </div>}
                                     </div>
                                     {(item.name === "Ben" || item.name === "Kai" || item.name === "Noa" || item.name === "Anita") && (
-                                      <span className="absolute -bottom-0.5 -right-0.5 z-10 h-3.5 w-3.5 bg-green-500 rounded-full border-2 border-background" />
+                                      <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-green-500 rounded-full border-2 border-background" />
                                     )}
                                   </div>
                                   <div className="mt-2">
@@ -392,7 +392,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                         </div>}
                                     </div>
                                     {(item.name === "Ben" || item.name === "Kai" || item.name === "Noa" || item.name === "Anita") && (
-                                      <span className="absolute -bottom-0.5 -right-0.5 z-10 h-3.5 w-3.5 bg-green-500 rounded-full border-2 border-background" />
+                                      <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-green-500 rounded-full border-2 border-background" />
                                     )}
                                   </div>
                                   <div className="mt-2">
@@ -420,7 +420,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                       </div>}
                                   </div>
                                   {(item.name === "Ben" || item.name === "Kai" || item.name === "Noa" || item.name === "Anita") && (
-                                    <span className="absolute -bottom-0.5 -right-0.5 z-10 h-3.5 w-3.5 bg-green-500 rounded-full border-2 border-background" />
+                                    <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-green-500 rounded-full border-2 border-background" />
                                   )}
                                 </div>
                                 <div className="mt-2">
