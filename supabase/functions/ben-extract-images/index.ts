@@ -5,38 +5,45 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// CSS selector to match: li.swiper-slide > div.image.c-image > div > img.cmp-image__image.c-image__img
-// We'll look for img tags with class "cmp-image__image" or "c-image__img"
+// CSS selector to match: #swiper-wrapper-* > div.cmp-carousel__item.swiper-slide > div > div > div > img
 function extractImageUrls(html: string): string[] {
   const imageUrls: string[] = [];
   
-  // Pattern to find img tags with the target classes
-  // Looking for: cmp-image__image and c-image__img classes
-  const imgRegex = /<img[^>]*class="[^"]*(?:cmp-image__image|c-image__img)[^"]*"[^>]*src="([^"]+)"[^>]*>/gi;
-  const imgRegex2 = /<img[^>]*src="([^"]+)"[^>]*class="[^"]*(?:cmp-image__image|c-image__img)[^"]*"[^>]*>/gi;
+  // Pattern 1: Find img tags inside cmp-carousel__item swiper-slide divs
+  const carouselImgRegex = /<div[^>]*class="[^"]*cmp-carousel__item[^"]*swiper-slide[^"]*"[^>]*>[\s\S]*?<img[^>]*src="([^"]+)"[^>]*>/gi;
   
   let match;
-  while ((match = imgRegex.exec(html)) !== null) {
+  while ((match = carouselImgRegex.exec(html)) !== null) {
     if (match[1] && !imageUrls.includes(match[1])) {
-      imageUrls.push(match[1]);
+      // Filter out SVG logos and small icons
+      if (!match[1].includes('logo') && !match[1].endsWith('.svg')) {
+        imageUrls.push(match[1]);
+      }
     }
   }
   
-  while ((match = imgRegex2.exec(html)) !== null) {
+  // Pattern 2: Look for swiper-slide with c-carousel__item class
+  const carouselImgRegex2 = /<div[^>]*class="[^"]*c-carousel__item[^"]*"[^>]*>[\s\S]*?<img[^>]*src="([^"]+)"[^>]*>/gi;
+  while ((match = carouselImgRegex2.exec(html)) !== null) {
     if (match[1] && !imageUrls.includes(match[1])) {
-      imageUrls.push(match[1]);
+      if (!match[1].includes('logo') && !match[1].endsWith('.svg')) {
+        imageUrls.push(match[1]);
+      }
     }
   }
   
-  // Also try a more general pattern for swiper-slide images
-  const swiperImgRegex = /<li[^>]*class="[^"]*swiper-slide[^"]*"[^>]*>[\s\S]*?<img[^>]*src="([^"]+)"[^>]*>/gi;
+  // Pattern 3: General swiper-slide pattern as fallback
+  const swiperImgRegex = /<div[^>]*class="[^"]*swiper-slide[^"]*"[^>]*>[\s\S]*?<img[^>]*src="([^"]+)"[^>]*>/gi;
   while ((match = swiperImgRegex.exec(html)) !== null) {
     if (match[1] && !imageUrls.includes(match[1])) {
-      imageUrls.push(match[1]);
+      if (!match[1].includes('logo') && !match[1].endsWith('.svg')) {
+        imageUrls.push(match[1]);
+      }
     }
   }
   
   console.log("Found image URLs:", imageUrls.length);
+  console.log("First few URLs:", imageUrls.slice(0, 3));
   return imageUrls;
 }
 
