@@ -5,74 +5,82 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// Extract all carousel images matching the specific selector pattern:
+// Extract carousel images from the specific gallery selector:
 // #swiper-wrapper-* > div.cmp-carousel__item.swiper-slide.c-carousel__item > div > div > div > img
 function extractCarouselImages(html: string, baseUrl: string): string[] {
   const images: string[] = [];
   const seen = new Set<string>();
 
-  // Pattern to match the specific carousel structure
-  // Looking for: swiper-wrapper containing cmp-carousel__item with swiper-slide and c-carousel__item classes
-  const carouselRegex = /<div[^>]*id="swiper-wrapper[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<\/div>\s*<\/div>/gi;
+  // Find the swiper-wrapper container and extract images from it
+  // Pattern: swiper-wrapper containing divs with all three classes: cmp-carousel__item, swiper-slide, c-carousel__item
+  const swiperWrapperRegex = /<div[^>]*id="swiper-wrapper-[^"]*"[^>]*class="[^"]*swiper-wrapper[^"]*"[^>]*>([\s\S]*?)<\/div>\s*(?:<div[^>]*class="[^"]*swiper-button|<\/div>)/gi;
   
-  // Find all swiper-slide items with the specific class combination
-  const slideRegex = /<div[^>]*class="[^"]*cmp-carousel__item[^"]*swiper-slide[^"]*c-carousel__item[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<\/div>\s*<\/div>\s*<\/div>/gi;
+  const wrapperMatch = swiperWrapperRegex.exec(html);
   
-  let match;
+  if (wrapperMatch) {
+    const wrapperContent = wrapperMatch[1];
+    console.log("Found swiper-wrapper content, length:", wrapperContent.length);
+    
+    // Extract images from slides that have all required classes
+    const slideImgRegex = /<div[^>]*class="[^"]*cmp-carousel__item[^"]*swiper-slide[^"]*c-carousel__item[^"]*"[^>]*>[\s\S]*?<img[^>]*(?:src|data-src)="([^"]+)"[^>]*>/gi;
+    
+    let match;
+    while ((match = slideImgRegex.exec(wrapperContent)) !== null) {
+      const src = match[1];
+      if (src && !src.includes('logo') && !src.endsWith('.svg') && !seen.has(src)) {
+        seen.add(src);
+        const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
+        images.push(fullUrl);
+        console.log("Found gallery image:", fullUrl);
+      }
+    }
+  }
   
-  // Method 1: Look for the nested img structure within carousel items
-  const imgInCarouselRegex = /<div[^>]*class="[^"]*(?:cmp-carousel__item|swiper-slide|c-carousel__item)[^"]*"[^>]*>[\s\S]*?<div[^>]*>[\s\S]*?<div[^>]*>[\s\S]*?<div[^>]*>[\s\S]*?<img[^>]*src="([^"]+)"[^>]*>/gi;
-  
-  while ((match = imgInCarouselRegex.exec(html)) !== null) {
-    const src = match[1];
-    if (src && !src.includes('logo') && !src.endsWith('.svg') && !seen.has(src)) {
-      seen.add(src);
-      const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
-      images.push(fullUrl);
-      console.log("Found carousel image (method 1):", fullUrl);
+  // Fallback: If no images found, try a more direct approach
+  if (images.length === 0) {
+    console.log("Trying fallback extraction...");
+    
+    // Look for the specific class combination pattern
+    const fallbackRegex = /<div[^>]*class="(?:[^"]*\s)?cmp-carousel__item(?:\s[^"]*)?swiper-slide(?:\s[^"]*)?c-carousel__item[^"]*"[^>]*>[\s\S]*?<img[^>]*(?:src|data-src)="([^"]+)"[^>]*>/gi;
+    
+    let match;
+    while ((match = fallbackRegex.exec(html)) !== null) {
+      const src = match[1];
+      if (src && !src.includes('logo') && !src.endsWith('.svg') && !seen.has(src)) {
+        seen.add(src);
+        const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
+        images.push(fullUrl);
+        console.log("Found gallery image (fallback):", fullUrl);
+      }
     }
   }
 
-  // Method 2: More flexible pattern for swiper slides with images
-  const swiperSlideImgRegex = /<div[^>]*class="[^"]*swiper-slide[^"]*"[^>]*>[\s\S]*?<img[^>]*src="([^"]+)"[^>]*>/gi;
-  
-  while ((match = swiperSlideImgRegex.exec(html)) !== null) {
-    const src = match[1];
-    if (src && !src.includes('logo') && !src.endsWith('.svg') && !seen.has(src)) {
-      seen.add(src);
-      const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
-      images.push(fullUrl);
-      console.log("Found carousel image (method 2):", fullUrl);
+  // Second fallback: Match class order variations
+  if (images.length === 0) {
+    console.log("Trying second fallback...");
+    
+    // Classes might be in different order
+    const patterns = [
+      /<div[^>]*class="[^"]*c-carousel__item[^"]*cmp-carousel__item[^"]*swiper-slide[^"]*"[^>]*>[\s\S]*?<img[^>]*(?:src|data-src)="([^"]+)"[^>]*>/gi,
+      /<div[^>]*class="[^"]*swiper-slide[^"]*cmp-carousel__item[^"]*c-carousel__item[^"]*"[^>]*>[\s\S]*?<img[^>]*(?:src|data-src)="([^"]+)"[^>]*>/gi,
+    ];
+    
+    for (const pattern of patterns) {
+      let match;
+      while ((match = pattern.exec(html)) !== null) {
+        const src = match[1];
+        if (src && !src.includes('logo') && !src.endsWith('.svg') && !seen.has(src)) {
+          seen.add(src);
+          const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
+          images.push(fullUrl);
+          console.log("Found gallery image (fallback 2):", fullUrl);
+        }
+      }
+      if (images.length > 0) break;
     }
   }
 
-  // Method 3: Look for data-src attributes (lazy loaded images)
-  const dataSrcRegex = /<div[^>]*class="[^"]*swiper-slide[^"]*"[^>]*>[\s\S]*?<img[^>]*data-src="([^"]+)"[^>]*>/gi;
-  
-  while ((match = dataSrcRegex.exec(html)) !== null) {
-    const src = match[1];
-    if (src && !src.includes('logo') && !src.endsWith('.svg') && !seen.has(src)) {
-      seen.add(src);
-      const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
-      images.push(fullUrl);
-      console.log("Found carousel image (method 3 - data-src):", fullUrl);
-    }
-  }
-
-  // Method 4: Extract all images from cmp-carousel__item containers
-  const cmpCarouselImgRegex = /<div[^>]*class="[^"]*cmp-carousel__item[^"]*"[^>]*>[\s\S]*?<img[^>]*(?:src|data-src)="([^"]+)"[^>]*>/gi;
-  
-  while ((match = cmpCarouselImgRegex.exec(html)) !== null) {
-    const src = match[1];
-    if (src && !src.includes('logo') && !src.endsWith('.svg') && !seen.has(src)) {
-      seen.add(src);
-      const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
-      images.push(fullUrl);
-      console.log("Found carousel image (method 4):", fullUrl);
-    }
-  }
-
-  console.log(`Total unique carousel images found: ${images.length}`);
+  console.log(`Total gallery images found: ${images.length}`);
   return images;
 }
 
@@ -100,7 +108,7 @@ serve(async (req) => {
       });
     }
 
-    console.log("Extracting carousel images from URL:", url);
+    console.log("Extracting gallery carousel images from URL:", url);
 
     const response = await fetch("https://api.firecrawl.dev/v1/scrape", {
       method: "POST",
