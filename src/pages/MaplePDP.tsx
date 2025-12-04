@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Send, Loader2, RotateCcw, FileText, ListChecks, Monitor, Smartphone, Download, X } from "lucide-react";
+import { ArrowLeft, Send, Loader2, RotateCcw, Mic, ListChecks, Monitor, Smartphone, Download, X, Play, Pause } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
@@ -10,9 +10,11 @@ interface Message {
   content: string;
   url?: string;
   screenshot?: string;
+  audioBase64?: string;
+  script?: string;
 }
 
-type AnalysisOption = "summary" | "audit" | "screenshot-pc" | "screenshot-mobile";
+type AnalysisOption = "podcast" | "audit" | "screenshot-pc" | "screenshot-mobile";
 
 const MaplePDP = () => {
   const navigate = useNavigate();
@@ -22,8 +24,11 @@ const MaplePDP = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [pendingUrl, setPendingUrl] = useState<string | null>(null);
   const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentAudioIndex, setCurrentAudioIndex] = useState<number | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -127,12 +132,9 @@ const MaplePDP = () => {
             return newMessages;
           });
         }
-      } else {
-        // Summary or Audit
-        const analysisType = option === "summary" ? "summary" : "audit";
-        const loadingText = option === "summary" ? "Analyzing product page... 🔍" : "Auditing page content... 📋";
-        
-        setMessages((prev) => [...prev, { role: "assistant", content: loadingText }]);
+      } else if (option === "podcast") {
+        // Podcast curation with audio
+        setMessages((prev) => [...prev, { role: "assistant", content: "Preparing your podcast curation... 🎙️\nAnalyzing product and generating voice..." }]);
 
         const { content: htmlContent } = await fetchPageContent(url, "content");
         
@@ -154,7 +156,56 @@ const MaplePDP = () => {
               "Content-Type": "application/json",
               Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
             },
-            body: JSON.stringify({ url, htmlContent, analysisType }),
+            body: JSON.stringify({ url, htmlContent, analysisType: "podcast" }),
+          }
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || "Podcast generation failed");
+        }
+
+        const data = await response.json();
+        
+        if (data.success && data.audioBase64) {
+          setMessages((prev) => {
+            const newMessages = [...prev];
+            newMessages[newMessages.length - 1] = {
+              role: "assistant",
+              content: "🎙️ Here's your podcast curation:",
+              audioBase64: data.audioBase64,
+              script: data.script,
+            };
+            return newMessages;
+          });
+        } else {
+          throw new Error("Failed to generate podcast");
+        }
+      } else if (option === "audit") {
+        // Content Audit (streaming text)
+        setMessages((prev) => [...prev, { role: "assistant", content: "Auditing page content... 📋" }]);
+
+        const { content: htmlContent } = await fetchPageContent(url, "content");
+        
+        if (!htmlContent) {
+          setMessages((prev) => {
+            const newMessages = [...prev];
+            newMessages[newMessages.length - 1] = { role: "assistant", content: "Unable to fetch page content. Please try again." };
+            return newMessages;
+          });
+          setIsLoading(false);
+          return;
+        }
+
+        const response = await fetch(
+          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/maple-pdp-analyze`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+            },
+            body: JSON.stringify({ url, htmlContent, analysisType: "audit" }),
           }
         );
 
@@ -207,8 +258,16 @@ const MaplePDP = () => {
       }
     } catch (error) {
       console.error("Error:", error);
-      toast({ title: "Error", description: "An error occurred. Please try again.", variant: "destructive" });
-      setMessages((prev) => [...prev, { role: "assistant", content: "An error occurred. Please try again." }]);
+      toast({ title: "Error", description: error instanceof Error ? error.message : "An error occurred. Please try again.", variant: "destructive" });
+      setMessages((prev) => {
+        const newMessages = [...prev];
+        if (newMessages.length > 0 && newMessages[newMessages.length - 1].role === "assistant") {
+          newMessages[newMessages.length - 1] = { role: "assistant", content: "An error occurred. Please try again." };
+        } else {
+          newMessages.push({ role: "assistant", content: "An error occurred. Please try again." });
+        }
+        return newMessages;
+      });
     } finally {
       setIsLoading(false);
     }
@@ -225,16 +284,54 @@ const MaplePDP = () => {
     setMessages([]);
     setInput("");
     setPendingUrl(null);
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+    setIsPlaying(false);
+    setCurrentAudioIndex(null);
   };
 
   const handleDownloadScreenshot = (e: React.MouseEvent, screenshotUrl: string) => {
     e.stopPropagation();
     e.preventDefault();
     
-    // Create a temporary anchor and trigger download
     const link = document.createElement("a");
     link.href = screenshotUrl;
     link.download = `maple-screenshot-${Date.now()}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  const handlePlayAudio = (audioBase64: string, index: number) => {
+    if (audioRef.current) {
+      audioRef.current.pause();
+    }
+
+    if (currentAudioIndex === index && isPlaying) {
+      setIsPlaying(false);
+      setCurrentAudioIndex(null);
+      return;
+    }
+
+    const audio = new Audio(`data:audio/mpeg;base64,${audioBase64}`);
+    audioRef.current = audio;
+    
+    audio.onended = () => {
+      setIsPlaying(false);
+      setCurrentAudioIndex(null);
+    };
+    
+    audio.play();
+    setIsPlaying(true);
+    setCurrentAudioIndex(index);
+  };
+
+  const handleDownloadAudio = (audioBase64: string) => {
+    const link = document.createElement("a");
+    link.href = `data:audio/mpeg;base64,${audioBase64}`;
+    link.download = `maple-podcast-${Date.now()}.mp3`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -275,6 +372,7 @@ const MaplePDP = () => {
           />
         </div>
       )}
+
       {/* Header */}
       <header className="h-14 border-b border-border bg-background/80 backdrop-blur-sm flex items-center px-4 justify-between">
         <Button variant="ghost" size="icon" onClick={() => navigate("/home")} className="text-muted-foreground hover:text-foreground">
@@ -297,7 +395,7 @@ const MaplePDP = () => {
             <h1 className="text-2xl font-semibold text-foreground mb-2">Maple PDP Curator</h1>
             <p className="text-muted-foreground text-center max-w-md">
               Enter a product page URL you want to analyze.<br />
-              I'll help you with summaries, content audits, or screenshots.
+              I'll create a podcast-style audio curation just for you! 🎙️
             </p>
           </div>
         ) : (
@@ -311,6 +409,52 @@ const MaplePDP = () => {
                       <div className="text-foreground leading-relaxed whitespace-pre-wrap">
                         {message.content || <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}
                       </div>
+                      
+                      {/* Audio Player */}
+                      {message.audioBase64 && (
+                        <div className="mt-4 p-4 bg-secondary/50 rounded-xl border border-border">
+                          <div className="flex items-center gap-3">
+                            <Button
+                              size="icon"
+                              variant="default"
+                              className="h-12 w-12 rounded-full bg-primary hover:bg-primary/90"
+                              onClick={() => handlePlayAudio(message.audioBase64!, index)}
+                            >
+                              {currentAudioIndex === index && isPlaying ? (
+                                <Pause className="w-5 h-5" />
+                              ) : (
+                                <Play className="w-5 h-5 ml-0.5" />
+                              )}
+                            </Button>
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-foreground">Product Curation</p>
+                              <p className="text-xs text-muted-foreground">Tap to {currentAudioIndex === index && isPlaying ? "pause" : "play"}</p>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDownloadAudio(message.audioBase64!)}
+                              className="text-muted-foreground hover:text-foreground"
+                            >
+                              <Download className="w-4 h-4" />
+                            </Button>
+                          </div>
+                          
+                          {/* Script toggle/display */}
+                          {message.script && (
+                            <details className="mt-3">
+                              <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground">
+                                View script
+                              </summary>
+                              <p className="mt-2 text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap">
+                                {message.script}
+                              </p>
+                            </details>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Screenshot */}
                       {message.screenshot && (
                         <div className="mt-3 space-y-2">
                           <div 
@@ -356,12 +500,12 @@ const MaplePDP = () => {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => handleOptionSelect("summary")}
+                          onClick={() => handleOptionSelect("podcast")}
                           disabled={isLoading}
-                          className="flex items-center gap-2"
+                          className="flex items-center gap-2 bg-primary/10 border-primary/20 hover:bg-primary/20"
                         >
-                          <FileText className="w-4 h-4" />
-                          Product Summary
+                          <Mic className="w-4 h-4" />
+                          Podcast Curation
                         </Button>
                         <Button
                           variant="outline"
@@ -431,7 +575,7 @@ const MaplePDP = () => {
               {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground text-center mt-2">Maple analyzes product pages and provides curation insights</p>
+          <p className="text-xs text-muted-foreground text-center mt-2">Maple creates podcast-style audio curation for your products 🎙️</p>
         </div>
       </div>
     </div>
