@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, Loader2, Download, Search, Sparkles, ZoomIn, Square, RectangleVertical, RectangleHorizontal } from "lucide-react";
+import { ArrowLeft, Loader2, Download, Search, Sparkles, ZoomIn, Square, RectangleVertical, RectangleHorizontal, Film } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import Logo from "@/components/Logo";
@@ -15,9 +15,11 @@ const AnitaLifestyle = () => {
   const [isGenerating, setIsGenerating] = useState(false);
   const [isUpscaling, setIsUpscaling] = useState(false);
   const [isResizing, setIsResizing] = useState(false);
+  const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);
   const [carouselImages, setCarouselImages] = useState<string[]>([]);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
+  const [generatedVideoUrl, setGeneratedVideoUrl] = useState<string | null>(null);
   const [isUpscaled, setIsUpscaled] = useState(false);
   const [step, setStep] = useState<"input" | "select" | "result">("input");
   const [currentAspectRatio, setCurrentAspectRatio] = useState<"16:9" | "1:1" | "9:16">("16:9");
@@ -121,9 +123,48 @@ const AnitaLifestyle = () => {
     setCarouselImages([]);
     setSelectedImage(null);
     setGeneratedImage(null);
+    setGeneratedVideoUrl(null);
     setIsUpscaled(false);
     setStep("input");
     setCurrentAspectRatio("16:9");
+  };
+
+  const handleGenerateVideo = async () => {
+    if (!generatedImage) return;
+
+    setIsGeneratingVideo(true);
+    setGeneratedVideoUrl(null);
+    try {
+      const { data, error } = await supabase.functions.invoke("anita-generate-video", {
+        body: { imageBase64: generatedImage },
+      });
+
+      if (error) throw error;
+      if (!data.success || !data.videoUrl) {
+        throw new Error(data.error || "Failed to generate video");
+      }
+
+      setGeneratedVideoUrl(data.videoUrl);
+      toast.success("Video generated!");
+    } catch (error) {
+      console.error("Error generating video:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to generate video");
+    } finally {
+      setIsGeneratingVideo(false);
+    }
+  };
+
+  const handleDownloadVideo = () => {
+    if (!generatedVideoUrl) return;
+
+    const link = document.createElement("a");
+    link.href = generatedVideoUrl;
+    link.download = `anita-lifestyle-video-${Date.now()}.mp4`;
+    link.target = "_blank";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    toast.success("Video download started!");
   };
 
   const handleResize = async (newRatio: "16:9" | "1:1" | "9:16") => {
@@ -387,7 +428,7 @@ const AnitaLifestyle = () => {
               {!isUpscaled && (
                 <Button
                   onClick={handleUpscale}
-                  disabled={isUpscaling || isResizing}
+                  disabled={isUpscaling || isResizing || isGeneratingVideo}
                   variant="outline"
                   className="border-purple-300 text-purple-600 hover:bg-purple-50"
                 >
@@ -406,13 +447,66 @@ const AnitaLifestyle = () => {
               )}
               <Button
                 onClick={handleDownload}
-                disabled={isResizing || isUpscaling}
+                disabled={isResizing || isUpscaling || isGeneratingVideo}
                 className="bg-purple-500 hover:bg-purple-600"
               >
                 <Download className="w-4 h-4 mr-2" />
                 Download
               </Button>
+              <Button
+                onClick={handleGenerateVideo}
+                disabled={isResizing || isUpscaling || isGeneratingVideo}
+                variant="outline"
+                className="border-indigo-300 text-indigo-600 hover:bg-indigo-50"
+              >
+                {isGeneratingVideo ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    Generating...
+                  </>
+                ) : (
+                  <>
+                    <Film className="w-4 h-4 mr-2" />
+                    Generate Video
+                  </>
+                )}
+              </Button>
             </div>
+
+            {/* Video Generation Progress */}
+            {isGeneratingVideo && (
+              <Card className="p-6 bg-white/80 backdrop-blur-sm text-center">
+                <Loader2 className="w-8 h-8 animate-spin mx-auto mb-4 text-indigo-500" />
+                <p className="text-gray-600">Generating 5-second video with camera motion...</p>
+                <p className="text-sm text-gray-500 mt-2">This may take up to 5 minutes</p>
+              </Card>
+            )}
+
+            {/* Video Preview */}
+            {generatedVideoUrl && (
+              <Card className="p-6 bg-white/80 backdrop-blur-sm">
+                <h3 className="text-lg font-medium text-gray-800 mb-4">Generated Video (5 seconds)</h3>
+                <div className="rounded-lg overflow-hidden border border-gray-200 mb-4">
+                  <video
+                    src={generatedVideoUrl}
+                    controls
+                    autoPlay
+                    loop
+                    muted
+                    className="w-full h-auto"
+                  />
+                </div>
+                <div className="flex justify-center">
+                  <Button
+                    onClick={handleDownloadVideo}
+                    className="bg-indigo-500 hover:bg-indigo-600"
+                  >
+                    <Download className="w-4 h-4 mr-2" />
+                    Download Video
+                  </Button>
+                </div>
+              </Card>
+            )}
           </div>
         )}
       </div>
