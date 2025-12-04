@@ -13,7 +13,7 @@ import ContactOrder from "../components/ContactOrder";
 import CrewRequestForm from "../components/CrewRequestForm";
 import KaiBackgroundRemovalPopup from "../components/KaiBackgroundRemovalPopup";
 const aliceProfile = "/lovable-uploads/d004c9d6-0491-459c-8639-7730374641aa.png";
-const benProfile = "/lovable-uploads/df1c4dd4-a06d-4d9c-981e-4463ad0b08dc.png";
+const benProfile = "/lovable-uploads/ben-profile-new.png";
 const leaderProfile = "/lovable-uploads/b9d1ddf6-1b17-41b4-9233-91642568cd3c.png";
 const Home = () => {
   const navigate = useNavigate();
