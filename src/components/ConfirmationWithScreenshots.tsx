@@ -378,6 +378,14 @@ const ConfirmationWithScreenshots = ({
     }
   };
 
+  const getDateString = () => {
+    const now = new Date();
+    const yy = String(now.getFullYear()).slice(-2);
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    return `${yy}${mm}${dd}`;
+  };
+
   const downloadImage = (dataUrl: string, filename: string) => {
     const link = document.createElement('a');
     link.href = dataUrl;
@@ -403,7 +411,7 @@ const ConfirmationWithScreenshots = ({
                 <img src={pcImage} alt="PBP Gallery" className="w-full h-auto" />
               </div>
               <Button 
-                onClick={() => downloadImage(pcImage, 'gallery-pbp.png')}
+                onClick={() => downloadImage(pcImage, `${getDateString()}_2010x1334.png`)}
                 className="w-full"
                 size="sm"
               >
@@ -418,7 +426,7 @@ const ConfirmationWithScreenshots = ({
                 <img src={mobileImage} alt="Multi-purpose Gallery" className="w-full h-auto" />
               </div>
               <Button 
-                onClick={() => downloadImage(mobileImage, 'gallery-multi.png')}
+                onClick={() => downloadImage(mobileImage, `${getDateString()}_450x450.png`)}
                 className="w-full"
                 size="sm"
               >
