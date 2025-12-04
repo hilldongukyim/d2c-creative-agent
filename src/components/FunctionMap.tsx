@@ -344,7 +344,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                         onProfileClick?.(item.name);
                       }} role="button" tabIndex={0}>
                                   <div className="relative">
-                                    {(item.name === "Kai" || item.name === "Noa") && (
+                                    {(item.name === "Kai" || item.name === "Noa" || item.name === "Maple" || item.name === "Luna") && (
                                       <span className="absolute -top-1 -right-1 z-10 bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full shadow-md">New</span>
                                     )}
                                     <div className={`h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden ${item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
@@ -371,7 +371,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                         onProfileClick?.(item.name);
                       }} role="button" tabIndex={0}>
                                   <div className="relative">
-                                    {(item.name === "Kai" || item.name === "Noa") && (
+                                    {(item.name === "Kai" || item.name === "Noa" || item.name === "Maple" || item.name === "Luna") && (
                                       <span className="absolute -top-1 -right-1 z-10 bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full shadow-md">New</span>
                                     )}
                                     <div className={`h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden ${item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
@@ -395,7 +395,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                       onProfileClick?.(item.name);
                     }} role="button" tabIndex={0}>
                                 <div className="relative">
-                                  {(item.name === "Kai" || item.name === "Noa") && (
+                                  {(item.name === "Kai" || item.name === "Noa" || item.name === "Maple" || item.name === "Luna") && (
                                     <span className="absolute -top-1 -right-1 z-10 bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full shadow-md">New</span>
                                   )}
                                   <div className={`h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden ${item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
