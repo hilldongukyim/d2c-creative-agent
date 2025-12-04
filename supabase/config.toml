@@ -20,3 +20,6 @@ verify_jwt = false
 
 [functions.ben-extract-images]
 verify_jwt = false
+
+[functions.ben-process-images]
+verify_jwt = false
