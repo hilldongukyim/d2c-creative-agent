@@ -14,6 +14,7 @@ import NotFound from "./pages/NotFound";
 import Crawling from "./pages/Crawling";
 import MaplePDP from "./pages/MaplePDP";
 import AnitaLifestyle from "./pages/AnitaLifestyle";
+import AnitaCamera from "./pages/AnitaCamera";
 
 const queryClient = new QueryClient();
 
@@ -33,6 +34,7 @@ const App = () => (
         <Route path="/crawling" element={<Crawling />} />
         <Route path="/maple-pdp" element={<MaplePDP />} />
         <Route path="/anita-lifestyle" element={<AnitaLifestyle />} />
+        <Route path="/anita-camera/:sessionId" element={<AnitaCamera />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
