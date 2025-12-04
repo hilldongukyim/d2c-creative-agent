@@ -5,6 +5,144 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+interface PodcastSegment {
+  imageUrl: string;
+  text: string;
+  estimatedDuration: number; // in seconds
+}
+
+function extractCarouselImages(htmlContent: string, baseUrl: string): string[] {
+  const images: string[] = [];
+  
+  // Extract image URLs from various patterns
+  const imgPatterns = [
+    /src="([^"]*(?:carousel|gallery|product|hero)[^"]*\.(?:jpg|jpeg|png|webp)[^"]*)"/gi,
+    /data-src="([^"]*(?:carousel|gallery|product|hero)[^"]*\.(?:jpg|jpeg|png|webp)[^"]*)"/gi,
+    /srcset="([^"]*(?:carousel|gallery|product)[^"]*\.(?:jpg|jpeg|png|webp)[^"]*)"/gi,
+    /src="([^"]*\/[^"]*\.(?:jpg|jpeg|png|webp))"/gi,
+  ];
+  
+  for (const pattern of imgPatterns) {
+    let match;
+    while ((match = pattern.exec(htmlContent)) !== null) {
+      let url = match[1];
+      // Handle srcset - take first URL
+      if (url.includes(',')) {
+        url = url.split(',')[0].trim().split(' ')[0];
+      }
+      // Skip thumbnails and small images
+      if (url.includes('thum') || url.includes('180x180') || url.includes('50x50') || url.includes('icon')) {
+        continue;
+      }
+      // Make absolute URL
+      if (url.startsWith('//')) {
+        url = 'https:' + url;
+      } else if (url.startsWith('/')) {
+        try {
+          const urlObj = new URL(baseUrl);
+          url = urlObj.origin + url;
+        } catch {}
+      }
+      if (url.startsWith('http') && !images.includes(url)) {
+        images.push(url);
+      }
+    }
+  }
+  
+  // Return first 5-8 images max for the video
+  return images.slice(0, 8);
+}
+
+async function generateVideoPodcastScript(
+  url: string, 
+  htmlContent: string, 
+  imageUrls: string[], 
+  lovableApiKey: string
+): Promise<PodcastSegment[]> {
+  const imageCount = Math.min(imageUrls.length, 6);
+  
+  const systemPrompt = `You are Maple, a product curator creating video podcast scripts.
+Your task is to create a structured script where each segment describes what's shown in a product image.
+
+CRITICAL RULES:
+- Start IMMEDIATELY with product content. NO greetings, NO introductions like "안녕하세요" or "Hi there"
+- First sentence should describe the product or its key feature directly
+- Each segment should be 2-3 sentences (about 8-15 seconds when spoken)
+- Total script should be 40-60 seconds
+- Use natural, conversational Korean for Korean products
+- Focus on visual elements that match what would be shown in product images
+- End with a compelling call-to-action
+
+You will create exactly ${imageCount} segments to match ${imageCount} product images.`;
+
+  const userPrompt = `Create a ${imageCount}-segment video podcast script for this product:
+
+URL: ${url}
+
+Page Content:
+${htmlContent.slice(0, 10000)}
+
+Return ONLY a JSON array with exactly ${imageCount} segments in this format:
+[
+  {"text": "segment 1 script text here", "imageIndex": 0},
+  {"text": "segment 2 script text here", "imageIndex": 1},
+  ...
+]
+
+Remember: Start with product content directly. NO greetings or introductions!`;
+
+  const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${lovableApiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "google/gemini-2.5-flash",
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: userPrompt },
+      ],
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`AI analysis failed: ${response.status}`);
+  }
+
+  const data = await response.json();
+  const content = data.choices?.[0]?.message?.content || "";
+  
+  // Parse JSON from response
+  let segments: { text: string; imageIndex: number }[] = [];
+  try {
+    // Try to extract JSON array from response
+    const jsonMatch = content.match(/\[[\s\S]*\]/);
+    if (jsonMatch) {
+      segments = JSON.parse(jsonMatch[0]);
+    }
+  } catch (e) {
+    console.error("Failed to parse segments JSON:", e);
+    // Fallback: create single segment with full content
+    segments = [{ text: content.replace(/[\[\]{}]/g, ''), imageIndex: 0 }];
+  }
+
+  // Map segments to images with duration estimates
+  const result: PodcastSegment[] = segments.map((seg, idx) => {
+    // Estimate duration: roughly 150 characters per 10 seconds for Korean
+    const charCount = seg.text.length;
+    const estimatedDuration = Math.max(5, Math.min(15, Math.round(charCount / 15)));
+    
+    return {
+      imageUrl: imageUrls[Math.min(seg.imageIndex || idx, imageUrls.length - 1)] || imageUrls[0] || '',
+      text: seg.text,
+      estimatedDuration,
+    };
+  });
+
+  return result;
+}
+
 async function generateCurationText(url: string, htmlContent: string, lovableApiKey: string): Promise<string> {
   const systemPrompt = `You are Maple, a friendly and knowledgeable product curator with a warm, engaging voice. 
 Your role is to create podcast-style audio scripts that feel like a personal shopping consultant talking to a customer.
@@ -13,7 +151,8 @@ Guidelines for your script:
 - Speak naturally and conversationally, as if talking to a friend
 - Use Korean language for Korean product pages, English for English pages
 - Keep it concise but engaging (around 30-45 seconds when spoken)
-- Start with a friendly greeting and product introduction
+- IMPORTANT: Start DIRECTLY with the product content - NO greetings like "안녕하세요" or introductions
+- Begin immediately with what makes this product special
 - Highlight 2-3 key selling points with enthusiasm
 - Mention who would love this product
 - End with a warm recommendation
@@ -28,7 +167,7 @@ URL: ${url}
 Page Content:
 ${htmlContent}
 
-Remember: Write as if you're speaking directly to a customer, making them feel excited about this product. Keep it natural and conversational.`;
+Remember: Start IMMEDIATELY with the product - NO greeting, NO intro. Jump straight into what makes this product great.`;
 
   const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
@@ -115,7 +254,42 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY is not configured");
     }
 
-    // Handle podcast curation (summary with audio)
+    // Handle video podcast (with image segments)
+    if (analysisType === "video-podcast") {
+      if (!ELEVENLABS_API_KEY) {
+        throw new Error("ELEVENLABS_API_KEY is not configured");
+      }
+
+      console.log("Extracting carousel images...");
+      const imageUrls = extractCarouselImages(htmlContent, url);
+      console.log("Found images:", imageUrls.length);
+
+      if (imageUrls.length === 0) {
+        throw new Error("No product images found on the page");
+      }
+
+      console.log("Generating video podcast script...");
+      const segments = await generateVideoPodcastScript(url, htmlContent, imageUrls, LOVABLE_API_KEY);
+      console.log("Generated segments:", segments.length);
+
+      // Generate audio for full script
+      const fullScript = segments.map(s => s.text).join(' ');
+      console.log("Generating audio for full script...");
+      const audioBase64 = await generateAudio(fullScript, ELEVENLABS_API_KEY);
+      console.log("Audio generated");
+
+      return new Response(
+        JSON.stringify({ 
+          success: true, 
+          audioBase64,
+          segments,
+          fullScript,
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Handle podcast curation (audio only, no video)
     if (analysisType === "summary" || analysisType === "podcast") {
       if (!ELEVENLABS_API_KEY) {
         throw new Error("ELEVENLABS_API_KEY is not configured");
