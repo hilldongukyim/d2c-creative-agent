@@ -279,6 +279,42 @@ const CrewRequestForm = ({ open, onOpenChange }: CrewRequestFormProps) => {
                           alt="Crew image 24" 
                           className="w-full h-full object-cover"
                         />
+                      ) : i === 24 ? (
+                        <img 
+                          src="/lovable-uploads/crew-image-25.png" 
+                          alt="Crew image 25" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : i === 25 ? (
+                        <img 
+                          src="/lovable-uploads/crew-image-26.png" 
+                          alt="Crew image 26" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : i === 26 ? (
+                        <img 
+                          src="/lovable-uploads/crew-image-27.png" 
+                          alt="Crew image 27" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : i === 27 ? (
+                        <img 
+                          src="/lovable-uploads/crew-image-28.png" 
+                          alt="Crew image 28" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : i === 28 ? (
+                        <img 
+                          src="/lovable-uploads/crew-image-29.png" 
+                          alt="Crew image 29" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : i === 29 ? (
+                        <img 
+                          src="/lovable-uploads/crew-image-30.png" 
+                          alt="Crew image 30" 
+                          className="w-full h-full object-cover"
+                        />
                       ) : (
                         <span className="text-xs text-muted-foreground">{i + 1}</span>
                       )}
