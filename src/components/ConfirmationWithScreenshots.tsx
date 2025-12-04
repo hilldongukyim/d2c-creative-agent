@@ -172,19 +172,19 @@ const ConfirmationWithScreenshots = ({
       loadImage(secondImgSrc),
     ]);
     
-    // Layout settings - no margins, images extend to edges
+    // Layout settings with safe margins
     const isPC = width === 2010;
-    const plusSize = isPC ? 200 : 50;
-    const margin = 0; // No outer margin
-    const plusGap = isPC ? 5 : 2; // Minimal gap between image and + sign
+    const plusSize = isPC ? 120 : 40;
+    const safeMargin = isPC ? 100 : 30; // Safe margin on all sides
+    const plusGap = isPC ? 40 : 15; // Gap between image and + sign
     
-    // Calculate available space for each image
+    // Calculate available space for each image (accounting for margins)
     const plusAreaWidth = plusSize + plusGap * 2;
-    const availableWidth = width - plusAreaWidth;
+    const availableWidth = width - (safeMargin * 2) - plusAreaWidth;
     const imgAreaWidth = availableWidth / 2;
-    const imgAreaHeight = height;
+    const imgAreaHeight = height - (safeMargin * 2);
     
-    // Calculate aspect ratios and scale to fit
+    // Calculate aspect ratios and scale to fit within safe area
     const mainRatio = mainImg.width / mainImg.height;
     const secondRatio = secondImg.width / secondImg.height;
     
@@ -202,14 +202,15 @@ const ConfirmationWithScreenshots = ({
       secondDrawWidth = secondDrawHeight * secondRatio;
     }
     
-    // Position images - left image right-aligned in its area, right image left-aligned
-    const leftAreaEnd = margin + imgAreaWidth;
-    const rightAreaStart = width - margin - imgAreaWidth;
-    
-    const mainX = leftAreaEnd - mainDrawWidth; // right-align in left area
+    // Position images with safe margins
+    // Left image: right-aligned within left area
+    const leftAreaEnd = safeMargin + imgAreaWidth;
+    const mainX = leftAreaEnd - mainDrawWidth;
     const mainY = (height - mainDrawHeight) / 2;
     
-    const secondX = rightAreaStart; // left-align in right area
+    // Right image: left-aligned within right area  
+    const rightAreaStart = width - safeMargin - imgAreaWidth;
+    const secondX = rightAreaStart;
     const secondY = (height - secondDrawHeight) / 2;
     
     // Draw images
