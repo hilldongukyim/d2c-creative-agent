@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { ArrowLeft, Loader2, Download, Search, Sparkles, ZoomIn, Square, RectangleVertical, RectangleHorizontal, Film } from "lucide-react";
+import { ArrowLeft, Loader2, Download, Search, Sparkles, ZoomIn, Square, RectangleVertical, RectangleHorizontal, Film, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import Logo from "@/components/Logo";
@@ -64,6 +64,10 @@ const AnitaLifestyle = () => {
     }
 
     setIsGenerating(true);
+    // Reset previous generation results when re-generating
+    setIsUpscaled(false);
+    setGeneratedVideoUrl(null);
+    
     try {
       const { data, error } = await supabase.functions.invoke("anita-generate-lifestyle", {
         body: { imageUrl: selectedImage, aspectRatio: "16:9" },
@@ -512,10 +516,28 @@ const AnitaLifestyle = () => {
               <Button variant="outline" onClick={handleReset}>
                 Create Another
               </Button>
+              <Button
+                onClick={handleGenerateLifestyle}
+                disabled={isGenerating || isUpscaling || isResizing || isGeneratingVideo}
+                variant="outline"
+                className="border-orange-300 text-orange-600 hover:bg-orange-50"
+              >
+                {isGenerating ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                    Re-generating...
+                  </>
+                ) : (
+                  <>
+                    <RefreshCw className="w-4 h-4 mr-2" />
+                    Re-generate
+                  </>
+                )}
+              </Button>
               {!isUpscaled && (
                 <Button
                   onClick={handleUpscale}
-                  disabled={isUpscaling || isResizing || isGeneratingVideo}
+                  disabled={isUpscaling || isResizing || isGeneratingVideo || isGenerating}
                   variant="outline"
                   className="border-purple-300 text-purple-600 hover:bg-purple-50"
                 >
@@ -534,7 +556,7 @@ const AnitaLifestyle = () => {
               )}
               <Button
                 onClick={handleDownload}
-                disabled={isResizing || isUpscaling || isGeneratingVideo}
+                disabled={isResizing || isUpscaling || isGeneratingVideo || isGenerating}
                 className="bg-purple-500 hover:bg-purple-600"
               >
                 <Download className="w-4 h-4 mr-2" />
@@ -542,7 +564,7 @@ const AnitaLifestyle = () => {
               </Button>
               <Button
                 onClick={handleGenerateVideo}
-                disabled={isResizing || isUpscaling || isGeneratingVideo}
+                disabled={isResizing || isUpscaling || isGeneratingVideo || isGenerating}
                 variant="outline"
                 className="border-indigo-300 text-indigo-600 hover:bg-indigo-50"
               >
