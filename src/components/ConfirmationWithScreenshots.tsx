@@ -108,8 +108,8 @@ const ConfirmationWithScreenshots = ({
     // Layout settings - maximize image size while keeping + visible
     const isPC = width === 2010;
     const plusSize = isPC ? 240 : 60;
-    const margin = isPC ? 40 : 15; // outer margin
-    const plusGap = isPC ? 30 : 10; // gap between image and + sign
+    const margin = isPC ? 20 : 8; // minimal outer margin
+    const plusGap = isPC ? 15 : 5; // minimal gap between image and + sign
     
     // Calculate available space for each image
     const plusAreaWidth = plusSize + plusGap * 2;
