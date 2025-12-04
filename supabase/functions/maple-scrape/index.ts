@@ -42,6 +42,9 @@ serve(async (req) => {
     // Only add onlyMainContent for markdown mode
     if (mode !== "screenshot") {
       requestBody.onlyMainContent = true;
+    } else {
+      // Wait for page to fully load before screenshot (5 seconds)
+      requestBody.waitFor = 5000;
     }
 
     console.log("Request body:", JSON.stringify(requestBody));
