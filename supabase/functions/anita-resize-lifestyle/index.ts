@@ -23,24 +23,27 @@ serve(async (req) => {
     }
 
     // Determine dimensions based on aspect ratio
-    let width: number, height: number;
+    let width: number, height: number, orientation: string;
     switch (aspectRatio) {
       case "1:1":
         width = 1080;
         height = 1080;
+        orientation = "square";
         break;
       case "9:16":
         width = 1080;
         height = 1920;
+        orientation = "vertical portrait";
         break;
       case "16:9":
       default:
         width = 1920;
         height = 1080;
+        orientation = "horizontal landscape";
         break;
     }
 
-    console.log(`Resizing lifestyle image to ${aspectRatio} (${width}x${height})`);
+    console.log(`Resizing lifestyle image to ${aspectRatio} (${width}x${height}) - ${orientation}`);
 
     // Extract base64 data from data URL if present
     let cleanBase64 = imageBase64;
@@ -51,21 +54,21 @@ serve(async (req) => {
       }
     }
 
-    const prompt = `Resize and recompose this lifestyle image to ${width}x${height} resolution (${aspectRatio} aspect ratio).
+    const prompt = `Transform this lifestyle product image to a ${orientation} format (${aspectRatio} aspect ratio, ${width}x${height} pixels).
 
-CRITICAL REQUIREMENTS:
-1. PRESERVE THE PRODUCT: The product in the image must remain fully visible and NOT be cropped or cut off
-2. MAINTAIN COMPOSITION: Keep the product as the focal point of the image
-3. EXTEND OR ADJUST BACKGROUND: If needed, intelligently extend the background or reposition elements to fit the new aspect ratio
-4. KEEP QUALITY: Maintain the same high-quality, professional photography aesthetic
-5. SEAMLESS RESULT: The resized image should look natural, not stretched or distorted
+IMPORTANT INSTRUCTIONS:
+1. The product in the image MUST remain completely visible - do NOT crop or cut any part of the product
+2. Intelligently extend or recompose the background/surroundings to fill the new ${orientation} canvas
+3. Keep the product as the main focal point, naturally positioned within the new frame
+4. Maintain the same lighting, color palette, and professional photography style
+5. The extended areas should blend seamlessly with the existing image
+6. Generate the final image at exactly ${width} pixels wide and ${height} pixels tall
 
-For ${aspectRatio === "9:16" ? "vertical (portrait)" : aspectRatio === "1:1" ? "square" : "horizontal (landscape)"} format:
-- ${aspectRatio === "9:16" ? "Add more vertical space above and/or below the product, extending the lifestyle background naturally" : ""}
-- ${aspectRatio === "1:1" ? "Create a balanced square composition with the product centered" : ""}
-- ${aspectRatio === "16:9" ? "Ensure wide horizontal composition with product clearly visible" : ""}
+${aspectRatio === "9:16" ? "For this vertical format: extend the scene vertically, adding more environment above and/or below the product while keeping the product fully visible and prominent." : ""}
+${aspectRatio === "1:1" ? "For this square format: create a balanced composition with the product centered, extending the background equally on sides if needed." : ""}
+${aspectRatio === "16:9" ? "For this wide horizontal format: extend the scene horizontally, adding more of the lifestyle environment to the left and/or right while keeping the product as the central focus." : ""}`;
 
-Output exactly at ${width}x${height} pixels.`;
+    console.log("Sending request to Lovable AI for resize...");
 
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -110,10 +113,11 @@ Output exactly at ${width}x${height} pixels.`;
     }
 
     const result = await response.json();
-    console.log("Resize response received");
+    console.log("Resize response received successfully");
 
     const imageUrl = result.choices?.[0]?.message?.images?.[0]?.image_url?.url;
     if (!imageUrl) {
+      console.error("No image in response:", JSON.stringify(result).substring(0, 500));
       throw new Error("No image generated from Lovable AI");
     }
 
@@ -123,11 +127,14 @@ Output exactly at ${width}x${height} pixels.`;
       throw new Error("Invalid image format from Lovable AI");
     }
 
+    console.log(`Successfully resized image to ${aspectRatio}`);
+
     return new Response(
       JSON.stringify({
         success: true,
         imageBase64: base64Match[1],
         dimensions: { width, height },
+        aspectRatio,
       }),
       {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -136,7 +143,10 @@ Output exactly at ${width}x${height} pixels.`;
   } catch (error) {
     console.error("Error in anita-resize-lifestyle:", error);
     return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Resize failed" }),
+      JSON.stringify({ 
+        success: false,
+        error: error instanceof Error ? error.message : "Resize failed" 
+      }),
       {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
