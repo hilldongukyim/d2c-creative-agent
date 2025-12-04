@@ -5,46 +5,34 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// CSS selector to match: #swiper-wrapper-* > div.cmp-carousel__item.swiper-slide > div > div > div > img
-function extractImageUrls(html: string): string[] {
-  const imageUrls: string[] = [];
-  
-  // Pattern 1: Find img tags inside cmp-carousel__item swiper-slide divs
-  const carouselImgRegex = /<div[^>]*class="[^"]*cmp-carousel__item[^"]*swiper-slide[^"]*"[^>]*>[\s\S]*?<img[^>]*src="([^"]+)"[^>]*>/gi;
-  
-  let match;
-  while ((match = carouselImgRegex.exec(html)) !== null) {
-    if (match[1] && !imageUrls.includes(match[1])) {
-      // Filter out SVG logos and small icons
-      if (!match[1].includes('logo') && !match[1].endsWith('.svg')) {
-        imageUrls.push(match[1]);
-      }
-    }
+// CSS selector to match: #swiper-wrapper-* > div.cmp-carousel__item.swiper-slide.swiper-slide-active > div > div > div > img
+function extractFirstCarouselImage(html: string): string | null {
+  // Priority 1: Look for swiper-slide-active (first/current slide)
+  const activeSlideRegex = /<div[^>]*class="[^"]*swiper-slide-active[^"]*"[^>]*>[\s\S]*?<img[^>]*src="([^"]+)"[^>]*>/i;
+  const activeMatch = activeSlideRegex.exec(html);
+  if (activeMatch && activeMatch[1] && !activeMatch[1].includes('logo') && !activeMatch[1].endsWith('.svg')) {
+    console.log("Found active slide image:", activeMatch[1]);
+    return activeMatch[1];
   }
   
-  // Pattern 2: Look for swiper-slide with c-carousel__item class
-  const carouselImgRegex2 = /<div[^>]*class="[^"]*c-carousel__item[^"]*"[^>]*>[\s\S]*?<img[^>]*src="([^"]+)"[^>]*>/gi;
-  while ((match = carouselImgRegex2.exec(html)) !== null) {
-    if (match[1] && !imageUrls.includes(match[1])) {
-      if (!match[1].includes('logo') && !match[1].endsWith('.svg')) {
-        imageUrls.push(match[1]);
-      }
-    }
+  // Priority 2: Look for first cmp-carousel__item with img
+  const carouselItemRegex = /<div[^>]*class="[^"]*cmp-carousel__item[^"]*"[^>]*>[\s\S]*?<img[^>]*src="([^"]+)"[^>]*>/i;
+  const carouselMatch = carouselItemRegex.exec(html);
+  if (carouselMatch && carouselMatch[1] && !carouselMatch[1].includes('logo') && !carouselMatch[1].endsWith('.svg')) {
+    console.log("Found carousel item image:", carouselMatch[1]);
+    return carouselMatch[1];
   }
   
-  // Pattern 3: General swiper-slide pattern as fallback
-  const swiperImgRegex = /<div[^>]*class="[^"]*swiper-slide[^"]*"[^>]*>[\s\S]*?<img[^>]*src="([^"]+)"[^>]*>/gi;
-  while ((match = swiperImgRegex.exec(html)) !== null) {
-    if (match[1] && !imageUrls.includes(match[1])) {
-      if (!match[1].includes('logo') && !match[1].endsWith('.svg')) {
-        imageUrls.push(match[1]);
-      }
-    }
+  // Priority 3: Look for first swiper-slide with img
+  const swiperSlideRegex = /<div[^>]*class="[^"]*swiper-slide[^"]*"[^>]*>[\s\S]*?<img[^>]*src="([^"]+)"[^>]*>/i;
+  const swiperMatch = swiperSlideRegex.exec(html);
+  if (swiperMatch && swiperMatch[1] && !swiperMatch[1].includes('logo') && !swiperMatch[1].endsWith('.svg')) {
+    console.log("Found swiper slide image:", swiperMatch[1]);
+    return swiperMatch[1];
   }
   
-  console.log("Found image URLs:", imageUrls.length);
-  console.log("First few URLs:", imageUrls.slice(0, 3));
-  return imageUrls;
+  console.log("No carousel image found");
+  return null;
 }
 
 serve(async (req) => {
@@ -109,17 +97,13 @@ serve(async (req) => {
     const html = data.data?.rawHtml || "";
     console.log("HTML length:", html.length);
     
-    const imageUrls = extractImageUrls(html);
+    const firstImage = extractFirstCarouselImage(html);
     
-    // Return the first image found (for the swiper gallery)
-    const firstImage = imageUrls[0] || null;
-    
-    console.log("First image URL:", firstImage);
+    console.log("First carousel image URL:", firstImage);
 
     return new Response(JSON.stringify({ 
       success: true, 
       imageUrl: firstImage,
-      allImageUrls: imageUrls.slice(0, 5), // Return up to 5 images
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
