@@ -167,19 +167,19 @@ const ConfirmationWithScreenshots = ({
       loadImage(secondImgSrc),
     ]);
     
-    // Layout settings - maximize image size while keeping + visible
+    // Layout settings - maximize image size, minimal plus sign
     const isPC = width === 2010;
-    const plusSize = isPC ? 240 : 60;
-    const margin = isPC ? 20 : 8; // minimal outer margin
-    const plusGap = isPC ? 15 : 5; // minimal gap between image and + sign
+    const plusSize = isPC ? 120 : 40; // Smaller plus sign
+    const margin = isPC ? 10 : 4; // Minimal outer margin
+    const plusGap = isPC ? 8 : 3; // Minimal gap between image and + sign
     
-    // Calculate available space for each image
+    // Calculate available space for each image - give more room to images
     const plusAreaWidth = plusSize + plusGap * 2;
     const availableWidth = width - margin * 2 - plusAreaWidth;
     const imgAreaWidth = availableWidth / 2;
     const imgAreaHeight = height - margin * 2;
     
-    // Calculate aspect ratios and scale to fit
+    // Calculate aspect ratios and scale to fit (use full available area)
     const mainRatio = mainImg.width / mainImg.height;
     const secondRatio = secondImg.width / secondImg.height;
     
