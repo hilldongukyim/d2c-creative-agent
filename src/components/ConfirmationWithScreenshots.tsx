@@ -173,56 +173,105 @@ const ConfirmationWithScreenshots = ({
     ]);
     
     // Layout settings with safe margins
-    const isPC = width === 2010;
-    const plusSize = isPC ? 120 : 40;
-    const safeMargin = isPC ? 100 : 30; // Safe margin on all sides
-    const plusGap = isPC ? 40 : 15; // Gap between image and + sign
+    const isPBP = width === 2010;
+    const plusSize = isPBP ? 120 : 40;
+    const safeMargin = isPBP ? 100 : 30;
+    const plusGap = isPBP ? 40 : 15;
     
-    // Calculate available space for each image (accounting for margins)
-    const plusAreaWidth = plusSize + plusGap * 2;
-    const availableWidth = width - (safeMargin * 2) - plusAreaWidth;
-    const imgAreaWidth = availableWidth / 2;
-    const imgAreaHeight = height - (safeMargin * 2);
+    // Determine layout for 450x450 based on product image orientation
+    // Both landscape (wider than tall) -> vertical layout (top-bottom)
+    // Both portrait (taller than wide) -> horizontal layout (left-right)
+    // Mixed -> horizontal layout (left-right)
+    const mainIsLandscape = mainImg.width > mainImg.height;
+    const secondIsLandscape = secondImg.width > secondImg.height;
+    const useVerticalLayout = !isPBP && mainIsLandscape && secondIsLandscape;
     
-    // Calculate aspect ratios and scale to fit within safe area
-    const mainRatio = mainImg.width / mainImg.height;
-    const secondRatio = secondImg.width / secondImg.height;
-    
-    let mainDrawWidth = imgAreaWidth;
-    let mainDrawHeight = mainDrawWidth / mainRatio;
-    if (mainDrawHeight > imgAreaHeight) {
-      mainDrawHeight = imgAreaHeight;
-      mainDrawWidth = mainDrawHeight * mainRatio;
+    if (useVerticalLayout) {
+      // Vertical layout: images stacked top-bottom with + in center
+      const plusAreaHeight = plusSize + plusGap * 2;
+      const availableHeight = height - (safeMargin * 2) - plusAreaHeight;
+      const imgAreaHeight = availableHeight / 2;
+      const imgAreaWidth = width - (safeMargin * 2);
+      
+      const mainRatio = mainImg.width / mainImg.height;
+      const secondRatio = secondImg.width / secondImg.height;
+      
+      // Scale main image
+      let mainDrawWidth = imgAreaWidth;
+      let mainDrawHeight = mainDrawWidth / mainRatio;
+      if (mainDrawHeight > imgAreaHeight) {
+        mainDrawHeight = imgAreaHeight;
+        mainDrawWidth = mainDrawHeight * mainRatio;
+      }
+      
+      // Scale second image
+      let secondDrawWidth = imgAreaWidth;
+      let secondDrawHeight = secondDrawWidth / secondRatio;
+      if (secondDrawHeight > imgAreaHeight) {
+        secondDrawHeight = imgAreaHeight;
+        secondDrawWidth = secondDrawHeight * secondRatio;
+      }
+      
+      // Position images vertically
+      const topAreaEnd = safeMargin + imgAreaHeight;
+      const mainX = (width - mainDrawWidth) / 2;
+      const mainY = topAreaEnd - mainDrawHeight;
+      
+      const bottomAreaStart = height - safeMargin - imgAreaHeight;
+      const secondX = (width - secondDrawWidth) / 2;
+      const secondY = bottomAreaStart;
+      
+      ctx.drawImage(mainImg, mainX, mainY, mainDrawWidth, mainDrawHeight);
+      ctx.drawImage(secondImg, secondX, secondY, secondDrawWidth, secondDrawHeight);
+      
+      // Draw + sign in center
+      ctx.fillStyle = '#000000';
+      ctx.font = `bold ${plusSize}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('+', width / 2, height / 2);
+    } else {
+      // Horizontal layout: images side-by-side (default for PBP and non-landscape pairs)
+      const plusAreaWidth = plusSize + plusGap * 2;
+      const availableWidth = width - (safeMargin * 2) - plusAreaWidth;
+      const imgAreaWidth = availableWidth / 2;
+      const imgAreaHeight = height - (safeMargin * 2);
+      
+      const mainRatio = mainImg.width / mainImg.height;
+      const secondRatio = secondImg.width / secondImg.height;
+      
+      let mainDrawWidth = imgAreaWidth;
+      let mainDrawHeight = mainDrawWidth / mainRatio;
+      if (mainDrawHeight > imgAreaHeight) {
+        mainDrawHeight = imgAreaHeight;
+        mainDrawWidth = mainDrawHeight * mainRatio;
+      }
+      
+      let secondDrawWidth = imgAreaWidth;
+      let secondDrawHeight = secondDrawWidth / secondRatio;
+      if (secondDrawHeight > imgAreaHeight) {
+        secondDrawHeight = imgAreaHeight;
+        secondDrawWidth = secondDrawHeight * secondRatio;
+      }
+      
+      const leftAreaEnd = safeMargin + imgAreaWidth;
+      const mainX = leftAreaEnd - mainDrawWidth;
+      const mainY = (height - mainDrawHeight) / 2;
+      
+      const rightAreaStart = width - safeMargin - imgAreaWidth;
+      const secondX = rightAreaStart;
+      const secondY = (height - secondDrawHeight) / 2;
+      
+      ctx.drawImage(mainImg, mainX, mainY, mainDrawWidth, mainDrawHeight);
+      ctx.drawImage(secondImg, secondX, secondY, secondDrawWidth, secondDrawHeight);
+      
+      // Draw + sign in center
+      ctx.fillStyle = '#000000';
+      ctx.font = `bold ${plusSize}px Arial`;
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('+', width / 2, height / 2);
     }
-    
-    let secondDrawWidth = imgAreaWidth;
-    let secondDrawHeight = secondDrawWidth / secondRatio;
-    if (secondDrawHeight > imgAreaHeight) {
-      secondDrawHeight = imgAreaHeight;
-      secondDrawWidth = secondDrawHeight * secondRatio;
-    }
-    
-    // Position images with safe margins
-    // Left image: right-aligned within left area
-    const leftAreaEnd = safeMargin + imgAreaWidth;
-    const mainX = leftAreaEnd - mainDrawWidth;
-    const mainY = (height - mainDrawHeight) / 2;
-    
-    // Right image: left-aligned within right area  
-    const rightAreaStart = width - safeMargin - imgAreaWidth;
-    const secondX = rightAreaStart;
-    const secondY = (height - secondDrawHeight) / 2;
-    
-    // Draw images
-    ctx.drawImage(mainImg, mainX, mainY, mainDrawWidth, mainDrawHeight);
-    ctx.drawImage(secondImg, secondX, secondY, secondDrawWidth, secondDrawHeight);
-    
-    // Draw + sign in center
-    ctx.fillStyle = '#000000';
-    ctx.font = `bold ${plusSize}px Arial`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText('+', width / 2, height / 2);
     
     return canvas.toDataURL('image/png');
   };
@@ -346,32 +395,32 @@ const ConfirmationWithScreenshots = ({
           
           <div className="grid grid-cols-2 gap-4 mb-4">
             <div className="space-y-2">
-              <p className="text-sm font-medium">PC Version (2010×1334)</p>
+              <p className="text-sm font-medium">PBP (2010×1334)</p>
               <div className="border border-border rounded-lg overflow-hidden bg-white">
-                <img src={pcImage} alt="PC Gallery" className="w-full h-auto" />
+                <img src={pcImage} alt="PBP Gallery" className="w-full h-auto" />
               </div>
               <Button 
-                onClick={() => downloadImage(pcImage, 'gallery-pc.png')}
+                onClick={() => downloadImage(pcImage, 'gallery-pbp.png')}
                 className="w-full"
                 size="sm"
               >
                 <Download className="h-4 w-4 mr-2" />
-                Download PC
+                Download PBP
               </Button>
             </div>
             
             <div className="space-y-2">
-              <p className="text-sm font-medium">Mobile Version (450×450)</p>
+              <p className="text-sm font-medium text-center">Home, Category, PLP, PDP, Compare, My LG, Search (450×450)</p>
               <div className="border border-border rounded-lg overflow-hidden bg-white">
-                <img src={mobileImage} alt="Mobile Gallery" className="w-full h-auto" />
+                <img src={mobileImage} alt="Multi-purpose Gallery" className="w-full h-auto" />
               </div>
               <Button 
-                onClick={() => downloadImage(mobileImage, 'gallery-mobile.png')}
+                onClick={() => downloadImage(mobileImage, 'gallery-multi.png')}
                 className="w-full"
                 size="sm"
               >
                 <Download className="h-4 w-4 mr-2" />
-                Download Mobile
+                Download
               </Button>
             </div>
           </div>
