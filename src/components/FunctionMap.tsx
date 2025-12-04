@@ -83,6 +83,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       personality: "Competitor Crawling, Product Crawling, Data DB, Trend Analysis, Excel Template.",
       admin: { name: "Hyunsoo Park", email: "hyunsoo9.park@lge.com" }
     },
+    "theo": {
+      description: "Theo is the Content Operation manager who supports subsidiary/BU representatives with NPI product registration requests and helps monitor readiness check status for new product launches.",
+      personality: "NPI Operation, Content Operation, Product Registration, Readiness Check, BU Support."
+    },
     "dan": {
       description: "Dan suggests optimal metadata for image-video content to ensure better exposure in search engines and internal search systems by generative AI.",
       personality: "Exploratory and curious, enjoys web surfing."
@@ -194,6 +198,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         name: "Mateo",
         role: "Crawler",
         imageSrc: "/lovable-uploads/mateo-profile.png"
+      }, {
+        name: "Theo",
+        role: "NPI Operation Manager",
+        imageSrc: "/lovable-uploads/theo-profile.png"
       }]
     }, {
       title: "Platform Operation Team",
