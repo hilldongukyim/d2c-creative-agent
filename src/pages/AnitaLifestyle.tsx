@@ -25,6 +25,7 @@ const AnitaLifestyle = () => {
   const [currentAspectRatio, setCurrentAspectRatio] = useState<"16:9" | "1:1" | "9:16" | "custom">("16:9");
   const [customWidth, setCustomWidth] = useState("");
   const [customHeight, setCustomHeight] = useState("");
+  const [productName, setProductName] = useState("");
 
   const handleExtractImages = async () => {
     if (!url) {
@@ -45,6 +46,7 @@ const AnitaLifestyle = () => {
       }
 
       setCarouselImages(data.images);
+      setProductName(data.productName || "product");
       setStep("select");
       toast.success(`Found ${data.images.length} carousel images`);
     } catch (error) {
@@ -84,13 +86,32 @@ const AnitaLifestyle = () => {
     }
   };
 
+  const getDateString = () => {
+    const now = new Date();
+    const yy = String(now.getFullYear()).slice(-2);
+    const mm = String(now.getMonth() + 1).padStart(2, '0');
+    const dd = String(now.getDate()).padStart(2, '0');
+    return `${yy}${mm}${dd}`;
+  };
+
+  const getSizeString = () => {
+    if (isUpscaled) return "3840x2160";
+    switch (currentAspectRatio) {
+      case "1:1": return "1080x1080";
+      case "9:16": return "1080x1920";
+      case "16:9": return "1920x1080";
+      case "custom": return `${customWidth}x${customHeight}`;
+      default: return "1920x1080";
+    }
+  };
+
   const handleDownload = () => {
     if (!generatedImage) return;
 
     const link = document.createElement("a");
     link.href = generatedImage;
-    const suffix = isUpscaled ? "-4k" : `-${currentAspectRatio.replace(":", "x")}`;
-    link.download = `anita-lifestyle${suffix}.png`;
+    const filename = `${getDateString()}_${productName}_${getSizeString()}.png`;
+    link.download = filename;
     link.click();
     toast.success("Image downloaded!");
   };
@@ -161,7 +182,8 @@ const AnitaLifestyle = () => {
 
     const link = document.createElement("a");
     link.href = generatedVideoUrl;
-    link.download = `anita-lifestyle-video-${Date.now()}.mp4`;
+    const filename = `${getDateString()}_${productName}_video.mp4`;
+    link.download = filename;
     link.target = "_blank";
     document.body.appendChild(link);
     link.click();

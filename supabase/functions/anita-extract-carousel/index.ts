@@ -135,6 +135,49 @@ function extractCarouselImages(html: string, baseUrl: string): string[] {
   return images;
 }
 
+// Extract product name from HTML
+function extractProductName(html: string, url: string): string {
+  // Try og:title first (most reliable for product name)
+  const ogTitleMatch = html.match(/<meta[^>]*property="og:title"[^>]*content="([^"]+)"/i) ||
+                       html.match(/<meta[^>]*content="([^"]+)"[^>]*property="og:title"/i);
+  if (ogTitleMatch) {
+    console.log("Found og:title:", ogTitleMatch[1]);
+    return cleanProductName(ogTitleMatch[1]);
+  }
+
+  // Try title tag
+  const titleMatch = html.match(/<title[^>]*>([^<]+)<\/title>/i);
+  if (titleMatch) {
+    console.log("Found title:", titleMatch[1]);
+    return cleanProductName(titleMatch[1]);
+  }
+
+  // Try h1 tag
+  const h1Match = html.match(/<h1[^>]*>([^<]+)<\/h1>/i);
+  if (h1Match) {
+    console.log("Found h1:", h1Match[1]);
+    return cleanProductName(h1Match[1]);
+  }
+
+  // Fallback: extract from URL
+  const urlParts = url.split('/').filter(p => p && !p.includes('www.') && !p.includes('.com'));
+  const lastPart = urlParts[urlParts.length - 1] || urlParts[urlParts.length - 2] || 'product';
+  return cleanProductName(lastPart.replace(/-/g, ' '));
+}
+
+function cleanProductName(name: string): string {
+  // Remove common suffixes, special characters, and clean up
+  return name
+    .replace(/\s*[|\-–—]\s*LG.*$/i, '') // Remove "| LG..." or "- LG..."
+    .replace(/\s*[|\-–—]\s*Buy.*$/i, '') // Remove "| Buy..."
+    .replace(/[<>:"/\\|?*]/g, '') // Remove invalid filename chars
+    .replace(/\s+/g, '_') // Replace spaces with underscores
+    .replace(/_+/g, '_') // Remove multiple underscores
+    .replace(/^_|_$/g, '') // Remove leading/trailing underscores
+    .substring(0, 50) // Limit length
+    .trim() || 'product';
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -197,10 +240,13 @@ serve(async (req) => {
     console.log("HTML length:", html.length);
 
     const images = extractCarouselImages(html, url);
+    const productName = extractProductName(html, url);
+    console.log("Extracted product name:", productName);
 
     return new Response(JSON.stringify({
       success: true,
       images: images,
+      productName: productName,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
