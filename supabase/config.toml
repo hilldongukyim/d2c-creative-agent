@@ -17,3 +17,6 @@ verify_jwt = false
 
 [functions.fotor-background-removal]
 verify_jwt = false
+
+[functions.ben-extract-images]
+verify_jwt = false
