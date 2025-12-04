@@ -111,7 +111,8 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     },
     "ava": {
       description: "Checks and reports SKU-level status to ensure timely upload of LG.com PDP.",
-      personality: "Systematic with excellent communication skills, excels at facilitating work collaboration. PDP Tracker, SKU status."
+      personality: "Systematic with excellent communication skills, excels at facilitating work collaboration. PDP Tracker, SKU status.",
+      admin: { name: "Jason Lee", email: "jasonc.lee@lge.com" }
     },
     "luna": {
       description: "Creates audiences and offers in Adobe Target using natural language input.",
