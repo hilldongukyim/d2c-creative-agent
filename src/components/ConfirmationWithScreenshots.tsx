@@ -34,6 +34,11 @@ const ConfirmationWithScreenshots = ({
   const [processingStatus, setProcessingStatus] = useState<string>('');
   const [pcImage, setPcImage] = useState<string | null>(null);
   const [mobileImage, setMobileImage] = useState<string | null>(null);
+  
+  // Background removed images state
+  const [bgRemovedMain, setBgRemovedMain] = useState<string | null>(null);
+  const [bgRemovedSecond, setBgRemovedSecond] = useState<string | null>(null);
+  const [showBgRemovedPreview, setShowBgRemovedPreview] = useState(false);
 
   useEffect(() => {
     const extractImage = async (url: string, setImage: (url: string | null) => void, setLoading: (loading: boolean) => void, setError: (error: string | null) => void) => {
@@ -239,7 +244,14 @@ const ConfirmationWithScreenshots = ({
       if (error || !data.success) {
         console.error('Error processing images:', error || data.error);
         setProcessingStatus('Failed to remove backgrounds. Using original images...');
-        await createFinalImages(mainImage, secondImage);
+        // Fall back to cropping original images
+        setProcessingStatus('Step 2/4: Scaling product images to fit...');
+        const croppedMain = await cropTransparentPixels(mainImage);
+        const croppedSecond = await cropTransparentPixels(secondImage);
+        setBgRemovedMain(croppedMain);
+        setBgRemovedSecond(croppedSecond);
+        setShowBgRemovedPreview(true);
+        setIsProcessing(false);
         return;
       }
 
@@ -248,24 +260,44 @@ const ConfirmationWithScreenshots = ({
       const croppedMain = await cropTransparentPixels(data.mainImage);
       const croppedSecond = await cropTransparentPixels(data.secondImage);
       
-      // Step 3: Analyze and place images in correct layout
-      setProcessingStatus('Step 3/4: Analyzing layout and compositing...');
-      const pcDataUrl = await createCompositeImage(croppedMain, croppedSecond, 2010, 1334);
-      setPcImage(pcDataUrl);
-      const mobileDataUrl = await createCompositeImage(croppedMain, croppedSecond, 450, 450);
-      setMobileImage(mobileDataUrl);
-      
-      // Step 4: Finalizing
-      setProcessingStatus('Step 4/4: Finalizing...');
-      await new Promise(resolve => setTimeout(resolve, 500)); // Brief pause for UX
-      
-      setProcessingStatus('✅ Complete!');
+      // Store cropped images and show preview
+      setBgRemovedMain(croppedMain);
+      setBgRemovedSecond(croppedSecond);
+      setShowBgRemovedPreview(true);
       setIsProcessing(false);
       
     } catch (err) {
       console.error('Error:', err);
-      setProcessingStatus('Error occurred. Using original images...');
-      await createFinalImages(mainImage, secondImage);
+      setProcessingStatus('Error occurred.');
+      setIsProcessing(false);
+    }
+  };
+
+  const handleGenerateComposite = async () => {
+    if (!bgRemovedMain || !bgRemovedSecond) return;
+    
+    setIsProcessing(true);
+    
+    try {
+      // Step 3: Analyze and place images in correct layout
+      setProcessingStatus('Step 3/4: Analyzing layout and compositing...');
+      const pcDataUrl = await createCompositeImage(bgRemovedMain, bgRemovedSecond, 2010, 1334);
+      setPcImage(pcDataUrl);
+      const mobileDataUrl = await createCompositeImage(bgRemovedMain, bgRemovedSecond, 450, 450);
+      setMobileImage(mobileDataUrl);
+      
+      // Step 4: Finalizing
+      setProcessingStatus('Step 4/4: Finalizing...');
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      setProcessingStatus('✅ Complete!');
+      setShowBgRemovedPreview(false);
+      setIsProcessing(false);
+      
+    } catch (err) {
+      console.error('Error creating composite images:', err);
+      setProcessingStatus('Failed to create images');
+      setIsProcessing(false);
     }
   };
 
@@ -348,12 +380,77 @@ const ConfirmationWithScreenshots = ({
             onClick={() => {
               setPcImage(null);
               setMobileImage(null);
+              setBgRemovedMain(null);
+              setBgRemovedSecond(null);
+              setShowBgRemovedPreview(false);
               onSubmit();
             }}
             className="w-full"
           >
             Create Another Gallery
           </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // Show background removed images preview
+  if (showBgRemovedPreview && bgRemovedMain && bgRemovedSecond) {
+    return (
+      <div className="flex gap-3 mt-4 animate-fade-in">
+        <div className="bg-purple-50 dark:bg-purple-950/30 rounded-lg p-4 max-w-[95%] w-full">
+          <h3 className="text-lg font-semibold text-purple-700 dark:text-purple-400 mb-4">
+            🎨 Background Removed - Preview
+          </h3>
+          
+          <div className="grid grid-cols-2 gap-4 mb-4">
+            <div className="space-y-2">
+              <p className="text-sm font-medium">Main Product (Left)</p>
+              <div className="aspect-square bg-[#f0f0f0] rounded-lg overflow-hidden flex items-center justify-center border border-border" style={{ backgroundImage: 'linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%)', backgroundSize: '20px 20px', backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px' }}>
+                <img 
+                  src={bgRemovedMain} 
+                  alt="Main product (BG removed)" 
+                  className="max-w-full max-h-full object-contain"
+                />
+              </div>
+            </div>
+            
+            <div className="space-y-2">
+              <p className="text-sm font-medium">Second Product (Right)</p>
+              <div className="aspect-square bg-[#f0f0f0] rounded-lg overflow-hidden flex items-center justify-center border border-border" style={{ backgroundImage: 'linear-gradient(45deg, #ccc 25%, transparent 25%), linear-gradient(-45deg, #ccc 25%, transparent 25%), linear-gradient(45deg, transparent 75%, #ccc 75%), linear-gradient(-45deg, transparent 75%, #ccc 75%)', backgroundSize: '20px 20px', backgroundPosition: '0 0, 0 10px, 10px -10px, -10px 0px' }}>
+                <img 
+                  src={bgRemovedSecond} 
+                  alt="Second product (BG removed)" 
+                  className="max-w-full max-h-full object-contain"
+                />
+              </div>
+            </div>
+          </div>
+          
+          <p className="text-sm text-muted-foreground mb-4">
+            Background removed and cropped to fit. Ready to generate composite images?
+          </p>
+          
+          <div className="flex gap-2">
+            <Button 
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setBgRemovedMain(null);
+                setBgRemovedSecond(null);
+                setShowBgRemovedPreview(false);
+              }}
+            >
+              Back
+            </Button>
+            <Button 
+              size="sm"
+              onClick={handleGenerateComposite}
+              className="bg-gradient-to-r from-purple-500 to-pink-600 hover:from-purple-600 hover:to-pink-700 text-white flex-1"
+            >
+              Generate Composite Images
+            </Button>
+          </div>
         </div>
       </div>
     );
