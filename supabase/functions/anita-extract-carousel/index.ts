@@ -27,39 +27,42 @@ function extractCarouselImages(html: string, baseUrl: string): string[] {
     return true;
   };
 
-  // Strategy 1: Find swiper-wrapper sections and extract images from carousel items
-  // Pattern: swiper-wrapper > div.cmp-carousel__item.swiper-slide.c-carousel__item > div > div > div > img
-  const swiperWrapperRegex = /<div[^>]*id="swiper-wrapper[^"]*"[^>]*>([\s\S]*?)(?=<div[^>]*id="swiper-wrapper|<\/section>|<section|$)/gi;
-  let wrapperMatch;
-  let foundInSwiper = false;
+  // Strategy 1: Find first swiper-wrapper and extract ALL carousel item images
+  // Pattern: #swiper-wrapper-* > div.cmp-carousel__item.swiper-slide.c-carousel__item > div > div > div > img
+  const swiperWrapperMatch = html.match(/<div[^>]*id="swiper-wrapper-[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<\/div>\s*<div[^>]*class="[^"]*swiper-button/i);
   
-  // Find the first swiper-wrapper (usually the main product gallery)
-  wrapperMatch = swiperWrapperRegex.exec(html);
-  if (wrapperMatch) {
-    const wrapperContent = wrapperMatch[1];
-    console.log("Found swiper-wrapper section, length:", wrapperContent.length);
+  if (swiperWrapperMatch) {
+    console.log("Found swiper-wrapper with button boundary");
+    const wrapperContent = swiperWrapperMatch[1];
     
-    // Extract carousel items with specific class pattern
-    const carouselItemRegex = /<div[^>]*class="[^"]*cmp-carousel__item[^"]*swiper-slide[^"]*c-carousel__item[^"]*"[^>]*>([\s\S]*?)(?=<div[^>]*class="[^"]*cmp-carousel__item|$)/gi;
+    // Find all divs with the specific class combination
+    const itemRegex = /<div[^>]*class="cmp-carousel__item\s+swiper-slide\s+c-carousel__item[^"]*"[^>]*>([\s\S]*?)(?=<div[^>]*class="cmp-carousel__item\s+swiper-slide|$)/gi;
     let itemMatch;
     
-    while ((itemMatch = carouselItemRegex.exec(wrapperContent)) !== null) {
-      const itemContent = itemMatch[1];
-      
-      // Extract img src from nested div > div > div > img structure
-      const imgRegex = /<img[^>]*(?:data-src|src)="([^"]+)"[^>]*>/gi;
-      let imgMatch;
-      
-      while ((imgMatch = imgRegex.exec(itemContent)) !== null) {
-        if (addImage(imgMatch[1], 'carousel-item')) {
-          foundInSwiper = true;
-        }
+    while ((itemMatch = itemRegex.exec(wrapperContent)) !== null) {
+      // Find img inside nested div > div > div > img
+      const imgMatch = itemMatch[1].match(/<div[^>]*>\s*<div[^>]*>\s*<div[^>]*>\s*<img[^>]*(?:data-src|src)="([^"]+)"/i);
+      if (imgMatch) {
+        addImage(imgMatch[1], 'exact-pattern');
       }
     }
   }
 
-  if (foundInSwiper && images.length > 0) {
-    console.log(`Found ${images.length} images from swiper carousel items`);
+  if (images.length > 0) {
+    console.log(`Found ${images.length} images from exact swiper pattern`);
+    return images;
+  }
+
+  // Strategy 2: Alternative - find all cmp-carousel__item with swiper-slide and c-carousel__item classes
+  const altRegex = /<div[^>]*class="[^"]*cmp-carousel__item[^"]*swiper-slide[^"]*c-carousel__item[^"]*"[^>]*>[\s\S]*?<img[^>]*(?:data-src|src)="([^"]+)"[^>]*>/gi;
+  let altMatch;
+  
+  while ((altMatch = altRegex.exec(html)) !== null) {
+    addImage(altMatch[1], 'alt-carousel');
+  }
+
+  if (images.length > 0) {
+    console.log(`Found ${images.length} images from alternative carousel pattern`);
     return images;
   }
 
