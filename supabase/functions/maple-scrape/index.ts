@@ -31,8 +31,11 @@ serve(async (req) => {
 
     console.log("Scraping URL:", url, "Mode:", mode);
     
-    // Configure formats based on mode - screenshot goes in formats array
-    const formats = mode === "screenshot" ? ["screenshot@fullPage"] : ["markdown"];
+    const isScreenshot = mode === "screenshot-pc" || mode === "screenshot-mobile";
+    const isMobile = mode === "screenshot-mobile";
+    
+    // Configure formats based on mode
+    const formats = isScreenshot ? ["screenshot@fullPage"] : ["markdown"];
 
     const requestBody: any = {
       url: url,
@@ -40,11 +43,16 @@ serve(async (req) => {
     };
 
     // Only add onlyMainContent for markdown mode
-    if (mode !== "screenshot") {
+    if (!isScreenshot) {
       requestBody.onlyMainContent = true;
     } else {
       // Wait for page to fully load before screenshot (5 seconds)
       requestBody.waitFor = 5000;
+      
+      // Enable mobile viewport for mobile screenshots
+      if (isMobile) {
+        requestBody.mobile = true;
+      }
     }
 
     console.log("Request body:", JSON.stringify(requestBody));

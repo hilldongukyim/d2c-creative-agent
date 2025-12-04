@@ -105,9 +105,9 @@ const MaplePDP = () => {
 
     try {
       if (option === "screenshot-pc" || option === "screenshot-mobile") {
-        setMessages((prev) => [...prev, { role: "assistant", content: `Taking ${option === "screenshot-pc" ? "PC" : "Mobile"} screenshot... 📸` }]);
+        setMessages((prev) => [...prev, { role: "assistant", content: `Taking ${option === "screenshot-pc" ? "PC" : "Mobile (iPhone)"} screenshot... 📸` }]);
         
-        const { screenshot } = await fetchPageContent(url, "screenshot");
+        const { screenshot } = await fetchPageContent(url, option);
         
         if (screenshot) {
           setMessages((prev) => {
