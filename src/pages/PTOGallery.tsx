@@ -5,7 +5,7 @@ import { ArrowLeft, Send, Undo2, Camera, Check } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef, useMemo } from "react";
 import ConfirmationWithScreenshots from "@/components/ConfirmationWithScreenshots";
-const benProfile = "/lovable-uploads/ben-profile-new.png";
+const benProfile = "/lovable-uploads/ben-profile-v2.png";
 
 interface FormData {
   email: string;
