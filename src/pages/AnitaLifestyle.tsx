@@ -22,7 +22,9 @@ const AnitaLifestyle = () => {
   const [generatedVideoUrl, setGeneratedVideoUrl] = useState<string | null>(null);
   const [isUpscaled, setIsUpscaled] = useState(false);
   const [step, setStep] = useState<"input" | "select" | "result">("input");
-  const [currentAspectRatio, setCurrentAspectRatio] = useState<"16:9" | "1:1" | "9:16">("16:9");
+  const [currentAspectRatio, setCurrentAspectRatio] = useState<"16:9" | "1:1" | "9:16" | "custom">("16:9");
+  const [customWidth, setCustomWidth] = useState("");
+  const [customHeight, setCustomHeight] = useState("");
 
   const handleExtractImages = async () => {
     if (!url) {
@@ -167,13 +169,23 @@ const AnitaLifestyle = () => {
     toast.success("Video download started!");
   };
 
-  const handleResize = async (newRatio: "16:9" | "1:1" | "9:16") => {
-    if (!generatedImage || newRatio === currentAspectRatio) return;
+  const handleResize = async (newRatio: "16:9" | "1:1" | "9:16" | "custom", width?: number, height?: number) => {
+    if (!generatedImage) return;
+    if (newRatio !== "custom" && newRatio === currentAspectRatio) return;
 
     setIsResizing(true);
     try {
+      const body: any = { imageBase64: generatedImage };
+      
+      if (newRatio === "custom" && width && height) {
+        body.customWidth = width;
+        body.customHeight = height;
+      } else {
+        body.aspectRatio = newRatio;
+      }
+
       const { data, error } = await supabase.functions.invoke("anita-resize-lifestyle", {
-        body: { imageBase64: generatedImage, aspectRatio: newRatio },
+        body,
       });
 
       if (error) throw error;
@@ -184,13 +196,31 @@ const AnitaLifestyle = () => {
       setGeneratedImage(`data:image/png;base64,${data.imageBase64}`);
       setCurrentAspectRatio(newRatio);
       setIsUpscaled(false);
-      toast.success(`Resized to ${newRatio}!`);
+      
+      const sizeLabel = newRatio === "custom" ? `${width}×${height}` : newRatio;
+      toast.success(`Resized to ${sizeLabel}!`);
     } catch (error) {
       console.error("Error resizing image:", error);
       toast.error(error instanceof Error ? error.message : "Failed to resize image");
     } finally {
       setIsResizing(false);
     }
+  };
+
+  const handleCustomResize = () => {
+    const width = parseInt(customWidth);
+    const height = parseInt(customHeight);
+    
+    if (!width || !height || width < 100 || height < 100) {
+      toast.error("Please enter valid dimensions (minimum 100px)");
+      return;
+    }
+    if (width > 4096 || height > 4096) {
+      toast.error("Maximum dimension is 4096px");
+      return;
+    }
+    
+    handleResize("custom", width, height);
   };
 
   const getAspectRatioLabel = () => {
@@ -386,38 +416,73 @@ const AnitaLifestyle = () => {
 
             {/* Aspect Ratio Resize Options */}
             <Card className="p-4 bg-white/80 backdrop-blur-sm">
-              <div className="flex items-center justify-center gap-3 flex-wrap">
-                <span className="text-sm text-gray-600">Resize to:</span>
-                <Button
-                  variant={currentAspectRatio === "16:9" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => handleResize("16:9")}
-                  disabled={isResizing || isUpscaling || currentAspectRatio === "16:9"}
-                  className={currentAspectRatio === "16:9" ? "bg-purple-500 hover:bg-purple-600" : ""}
-                >
-                  <RectangleHorizontal className="w-4 h-4 mr-1" />
-                  16:9
-                </Button>
-                <Button
-                  variant={currentAspectRatio === "1:1" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => handleResize("1:1")}
-                  disabled={isResizing || isUpscaling || currentAspectRatio === "1:1"}
-                  className={currentAspectRatio === "1:1" ? "bg-purple-500 hover:bg-purple-600" : ""}
-                >
-                  <Square className="w-4 h-4 mr-1" />
-                  1:1
-                </Button>
-                <Button
-                  variant={currentAspectRatio === "9:16" ? "default" : "outline"}
-                  size="sm"
-                  onClick={() => handleResize("9:16")}
-                  disabled={isResizing || isUpscaling || currentAspectRatio === "9:16"}
-                  className={currentAspectRatio === "9:16" ? "bg-purple-500 hover:bg-purple-600" : ""}
-                >
-                  <RectangleVertical className="w-4 h-4 mr-1" />
-                  9:16
-                </Button>
+              <div className="space-y-4">
+                <div className="flex items-center justify-center gap-3 flex-wrap">
+                  <span className="text-sm text-gray-600">Resize to:</span>
+                  <Button
+                    variant={currentAspectRatio === "16:9" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handleResize("16:9")}
+                    disabled={isResizing || isUpscaling || currentAspectRatio === "16:9"}
+                    className={currentAspectRatio === "16:9" ? "bg-purple-500 hover:bg-purple-600" : ""}
+                  >
+                    <RectangleHorizontal className="w-4 h-4 mr-1" />
+                    16:9
+                  </Button>
+                  <Button
+                    variant={currentAspectRatio === "1:1" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handleResize("1:1")}
+                    disabled={isResizing || isUpscaling || currentAspectRatio === "1:1"}
+                    className={currentAspectRatio === "1:1" ? "bg-purple-500 hover:bg-purple-600" : ""}
+                  >
+                    <Square className="w-4 h-4 mr-1" />
+                    1:1
+                  </Button>
+                  <Button
+                    variant={currentAspectRatio === "9:16" ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => handleResize("9:16")}
+                    disabled={isResizing || isUpscaling || currentAspectRatio === "9:16"}
+                    className={currentAspectRatio === "9:16" ? "bg-purple-500 hover:bg-purple-600" : ""}
+                  >
+                    <RectangleVertical className="w-4 h-4 mr-1" />
+                    9:16
+                  </Button>
+                </div>
+                
+                {/* Custom Size Input */}
+                <div className="flex items-center justify-center gap-2 flex-wrap">
+                  <span className="text-sm text-gray-600">Custom:</span>
+                  <Input
+                    type="number"
+                    placeholder="Width"
+                    value={customWidth}
+                    onChange={(e) => setCustomWidth(e.target.value)}
+                    className="w-24 h-8 text-sm"
+                    min={100}
+                    max={4096}
+                  />
+                  <span className="text-gray-400">×</span>
+                  <Input
+                    type="number"
+                    placeholder="Height"
+                    value={customHeight}
+                    onChange={(e) => setCustomHeight(e.target.value)}
+                    className="w-24 h-8 text-sm"
+                    min={100}
+                    max={4096}
+                  />
+                  <span className="text-xs text-gray-400">px</span>
+                  <Button
+                    size="sm"
+                    onClick={handleCustomResize}
+                    disabled={isResizing || isUpscaling || !customWidth || !customHeight}
+                    variant="outline"
+                  >
+                    Apply
+                  </Button>
+                </div>
               </div>
             </Card>
 
