@@ -84,7 +84,10 @@ const ConfirmationWithScreenshots = ({
 
   // Crop transparent pixels from image and return trimmed base64
   const cropTransparentPixels = async (imageSrc: string): Promise<string> => {
+    console.log('Starting crop transparent pixels...');
     const img = await loadImage(imageSrc);
+    console.log(`Original image size: ${img.width}x${img.height}`);
+    
     const canvas = document.createElement('canvas');
     canvas.width = img.width;
     canvas.height = img.height;
@@ -95,34 +98,36 @@ const ConfirmationWithScreenshots = ({
     const data = imageData.data;
     
     let minX = canvas.width, minY = canvas.height, maxX = 0, maxY = 0;
+    let hasVisiblePixels = false;
     
-    // Find bounding box of non-transparent pixels
+    // Find bounding box of non-transparent pixels (alpha > 20 for better detection)
     for (let y = 0; y < canvas.height; y++) {
       for (let x = 0; x < canvas.width; x++) {
-        const alpha = data[(y * canvas.width + x) * 4 + 3];
-        if (alpha > 10) { // threshold for non-transparent
-          minX = Math.min(minX, x);
-          minY = Math.min(minY, y);
-          maxX = Math.max(maxX, x);
-          maxY = Math.max(maxY, y);
+        const idx = (y * canvas.width + x) * 4;
+        const alpha = data[idx + 3];
+        // Check if pixel is visible (not fully transparent)
+        if (alpha > 20) {
+          hasVisiblePixels = true;
+          if (x < minX) minX = x;
+          if (y < minY) minY = y;
+          if (x > maxX) maxX = x;
+          if (y > maxY) maxY = y;
         }
       }
     }
     
+    console.log(`Bounding box found: (${minX}, ${minY}) to (${maxX}, ${maxY})`);
+    
     // If no visible pixels found, return original
-    if (minX >= maxX || minY >= maxY) {
+    if (!hasVisiblePixels || minX >= maxX || minY >= maxY) {
+      console.log('No visible pixels found or invalid bounds, returning original');
       return imageSrc;
     }
     
-    // Add small padding (2px)
-    const padding = 2;
-    minX = Math.max(0, minX - padding);
-    minY = Math.max(0, minY - padding);
-    maxX = Math.min(canvas.width - 1, maxX + padding);
-    maxY = Math.min(canvas.height - 1, maxY + padding);
-    
     const cropWidth = maxX - minX + 1;
     const cropHeight = maxY - minY + 1;
+    
+    console.log(`Cropping to: ${cropWidth}x${cropHeight} (removed ${img.width - cropWidth}x${img.height - cropHeight} transparent area)`);
     
     // Create cropped canvas
     const croppedCanvas = document.createElement('canvas');
@@ -220,7 +225,7 @@ const ConfirmationWithScreenshots = ({
     if (!mainImage || !secondImage) return;
     
     setIsProcessing(true);
-    setProcessingStatus('Removing backgrounds...');
+    setProcessingStatus('Step 1/5: Removing backgrounds...');
     
     try {
       // Step 1: Remove backgrounds using Fotor API
@@ -234,44 +239,52 @@ const ConfirmationWithScreenshots = ({
       if (error || !data.success) {
         console.error('Error processing images:', error || data.error);
         setProcessingStatus('Failed to remove backgrounds. Using original images...');
-        // Fall back to original images
         await createFinalImages(mainImage, secondImage);
         return;
       }
 
-      setProcessingStatus('Creating gallery images...');
+      setProcessingStatus('Step 2/5: Cropping transparent areas from main product...');
+      const croppedMain = await cropTransparentPixels(data.mainImage);
       
-      // Step 2: Create composite images with background-removed images
-      await createFinalImages(data.mainImage, data.secondImage);
+      setProcessingStatus('Step 3/5: Cropping transparent areas from second product...');
+      const croppedSecond = await cropTransparentPixels(data.secondImage);
+      
+      // Step 4 & 5: Create composite images
+      setProcessingStatus('Step 4/5: Creating PC version (2010×1334)...');
+      const pcDataUrl = await createCompositeImage(croppedMain, croppedSecond, 2010, 1334);
+      setPcImage(pcDataUrl);
+      
+      setProcessingStatus('Step 5/5: Creating Mobile version (450×450)...');
+      const mobileDataUrl = await createCompositeImage(croppedMain, croppedSecond, 450, 450);
+      setMobileImage(mobileDataUrl);
+      
+      setProcessingStatus('✅ Complete!');
+      setIsProcessing(false);
       
     } catch (err) {
       console.error('Error:', err);
       setProcessingStatus('Error occurred. Using original images...');
-      // Fall back to original images
       await createFinalImages(mainImage, secondImage);
     }
   };
 
   const createFinalImages = async (mainSrc: string, secondSrc: string) => {
     try {
-      // Crop transparent pixels from both images first
-      setProcessingStatus('Cropping transparent areas...');
-      const [croppedMain, croppedSecond] = await Promise.all([
-        cropTransparentPixels(mainSrc),
-        cropTransparentPixels(secondSrc)
-      ]);
+      setProcessingStatus('Step 2/5: Cropping main product...');
+      const croppedMain = await cropTransparentPixels(mainSrc);
       
-      // Create PC version (2010x1334, horizontal)
-      setProcessingStatus('Creating PC version...');
+      setProcessingStatus('Step 3/5: Cropping second product...');
+      const croppedSecond = await cropTransparentPixels(secondSrc);
+      
+      setProcessingStatus('Step 4/5: Creating PC version...');
       const pcDataUrl = await createCompositeImage(croppedMain, croppedSecond, 2010, 1334);
       setPcImage(pcDataUrl);
       
-      // Create Mobile version (450x450, horizontal)
-      setProcessingStatus('Creating Mobile version...');
+      setProcessingStatus('Step 5/5: Creating Mobile version...');
       const mobileDataUrl = await createCompositeImage(croppedMain, croppedSecond, 450, 450);
       setMobileImage(mobileDataUrl);
       
-      setProcessingStatus('Complete!');
+      setProcessingStatus('✅ Complete!');
       setIsProcessing(false);
     } catch (err) {
       console.error('Error creating composite images:', err);
