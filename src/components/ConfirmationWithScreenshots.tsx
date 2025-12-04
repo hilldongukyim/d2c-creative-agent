@@ -283,7 +283,7 @@ const ConfirmationWithScreenshots = ({
     if (!mainImage || !secondImage) return;
     
     setIsProcessing(true);
-    setProcessingStatus('Step 1/4: Removing backgrounds...');
+    setProcessingStatus('Removing backgrounds...');
     
     try {
       // Step 1: Remove backgrounds using Fotor API
@@ -298,7 +298,7 @@ const ConfirmationWithScreenshots = ({
         console.error('Error processing images:', error || data.error);
         setProcessingStatus('Failed to remove backgrounds. Using original images...');
         // Fall back to cropping original images
-        setProcessingStatus('Step 2/4: Scaling product images to fit...');
+        setProcessingStatus('Scaling product images to fit...');
         const croppedMain = await cropTransparentPixels(mainImage);
         const croppedSecond = await cropTransparentPixels(secondImage);
         setBgRemovedMain(croppedMain);
@@ -309,7 +309,7 @@ const ConfirmationWithScreenshots = ({
       }
 
       // Step 2: Scale to fit product images (crop transparent areas)
-      setProcessingStatus('Step 2/4: Scaling product images to fit...');
+      setProcessingStatus('Scaling product images to fit...');
       const croppedMain = await cropTransparentPixels(data.mainImage);
       const croppedSecond = await cropTransparentPixels(data.secondImage);
       
@@ -333,14 +333,14 @@ const ConfirmationWithScreenshots = ({
     
     try {
       // Step 3: Analyze and place images in correct layout
-      setProcessingStatus('Step 3/4: Analyzing layout and compositing...');
+      setProcessingStatus('Analyzing layout and compositing...');
       const pcDataUrl = await createCompositeImage(bgRemovedMain, bgRemovedSecond, 2010, 1334);
       setPcImage(pcDataUrl);
       const mobileDataUrl = await createCompositeImage(bgRemovedMain, bgRemovedSecond, 450, 450);
       setMobileImage(mobileDataUrl);
       
       // Step 4: Finalizing
-      setProcessingStatus('Step 4/4: Finalizing...');
+      setProcessingStatus('Finalizing...');
       await new Promise(resolve => setTimeout(resolve, 500));
       
       setProcessingStatus('✅ Complete!');
@@ -356,17 +356,17 @@ const ConfirmationWithScreenshots = ({
 
   const createFinalImages = async (mainSrc: string, secondSrc: string) => {
     try {
-      setProcessingStatus('Step 2/4: Scaling product images to fit...');
+      setProcessingStatus('Scaling product images to fit...');
       const croppedMain = await cropTransparentPixels(mainSrc);
       const croppedSecond = await cropTransparentPixels(secondSrc);
       
-      setProcessingStatus('Step 3/4: Analyzing layout and compositing...');
+      setProcessingStatus('Analyzing layout and compositing...');
       const pcDataUrl = await createCompositeImage(croppedMain, croppedSecond, 2010, 1334);
       setPcImage(pcDataUrl);
       const mobileDataUrl = await createCompositeImage(croppedMain, croppedSecond, 450, 450);
       setMobileImage(mobileDataUrl);
       
-      setProcessingStatus('Step 4/4: Finalizing...');
+      setProcessingStatus('Finalizing...');
       await new Promise(resolve => setTimeout(resolve, 500));
       
       setProcessingStatus('✅ Complete!');
