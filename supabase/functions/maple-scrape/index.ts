@@ -31,14 +31,20 @@ serve(async (req) => {
 
     console.log("Scraping URL:", url, "Mode:", mode);
     
-    // Configure formats based on mode
-    let formats: string[] = ["markdown"];
-    let screenshotOptions: any = undefined;
-    
-    if (mode === "screenshot") {
-      formats = ["screenshot"];
-      screenshotOptions = { fullPage: true };
+    // Configure formats based on mode - screenshot goes in formats array
+    const formats = mode === "screenshot" ? ["screenshot@fullPage"] : ["markdown"];
+
+    const requestBody: any = {
+      url: url,
+      formats: formats,
+    };
+
+    // Only add onlyMainContent for markdown mode
+    if (mode !== "screenshot") {
+      requestBody.onlyMainContent = true;
     }
+
+    console.log("Request body:", JSON.stringify(requestBody));
 
     const response = await fetch("https://api.firecrawl.dev/v1/scrape", {
       method: "POST",
@@ -46,24 +52,20 @@ serve(async (req) => {
         "Authorization": `Bearer ${FIRECRAWL_API_KEY}`,
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        url: url,
-        formats: formats,
-        onlyMainContent: mode !== "screenshot",
-        ...(screenshotOptions && { screenshot: screenshotOptions }),
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {
       const errorText = await response.text();
       console.error("Firecrawl API error:", response.status, errorText);
-      return new Response(JSON.stringify({ error: "Failed to scrape URL" }), {
+      return new Response(JSON.stringify({ error: "Failed to scrape URL", details: errorText }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     const data = await response.json();
+    console.log("Firecrawl response keys:", Object.keys(data.data || {}));
     
     if (!data.success) {
       console.error("Firecrawl scrape failed:", data);
