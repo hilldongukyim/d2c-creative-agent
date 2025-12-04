@@ -4,7 +4,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 
 interface FormData {
-  email: string;
   mainProductUrl: string;
   secondProductUrl: string;
   mainEnergyLabel?: string;
@@ -71,7 +70,6 @@ const ConfirmationWithScreenshots = ({
     <div className="flex gap-3 mt-4 animate-fade-in">
       <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-4 max-w-[95%] w-full">
         <div className="space-y-3 text-sm">
-          <div><strong>EP ID:</strong> {formData.email}</div>
           <div><strong>Main Product URL:</strong> <span className="text-xs text-muted-foreground break-all">{formData.mainProductUrl}</span></div>
           <div><strong>Second Product URL:</strong> <span className="text-xs text-muted-foreground break-all">{formData.secondProductUrl}</span></div>
         </div>
