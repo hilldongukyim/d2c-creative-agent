@@ -212,14 +212,14 @@ const ConfirmationWithScreenshots = ({
         secondDrawWidth = secondDrawHeight * secondRatio;
       }
       
-      // Position images vertically
-      const topAreaEnd = safeMargin + imgAreaHeight;
+      // Center each image within its respective half area (top and bottom)
+      const topAreaStart = safeMargin;
       const mainX = (width - mainDrawWidth) / 2;
-      const mainY = topAreaEnd - mainDrawHeight;
+      const mainY = topAreaStart + (imgAreaHeight - mainDrawHeight) / 2;
       
       const bottomAreaStart = height - safeMargin - imgAreaHeight;
       const secondX = (width - secondDrawWidth) / 2;
-      const secondY = bottomAreaStart;
+      const secondY = bottomAreaStart + (imgAreaHeight - secondDrawHeight) / 2;
       
       ctx.drawImage(mainImg, mainX, mainY, mainDrawWidth, mainDrawHeight);
       ctx.drawImage(secondImg, secondX, secondY, secondDrawWidth, secondDrawHeight);
@@ -254,12 +254,13 @@ const ConfirmationWithScreenshots = ({
         secondDrawWidth = secondDrawHeight * secondRatio;
       }
       
-      const leftAreaEnd = safeMargin + imgAreaWidth;
-      const mainX = leftAreaEnd - mainDrawWidth;
+      // Center each image within its respective half area
+      const leftAreaStart = safeMargin;
+      const mainX = leftAreaStart + (imgAreaWidth - mainDrawWidth) / 2;
       const mainY = (height - mainDrawHeight) / 2;
       
       const rightAreaStart = width - safeMargin - imgAreaWidth;
-      const secondX = rightAreaStart;
+      const secondX = rightAreaStart + (imgAreaWidth - secondDrawWidth) / 2;
       const secondY = (height - secondDrawHeight) / 2;
       
       ctx.drawImage(mainImg, mainX, mainY, mainDrawWidth, mainDrawHeight);
