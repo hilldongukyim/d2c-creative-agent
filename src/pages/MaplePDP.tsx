@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Send, Loader2, RotateCcw, FileText, ListChecks, Camera, Monitor, Smartphone } from "lucide-react";
+import { ArrowLeft, Send, Loader2, RotateCcw, FileText, ListChecks, Monitor, Smartphone, Download, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
@@ -21,6 +21,7 @@ const MaplePDP = () => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [pendingUrl, setPendingUrl] = useState<string | null>(null);
+  const [fullscreenImage, setFullscreenImage] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -226,8 +227,49 @@ const MaplePDP = () => {
     setPendingUrl(null);
   };
 
+  const handleDownloadScreenshot = (screenshotUrl: string) => {
+    const link = document.createElement("a");
+    link.href = screenshotUrl;
+    link.download = `maple-screenshot-${Date.now()}.png`;
+    link.click();
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 flex flex-col">
+      {/* Fullscreen Image Modal */}
+      {fullscreenImage && (
+        <div 
+          className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+          onClick={() => setFullscreenImage(null)}
+        >
+          <Button
+            variant="ghost"
+            size="icon"
+            className="absolute top-4 right-4 text-white hover:bg-white/20"
+            onClick={() => setFullscreenImage(null)}
+          >
+            <X className="w-6 h-6" />
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="absolute top-4 left-4 bg-white/10 border-white/20 text-white hover:bg-white/20"
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDownloadScreenshot(fullscreenImage);
+            }}
+          >
+            <Download className="w-4 h-4 mr-2" />
+            Download PNG
+          </Button>
+          <img 
+            src={fullscreenImage} 
+            alt="Full size screenshot" 
+            className="max-w-full max-h-full object-contain"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
       {/* Header */}
       <header className="h-14 border-b border-border bg-background/80 backdrop-blur-sm flex items-center px-4 justify-between">
         <Button variant="ghost" size="icon" onClick={() => navigate("/home")} className="text-muted-foreground hover:text-foreground">
@@ -265,8 +307,37 @@ const MaplePDP = () => {
                         {message.content || <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />}
                       </div>
                       {message.screenshot && (
-                        <div className="mt-3 rounded-lg overflow-hidden border border-border max-w-sm">
-                          <img src={message.screenshot} alt="Page Screenshot" className="w-full max-h-[400px] object-contain object-top bg-secondary" />
+                        <div className="mt-3 space-y-2">
+                          <div 
+                            className="rounded-lg overflow-hidden border border-border cursor-pointer hover:opacity-90 transition-opacity inline-block"
+                            onClick={() => setFullscreenImage(message.screenshot!)}
+                          >
+                            <img 
+                              src={message.screenshot} 
+                              alt="Page Screenshot" 
+                              className="w-auto h-auto max-w-full"
+                              style={{ maxHeight: "70vh" }}
+                            />
+                          </div>
+                          <div className="flex gap-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleDownloadScreenshot(message.screenshot!)}
+                              className="flex items-center gap-2"
+                            >
+                              <Download className="w-4 h-4" />
+                              Download PNG
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => setFullscreenImage(message.screenshot!)}
+                              className="text-muted-foreground"
+                            >
+                              View Full Size
+                            </Button>
+                          </div>
                         </div>
                       )}
                     </div>
