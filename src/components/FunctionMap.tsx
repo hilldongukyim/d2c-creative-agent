@@ -88,8 +88,8 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       personality: "NPI Operation, Content Operation, Product Registration, Readiness Check, BU Support."
     },
     "dan": {
-      description: "Dan suggests optimal metadata for image-video content to ensure better exposure in search engines and internal search systems by generative AI.",
-      personality: "Exploratory and curious, enjoys web surfing."
+      description: "Dan is an eCRM content creator who designs email content and WhatsApp banners for customer distribution. Currently specializes in text-focused content production for marketing communications.",
+      personality: "eCRM, Email Marketing, WhatsApp Banner, Customer Communication, Text Content."
     },
     "kai": {
       description: "Kai is a background removal specialist responsible for image editing and post-processing. Creates clean and professional images with precise technical skills.",
@@ -181,6 +181,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         name: "Candy",
         role: "DAM Tutor",
         imageSrc: "/lovable-uploads/candy-profile.png"
+      }, {
+        name: "Dan",
+        role: "eCRM Creator",
+        imageSrc: "/lovable-uploads/dan-profile.png"
       }, {
         name: "Anita",
         role: "Lifestyle Artist",
