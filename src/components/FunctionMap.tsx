@@ -183,7 +183,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         imageSrc: "/lovable-uploads/candy-profile.png"
       }, {
         name: "Dan",
-        role: "eCRM Creator",
+        role: "eCRM Designer",
         imageSrc: "/lovable-uploads/dan-profile.png"
       }, {
         name: "Anita",
