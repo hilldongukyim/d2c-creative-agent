@@ -356,9 +356,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                         onProfileClick?.(item.name);
                       }} role="button" tabIndex={0}>
                                   <div className="relative">
-                                    {(item.name === "Kai" || item.name === "Noa" || item.name === "Maple" || item.name === "Luna") && (
-                                      <span className="absolute -top-1 -right-1 z-10 bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full shadow-md">New</span>
-                                    )}
                                     <div className={`h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden ${item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
                                       {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{
                               backgroundColor: '#6B6B6B'
@@ -368,6 +365,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                     </div>
                                     {(item.name === "Ben" || item.name === "Kai" || item.name === "Noa" || item.name === "Anita" || item.name === "Candy") && (
                                       <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-green-500 rounded-full border-2 border-background" />
+                                    )}
+                                    {(item.name === "Yumi" || item.name === "Maple" || item.name === "Dan" || item.name === "Ava" || item.name === "Clara" || item.name === "Luna" || item.name === "Levi" || item.name === "Theo" || item.name === "Mateo") && (
+                                      <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-red-500 rounded-full border-2 border-background" />
                                     )}
                                   </div>
                                   <div className="mt-2">
@@ -386,9 +386,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                         onProfileClick?.(item.name);
                       }} role="button" tabIndex={0}>
                                   <div className="relative">
-                                    {(item.name === "Kai" || item.name === "Noa" || item.name === "Maple" || item.name === "Luna") && (
-                                      <span className="absolute -top-1 -right-1 z-10 bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full shadow-md">New</span>
-                                    )}
                                     <div className={`h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden ${item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
                                       {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{
                               backgroundColor: '#6B6B6B'
@@ -397,6 +394,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                     </div>
                                     {(item.name === "Ben" || item.name === "Kai" || item.name === "Noa" || item.name === "Anita" || item.name === "Candy") && (
                                       <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-green-500 rounded-full border-2 border-background" />
+                                    )}
+                                    {(item.name === "Yumi" || item.name === "Maple" || item.name === "Dan" || item.name === "Ava" || item.name === "Clara" || item.name === "Luna" || item.name === "Levi" || item.name === "Theo" || item.name === "Mateo") && (
+                                      <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-red-500 rounded-full border-2 border-background" />
                                     )}
                                   </div>
                                   <div className="mt-2">
@@ -413,9 +413,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                       onProfileClick?.(item.name);
                     }} role="button" tabIndex={0}>
                                 <div className="relative">
-                                  {(item.name === "Kai" || item.name === "Noa" || item.name === "Maple" || item.name === "Luna") && (
-                                    <span className="absolute -top-1 -right-1 z-10 bg-red-500 text-white text-[8px] font-bold px-1.5 py-0.5 rounded-full shadow-md">New</span>
-                                  )}
                                   <div className={`h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden ${item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
                                     {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{
                             backgroundColor: '#6B6B6B'
@@ -425,6 +422,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                   </div>
                                   {(item.name === "Ben" || item.name === "Kai" || item.name === "Noa" || item.name === "Anita" || item.name === "Candy") && (
                                     <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-green-500 rounded-full border-2 border-background" />
+                                  )}
+                                  {(item.name === "Yumi" || item.name === "Maple" || item.name === "Dan" || item.name === "Ava" || item.name === "Clara" || item.name === "Luna" || item.name === "Levi" || item.name === "Theo" || item.name === "Mateo") && (
+                                    <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-red-500 rounded-full border-2 border-background" />
                                   )}
                                 </div>
                                 <div className="mt-2">
