@@ -18,8 +18,8 @@ async function downloadImageAsBase64(imageUrl: string): Promise<string> {
   return base64Encode(new Uint8Array(imageArrayBuffer));
 }
 
-async function generateLifestyleImage(productImageBase64: string, lovableApiKey: string, aspectRatio: string = "16:9"): Promise<string> {
-  console.log("Generating lifestyle image with Gemini...");
+async function generateLifestyleImage(productImageBase64: string, lovableApiKey: string, aspectRatio: string = "16:9", country: string | null = null): Promise<string> {
+  console.log("Generating lifestyle image with Gemini...", country ? `for ${country}` : "");
 
   // Determine dimensions based on aspect ratio
   let width: number, height: number;
@@ -39,10 +39,35 @@ async function generateLifestyleImage(productImageBase64: string, lovableApiKey:
       break;
   }
 
+  // Country-specific lifestyle context
+  const countryContext = country ? `
+TARGET MARKET: ${country}
+Create a lifestyle scene that resonates with ${country} consumers:
+- Use interior design styles, furniture, and decor typical of ${country} homes
+- Reflect the cultural preferences and aesthetic sensibilities of ${country}
+- Consider typical home layouts and living spaces in ${country}
+- Include elements that feel authentic and aspirational for ${country} market
+- If applicable, consider climate and lifestyle patterns typical of ${country}
+
+For example:
+- South Korea: Modern minimalist apartments, ondol floor heating, compact but stylish spaces
+- Japan: Clean, organized spaces with natural materials, zen-like simplicity
+- United States: Spacious open-concept homes, casual comfortable lifestyle
+- Germany: Functional, efficient design with quality craftsmanship
+- United Kingdom: Mix of traditional and modern, cozy home atmosphere
+- France: Elegant, sophisticated interiors with classic touches
+- Italy: Warm Mediterranean aesthetics, stylish and artistic
+- Brazil: Vibrant colors, tropical elements, warm family-oriented spaces
+- India: Rich colors and textures, blend of traditional and modern
+- China: Balance of contemporary and traditional Chinese elements
+- Middle East (UAE, Saudi Arabia): Luxurious, opulent interiors
+- Australia: Indoor-outdoor living, bright natural light
+` : '';
+
   const prompt = `You are a professional lifestyle photographer and product placement specialist.
 
 TASK: Create a stunning lifestyle marketing image at ${width}x${height} resolution (${aspectRatio} aspect ratio).
-
+${countryContext}
 INSTRUCTIONS:
 1. First, analyze the product in the image - identify what type of product it is (electronics, appliance, furniture, etc.)
 2. Based on the product type, determine the ideal target persona:
@@ -134,7 +159,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageUrl, aspectRatio = "16:9" } = await req.json();
+    const { imageUrl, aspectRatio = "16:9", country = null } = await req.json();
 
     if (!imageUrl) {
       throw new Error("Image URL is required");
@@ -145,7 +170,7 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY not configured");
     }
 
-    console.log("Starting lifestyle image generation for:", imageUrl, "with aspect ratio:", aspectRatio);
+    console.log("Starting lifestyle image generation for:", imageUrl, "with aspect ratio:", aspectRatio, "country:", country);
 
     // Step 1: Download image
     console.log("Step 1: Downloading product image...");
@@ -154,7 +179,7 @@ serve(async (req) => {
 
     // Step 2: Generate lifestyle image with Gemini
     console.log("Step 2: Generating lifestyle image with Gemini...");
-    const lifestyleImageBase64 = await generateLifestyleImage(productImageBase64, LOVABLE_API_KEY, aspectRatio);
+    const lifestyleImageBase64 = await generateLifestyleImage(productImageBase64, LOVABLE_API_KEY, aspectRatio, country);
     console.log("Lifestyle image generated, length:", lifestyleImageBase64.length);
 
     return new Response(

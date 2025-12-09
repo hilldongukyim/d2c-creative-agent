@@ -68,6 +68,70 @@ const AnitaLifestyle = () => {
     }
   };
 
+  // Extract country code from URL
+  const extractCountryFromUrl = (pdpUrl: string): string | null => {
+    try {
+      const urlObj = new URL(pdpUrl);
+      const pathParts = urlObj.pathname.split('/').filter(Boolean);
+      // LG URL pattern: lg.com/{country-code}/... (e.g., /us/, /kr/, /de/, /uk/, /fr/, /it/, /es/, /br/, /mx/, /au/, /in/, /jp/)
+      if (pathParts.length > 0) {
+        const countryCode = pathParts[0].toLowerCase();
+        // Common country codes
+        const countryMap: Record<string, string> = {
+          'us': 'United States',
+          'kr': 'South Korea',
+          'de': 'Germany',
+          'uk': 'United Kingdom',
+          'gb': 'United Kingdom',
+          'fr': 'France',
+          'it': 'Italy',
+          'es': 'Spain',
+          'br': 'Brazil',
+          'mx': 'Mexico',
+          'au': 'Australia',
+          'in': 'India',
+          'jp': 'Japan',
+          'cn': 'China',
+          'tw': 'Taiwan',
+          'hk': 'Hong Kong',
+          'sg': 'Singapore',
+          'my': 'Malaysia',
+          'th': 'Thailand',
+          'id': 'Indonesia',
+          'ph': 'Philippines',
+          'vn': 'Vietnam',
+          'nl': 'Netherlands',
+          'be': 'Belgium',
+          'at': 'Austria',
+          'ch': 'Switzerland',
+          'pl': 'Poland',
+          'se': 'Sweden',
+          'no': 'Norway',
+          'dk': 'Denmark',
+          'fi': 'Finland',
+          'pt': 'Portugal',
+          'ru': 'Russia',
+          'tr': 'Turkey',
+          'ae': 'United Arab Emirates',
+          'sa': 'Saudi Arabia',
+          'za': 'South Africa',
+          'ca': 'Canada',
+          'ar': 'Argentina',
+          'cl': 'Chile',
+          'co': 'Colombia',
+          'pe': 'Peru',
+          'nz': 'New Zealand',
+        };
+        if (countryMap[countryCode]) {
+          return countryMap[countryCode];
+        }
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  };
+
   const handleGenerateLifestyle = async () => {
     if (!selectedImage) {
       toast.error("Please select an image first");
@@ -80,8 +144,11 @@ const AnitaLifestyle = () => {
     setGeneratedVideoUrl(null);
     
     try {
+      // Extract country from the original URL
+      const country = extractCountryFromUrl(url);
+      
       const { data, error } = await supabase.functions.invoke("anita-generate-lifestyle", {
-        body: { imageUrl: selectedImage, aspectRatio: "16:9" },
+        body: { imageUrl: selectedImage, aspectRatio: "16:9", country },
       });
 
       if (error) throw error;
