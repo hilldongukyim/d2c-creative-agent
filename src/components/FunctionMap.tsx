@@ -363,10 +363,13 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                           {item.name.charAt(0)}
                                         </div>}
                                     </div>
-                                    {(item.name === "Ben" || item.name === "Kai" || item.name === "Noa" || item.name === "Anita" || item.name === "Candy") && (
+                                    {(item.name === "Ben" || item.name === "Kai" || item.name === "Noa" || item.name === "Candy") && (
                                       <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-green-500 rounded-full border-2 border-background" />
                                     )}
-                                    {(item.name === "Yumi" || item.name === "Maple" || item.name === "Dan" || item.name === "Ava" || item.name === "Clara" || item.name === "Luna" || item.name === "Levi" || item.name === "Theo" || item.name === "Mateo") && (
+                                    {(item.name === "Anita" || item.name === "Maple" || item.name === "Mateo") && (
+                                      <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-yellow-500 rounded-full border-2 border-background" />
+                                    )}
+                                    {(item.name === "Yumi" || item.name === "Dan" || item.name === "Ava" || item.name === "Clara" || item.name === "Luna" || item.name === "Levi" || item.name === "Theo") && (
                                       <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-red-500 rounded-full border-2 border-background" />
                                     )}
                                   </div>
@@ -392,10 +395,13 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                             }}>
                                         </div>}
                                     </div>
-                                    {(item.name === "Ben" || item.name === "Kai" || item.name === "Noa" || item.name === "Anita" || item.name === "Candy") && (
+                                    {(item.name === "Ben" || item.name === "Kai" || item.name === "Noa" || item.name === "Candy") && (
                                       <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-green-500 rounded-full border-2 border-background" />
                                     )}
-                                    {(item.name === "Yumi" || item.name === "Maple" || item.name === "Dan" || item.name === "Ava" || item.name === "Clara" || item.name === "Luna" || item.name === "Levi" || item.name === "Theo" || item.name === "Mateo") && (
+                                    {(item.name === "Anita" || item.name === "Maple" || item.name === "Mateo") && (
+                                      <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-yellow-500 rounded-full border-2 border-background" />
+                                    )}
+                                    {(item.name === "Yumi" || item.name === "Dan" || item.name === "Ava" || item.name === "Clara" || item.name === "Luna" || item.name === "Levi" || item.name === "Theo") && (
                                       <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-red-500 rounded-full border-2 border-background" />
                                     )}
                                   </div>
@@ -420,10 +426,13 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                         {item.name.charAt(0)}
                                       </div>}
                                   </div>
-                                  {(item.name === "Ben" || item.name === "Kai" || item.name === "Noa" || item.name === "Anita" || item.name === "Candy") && (
+                                  {(item.name === "Ben" || item.name === "Kai" || item.name === "Noa" || item.name === "Candy") && (
                                     <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-green-500 rounded-full border-2 border-background" />
                                   )}
-                                  {(item.name === "Yumi" || item.name === "Maple" || item.name === "Dan" || item.name === "Ava" || item.name === "Clara" || item.name === "Luna" || item.name === "Levi" || item.name === "Theo" || item.name === "Mateo") && (
+                                  {(item.name === "Anita" || item.name === "Maple" || item.name === "Mateo") && (
+                                    <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-yellow-500 rounded-full border-2 border-background" />
+                                  )}
+                                  {(item.name === "Yumi" || item.name === "Dan" || item.name === "Ava" || item.name === "Clara" || item.name === "Luna" || item.name === "Levi" || item.name === "Theo") && (
                                     <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-red-500 rounded-full border-2 border-background" />
                                   )}
                                 </div>
