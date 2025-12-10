@@ -32,6 +32,7 @@ const AnitaLifestyle = () => {
   const [customWidth, setCustomWidth] = useState("");
   const [customHeight, setCustomHeight] = useState("");
   const [productName, setProductName] = useState("");
+  const [productDimensions, setProductDimensions] = useState<{ width?: string; height?: string; depth?: string; raw?: string } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   // QR code dialog state
@@ -63,8 +64,11 @@ const AnitaLifestyle = () => {
 
       setCarouselImages(data.images);
       setProductName(data.productName || "product");
+      setProductDimensions(data.productDimensions || null);
       setStep("select");
-      toast.success(`Found ${data.images.length} carousel images`);
+      
+      const dimensionInfo = data.productDimensions?.raw ? ` (Size: ${data.productDimensions.raw})` : '';
+      toast.success(`Found ${data.images.length} carousel images${dimensionInfo}`);
     } catch (error) {
       console.error("Error extracting images:", error);
       toast.error("Failed to extract images from URL");
@@ -153,7 +157,7 @@ const AnitaLifestyle = () => {
       const country = extractCountryFromUrl(url);
       
       const { data, error } = await supabase.functions.invoke("anita-generate-lifestyle", {
-        body: { imageUrl: selectedImage, aspectRatio: "16:9", country },
+        body: { imageUrl: selectedImage, aspectRatio: "16:9", country, productDimensions },
       });
 
       if (error) throw error;

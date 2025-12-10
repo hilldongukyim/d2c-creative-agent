@@ -18,8 +18,14 @@ async function downloadImageAsBase64(imageUrl: string): Promise<string> {
   return base64Encode(new Uint8Array(imageArrayBuffer));
 }
 
-async function generateLifestyleImage(productImageBase64: string, lovableApiKey: string, aspectRatio: string = "16:9", country: string | null = null): Promise<string> {
-  console.log("Generating lifestyle image with Gemini...", country ? `for ${country}` : "");
+async function generateLifestyleImage(
+  productImageBase64: string, 
+  lovableApiKey: string, 
+  aspectRatio: string = "16:9", 
+  country: string | null = null,
+  productDimensions: { width?: string; height?: string; depth?: string; raw?: string } | null = null
+): Promise<string> {
+  console.log("Generating lifestyle image with Gemini...", country ? `for ${country}` : "", productDimensions ? `with dimensions: ${JSON.stringify(productDimensions)}` : "");
 
   // Determine dimensions based on aspect ratio
   let width: number, height: number;
@@ -38,6 +44,24 @@ async function generateLifestyleImage(productImageBase64: string, lovableApiKey:
       height = 1080;
       break;
   }
+
+  // Product dimensions context for accurate sizing
+  const dimensionsContext = productDimensions ? `
+PRODUCT PHYSICAL DIMENSIONS:
+${productDimensions.raw ? `- Overall size: ${productDimensions.raw}` : ''}
+${productDimensions.width ? `- Width: ${productDimensions.width}` : ''}
+${productDimensions.height ? `- Height: ${productDimensions.height}` : ''}
+${productDimensions.depth ? `- Depth: ${productDimensions.depth}` : ''}
+
+CRITICAL SIZE ACCURACY INSTRUCTIONS:
+- Use these exact dimensions to determine the product's real-world scale
+- Place the product in the scene with ACCURATE proportions relative to furniture and surroundings
+- A 1000mm tall refrigerator should appear roughly human-height in the scene
+- A 500mm tall washing machine should appear waist-height when placed on the floor
+- Compare product dimensions to standard furniture sizes (sofa ~85cm height, dining table ~75cm height, door ~200cm height)
+- The product should look naturally sized - not too large or too small for the space
+- Use reference objects in the scene to establish correct scale perception
+` : '';
 
   // Country-specific lifestyle context
   const countryContext = country ? `
@@ -67,6 +91,7 @@ For example:
   const prompt = `You are a professional lifestyle photographer and product placement specialist.
 
 TASK: Create a stunning lifestyle marketing image at ${width}x${height} resolution (${aspectRatio} aspect ratio).
+${dimensionsContext}
 ${countryContext}
 INSTRUCTIONS:
 1. First, analyze the product in the image - identify what type of product it is (electronics, appliance, furniture, etc.)
@@ -84,6 +109,7 @@ INSTRUCTIONS:
    - Uses appropriate lighting for the product type (warm for home, bright for tech)
    - Includes contextual elements that tell a story about the user's lifestyle
    - Feels like a high-end catalog or magazine advertisement
+   ${productDimensions ? '- MAINTAINS ACCURATE PRODUCT SIZE based on the provided dimensions' : ''}
 
 4. Technical requirements:
    - Professional photography quality
@@ -91,6 +117,7 @@ INSTRUCTIONS:
    - Product should be clearly visible and prominently featured
    - Background should complement, not distract from the product
    - Color harmony between product and environment
+   ${productDimensions ? '- Product scale must be realistic relative to surrounding furniture and space' : ''}
 
 Generate the lifestyle image now.`;
 
@@ -159,7 +186,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageUrl, aspectRatio = "16:9", country = null } = await req.json();
+    const { imageUrl, aspectRatio = "16:9", country = null, productDimensions = null } = await req.json();
 
     if (!imageUrl) {
       throw new Error("Image URL is required");
@@ -170,7 +197,7 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY not configured");
     }
 
-    console.log("Starting lifestyle image generation for:", imageUrl, "with aspect ratio:", aspectRatio, "country:", country);
+    console.log("Starting lifestyle image generation for:", imageUrl, "with aspect ratio:", aspectRatio, "country:", country, "dimensions:", productDimensions);
 
     // Step 1: Download image
     console.log("Step 1: Downloading product image...");
@@ -179,7 +206,7 @@ serve(async (req) => {
 
     // Step 2: Generate lifestyle image with Gemini
     console.log("Step 2: Generating lifestyle image with Gemini...");
-    const lifestyleImageBase64 = await generateLifestyleImage(productImageBase64, LOVABLE_API_KEY, aspectRatio, country);
+    const lifestyleImageBase64 = await generateLifestyleImage(productImageBase64, LOVABLE_API_KEY, aspectRatio, country, productDimensions);
     console.log("Lifestyle image generated, length:", lifestyleImageBase64.length);
 
     return new Response(

@@ -92,6 +92,64 @@ function extractCarouselImages(html: string, baseUrl: string): string[] {
   return uniqueImages;
 }
 
+// Extract product dimensions from Spec section
+function extractProductDimensions(html: string): { width?: string; height?: string; depth?: string; raw?: string } | null {
+  console.log("=== Extracting product dimensions ===");
+  
+  const dimensions: { width?: string; height?: string; depth?: string; raw?: string } = {};
+  
+  // Try to find spec/dimension section patterns
+  // Pattern 1: Look for dimension rows with W x H x D format
+  const dimensionPatterns = [
+    // W x H x D pattern (e.g., "1200 x 800 x 350 mm")
+    /(?:dimension|size|spec)[^<]*?(\d+(?:\.\d+)?)\s*[x×]\s*(\d+(?:\.\d+)?)\s*[x×]\s*(\d+(?:\.\d+)?)\s*(mm|cm|inch)?/gi,
+    // Individual dimension patterns
+    /(?:width|가로)[^<]*?[:\s]+(\d+(?:\.\d+)?)\s*(mm|cm|inch)?/gi,
+    /(?:height|높이|세로)[^<]*?[:\s]+(\d+(?:\.\d+)?)\s*(mm|cm|inch)?/gi,
+    /(?:depth|깊이)[^<]*?[:\s]+(\d+(?:\.\d+)?)\s*(mm|cm|inch)?/gi,
+  ];
+  
+  // Pattern for "Size (W x H x D)" format common in LG spec tables
+  const sizeWHDMatch = html.match(/(?:size|dimension)[^<]*?\(?\s*W\s*[x×]\s*H\s*[x×]\s*D\s*\)?[^<]*?(\d+(?:\.\d+)?)\s*[x×]\s*(\d+(?:\.\d+)?)\s*[x×]\s*(\d+(?:\.\d+)?)\s*(mm|cm)?/i);
+  if (sizeWHDMatch) {
+    dimensions.width = sizeWHDMatch[1] + (sizeWHDMatch[4] || 'mm');
+    dimensions.height = sizeWHDMatch[2] + (sizeWHDMatch[4] || 'mm');
+    dimensions.depth = sizeWHDMatch[3] + (sizeWHDMatch[4] || 'mm');
+    dimensions.raw = `${sizeWHDMatch[1]} x ${sizeWHDMatch[2]} x ${sizeWHDMatch[3]} ${sizeWHDMatch[4] || 'mm'}`;
+    console.log("Found W x H x D dimensions:", dimensions);
+    return dimensions;
+  }
+
+  // Pattern for table rows with dimension labels
+  const widthMatch = html.match(/(?:<td[^>]*>|<th[^>]*>|<dt[^>]*>|<span[^>]*>)[^<]*(?:width|가로|W)[^<]*(?:<\/td>|<\/th>|<\/dt>|<\/span>)[^<]*(?:<td[^>]*>|<dd[^>]*>|<span[^>]*>)[^<]*?(\d+(?:\.\d+)?)\s*(mm|cm)?/i);
+  const heightMatch = html.match(/(?:<td[^>]*>|<th[^>]*>|<dt[^>]*>|<span[^>]*>)[^<]*(?:height|높이|세로|H)[^<]*(?:<\/td>|<\/th>|<\/dt>|<\/span>)[^<]*(?:<td[^>]*>|<dd[^>]*>|<span[^>]*>)[^<]*?(\d+(?:\.\d+)?)\s*(mm|cm)?/i);
+  const depthMatch = html.match(/(?:<td[^>]*>|<th[^>]*>|<dt[^>]*>|<span[^>]*>)[^<]*(?:depth|깊이|D)[^<]*(?:<\/td>|<\/th>|<\/dt>|<\/span>)[^<]*(?:<td[^>]*>|<dd[^>]*>|<span[^>]*>)[^<]*?(\d+(?:\.\d+)?)\s*(mm|cm)?/i);
+
+  if (widthMatch) {
+    dimensions.width = widthMatch[1] + (widthMatch[2] || 'mm');
+  }
+  if (heightMatch) {
+    dimensions.height = heightMatch[1] + (heightMatch[2] || 'mm');
+  }
+  if (depthMatch) {
+    dimensions.depth = depthMatch[1] + (depthMatch[2] || 'mm');
+  }
+
+  // Also try to find raw dimension string for complex formats
+  const rawDimensionMatch = html.match(/(?:dimension|size|spec)[^<]*?[:\s]*(\d+(?:\.\d+)?(?:\s*[x×]\s*\d+(?:\.\d+)?){1,2})\s*(mm|cm|inch)?/i);
+  if (rawDimensionMatch) {
+    dimensions.raw = rawDimensionMatch[1] + ' ' + (rawDimensionMatch[2] || 'mm');
+  }
+
+  if (Object.keys(dimensions).length > 0) {
+    console.log("Found dimensions:", dimensions);
+    return dimensions;
+  }
+
+  console.log("No dimensions found in spec section");
+  return null;
+}
+
 // Extract product name from HTML
 function extractProductName(html: string, url: string): string {
   const ogTitleMatch = html.match(/<meta[^>]*property="og:title"[^>]*content="([^"]+)"/i) ||
@@ -186,12 +244,15 @@ serve(async (req) => {
 
     const images = extractCarouselImages(html, url);
     const productName = extractProductName(html, url);
+    const productDimensions = extractProductDimensions(html);
     console.log("Total images extracted:", images.length);
+    console.log("Product dimensions:", productDimensions);
 
     return new Response(JSON.stringify({
       success: true,
       images: images,
       productName: productName,
+      productDimensions: productDimensions,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
