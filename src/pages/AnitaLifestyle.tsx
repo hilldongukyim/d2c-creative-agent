@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { ArrowLeft, Loader2, Download, Search, Sparkles, ZoomIn, Square, RectangleVertical, RectangleHorizontal, Film, RefreshCw, Camera, Smartphone } from "lucide-react";
+import { ArrowLeft, Loader2, Download, Search, Sparkles, ZoomIn, Square, RectangleVertical, RectangleHorizontal, Film, RefreshCw, Camera, Smartphone, Pencil, Send } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import Logo from "@/components/Logo";
@@ -37,6 +38,10 @@ const AnitaLifestyle = () => {
   const [showQRDialog, setShowQRDialog] = useState(false);
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [isWaitingForMobile, setIsWaitingForMobile] = useState(false);
+  
+  // Edit prompt state
+  const [editPrompt, setEditPrompt] = useState("");
+  const [isEditing, setIsEditing] = useState(false);
 
   const handleExtractImages = async () => {
     if (!url) {
@@ -235,6 +240,37 @@ const AnitaLifestyle = () => {
     setSessionId(null);
     setShowQRDialog(false);
     setIsWaitingForMobile(false);
+    setEditPrompt("");
+  };
+
+  const handleEditImage = async () => {
+    if (!generatedImage || !editPrompt.trim()) {
+      toast.error("Please enter an edit prompt");
+      return;
+    }
+
+    setIsEditing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("anita-edit-lifestyle", {
+        body: { imageBase64: generatedImage, editPrompt: editPrompt.trim() },
+      });
+
+      if (error) throw error;
+      if (!data.success || !data.imageBase64) {
+        throw new Error(data.error || "Failed to edit image");
+      }
+
+      setGeneratedImage(`data:image/png;base64,${data.imageBase64}`);
+      setIsUpscaled(false);
+      setGeneratedVideoUrl(null);
+      setEditPrompt("");
+      toast.success("Image edited successfully!");
+    } catch (error) {
+      console.error("Error editing image:", error);
+      toast.error(error instanceof Error ? error.message : "Failed to edit image");
+    } finally {
+      setIsEditing(false);
+    }
   };
 
   // Generate session ID and setup Realtime listener for QR code flow
@@ -665,6 +701,39 @@ const AnitaLifestyle = () => {
                 <p className="text-sm text-gray-500 mt-2">This may take up to 30 seconds</p>
               </Card>
             )}
+
+            {/* Edit Prompt Input */}
+            <Card className="p-4 bg-white/80 backdrop-blur-sm">
+              <div className="space-y-3">
+                <div className="flex items-center gap-2">
+                  <Pencil className="w-4 h-4 text-gray-600" />
+                  <span className="text-sm font-medium text-gray-700">Edit Image</span>
+                </div>
+                <div className="flex gap-2">
+                  <Textarea
+                    value={editPrompt}
+                    onChange={(e) => setEditPrompt(e.target.value)}
+                    placeholder="Enter your edit request... (e.g., 'Change the background to a cozy winter scene', 'Add warm lighting', 'Make it more minimalist')"
+                    className="flex-1 min-h-[60px] resize-none text-sm"
+                    disabled={isEditing || isResizing || isUpscaling || isGenerating || isGeneratingVideo}
+                  />
+                  <Button
+                    onClick={handleEditImage}
+                    disabled={isEditing || isResizing || isUpscaling || isGenerating || isGeneratingVideo || !editPrompt.trim()}
+                    className="bg-teal-500 hover:bg-teal-600 self-end"
+                  >
+                    {isEditing ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Send className="w-4 h-4" />
+                    )}
+                  </Button>
+                </div>
+                {isEditing && (
+                  <p className="text-xs text-gray-500 text-center">Applying edit... This may take up to 30 seconds</p>
+                )}
+              </div>
+            </Card>
 
             {/* Aspect Ratio Resize Options */}
             <Card className="p-4 bg-white/80 backdrop-blur-sm">

@@ -41,3 +41,9 @@ verify_jwt = false
 
 [functions.anita-generate-video]
 verify_jwt = false
+
+[functions.anita-edit-lifestyle]
+verify_jwt = false
+
+[functions.anita-photo-composite]
+verify_jwt = false
