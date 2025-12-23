@@ -476,8 +476,8 @@ const ConfirmationWithScreenshots = ({
         <BenFeedbackDialog
           open={showFeedbackDialog}
           onOpenChange={setShowFeedbackDialog}
-          mainProductUrl={formData.mainProductUrl}
-          secondProductUrl={formData.secondProductUrl}
+          crewName="Ben"
+          productUrls={[formData.mainProductUrl, formData.secondProductUrl].filter(Boolean)}
         />
       </div>
     );

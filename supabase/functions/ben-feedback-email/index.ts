@@ -8,17 +8,20 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// In-memory storage for cumulative stats (resets on function cold start)
-// For persistent storage, you would use a database
-let totalFeedback = 0;
-let totalLikes = 0;
-let totalDislikes = 0;
+// In-memory storage for cumulative stats per crew (resets on function cold start)
+const crewStats: Record<string, { total: number; likes: number; dislikes: number }> = {
+  Ben: { total: 0, likes: 0, dislikes: 0 },
+  Anita: { total: 0, likes: 0, dislikes: 0 },
+};
 
 interface FeedbackRequest {
+  crewName: 'Ben' | 'Anita';
   feedbackType: 'like' | 'dislike';
   comment: string;
-  mainProductUrl: string;
-  secondProductUrl: string;
+  productUrls: string[];
+  // Legacy support for old API
+  mainProductUrl?: string;
+  secondProductUrl?: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -28,20 +31,31 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { feedbackType, comment, mainProductUrl, secondProductUrl }: FeedbackRequest = await req.json();
+    const body: FeedbackRequest = await req.json();
+    
+    // Support both new and old API formats
+    const crewName = body.crewName || 'Ben';
+    const { feedbackType, comment } = body;
+    const productUrls = body.productUrls || [body.mainProductUrl, body.secondProductUrl].filter(Boolean);
 
-    console.log('Received feedback:', { feedbackType, comment, mainProductUrl, secondProductUrl });
+    console.log('Received feedback:', { crewName, feedbackType, comment, productUrls });
 
-    // Update cumulative stats
-    totalFeedback++;
-    if (feedbackType === 'like') {
-      totalLikes++;
-    } else {
-      totalDislikes++;
+    // Initialize crew stats if not exists
+    if (!crewStats[crewName]) {
+      crewStats[crewName] = { total: 0, likes: 0, dislikes: 0 };
     }
 
-    const likePercentage = totalFeedback > 0 ? Math.round((totalLikes / totalFeedback) * 100) : 0;
-    const dislikePercentage = totalFeedback > 0 ? Math.round((totalDislikes / totalFeedback) * 100) : 0;
+    // Update cumulative stats
+    crewStats[crewName].total++;
+    if (feedbackType === 'like') {
+      crewStats[crewName].likes++;
+    } else {
+      crewStats[crewName].dislikes++;
+    }
+
+    const stats = crewStats[crewName];
+    const likePercentage = stats.total > 0 ? Math.round((stats.likes / stats.total) * 100) : 0;
+    const dislikePercentage = stats.total > 0 ? Math.round((stats.dislikes / stats.total) * 100) : 0;
 
     // Format timestamp in Korean timezone
     const timestamp = new Date().toLocaleString('ko-KR', {
@@ -55,7 +69,19 @@ const handler = async (req: Request): Promise<Response> => {
     });
 
     const feedbackEmoji = feedbackType === 'like' ? '👍' : '👎';
-    const feedbackLabel = feedbackType === 'like' ? '좋아요' : '아쉬워요';
+    const feedbackLabel = feedbackType === 'like' ? 'Like' : 'Dislike';
+
+    const crewColor = crewName === 'Ben' ? '#667eea' : '#e879f9';
+    const crewGradient = crewName === 'Ben' 
+      ? 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+      : 'linear-gradient(135deg, #e879f9 0%, #8b5cf6 100%)';
+
+    const urlsHtml = productUrls.length > 0 
+      ? productUrls.map((url, i) => `
+          <p><strong>Product ${i + 1}:</strong></p>
+          <div class="url-box">${url || 'N/A'}</div>
+        `).join('')
+      : '<div class="url-box">No product URLs provided</div>';
 
     const emailHtml = `
       <!DOCTYPE html>
@@ -65,7 +91,7 @@ const handler = async (req: Request): Promise<Response> => {
           <style>
             body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #333; }
             .container { max-width: 600px; margin: 0 auto; padding: 20px; }
-            .header { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 10px 10px 0 0; }
+            .header { background: ${crewGradient}; color: white; padding: 20px; border-radius: 10px 10px 0 0; }
             .content { background: #f9fafb; padding: 20px; border: 1px solid #e5e7eb; }
             .stats { background: white; padding: 15px; border-radius: 8px; margin-top: 15px; }
             .stat-item { display: inline-block; margin-right: 20px; }
@@ -81,46 +107,43 @@ const handler = async (req: Request): Promise<Response> => {
         <body>
           <div class="container">
             <div class="header">
-              <h1 style="margin: 0;">📊 Ben Feedback Report</h1>
-              <p style="margin: 5px 0 0; opacity: 0.9;">PTO Gallery Image Generator</p>
+              <h1 style="margin: 0;">📊 ${crewName} Feedback Report</h1>
+              <p style="margin: 5px 0 0; opacity: 0.9;">LG AI Crew - ${crewName === 'Ben' ? 'PTO Gallery Image Generator' : 'Lifestyle Image Generator'}</p>
             </div>
             
             <div class="content">
-              <p><strong>⏰ 접수 시간:</strong> ${timestamp}</p>
-              <p><strong>${feedbackEmoji} 피드백 유형:</strong> <span class="${feedbackType}">${feedbackLabel}</span></p>
+              <p><strong>⏰ Timestamp:</strong> ${timestamp}</p>
+              <p><strong>${feedbackEmoji} Feedback Type:</strong> <span class="${feedbackType}">${feedbackLabel}</span></p>
               
               ${comment ? `
                 <div class="comment-box">
-                  <strong>💬 사용자 의견:</strong>
+                  <strong>💬 User Comment:</strong>
                   <p style="margin: 10px 0 0;">${comment}</p>
                 </div>
               ` : ''}
               
-              <h3 style="margin-top: 20px;">📝 사용한 제품 URL:</h3>
-              <p><strong>Main Product:</strong></p>
-              <div class="url-box">${mainProductUrl || 'N/A'}</div>
-              <p><strong>Second Product:</strong></p>
-              <div class="url-box">${secondProductUrl || 'N/A'}</div>
+              <h3 style="margin-top: 20px;">📝 Product URLs:</h3>
+              ${urlsHtml}
               
               <div class="stats">
-                <h3 style="margin-top: 0;">📈 누적 통계 (현재 세션)</h3>
+                <h3 style="margin-top: 0;">📈 Cumulative Stats (Current Session)</h3>
                 <div class="stat-item">
-                  <div class="label">총 피드백</div>
-                  <div class="value">${totalFeedback}건</div>
+                  <div class="label">Total Feedback</div>
+                  <div class="value">${stats.total}</div>
                 </div>
                 <div class="stat-item">
-                  <div class="label">좋아요</div>
-                  <div class="value like">${totalLikes}건 (${likePercentage}%)</div>
+                  <div class="label">Likes</div>
+                  <div class="value like">${stats.likes} (${likePercentage}%)</div>
                 </div>
                 <div class="stat-item">
-                  <div class="label">아쉬워요</div>
-                  <div class="value dislike">${totalDislikes}건 (${dislikePercentage}%)</div>
+                  <div class="label">Dislikes</div>
+                  <div class="value dislike">${stats.dislikes} (${dislikePercentage}%)</div>
                 </div>
               </div>
             </div>
             
             <div class="footer">
-              <p>이 이메일은 LG AI Crew - Ben으로부터 자동 발송되었습니다.</p>
+              <p>This email was automatically sent from LG AI Crew - ${crewName}.</p>
             </div>
           </div>
         </body>
@@ -130,7 +153,7 @@ const handler = async (req: Request): Promise<Response> => {
     const emailResponse = await resend.emails.send({
       from: "LG AI Crew <onboarding@resend.dev>",
       to: ["donguk.yim@lge.com"],
-      subject: `[Ben Feedback] ${feedbackEmoji} ${feedbackLabel} - ${timestamp}`,
+      subject: `[${crewName} Feedback] ${feedbackEmoji} ${feedbackLabel} - ${timestamp}`,
       html: emailHtml,
     });
 
@@ -140,11 +163,7 @@ const handler = async (req: Request): Promise<Response> => {
       JSON.stringify({ 
         success: true, 
         message: "Feedback sent successfully",
-        stats: {
-          totalFeedback,
-          totalLikes,
-          totalDislikes,
-        }
+        stats: crewStats[crewName],
       }),
       {
         status: 200,
