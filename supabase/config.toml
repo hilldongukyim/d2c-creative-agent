@@ -47,3 +47,6 @@ verify_jwt = false
 
 [functions.anita-photo-composite]
 verify_jwt = false
+
+[functions.ben-feedback-email]
+verify_jwt = false

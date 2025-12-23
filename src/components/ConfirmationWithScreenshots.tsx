@@ -1,7 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { useState, useEffect, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, Download } from "lucide-react";
+import { Loader2, Download, MessageCircle } from "lucide-react";
+import BenFeedbackDialog from "./BenFeedbackDialog";
 
 interface FormData {
   mainProductUrl: string;
@@ -41,6 +42,9 @@ const ConfirmationWithScreenshots = ({
   const [bgRemovedMain, setBgRemovedMain] = useState<string | null>(null);
   const [bgRemovedSecond, setBgRemovedSecond] = useState<string | null>(null);
   const [showBgRemovedPreview, setShowBgRemovedPreview] = useState(false);
+  
+  // Feedback dialog state
+  const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
 
   useEffect(() => {
     const extractImage = async (url: string, setImage: (url: string | null) => void, setLoading: (loading: boolean) => void, setError: (error: string | null) => void) => {
@@ -436,6 +440,20 @@ const ConfirmationWithScreenshots = ({
             </div>
           </div>
           
+          {/* Feedback section */}
+          <div className="flex items-center justify-center gap-2 py-3 mb-3 border-t border-border">
+            <span className="text-sm text-muted-foreground">결과물이 마음에 드셨나요?</span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setShowFeedbackDialog(true)}
+              className="gap-2"
+            >
+              <MessageCircle className="h-4 w-4" />
+              피드백 남기기
+            </Button>
+          </div>
+          
           <Button 
             variant="outline"
             onClick={() => {
@@ -453,6 +471,14 @@ const ConfirmationWithScreenshots = ({
             Create Another PTO Image
           </Button>
         </div>
+        
+        {/* Feedback Dialog */}
+        <BenFeedbackDialog
+          open={showFeedbackDialog}
+          onOpenChange={setShowFeedbackDialog}
+          mainProductUrl={formData.mainProductUrl}
+          secondProductUrl={formData.secondProductUrl}
+        />
       </div>
     );
   }
