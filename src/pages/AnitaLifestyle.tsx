@@ -4,13 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { ArrowLeft, Loader2, Download, Search, Sparkles, ZoomIn, Square, RectangleVertical, RectangleHorizontal, Film, RefreshCw, Camera, Smartphone, Pencil, Send } from "lucide-react";
+import { ArrowLeft, Loader2, Download, Search, Sparkles, ZoomIn, Square, RectangleVertical, RectangleHorizontal, Film, RefreshCw, Camera, Smartphone, Pencil, Send, MessageCircle } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import Logo from "@/components/Logo";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { QRCodeSVG } from "qrcode.react";
+import FeedbackDialog from "@/components/BenFeedbackDialog";
 
 const AnitaLifestyle = () => {
   const navigate = useNavigate();
@@ -43,6 +44,9 @@ const AnitaLifestyle = () => {
   // Edit prompt state
   const [editPrompt, setEditPrompt] = useState("");
   const [isEditing, setIsEditing] = useState(false);
+  
+  // Feedback dialog state
+  const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
 
   const handleExtractImages = async () => {
     if (!url) {
@@ -881,6 +885,18 @@ const AnitaLifestyle = () => {
               </Button>
             </div>
 
+            {/* Feedback Button */}
+            <div className="flex justify-center mt-4">
+              <Button
+                variant="outline"
+                onClick={() => setShowFeedbackDialog(true)}
+                className="border-pink-300 text-pink-600 hover:bg-pink-50"
+              >
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Leave Feedback
+              </Button>
+            </div>
+
             {/* Video Generation Progress */}
             {isGeneratingVideo && (
               <Card className="p-6 bg-white/80 backdrop-blur-sm text-center">
@@ -961,6 +977,14 @@ const AnitaLifestyle = () => {
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Feedback Dialog */}
+      <FeedbackDialog
+        open={showFeedbackDialog}
+        onOpenChange={setShowFeedbackDialog}
+        crewName="Anita"
+        productUrls={[url].filter(Boolean)}
+      />
     </div>
   );
 };

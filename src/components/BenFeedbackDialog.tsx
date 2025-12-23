@@ -11,19 +11,19 @@ import { ThumbsUp, ThumbsDown, Send, Loader2 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-interface BenFeedbackDialogProps {
+interface FeedbackDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  mainProductUrl: string;
-  secondProductUrl: string;
+  crewName: "Ben" | "Anita";
+  productUrls: string[];
 }
 
-const BenFeedbackDialog = ({
+const FeedbackDialog = ({
   open,
   onOpenChange,
-  mainProductUrl,
-  secondProductUrl,
-}: BenFeedbackDialogProps) => {
+  crewName,
+  productUrls,
+}: FeedbackDialogProps) => {
   const [feedbackType, setFeedbackType] = useState<'like' | 'dislike' | null>(null);
   const [comment, setComment] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -36,25 +36,24 @@ const BenFeedbackDialog = ({
     try {
       const { error } = await supabase.functions.invoke('ben-feedback-email', {
         body: {
+          crewName,
           feedbackType,
           comment: feedbackType === 'dislike' ? comment : '',
-          mainProductUrl,
-          secondProductUrl,
+          productUrls,
         },
       });
 
       if (error) {
         console.error('Error sending feedback:', error);
-        toast.error('피드백 전송에 실패했습니다.');
+        toast.error('Failed to send feedback.');
         return;
       }
 
       setSubmitted(true);
-      toast.success('피드백이 전송되었습니다. 감사합니다!');
+      toast.success('Thank you for your feedback!');
       
       setTimeout(() => {
         onOpenChange(false);
-        // Reset state after dialog closes
         setTimeout(() => {
           setFeedbackType(null);
           setComment("");
@@ -63,7 +62,7 @@ const BenFeedbackDialog = ({
       }, 1500);
     } catch (err) {
       console.error('Error:', err);
-      toast.error('피드백 전송 중 오류가 발생했습니다.');
+      toast.error('An error occurred while sending feedback.');
     } finally {
       setIsSubmitting(false);
     }
@@ -82,15 +81,15 @@ const BenFeedbackDialog = ({
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="text-center">
-            Ben의 결과물은 어떠셨나요?
+            How was {crewName}'s work?
           </DialogTitle>
         </DialogHeader>
 
         {submitted ? (
           <div className="flex flex-col items-center py-8">
             <div className="text-4xl mb-4">🎉</div>
-            <p className="text-lg font-medium text-green-600">감사합니다!</p>
-            <p className="text-sm text-muted-foreground">피드백이 전송되었습니다.</p>
+            <p className="text-lg font-medium text-green-600">Thank you!</p>
+            <p className="text-sm text-muted-foreground">Your feedback has been submitted.</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -112,7 +111,7 @@ const BenFeedbackDialog = ({
                 <span className={`text-sm font-medium ${
                   feedbackType === 'like' ? 'text-green-600' : 'text-muted-foreground'
                 }`}>
-                  좋아요
+                  Like
                 </span>
               </button>
 
@@ -132,7 +131,7 @@ const BenFeedbackDialog = ({
                 <span className={`text-sm font-medium ${
                   feedbackType === 'dislike' ? 'text-red-600' : 'text-muted-foreground'
                 }`}>
-                  아쉬워요
+                  Dislike
                 </span>
               </button>
             </div>
@@ -141,12 +140,12 @@ const BenFeedbackDialog = ({
             {feedbackType === 'dislike' && (
               <div className="space-y-2 animate-fade-in">
                 <label className="text-sm font-medium">
-                  어떤 점이 아쉬우셨나요?
+                  What could be improved?
                 </label>
                 <Textarea
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
-                  placeholder="개선이 필요한 부분을 알려주세요..."
+                  placeholder="Please share your feedback..."
                   rows={3}
                   className="resize-none"
                 />
@@ -163,12 +162,12 @@ const BenFeedbackDialog = ({
                 {isSubmitting ? (
                   <>
                     <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    전송 중...
+                    Submitting...
                   </>
                 ) : (
                   <>
                     <Send className="h-4 w-4 mr-2" />
-                    피드백 보내기
+                    Submit Feedback
                   </>
                 )}
               </Button>
@@ -180,4 +179,4 @@ const BenFeedbackDialog = ({
   );
 };
 
-export default BenFeedbackDialog;
+export default FeedbackDialog;
