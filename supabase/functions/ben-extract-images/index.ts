@@ -5,6 +5,64 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Product size category mapping based on product type
+type SizeCategory = 'L' | 'M' | 'S';
+
+const PRODUCT_SIZE_MAP: Record<string, SizeCategory> = {
+  // Large (대)
+  'refrigerator': 'L',
+  'fridge': 'L',
+  'washtower': 'L',
+  'wash-tower': 'L',
+  'soundbar': 'L',
+  'tv': 'L',
+  'oled': 'L',
+  'qned': 'L',
+  'nanocell': 'L',
+  'monitor': 'L',
+  'styler': 'L',
+  
+  // Medium (중)
+  'washer': 'M',
+  'washing': 'M',
+  'dryer': 'M',
+  'vacuum': 'M',
+  'cordzero': 'M',
+  'standbyme': 'M',
+  'stanbyme': 'M',
+  'projector': 'M',
+  'cinebeam': 'M',
+  'laptop': 'M',
+  'gram': 'M',
+  'dishwasher': 'M',
+  'air-conditioner': 'M',
+  'airconditioner': 'M',
+  'microwave': 'M',
+  'dehumidifier': 'M',
+  'air-purifier': 'M',
+  'puricare': 'M',
+  
+  // Small (소)
+  'earbuds': 'S',
+  'tone-free': 'S',
+  'tonefree': 'S',
+  'headphones': 'S',
+  'speaker': 'S',
+  'xboom': 'S',
+};
+
+function detectProductCategory(url: string): SizeCategory {
+  const lowerUrl = url.toLowerCase();
+  for (const [keyword, size] of Object.entries(PRODUCT_SIZE_MAP)) {
+    if (lowerUrl.includes(keyword)) {
+      console.log(`Detected product keyword: ${keyword} -> Size: ${size}`);
+      return size;
+    }
+  }
+  console.log("No product keyword matched, defaulting to Medium");
+  return 'M'; // Default to medium if no match
+}
+
 // CSS selector to match: #swiper-wrapper-* > div.cmp-carousel__item.swiper-slide.swiper-slide-active > div > div > div > img
 function extractFirstCarouselImage(html: string): string | null {
   // Priority 1: Look for swiper-slide-active (first/current slide)
@@ -60,6 +118,10 @@ serve(async (req) => {
     }
 
     console.log("Extracting images from URL:", url);
+    
+    // Detect product size category from URL
+    const sizeCategory = detectProductCategory(url);
+    console.log("Product size category:", sizeCategory);
 
     // Get rawHtml to parse for images
     const response = await fetch("https://api.firecrawl.dev/v1/scrape", {
@@ -104,6 +166,7 @@ serve(async (req) => {
     return new Response(JSON.stringify({ 
       success: true, 
       imageUrl: firstImage,
+      sizeCategory: sizeCategory,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
