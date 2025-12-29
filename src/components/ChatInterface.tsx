@@ -96,7 +96,9 @@ const languages = {
       enterDescription: "Describe your image...",
       completed: "I've prepared everything you need! You can preview the template, download it, or open it directly in Figma.",
       goHome: "Go to Home",
-      noLayersFound: "No editable layers found for the selected channels. Please try different channels."
+      noLayersFound: "No editable layers found for the selected channels. Please try different channels.",
+      rateLimitError: "Figma API is temporarily busy. Please wait a moment and try again.",
+      retryButton: "Retry"
     }
   },
   ko: {
@@ -132,7 +134,9 @@ const languages = {
       enterDescription: "이미지를 설명해 주세요...",
       completed: "모든 준비가 완료되었습니다! 템플릿을 미리보거나, 다운로드하거나, Figma에서 직접 열 수 있습니다.",
       goHome: "홈으로 가기",
-      noLayersFound: "선택하신 채널에서 편집 가능한 레이어를 찾을 수 없습니다. 다른 채널을 선택해 주세요."
+      noLayersFound: "선택하신 채널에서 편집 가능한 레이어를 찾을 수 없습니다. 다른 채널을 선택해 주세요.",
+      rateLimitError: "Figma API가 일시적으로 사용량이 많습니다. 잠시 후 다시 시도해 주세요.",
+      retryButton: "다시 시도"
     }
   }
 };
@@ -153,10 +157,11 @@ const ChatInterface = () => {
   const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
   const [allLayers, setAllLayers] = useState<FigmaLayer[]>([]);
   const [layerInputs, setLayerInputs] = useState<LayerInput[]>([]);
-  const [phase, setPhase] = useState<"loading" | "channel-select" | "collecting" | "completed">("loading");
+  const [phase, setPhase] = useState<"loading" | "error" | "channel-select" | "collecting" | "completed">("loading");
   const [isExporting, setIsExporting] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [selectedChannels, setSelectedChannels] = useState<string[]>([]);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const ui = languages[currentLanguage].ui;
@@ -184,9 +189,13 @@ const ChatInterface = () => {
     }]);
   };
 
-  const loadFigmaLayers = async () => {
+  const loadFigmaLayers = async (isRetry = false) => {
     setIsLoading(true);
-    addMessage("yumi", ui.welcome);
+    setLoadError(null);
+    
+    if (!isRetry) {
+      addMessage("yumi", ui.welcome);
+    }
 
     try {
       const { data, error } = await supabase.functions.invoke('yumi-figma-layers');
@@ -196,10 +205,18 @@ const ChatInterface = () => {
       }
 
       if (!data.success) {
+        // Check for rate limit error
+        if (data.errorCode === 'RATE_LIMIT') {
+          setLoadError('RATE_LIMIT');
+          setPhase("error");
+          addMessage("yumi", ui.rateLimitError);
+          return;
+        }
         throw new Error(data.error || 'Failed to load Figma layers');
       }
 
       setFigmaData(data);
+      setLoadError(null);
       
       // Store all editable layers
       const editable = data.layers.filter((l: FigmaLayer) => 
@@ -220,7 +237,20 @@ const ChatInterface = () => {
 
     } catch (error: any) {
       console.error('Error loading Figma layers:', error);
-      addMessage("yumi", ui.loadError);
+      
+      // Check if it's a rate limit error from the response
+      const isRateLimit = error.message?.includes('Rate limit') || error.message?.includes('429');
+      
+      if (isRateLimit) {
+        setLoadError('RATE_LIMIT');
+        setPhase("error");
+        addMessage("yumi", ui.rateLimitError);
+      } else {
+        setLoadError('UNKNOWN');
+        setPhase("error");
+        addMessage("yumi", ui.loadError);
+      }
+      
       toast({
         title: "Error",
         description: error.message || "Failed to load Figma template",
@@ -229,6 +259,12 @@ const ChatInterface = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleRetry = () => {
+    setMessages([]);
+    setPhase("loading");
+    loadFigmaLayers(true);
   };
 
   const handleChannelChange = (channelId: string, checked: boolean) => {
@@ -653,7 +689,17 @@ const ChatInterface = () => {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Channel selection area */}
+          {/* Error state with retry button */}
+          {phase === "error" && (
+            <div className="p-4 bg-white border-t border-gray-100">
+              <Button 
+                onClick={handleRetry}
+                className="w-full bg-orange-400 hover:bg-orange-500 text-white"
+              >
+                {ui.retryButton}
+              </Button>
+            </div>
+          )}
           {phase === "channel-select" && (
             <div className="p-4 bg-white border-t border-gray-100">
               <div className="space-y-4">

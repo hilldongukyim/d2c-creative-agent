@@ -67,6 +67,29 @@ function extractLayers(node: FigmaNode, path: string = ""): ExtractedLayer[] {
   return layers;
 }
 
+// Simple delay function
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
+
+// Fetch with retry for rate limiting
+async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 3): Promise<Response> {
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    const response = await fetch(url, options);
+    
+    if (response.status === 429) {
+      // Rate limited - wait and retry
+      const retryAfter = parseInt(response.headers.get('Retry-After') || '5', 10);
+      const waitTime = Math.min(retryAfter * 1000, 10000); // Max 10 seconds
+      console.log(`Rate limited. Waiting ${waitTime}ms before retry ${attempt + 1}/${maxRetries}`);
+      await delay(waitTime);
+      continue;
+    }
+    
+    return response;
+  }
+  
+  throw new Error('Rate limit exceeded after multiple retries. Please try again in a few minutes.');
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -82,8 +105,8 @@ serve(async (req) => {
 
     console.log(`Fetching Figma file: ${FIGMA_CONFIG.fileKey}`);
 
-    // Fetch Figma file structure
-    const figmaResponse = await fetch(
+    // Fetch Figma file structure with retry
+    const figmaResponse = await fetchWithRetry(
       `https://api.figma.com/v1/files/${FIGMA_CONFIG.fileKey}`,
       {
         headers: {
@@ -95,6 +118,18 @@ serve(async (req) => {
     if (!figmaResponse.ok) {
       const errorText = await figmaResponse.text();
       console.error('Figma API error:', figmaResponse.status, errorText);
+      
+      if (figmaResponse.status === 429) {
+        return new Response(JSON.stringify({ 
+          success: false, 
+          error: 'Figma API rate limit exceeded. Please wait a moment and try again.',
+          errorCode: 'RATE_LIMIT'
+        }), {
+          status: 429,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      
       throw new Error(`Figma API error: ${figmaResponse.status}`);
     }
 
@@ -140,11 +175,15 @@ serve(async (req) => {
 
   } catch (error) {
     console.error('Error in yumi-figma-layers:', error);
+    
+    const isRateLimit = error.message?.includes('Rate limit');
+    
     return new Response(JSON.stringify({ 
       success: false, 
-      error: error.message 
+      error: error.message,
+      errorCode: isRateLimit ? 'RATE_LIMIT' : 'UNKNOWN'
     }), {
-      status: 500,
+      status: isRateLimit ? 429 : 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   }
