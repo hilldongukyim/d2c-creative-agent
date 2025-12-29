@@ -32,6 +32,10 @@ const ConfirmationWithScreenshots = ({
   const [mainError, setMainError] = useState<string | null>(null);
   const [secondError, setSecondError] = useState<string | null>(null);
   
+  // Size category state (L = Large, M = Medium, S = Small)
+  const [mainSizeCategory, setMainSizeCategory] = useState<'L' | 'M' | 'S'>('M');
+  const [secondSizeCategory, setSecondSizeCategory] = useState<'L' | 'M' | 'S'>('M');
+  
   // Processing state
   const [isProcessing, setIsProcessing] = useState(false);
   const [processingStatus, setProcessingStatus] = useState<string>('');
@@ -45,9 +49,49 @@ const ConfirmationWithScreenshots = ({
   
   // Feedback dialog state
   const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
+  
+  // Calculate scale ratios based on size categories
+  const getScaleRatios = (
+    mainSize: 'L' | 'M' | 'S', 
+    secondSize: 'L' | 'M' | 'S'
+  ): { mainScale: number; secondScale: number } => {
+    const sizeValue = { L: 3, M: 2, S: 1 };
+    const mainVal = sizeValue[mainSize];
+    const secondVal = sizeValue[secondSize];
+    
+    if (mainVal === secondVal) {
+      // Same size = equal display
+      return { mainScale: 1.0, secondScale: 1.0 };
+    } else if (mainVal > secondVal) {
+      // Main is larger, scale down second
+      // L-M: 0.75, L-S: 0.55, M-S: 0.7
+      const ratioMap: Record<string, number> = {
+        '3-2': 0.75,  // L-M
+        '3-1': 0.55,  // L-S
+        '2-1': 0.70,  // M-S
+      };
+      const key = `${mainVal}-${secondVal}`;
+      return { mainScale: 1.0, secondScale: ratioMap[key] || 0.7 };
+    } else {
+      // Second is larger, scale down main
+      const ratioMap: Record<string, number> = {
+        '2-3': 0.75,  // M-L
+        '1-3': 0.55,  // S-L
+        '1-2': 0.70,  // S-M
+      };
+      const key = `${mainVal}-${secondVal}`;
+      return { mainScale: ratioMap[key] || 0.7, secondScale: 1.0 };
+    }
+  };
 
   useEffect(() => {
-    const extractImage = async (url: string, setImage: (url: string | null) => void, setLoading: (loading: boolean) => void, setError: (error: string | null) => void) => {
+    const extractImage = async (
+      url: string, 
+      setImage: (url: string | null) => void, 
+      setLoading: (loading: boolean) => void, 
+      setError: (error: string | null) => void,
+      setSizeCategory: (size: 'L' | 'M' | 'S') => void
+    ) => {
       try {
         setLoading(true);
         setError(null);
@@ -64,6 +108,8 @@ const ConfirmationWithScreenshots = ({
 
         if (data.success && data.imageUrl) {
           setImage(data.imageUrl);
+          setSizeCategory(data.sizeCategory || 'M');
+          console.log(`Extracted image with size category: ${data.sizeCategory}`);
         } else {
           setError('No product image found');
         }
@@ -76,10 +122,10 @@ const ConfirmationWithScreenshots = ({
     };
 
     if (formData.mainProductUrl) {
-      extractImage(formData.mainProductUrl, setMainImage, setIsLoadingMain, setMainError);
+      extractImage(formData.mainProductUrl, setMainImage, setIsLoadingMain, setMainError, setMainSizeCategory);
     }
     if (formData.secondProductUrl) {
-      extractImage(formData.secondProductUrl, setSecondImage, setIsLoadingSecond, setSecondError);
+      extractImage(formData.secondProductUrl, setSecondImage, setIsLoadingSecond, setSecondError, setSecondSizeCategory);
     }
   }, [formData.mainProductUrl, formData.secondProductUrl]);
 
@@ -159,7 +205,9 @@ const ConfirmationWithScreenshots = ({
     mainImgSrc: string,
     secondImgSrc: string,
     width: number,
-    height: number
+    height: number,
+    mainScale: number = 1.0,
+    secondScale: number = 1.0
   ): Promise<string> => {
     const canvas = document.createElement('canvas');
     canvas.width = width;
@@ -185,12 +233,11 @@ const ConfirmationWithScreenshots = ({
     const plusGap = isPBP ? 40 : 15;
     
     // Determine layout for 450x450 based on product image orientation
-    // Both landscape (wider than tall) -> vertical layout (top-bottom)
-    // Both portrait (taller than wide) -> horizontal layout (left-right)
-    // Mixed -> horizontal layout (left-right)
     const mainIsLandscape = mainImg.width > mainImg.height;
     const secondIsLandscape = secondImg.width > secondImg.height;
     const useVerticalLayout = !isPBP && mainIsLandscape && secondIsLandscape;
+    
+    console.log(`Creating composite: mainScale=${mainScale}, secondScale=${secondScale}`);
     
     if (useVerticalLayout) {
       // Vertical layout: images stacked top-bottom with + in center
@@ -209,6 +256,9 @@ const ConfirmationWithScreenshots = ({
         mainDrawHeight = imgAreaHeight;
         mainDrawWidth = mainDrawHeight * mainRatio;
       }
+      // Apply size category scale
+      mainDrawWidth *= mainScale;
+      mainDrawHeight *= mainScale;
       
       // Scale second image
       let secondDrawWidth = imgAreaWidth;
@@ -217,6 +267,9 @@ const ConfirmationWithScreenshots = ({
         secondDrawHeight = imgAreaHeight;
         secondDrawWidth = secondDrawHeight * secondRatio;
       }
+      // Apply size category scale
+      secondDrawWidth *= secondScale;
+      secondDrawHeight *= secondScale;
       
       // Center each image within its respective half area (top and bottom)
       const topAreaStart = safeMargin;
@@ -252,6 +305,9 @@ const ConfirmationWithScreenshots = ({
         mainDrawHeight = imgAreaHeight;
         mainDrawWidth = mainDrawHeight * mainRatio;
       }
+      // Apply size category scale
+      mainDrawWidth *= mainScale;
+      mainDrawHeight *= mainScale;
       
       let secondDrawWidth = imgAreaWidth;
       let secondDrawHeight = secondDrawWidth / secondRatio;
@@ -259,6 +315,9 @@ const ConfirmationWithScreenshots = ({
         secondDrawHeight = imgAreaHeight;
         secondDrawWidth = secondDrawHeight * secondRatio;
       }
+      // Apply size category scale
+      secondDrawWidth *= secondScale;
+      secondDrawHeight *= secondScale;
       
       // Center each image within its respective half area
       const leftAreaStart = safeMargin;
@@ -336,11 +395,16 @@ const ConfirmationWithScreenshots = ({
     setIsProcessing(true);
     
     try {
-      // Step 3: Analyze and place images in correct layout
+      // Get scale ratios based on product size categories
+      const { mainScale, secondScale } = getScaleRatios(mainSizeCategory, secondSizeCategory);
+      console.log(`Size categories: Main=${mainSizeCategory}, Second=${secondSizeCategory}`);
+      console.log(`Scale ratios: Main=${mainScale}, Second=${secondScale}`);
+      
+      // Step 3: Analyze and place images in correct layout with size scaling
       setProcessingStatus('Analyzing layout and compositing...');
-      const pcDataUrl = await createCompositeImage(bgRemovedMain, bgRemovedSecond, 2010, 1334);
+      const pcDataUrl = await createCompositeImage(bgRemovedMain, bgRemovedSecond, 2010, 1334, mainScale, secondScale);
       setPcImage(pcDataUrl);
-      const mobileDataUrl = await createCompositeImage(bgRemovedMain, bgRemovedSecond, 450, 450);
+      const mobileDataUrl = await createCompositeImage(bgRemovedMain, bgRemovedSecond, 450, 450, mainScale, secondScale);
       setMobileImage(mobileDataUrl);
       
       // Step 4: Finalizing
