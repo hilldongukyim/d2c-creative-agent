@@ -50,3 +50,9 @@ verify_jwt = false
 
 [functions.ben-feedback-email]
 verify_jwt = false
+
+[functions.yumi-figma-layers]
+verify_jwt = false
+
+[functions.yumi-figma-export]
+verify_jwt = false
