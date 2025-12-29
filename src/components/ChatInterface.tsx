@@ -45,6 +45,15 @@ interface LayerInput {
   userValue: string;
 }
 
+// Grouped layer for asking once per unique name
+interface GroupedLayer {
+  name: string;
+  type: "TEXT" | "IMAGE";
+  layers: FigmaLayer[];
+  currentValue: string | null;
+  count: number;
+}
+
 // Channel configuration with associated frame keywords
 const CHANNELS = [
   { id: "dv360", name: "DV360", keywords: ["dv360", "dv 360", "display"] },
@@ -140,6 +149,8 @@ const ChatInterface = () => {
   const [figmaData, setFigmaData] = useState<FigmaData | null>(null);
   const [currentLayerIndex, setCurrentLayerIndex] = useState(0);
   const [editableLayers, setEditableLayers] = useState<FigmaLayer[]>([]);
+  const [groupedLayers, setGroupedLayers] = useState<GroupedLayer[]>([]);
+  const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
   const [allLayers, setAllLayers] = useState<FigmaLayer[]>([]);
   const [layerInputs, setLayerInputs] = useState<LayerInput[]>([]);
   const [phase, setPhase] = useState<"loading" | "channel-select" | "collecting" | "completed">("loading");
@@ -266,48 +277,85 @@ const ChatInterface = () => {
 
     setEditableLayers(filteredLayers);
 
-    // Show filtered layer list
+    // Group layers by name
+    const grouped = groupLayersByName(filteredLayers);
+    setGroupedLayers(grouped);
+
+    // Show filtered layer list (grouped)
     setTimeout(() => {
       addMessage("yumi", ui.channelSelected.replace("{channels}", selectedChannelNames));
       
       setTimeout(() => {
-        const layerListContent = filteredLayers.map((layer: FigmaLayer, i: number) => {
-          const icon = layer.type === "TEXT" ? "📝" : "🖼️";
-          const value = layer.currentValue ? ` ("${layer.currentValue.substring(0, 25)}${layer.currentValue.length > 25 ? '...' : ''}")` : "";
-          return `${i + 1}. ${icon} ${layer.name}${value}`;
+        const layerListContent = grouped.map((group: GroupedLayer, i: number) => {
+          const icon = group.type === "TEXT" ? "📝" : "🖼️";
+          const value = group.currentValue ? ` ("${group.currentValue.substring(0, 25)}${group.currentValue.length > 25 ? '...' : ''}")` : "";
+          const countInfo = group.count > 1 ? ` (${group.count}개 프레임)` : "";
+          return `${i + 1}. ${icon} ${group.name}${value}${countInfo}`;
         }).join("\n");
         
         addMessage("yumi", `${ui.layerList}\n\n${layerListContent}`, "info");
         
-        // Start asking for each layer
+        // Start asking for each grouped layer
         setTimeout(() => {
           addMessage("yumi", ui.askForContent);
           setPhase("collecting");
-          setCurrentLayerIndex(0);
-          askForNextLayer(0, filteredLayers);
+          setCurrentGroupIndex(0);
+          askForNextGroup(0, grouped);
         }, 1500);
       }, 1500);
     }, 1000);
   };
 
-  const askForNextLayer = (index: number, layers: FigmaLayer[]) => {
-    if (index >= layers.length) {
-      // All layers collected, show summary
+  // Group layers by name to ask only once per unique name
+  const groupLayersByName = (layers: FigmaLayer[]): GroupedLayer[] => {
+    const groupMap = new Map<string, GroupedLayer>();
+    
+    for (const layer of layers) {
+      const key = layer.name.toLowerCase().trim();
+      const layerType = layer.type === "COMPONENT" ? "IMAGE" : layer.type;
+      
+      if (groupMap.has(key)) {
+        const existing = groupMap.get(key)!;
+        existing.layers.push(layer);
+        existing.count++;
+      } else {
+        groupMap.set(key, {
+          name: layer.name,
+          type: layerType as "TEXT" | "IMAGE",
+          layers: [layer],
+          currentValue: layer.currentValue,
+          count: 1
+        });
+      }
+    }
+    
+    return Array.from(groupMap.values());
+  };
+
+  const askForNextGroup = (index: number, groups: GroupedLayer[]) => {
+    if (index >= groups.length) {
+      // All groups collected, show summary
       showSummary();
       return;
     }
 
-    const layer = layers[index];
+    const group = groups[index];
     
     setTimeout(() => {
-      if (layer.type === "TEXT") {
-        let question = ui.textLayerQuestion.replace("{layerName}", layer.name);
-        if (layer.currentValue) {
-          question += "\n" + ui.textLayerHint.replace("{currentValue}", layer.currentValue);
+      const countInfo = group.count > 1 
+        ? currentLanguage === "ko" 
+          ? ` (${group.count}개 프레임에 적용됩니다)`
+          : ` (will apply to ${group.count} frames)`
+        : "";
+        
+      if (group.type === "TEXT") {
+        let question = ui.textLayerQuestion.replace("{layerName}", group.name) + countInfo;
+        if (group.currentValue) {
+          question += "\n" + ui.textLayerHint.replace("{currentValue}", group.currentValue);
         }
         addMessage("yumi", question);
       } else {
-        const question = ui.imageLayerQuestion.replace("{layerName}", layer.name);
+        const question = ui.imageLayerQuestion.replace("{layerName}", group.name) + countInfo;
         addMessage("yumi", question + "\n" + ui.imageLayerHint);
       }
     }, 1000);
@@ -316,36 +364,38 @@ const ChatInterface = () => {
   const handleInputSubmit = () => {
     if (!inputValue.trim()) return;
 
-    const currentLayer = editableLayers[currentLayerIndex];
+    const currentGroup = groupedLayers[currentGroupIndex];
     
     // Add user message
     addMessage("user", inputValue);
 
-    // Save layer input
-    const layerType = currentLayer.type === "COMPONENT" ? "IMAGE" : currentLayer.type;
-    setLayerInputs(prev => [...prev, {
-      layerId: currentLayer.id,
-      layerName: currentLayer.name,
-      layerType: layerType as "TEXT" | "IMAGE",
-      userValue: inputValue
-    }]);
+    // Save layer input for ALL layers in this group
+    for (const layer of currentGroup.layers) {
+      const layerType = layer.type === "COMPONENT" ? "IMAGE" : layer.type;
+      setLayerInputs(prev => [...prev, {
+        layerId: layer.id,
+        layerName: layer.name,
+        layerType: layerType as "TEXT" | "IMAGE",
+        userValue: inputValue
+      }]);
+    }
 
     setInputValue("");
     
-    // Move to next layer
-    const nextIndex = currentLayerIndex + 1;
-    setCurrentLayerIndex(nextIndex);
-    askForNextLayer(nextIndex, editableLayers);
+    // Move to next group
+    const nextIndex = currentGroupIndex + 1;
+    setCurrentGroupIndex(nextIndex);
+    askForNextGroup(nextIndex, groupedLayers);
   };
 
   const handleSkipLayer = () => {
-    const currentLayer = editableLayers[currentLayerIndex];
+    const currentGroup = groupedLayers[currentGroupIndex];
     
-    addMessage("user", `(${ui.skipLayer}: ${currentLayer.name})`);
+    addMessage("user", `(${ui.skipLayer}: ${currentGroup.name})`);
     
-    const nextIndex = currentLayerIndex + 1;
-    setCurrentLayerIndex(nextIndex);
-    askForNextLayer(nextIndex, editableLayers);
+    const nextIndex = currentGroupIndex + 1;
+    setCurrentGroupIndex(nextIndex);
+    askForNextGroup(nextIndex, groupedLayers);
   };
 
   const showSummary = () => {
@@ -644,21 +694,26 @@ const ChatInterface = () => {
           )}
 
           {/* Input area for layer collection */}
-          {phase === "collecting" && currentLayerIndex < editableLayers.length && (
+          {phase === "collecting" && currentGroupIndex < groupedLayers.length && (
             <div className="p-4 bg-white border-t border-gray-100">
               <div className="space-y-3">
                 {/* Current layer indicator */}
                 <div className="flex items-center justify-between text-sm text-gray-500">
                   <span>
-                    {editableLayers[currentLayerIndex]?.type === "TEXT" ? "📝" : "🖼️"}
-                    {" "}{editableLayers[currentLayerIndex]?.name}
+                    {groupedLayers[currentGroupIndex]?.type === "TEXT" ? "📝" : "🖼️"}
+                    {" "}{groupedLayers[currentGroupIndex]?.name}
+                    {groupedLayers[currentGroupIndex]?.count > 1 && (
+                      <span className="ml-2 text-orange-500 text-xs">
+                        ({groupedLayers[currentGroupIndex]?.count}개 프레임)
+                      </span>
+                    )}
                   </span>
-                  <span>{currentLayerIndex + 1} / {editableLayers.length}</span>
+                  <span>{currentGroupIndex + 1} / {groupedLayers.length}</span>
                 </div>
                 
                 {/* Input field */}
                 <div className="flex gap-2">
-                  {editableLayers[currentLayerIndex]?.type === "TEXT" ? (
+                  {groupedLayers[currentGroupIndex]?.type === "TEXT" ? (
                     <Input
                       value={inputValue}
                       onChange={(e) => setInputValue(e.target.value)}
