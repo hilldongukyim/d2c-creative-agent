@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ArrowLeft, Send, Globe, Loader2, Download, Image, FileText, ExternalLink } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -45,6 +45,14 @@ interface LayerInput {
   userValue: string;
 }
 
+// Channel configuration with associated frame keywords
+const CHANNELS = [
+  { id: "dv360", name: "DV360", keywords: ["dv360", "dv 360", "display"] },
+  { id: "criteo", name: "Criteo", keywords: ["criteo"] },
+  { id: "email", name: "Email", keywords: ["email", "edm", "newsletter"] },
+  { id: "social", name: "Social", keywords: ["social", "facebook", "instagram", "meta"] }
+];
+
 const languages = {
   en: {
     code: "en",
@@ -54,8 +62,11 @@ const languages = {
       loading: "Loading Figma template...",
       loadError: "Failed to load template. Please try again.",
       welcome: "Hi there! I'm Yumi, your promotional content designer. 🎨",
-      templateLoaded: "I've loaded the \"{fileName}\" template! Let me show you the layers you can customize.",
-      layerList: "Here are the editable layers:",
+      templateLoaded: "I've loaded the \"{fileName}\" template!",
+      channelQuestion: "Which channels do you need banners for? You can select multiple:",
+      channelSelected: "You selected: {channels}",
+      noChannelSelected: "Please select at least one channel.",
+      layerList: "Here are the editable layers for your selected channels:",
       askForContent: "Now, let me ask you about each layer. Let's start!",
       textLayerQuestion: "What content would you like for \"{layerName}\"?",
       textLayerHint: "Current value: \"{currentValue}\"",
@@ -71,10 +82,12 @@ const languages = {
       downloadSvg: "Download SVG",
       openFigma: "Open in Figma",
       continue: "Continue",
+      confirmChannels: "Confirm Selection",
       typeResponse: "Type your response here...",
       enterDescription: "Describe your image...",
       completed: "I've prepared everything you need! You can preview the template, download it, or open it directly in Figma.",
-      goHome: "Go to Home"
+      goHome: "Go to Home",
+      noLayersFound: "No editable layers found for the selected channels. Please try different channels."
     }
   },
   ko: {
@@ -85,8 +98,11 @@ const languages = {
       loading: "Figma 템플릿을 불러오는 중...",
       loadError: "템플릿 로드에 실패했습니다. 다시 시도해 주세요.",
       welcome: "안녕하세요! 저는 프로모션 콘텐츠 디자이너 유미입니다. 🎨",
-      templateLoaded: "\"{fileName}\" 템플릿을 불러왔어요! 커스터마이징 가능한 레이어를 보여드릴게요.",
-      layerList: "편집 가능한 레이어 목록입니다:",
+      templateLoaded: "\"{fileName}\" 템플릿을 불러왔어요!",
+      channelQuestion: "어떤 채널용 배너가 필요하세요? 여러 개 선택 가능합니다:",
+      channelSelected: "선택하신 채널: {channels}",
+      noChannelSelected: "최소 하나의 채널을 선택해 주세요.",
+      layerList: "선택하신 채널에서 편집 가능한 레이어 목록입니다:",
       askForContent: "이제 각 레이어에 대해 여쭤볼게요. 시작하겠습니다!",
       textLayerQuestion: "\"{layerName}\"에 어떤 내용을 넣으시겠어요?",
       textLayerHint: "현재 값: \"{currentValue}\"",
@@ -102,10 +118,12 @@ const languages = {
       downloadSvg: "SVG 다운로드",
       openFigma: "Figma에서 열기",
       continue: "계속하기",
+      confirmChannels: "선택 확인",
       typeResponse: "답변을 입력하세요...",
       enterDescription: "이미지를 설명해 주세요...",
       completed: "모든 준비가 완료되었습니다! 템플릿을 미리보거나, 다운로드하거나, Figma에서 직접 열 수 있습니다.",
-      goHome: "홈으로 가기"
+      goHome: "홈으로 가기",
+      noLayersFound: "선택하신 채널에서 편집 가능한 레이어를 찾을 수 없습니다. 다른 채널을 선택해 주세요."
     }
   }
 };
@@ -122,10 +140,12 @@ const ChatInterface = () => {
   const [figmaData, setFigmaData] = useState<FigmaData | null>(null);
   const [currentLayerIndex, setCurrentLayerIndex] = useState(0);
   const [editableLayers, setEditableLayers] = useState<FigmaLayer[]>([]);
+  const [allLayers, setAllLayers] = useState<FigmaLayer[]>([]);
   const [layerInputs, setLayerInputs] = useState<LayerInput[]>([]);
-  const [phase, setPhase] = useState<"loading" | "collecting" | "completed">("loading");
+  const [phase, setPhase] = useState<"loading" | "channel-select" | "collecting" | "completed">("loading");
   const [isExporting, setIsExporting] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [selectedChannels, setSelectedChannels] = useState<string[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const ui = languages[currentLanguage].ui;
@@ -170,32 +190,20 @@ const ChatInterface = () => {
 
       setFigmaData(data);
       
-      // Filter to get only editable layers (TEXT and IMAGE)
+      // Store all editable layers
       const editable = data.layers.filter((l: FigmaLayer) => 
         l.type === "TEXT" || l.type === "IMAGE"
       );
-      setEditableLayers(editable);
+      setAllLayers(editable);
 
       // Show template loaded message
       setTimeout(() => {
         addMessage("yumi", ui.templateLoaded.replace("{fileName}", data.fileName));
         
-        // Show layer list
+        // Ask for channel selection
         setTimeout(() => {
-          const layerListContent = editable.map((layer: FigmaLayer, i: number) => {
-            const icon = layer.type === "TEXT" ? "📝" : "🖼️";
-            const value = layer.currentValue ? ` (현재: "${layer.currentValue.substring(0, 30)}${layer.currentValue.length > 30 ? '...' : ''}")` : "";
-            return `${i + 1}. ${icon} ${layer.name}${value}`;
-          }).join("\n");
-          
-          addMessage("yumi", `${ui.layerList}\n\n${layerListContent}`, "info");
-          
-          // Start asking for each layer
-          setTimeout(() => {
-            addMessage("yumi", ui.askForContent);
-            setPhase("collecting");
-            askForNextLayer(0, editable);
-          }, 1500);
+          addMessage("yumi", ui.channelQuestion, "info");
+          setPhase("channel-select");
         }, 1500);
       }, 1500);
 
@@ -210,6 +218,76 @@ const ChatInterface = () => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleChannelChange = (channelId: string, checked: boolean) => {
+    setSelectedChannels(prev => 
+      checked 
+        ? [...prev, channelId]
+        : prev.filter(c => c !== channelId)
+    );
+  };
+
+  const handleChannelConfirm = () => {
+    if (selectedChannels.length === 0) {
+      toast({
+        title: "Warning",
+        description: ui.noChannelSelected,
+        variant: "destructive"
+      });
+      return;
+    }
+
+    // Get channel names for display
+    const selectedChannelNames = CHANNELS
+      .filter(c => selectedChannels.includes(c.id))
+      .map(c => c.name)
+      .join(", ");
+
+    addMessage("user", selectedChannelNames);
+
+    // Filter layers based on selected channels
+    const selectedKeywords = CHANNELS
+      .filter(c => selectedChannels.includes(c.id))
+      .flatMap(c => c.keywords);
+
+    const filteredLayers = allLayers.filter(layer => {
+      const pathLower = layer.path.toLowerCase();
+      return selectedKeywords.some(keyword => pathLower.includes(keyword.toLowerCase()));
+    });
+
+    if (filteredLayers.length === 0) {
+      setTimeout(() => {
+        addMessage("yumi", ui.noLayersFound);
+        // Stay in channel-select phase for retry
+      }, 1000);
+      return;
+    }
+
+    setEditableLayers(filteredLayers);
+
+    // Show filtered layer list
+    setTimeout(() => {
+      addMessage("yumi", ui.channelSelected.replace("{channels}", selectedChannelNames));
+      
+      setTimeout(() => {
+        const layerListContent = filteredLayers.map((layer: FigmaLayer, i: number) => {
+          const icon = layer.type === "TEXT" ? "📝" : "🖼️";
+          const value = layer.currentValue ? ` ("${layer.currentValue.substring(0, 25)}${layer.currentValue.length > 25 ? '...' : ''}")` : "";
+          return `${i + 1}. ${icon} ${layer.name}${value}`;
+        }).join("\n");
+        
+        addMessage("yumi", `${ui.layerList}\n\n${layerListContent}`, "info");
+        
+        // Start asking for each layer
+        setTimeout(() => {
+          addMessage("yumi", ui.askForContent);
+          setPhase("collecting");
+          setCurrentLayerIndex(0);
+          askForNextLayer(0, filteredLayers);
+        }, 1500);
+      }, 1500);
+    }, 1000);
   };
 
   const askForNextLayer = (index: number, layers: FigmaLayer[]) => {
@@ -525,7 +603,47 @@ const ChatInterface = () => {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Input area */}
+          {/* Channel selection area */}
+          {phase === "channel-select" && (
+            <div className="p-4 bg-white border-t border-gray-100">
+              <div className="space-y-4">
+                <div className="grid grid-cols-2 gap-3">
+                  {CHANNELS.map((channel) => (
+                    <div 
+                      key={channel.id} 
+                      className={`flex items-center space-x-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                        selectedChannels.includes(channel.id)
+                          ? "border-orange-400 bg-orange-50"
+                          : "border-gray-200 hover:border-gray-300"
+                      }`}
+                      onClick={() => handleChannelChange(channel.id, !selectedChannels.includes(channel.id))}
+                    >
+                      <Checkbox
+                        id={channel.id}
+                        checked={selectedChannels.includes(channel.id)}
+                        onCheckedChange={(checked) => handleChannelChange(channel.id, checked as boolean)}
+                      />
+                      <label 
+                        htmlFor={channel.id} 
+                        className="text-sm font-medium cursor-pointer flex-1"
+                      >
+                        {channel.name}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+                <Button 
+                  onClick={handleChannelConfirm}
+                  className="w-full bg-orange-400 hover:bg-orange-500 text-white"
+                  disabled={selectedChannels.length === 0}
+                >
+                  {ui.confirmChannels} ({selectedChannels.length})
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {/* Input area for layer collection */}
           {phase === "collecting" && currentLayerIndex < editableLayers.length && (
             <div className="p-4 bg-white border-t border-gray-100">
               <div className="space-y-3">
