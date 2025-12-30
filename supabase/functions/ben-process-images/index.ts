@@ -6,6 +6,49 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// SSRF protection: Validate URLs to prevent internal network access
+function isValidExternalUrl(urlString: string): { valid: boolean; error?: string } {
+  try {
+    const url = new URL(urlString);
+    
+    // Only allow https protocol
+    if (url.protocol !== 'https:') {
+      return { valid: false, error: "Only HTTPS URLs are allowed" };
+    }
+    
+    const hostname = url.hostname.toLowerCase();
+    
+    // Block localhost and loopback
+    if (hostname === 'localhost' || hostname === '127.0.0.1' || hostname === '::1') {
+      return { valid: false, error: "Localhost URLs are not allowed" };
+    }
+    
+    // Block private IP ranges
+    const ipv4Match = hostname.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+    if (ipv4Match) {
+      const [, a, b, c] = ipv4Match.map(Number);
+      if (
+        a === 10 ||
+        (a === 172 && b >= 16 && b <= 31) ||
+        (a === 192 && b === 168) ||
+        (a === 169 && b === 254) ||
+        a === 127
+      ) {
+        return { valid: false, error: "Private IP addresses are not allowed" };
+      }
+    }
+    
+    // Block AWS/cloud metadata endpoints
+    if (hostname === '169.254.169.254' || hostname.includes('metadata')) {
+      return { valid: false, error: "Metadata endpoints are not allowed" };
+    }
+    
+    return { valid: true };
+  } catch {
+    return { valid: false, error: "Invalid URL format" };
+  }
+}
+
 async function downloadImageAsBase64(imageUrl: string): Promise<string> {
   console.log("Downloading image:", imageUrl);
   const response = await fetch(imageUrl);
@@ -63,6 +106,25 @@ serve(async (req) => {
 
     if (!mainImageUrl || !secondImageUrl) {
       return new Response(JSON.stringify({ error: "Both image URLs are required" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // Validate URLs for SSRF protection
+    const mainUrlValidation = isValidExternalUrl(mainImageUrl);
+    if (!mainUrlValidation.valid) {
+      console.error("Main URL validation failed:", mainUrlValidation.error);
+      return new Response(JSON.stringify({ error: `Main image: ${mainUrlValidation.error}` }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const secondUrlValidation = isValidExternalUrl(secondImageUrl);
+    if (!secondUrlValidation.valid) {
+      console.error("Second URL validation failed:", secondUrlValidation.error);
+      return new Response(JSON.stringify({ error: `Second image: ${secondUrlValidation.error}` }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
