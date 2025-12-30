@@ -2,19 +2,53 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { ArrowLeft, Send, Globe, Loader2, Download, Image, FileText, ExternalLink } from "lucide-react";
+import { ArrowLeft, Loader2, Download, FileText, ExternalLink, Check, RefreshCw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
-interface Message {
-  id: string;
-  sender: "yumi" | "user";
-  content: string;
-  timestamp: Date;
-  type?: "question" | "answer" | "info" | "preview";
+// ==================== Types ====================
+
+type Phase = 
+  | "loading"
+  | "layout-select"
+  | "layout-confirm"
+  | "channel-select"
+  | "syncing"
+  | "copy-collect"
+  | "image-type-select"
+  | "pdp-input"
+  | "pdp-preview"
+  | "lifestyle-input"
+  | "lifestyle-generating"
+  | "lifestyle-preview"
+  | "final-generating"
+  | "final-preview"
+  | "completed"
+  | "error";
+
+interface LayoutOption {
+  id: "A" | "B" | "C" | "D" | "E";
+  name: string;
+  description: string;
+  thumbnail: string;
+  available: boolean;
+  requiresProduct: boolean;
+}
+
+interface WizardState {
+  selectedLayout: "A" | "B" | null;
+  selectedChannels: string[];
+  copyInputs: {
+    headline: string;
+    subcopy: string;
+    cta: string;
+  };
+  includeProduct: boolean;
+  pdpUrl: string;
+  productImageUrl: string | null;
+  lifestyleDescription: string;
+  lifestyleImageUrl: string | null;
 }
 
 interface FigmaLayer {
@@ -25,490 +59,424 @@ interface FigmaLayer {
   path: string;
 }
 
-interface FigmaPage {
-  name: string;
-  id: string;
-  layers: FigmaLayer[];
-}
-
 interface FigmaData {
   fileName: string;
   fileKey: string;
-  pages: FigmaPage[];
   layers: FigmaLayer[];
 }
 
-interface LayerInput {
-  layerId: string;
-  layerName: string;
-  layerType: "TEXT" | "IMAGE";
-  userValue: string;
-}
+// ==================== Constants ====================
 
-// Grouped layer for asking once per unique name
-interface GroupedLayer {
-  name: string;
-  type: "TEXT" | "IMAGE";
-  layers: FigmaLayer[];
-  currentValue: string | null;
-  count: number;
-}
-
-// Channel configuration with associated frame keywords
-const CHANNELS = [
-  { id: "dv360", name: "DV360", keywords: ["dv360", "dv 360", "display"] },
-  { id: "criteo", name: "Criteo", keywords: ["criteo"] },
-  { id: "email", name: "Email", keywords: ["email", "edm", "newsletter"] },
-  { id: "social", name: "Social", keywords: ["social", "facebook", "instagram", "meta"] }
+const LAYOUT_OPTIONS: LayoutOption[] = [
+  {
+    id: "A",
+    name: "Type A",
+    description: "Product + Lifestyle",
+    thumbnail: "/layout-type-a.jpg",
+    available: true,
+    requiresProduct: true,
+  },
+  {
+    id: "B",
+    name: "Type B",
+    description: "Lifestyle Only",
+    thumbnail: "/layout-type-b.jpg",
+    available: false, // Coming soon
+    requiresProduct: false,
+  },
+  {
+    id: "C",
+    name: "Type C",
+    description: "Coming Soon",
+    thumbnail: "",
+    available: false,
+    requiresProduct: false,
+  },
+  {
+    id: "D",
+    name: "Type D",
+    description: "Coming Soon",
+    thumbnail: "",
+    available: false,
+    requiresProduct: false,
+  },
+  {
+    id: "E",
+    name: "Type E",
+    description: "Coming Soon",
+    thumbnail: "",
+    available: false,
+    requiresProduct: false,
+  },
 ];
 
-const languages = {
-  en: {
-    code: "en",
-    name: "English",
-    flag: "🇺🇸",
-    ui: {
-      loading: "Loading Figma template...",
-      loadError: "Failed to load template. Please try again.",
-      welcome: "Hi there! I'm Yumi, your promotional content designer. 🎨",
-      templateLoaded: "I've loaded the \"{fileName}\" template!",
-      channelQuestion: "Which channels do you need banners for? You can select multiple:",
-      channelSelected: "You selected: {channels}",
-      noChannelSelected: "Please select at least one channel.",
-      layerList: "Here are the editable layers for your selected channels:",
-      askForContent: "Now, let me ask you about each layer. Let's start!",
-      textLayerQuestion: "What content would you like for \"{layerName}\"?",
-      textLayerHint: "Current value: \"{currentValue}\"",
-      imageLayerQuestion: "Please describe the image you'd like for \"{layerName}\":",
-      imageLayerHint: "I'll help you find or create the perfect image for this spot.",
-      skipLayer: "Skip this layer",
-      allDone: "I've collected all your inputs! Here's a summary:",
-      summary: "Layer Customizations:",
-      exportGuide: "To apply these changes in Figma:",
-      exportStep: "1. Open the Figma file\n2. Find each layer using the paths I provided\n3. Update the content as specified",
-      previewButton: "Preview Template",
-      downloadPng: "Download PNG",
-      downloadSvg: "Download SVG",
-      openFigma: "Open in Figma",
-      continue: "Continue",
-      confirmChannels: "Confirm Selection",
-      typeResponse: "Type your response here...",
-      enterDescription: "Describe your image...",
-      completed: "I've prepared everything you need! You can preview the template, download it, or open it directly in Figma.",
-      goHome: "Go to Home",
-      noLayersFound: "No editable layers found for the selected channels. Please try different channels.",
-      rateLimitError: "Figma API is temporarily busy. Please wait a moment and try again.",
-      retryButton: "Retry"
-    }
-  },
-  ko: {
-    code: "ko",
-    name: "한국어",
-    flag: "🇰🇷",
-    ui: {
-      loading: "Figma 템플릿을 불러오는 중...",
-      loadError: "템플릿 로드에 실패했습니다. 다시 시도해 주세요.",
-      welcome: "안녕하세요! 저는 프로모션 콘텐츠 디자이너 유미입니다. 🎨",
-      templateLoaded: "\"{fileName}\" 템플릿을 불러왔어요!",
-      channelQuestion: "어떤 채널용 배너가 필요하세요? 여러 개 선택 가능합니다:",
-      channelSelected: "선택하신 채널: {channels}",
-      noChannelSelected: "최소 하나의 채널을 선택해 주세요.",
-      layerList: "선택하신 채널에서 편집 가능한 레이어 목록입니다:",
-      askForContent: "이제 각 레이어에 대해 여쭤볼게요. 시작하겠습니다!",
-      textLayerQuestion: "\"{layerName}\"에 어떤 내용을 넣으시겠어요?",
-      textLayerHint: "현재 값: \"{currentValue}\"",
-      imageLayerQuestion: "\"{layerName}\"에 넣을 이미지를 설명해 주세요:",
-      imageLayerHint: "이 위치에 완벽한 이미지를 찾거나 만들어 드릴게요.",
-      skipLayer: "이 레이어 건너뛰기",
-      allDone: "모든 입력을 수집했습니다! 요약입니다:",
-      summary: "레이어 커스터마이징:",
-      exportGuide: "Figma에서 이 변경사항을 적용하려면:",
-      exportStep: "1. Figma 파일 열기\n2. 제가 안내한 경로로 각 레이어 찾기\n3. 지정된 대로 콘텐츠 업데이트",
-      previewButton: "템플릿 미리보기",
-      downloadPng: "PNG 다운로드",
-      downloadSvg: "SVG 다운로드",
-      openFigma: "Figma에서 열기",
-      continue: "계속하기",
-      confirmChannels: "선택 확인",
-      typeResponse: "답변을 입력하세요...",
-      enterDescription: "이미지를 설명해 주세요...",
-      completed: "모든 준비가 완료되었습니다! 템플릿을 미리보거나, 다운로드하거나, Figma에서 직접 열 수 있습니다.",
-      goHome: "홈으로 가기",
-      noLayersFound: "선택하신 채널에서 편집 가능한 레이어를 찾을 수 없습니다. 다른 채널을 선택해 주세요.",
-      rateLimitError: "Figma API가 일시적으로 사용량이 많습니다. 잠시 후 다시 시도해 주세요.",
-      retryButton: "다시 시도"
-    }
-  }
-};
+const CHANNELS = [
+  { id: "criteo", name: "Criteo", keywords: ["criteo"] },
+  { id: "dv360", name: "DV360", keywords: ["dv360", "dv 360", "display"] },
+  { id: "social", name: "Social", keywords: ["social", "facebook", "instagram", "meta"] },
+  { id: "email", name: "Email (CRM)", keywords: ["email", "edm", "newsletter", "crm"] },
+];
 
-type LanguageCode = keyof typeof languages;
+const LIFESTYLE_SUGGESTIONS = [
+  "해변에서 여유로운 시간",
+  "카페에서 친구들과 대화",
+  "도시 거리 산책",
+  "공원에서 피크닉",
+  "집에서 편안한 휴식",
+];
+
+// ==================== Component ====================
 
 const ChatInterface = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [currentLanguage, setCurrentLanguage] = useState<LanguageCode>("en");
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [inputValue, setInputValue] = useState("");
-  const [isLoading, setIsLoading] = useState(true);
-  const [figmaData, setFigmaData] = useState<FigmaData | null>(null);
-  const [currentLayerIndex, setCurrentLayerIndex] = useState(0);
-  const [editableLayers, setEditableLayers] = useState<FigmaLayer[]>([]);
-  const [groupedLayers, setGroupedLayers] = useState<GroupedLayer[]>([]);
-  const [currentGroupIndex, setCurrentGroupIndex] = useState(0);
-  const [allLayers, setAllLayers] = useState<FigmaLayer[]>([]);
-  const [layerInputs, setLayerInputs] = useState<LayerInput[]>([]);
-  const [phase, setPhase] = useState<"loading" | "error" | "channel-select" | "collecting" | "completed">("loading");
-  const [isExporting, setIsExporting] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [selectedChannels, setSelectedChannels] = useState<string[]>([]);
-  const [loadError, setLoadError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const ui = languages[currentLanguage].ui;
+  // Phase & Loading
+  const [phase, setPhase] = useState<Phase>("loading");
+  const [isLoading, setIsLoading] = useState(false);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
+  // Figma Data
+  const [figmaData, setFigmaData] = useState<FigmaData | null>(null);
+  const [filteredLayers, setFilteredLayers] = useState<FigmaLayer[]>([]);
+
+  // Wizard State
+  const [wizardState, setWizardState] = useState<WizardState>({
+    selectedLayout: null,
+    selectedChannels: [],
+    copyInputs: {
+      headline: "",
+      subcopy: "",
+      cta: "",
+    },
+    includeProduct: false,
+    pdpUrl: "",
+    productImageUrl: null,
+    lifestyleDescription: "",
+    lifestyleImageUrl: null,
+  });
+
+  // Export State
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const [isExporting, setIsExporting] = useState(false);
+
+  // Scroll to bottom when messages change
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
   useEffect(() => {
     scrollToBottom();
-  }, [messages]);
+  }, [phase]);
 
-  // Load Figma layers on mount
+  // Initialize
   useEffect(() => {
-    loadFigmaLayers();
+    // Start with layout selection (no Figma API call yet)
+    setTimeout(() => {
+      setPhase("layout-select");
+    }, 1000);
   }, []);
 
-  const addMessage = (sender: "yumi" | "user", content: string, type?: Message["type"]) => {
-    setMessages(prev => [...prev, {
-      id: `${sender}-${Date.now()}-${Math.random()}`,
-      sender,
-      content,
-      timestamp: new Date(),
-      type
-    }]);
+  // ==================== Phase Handlers ====================
+
+  const handleLayoutSelect = (layoutId: "A" | "B") => {
+    const layout = LAYOUT_OPTIONS.find((l) => l.id === layoutId);
+    if (!layout?.available) {
+      toast({
+        title: "준비 중",
+        description: "이 레이아웃은 아직 준비 중입니다.",
+      });
+      return;
+    }
+    setWizardState((prev) => ({ ...prev, selectedLayout: layoutId }));
+    setPhase("layout-confirm");
   };
 
-  const loadFigmaLayers = async (isRetry = false) => {
-    setIsLoading(true);
-    setLoadError(null);
-    
-    if (!isRetry) {
-      addMessage("yumi", ui.welcome);
+  const handleLayoutConfirm = () => {
+    setPhase("channel-select");
+  };
+
+  const handleChannelToggle = (channelId: string) => {
+    setWizardState((prev) => ({
+      ...prev,
+      selectedChannels: prev.selectedChannels.includes(channelId)
+        ? prev.selectedChannels.filter((c) => c !== channelId)
+        : [...prev.selectedChannels, channelId],
+    }));
+  };
+
+  const handleChannelConfirm = async () => {
+    if (wizardState.selectedChannels.length === 0) {
+      toast({
+        title: "채널 선택 필요",
+        description: "최소 하나의 채널을 선택해주세요.",
+        variant: "destructive",
+      });
+      return;
     }
 
-    try {
-      const { data, error } = await supabase.functions.invoke('yumi-figma-layers');
+    // Only sync Figma for Type A
+    if (wizardState.selectedLayout === "A") {
+      setPhase("syncing");
+      await loadFigmaLayers();
+    } else {
+      setPhase("copy-collect");
+    }
+  };
 
-      if (error) {
-        throw error;
-      }
+  const loadFigmaLayers = async () => {
+    setIsLoading(true);
+    setLoadError(null);
+
+    try {
+      const { data, error } = await supabase.functions.invoke("yumi-figma-layers");
+
+      if (error) throw error;
 
       if (!data.success) {
-        // Check for rate limit error
-        if (data.errorCode === 'RATE_LIMIT') {
-          setLoadError('RATE_LIMIT');
+        if (data.errorCode === "RATE_LIMIT") {
+          setLoadError("RATE_LIMIT");
           setPhase("error");
-          addMessage("yumi", ui.rateLimitError);
           return;
         }
-        throw new Error(data.error || 'Failed to load Figma layers');
+        throw new Error(data.error || "Failed to load Figma layers");
       }
 
       setFigmaData(data);
-      setLoadError(null);
-      
-      // Store all editable layers
-      const editable = data.layers.filter((l: FigmaLayer) => 
-        l.type === "TEXT" || l.type === "IMAGE"
+
+      // Filter layers based on selected channels
+      const selectedKeywords = CHANNELS.filter((c) =>
+        wizardState.selectedChannels.includes(c.id)
+      ).flatMap((c) => c.keywords);
+
+      const editable = data.layers.filter(
+        (l: FigmaLayer) => l.type === "TEXT" || l.type === "IMAGE"
       );
-      setAllLayers(editable);
 
-      // Show template loaded message
-      setTimeout(() => {
-        addMessage("yumi", ui.templateLoaded.replace("{fileName}", data.fileName));
-        
-        // Ask for channel selection
-        setTimeout(() => {
-          addMessage("yumi", ui.channelQuestion, "info");
-          setPhase("channel-select");
-        }, 1500);
-      }, 1500);
+      const filtered = editable.filter((layer: FigmaLayer) => {
+        const pathLower = layer.path.toLowerCase();
+        return selectedKeywords.some((keyword) =>
+          pathLower.includes(keyword.toLowerCase())
+        );
+      });
 
+      setFilteredLayers(filtered);
+
+      // Get current copy values from Figma
+      const headlineLayer = filtered.find((l: FigmaLayer) =>
+        l.name.toLowerCase().includes("copy_headline")
+      );
+      const subcopyLayer = filtered.find((l: FigmaLayer) =>
+        l.name.toLowerCase().includes("copy_subcopy")
+      );
+      const ctaLayer = filtered.find((l: FigmaLayer) =>
+        l.name.toLowerCase().includes("copy_cta")
+      );
+
+      setWizardState((prev) => ({
+        ...prev,
+        copyInputs: {
+          headline: headlineLayer?.currentValue || "",
+          subcopy: subcopyLayer?.currentValue || "",
+          cta: ctaLayer?.currentValue || "",
+        },
+      }));
+
+      setPhase("copy-collect");
     } catch (error: any) {
-      console.error('Error loading Figma layers:', error);
-      
-      // Check if it's a rate limit error from the response
-      const isRateLimit = error.message?.includes('Rate limit') || error.message?.includes('429');
-      
+      console.error("Error loading Figma layers:", error);
+      const isRateLimit =
+        error.message?.includes("Rate limit") || error.message?.includes("429");
+
       if (isRateLimit) {
-        setLoadError('RATE_LIMIT');
-        setPhase("error");
-        addMessage("yumi", ui.rateLimitError);
+        setLoadError("RATE_LIMIT");
       } else {
-        setLoadError('UNKNOWN');
-        setPhase("error");
-        addMessage("yumi", ui.loadError);
+        setLoadError("UNKNOWN");
       }
-      
+      setPhase("error");
+
       toast({
-        title: "Error",
-        description: error.message || "Failed to load Figma template",
-        variant: "destructive"
+        title: "오류",
+        description: error.message || "Figma 템플릿 로드 실패",
+        variant: "destructive",
       });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleRetry = () => {
-    setMessages([]);
-    setPhase("loading");
-    loadFigmaLayers(true);
-  };
-
-  const handleChannelChange = (channelId: string, checked: boolean) => {
-    setSelectedChannels(prev => 
-      checked 
-        ? [...prev, channelId]
-        : prev.filter(c => c !== channelId)
-    );
-  };
-
-  const handleChannelConfirm = () => {
-    if (selectedChannels.length === 0) {
+  const handleCopySubmit = () => {
+    const { headline, subcopy, cta } = wizardState.copyInputs;
+    if (!headline.trim() || !subcopy.trim() || !cta.trim()) {
       toast({
-        title: "Warning",
-        description: ui.noChannelSelected,
-        variant: "destructive"
+        title: "입력 필요",
+        description: "모든 카피 필드를 입력해주세요.",
+        variant: "destructive",
+      });
+      return;
+    }
+    setPhase("image-type-select");
+  };
+
+  const handleImageTypeSelect = (includeProduct: boolean) => {
+    setWizardState((prev) => ({ ...prev, includeProduct }));
+    if (includeProduct) {
+      setPhase("pdp-input");
+    } else {
+      setPhase("lifestyle-input");
+    }
+  };
+
+  const handlePdpSubmit = async () => {
+    if (!wizardState.pdpUrl.trim()) {
+      toast({
+        title: "URL 필요",
+        description: "PDP URL을 입력해주세요.",
+        variant: "destructive",
       });
       return;
     }
 
-    // Get channel names for display
-    const selectedChannelNames = CHANNELS
-      .filter(c => selectedChannels.includes(c.id))
-      .map(c => c.name)
-      .join(", ");
+    setIsLoading(true);
 
-    addMessage("user", selectedChannelNames);
-
-    // Filter layers based on selected channels
-    const selectedKeywords = CHANNELS
-      .filter(c => selectedChannels.includes(c.id))
-      .flatMap(c => c.keywords);
-
-    const filteredLayers = allLayers.filter(layer => {
-      const pathLower = layer.path.toLowerCase();
-      return selectedKeywords.some(keyword => pathLower.includes(keyword.toLowerCase()));
-    });
-
-    if (filteredLayers.length === 0) {
-      setTimeout(() => {
-        addMessage("yumi", ui.noLayersFound);
-        // Stay in channel-select phase for retry
-      }, 1000);
-      return;
-    }
-
-    setEditableLayers(filteredLayers);
-
-    // Group layers by name
-    const grouped = groupLayersByName(filteredLayers);
-    setGroupedLayers(grouped);
-
-    // Show filtered layer list (grouped)
-    setTimeout(() => {
-      addMessage("yumi", ui.channelSelected.replace("{channels}", selectedChannelNames));
-      
-      setTimeout(() => {
-        const layerListContent = grouped.map((group: GroupedLayer, i: number) => {
-          const icon = group.type === "TEXT" ? "📝" : "🖼️";
-          const value = group.currentValue ? ` ("${group.currentValue.substring(0, 25)}${group.currentValue.length > 25 ? '...' : ''}")` : "";
-          const countInfo = group.count > 1 ? ` (${group.count}개 프레임)` : "";
-          return `${i + 1}. ${icon} ${group.name}${value}${countInfo}`;
-        }).join("\n");
-        
-        addMessage("yumi", `${ui.layerList}\n\n${layerListContent}`, "info");
-        
-        // Start asking for each grouped layer
-        setTimeout(() => {
-          addMessage("yumi", ui.askForContent);
-          setPhase("collecting");
-          setCurrentGroupIndex(0);
-          askForNextGroup(0, grouped);
-        }, 1500);
-      }, 1500);
-    }, 1000);
-  };
-
-  // Group layers by name to ask only once per unique name
-  const groupLayersByName = (layers: FigmaLayer[]): GroupedLayer[] => {
-    const groupMap = new Map<string, GroupedLayer>();
-    
-    for (const layer of layers) {
-      const key = layer.name.toLowerCase().trim();
-      const layerType = layer.type === "COMPONENT" ? "IMAGE" : layer.type;
-      
-      if (groupMap.has(key)) {
-        const existing = groupMap.get(key)!;
-        existing.layers.push(layer);
-        existing.count++;
-      } else {
-        groupMap.set(key, {
-          name: layer.name,
-          type: layerType as "TEXT" | "IMAGE",
-          layers: [layer],
-          currentValue: layer.currentValue,
-          count: 1
-        });
-      }
-    }
-    
-    return Array.from(groupMap.values());
-  };
-
-  const askForNextGroup = (index: number, groups: GroupedLayer[]) => {
-    if (index >= groups.length) {
-      // All groups collected, show summary
-      showSummary();
-      return;
-    }
-
-    const group = groups[index];
-    
-    setTimeout(() => {
-      const countInfo = group.count > 1 
-        ? currentLanguage === "ko" 
-          ? ` (${group.count}개 프레임에 적용됩니다)`
-          : ` (will apply to ${group.count} frames)`
-        : "";
-        
-      if (group.type === "TEXT") {
-        let question = ui.textLayerQuestion.replace("{layerName}", group.name) + countInfo;
-        if (group.currentValue) {
-          question += "\n" + ui.textLayerHint.replace("{currentValue}", group.currentValue);
-        }
-        addMessage("yumi", question);
-      } else {
-        const question = ui.imageLayerQuestion.replace("{layerName}", group.name) + countInfo;
-        addMessage("yumi", question + "\n" + ui.imageLayerHint);
-      }
-    }, 1000);
-  };
-
-  const handleInputSubmit = () => {
-    if (!inputValue.trim()) return;
-
-    const currentGroup = groupedLayers[currentGroupIndex];
-    
-    // Add user message
-    addMessage("user", inputValue);
-
-    // Save layer input for ALL layers in this group
-    for (const layer of currentGroup.layers) {
-      const layerType = layer.type === "COMPONENT" ? "IMAGE" : layer.type;
-      setLayerInputs(prev => [...prev, {
-        layerId: layer.id,
-        layerName: layer.name,
-        layerType: layerType as "TEXT" | "IMAGE",
-        userValue: inputValue
-      }]);
-    }
-
-    setInputValue("");
-    
-    // Move to next group
-    const nextIndex = currentGroupIndex + 1;
-    setCurrentGroupIndex(nextIndex);
-    askForNextGroup(nextIndex, groupedLayers);
-  };
-
-  const handleSkipLayer = () => {
-    const currentGroup = groupedLayers[currentGroupIndex];
-    
-    addMessage("user", `(${ui.skipLayer}: ${currentGroup.name})`);
-    
-    const nextIndex = currentGroupIndex + 1;
-    setCurrentGroupIndex(nextIndex);
-    askForNextGroup(nextIndex, groupedLayers);
-  };
-
-  const showSummary = () => {
-    setPhase("completed");
-    
-    setTimeout(() => {
-      addMessage("yumi", ui.allDone);
-      
-      // Show summary of inputs
-      setTimeout(() => {
-        if (layerInputs.length > 0) {
-          const summaryContent = layerInputs.map(input => {
-            const icon = input.layerType === "TEXT" ? "📝" : "🖼️";
-            return `${icon} **${input.layerName}**: ${input.userValue}`;
-          }).join("\n\n");
-          
-          addMessage("yumi", `${ui.summary}\n\n${summaryContent}`, "info");
-        }
-        
-        // Show export guide
-        setTimeout(() => {
-          addMessage("yumi", `${ui.exportGuide}\n\n${ui.exportStep}`);
-          
-          setTimeout(() => {
-            addMessage("yumi", ui.completed, "info");
-            // Auto-export preview
-            exportPreview();
-          }, 1500);
-        }, 1500);
-      }, 1000);
-    }, 500);
-  };
-
-  const exportPreview = async () => {
-    setIsExporting(true);
-    
     try {
-      const { data, error } = await supabase.functions.invoke('yumi-figma-export', {
-        body: { format: 'png', scale: 2 }
-      });
+      const { data, error } = await supabase.functions.invoke(
+        "yumi-extract-pdp-image",
+        {
+          body: { pdpUrl: wizardState.pdpUrl },
+        }
+      );
 
       if (error) throw error;
-      
-      if (data.success && data.exports.length > 0) {
-        setPreviewUrl(data.exports[0].imageUrl);
+
+      if (!data.success) {
+        throw new Error(data.error || "이미지 추출 실패");
       }
+
+      setWizardState((prev) => ({
+        ...prev,
+        productImageUrl: data.imageUrl,
+      }));
+
+      setPhase("pdp-preview");
     } catch (error: any) {
-      console.error('Error exporting preview:', error);
+      console.error("Error extracting PDP image:", error);
+      toast({
+        title: "오류",
+        description: error.message || "제품 이미지 추출 실패",
+        variant: "destructive",
+      });
     } finally {
-      setIsExporting(false);
+      setIsLoading(false);
     }
   };
 
-  const handleDownload = async (format: 'png' | 'svg') => {
-    setIsExporting(true);
-    
-    try {
-      const { data, error } = await supabase.functions.invoke('yumi-figma-export', {
-        body: { format, scale: format === 'png' ? 2 : 1 }
+  const handlePdpConfirm = () => {
+    setPhase("lifestyle-input");
+  };
+
+  const handleLifestyleGenerate = async () => {
+    if (!wizardState.lifestyleDescription.trim()) {
+      toast({
+        title: "입력 필요",
+        description: "원하는 씬을 설명해주세요.",
+        variant: "destructive",
       });
+      return;
+    }
+
+    setPhase("lifestyle-generating");
+    setIsLoading(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke(
+        "yumi-generate-lifestyle",
+        {
+          body: {
+            sceneDescription: wizardState.lifestyleDescription,
+            includeProduct: wizardState.includeProduct,
+            productImageUrl: wizardState.productImageUrl,
+            aspectRatio: "4:3",
+          },
+        }
+      );
 
       if (error) throw error;
-      
+
+      if (!data.success) {
+        throw new Error(data.error || "이미지 생성 실패");
+      }
+
+      setWizardState((prev) => ({
+        ...prev,
+        lifestyleImageUrl: data.imageUrl,
+      }));
+
+      setPhase("lifestyle-preview");
+    } catch (error: any) {
+      console.error("Error generating lifestyle image:", error);
+      toast({
+        title: "오류",
+        description: error.message || "라이프스타일 이미지 생성 실패",
+        variant: "destructive",
+      });
+      setPhase("lifestyle-input");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleLifestyleConfirm = async () => {
+    setPhase("final-generating");
+    
+    // For now, just show the preview
+    // In the future, this would apply images to Figma layers
+    setTimeout(() => {
+      setPhase("final-preview");
+    }, 1500);
+  };
+
+  const handleRegenerateLifestyle = () => {
+    setWizardState((prev) => ({
+      ...prev,
+      lifestyleImageUrl: null,
+    }));
+    setPhase("lifestyle-input");
+  };
+
+  const handleRetry = () => {
+    setLoadError(null);
+    setPhase("syncing");
+    loadFigmaLayers();
+  };
+
+  const handleExport = async (format: "png" | "svg") => {
+    setIsExporting(true);
+
+    try {
+      const { data, error } = await supabase.functions.invoke(
+        "yumi-figma-export",
+        {
+          body: { format, scale: format === "png" ? 2 : 1 },
+        }
+      );
+
+      if (error) throw error;
+
       if (data.success && data.exports.length > 0) {
-        // Open the image URL in a new tab for download
-        window.open(data.exports[0].imageUrl, '_blank');
+        window.open(data.exports[0].imageUrl, "_blank");
         toast({
-          title: "Success",
-          description: `${format.toUpperCase()} export ready!`
+          title: "성공",
+          description: `${format.toUpperCase()} 내보내기 완료!`,
         });
       }
     } catch (error: any) {
-      console.error('Error downloading:', error);
+      console.error("Error downloading:", error);
       toast({
-        title: "Error",
-        description: "Failed to export. Please try again.",
-        variant: "destructive"
+        title: "오류",
+        description: "내보내기 실패",
+        variant: "destructive",
       });
     } finally {
       setIsExporting(false);
@@ -517,79 +485,658 @@ const ChatInterface = () => {
 
   const openInFigma = () => {
     if (figmaData) {
-      window.open(`https://www.figma.com/file/${figmaData.fileKey}`, '_blank');
+      window.open(`https://www.figma.com/file/${figmaData.fileKey}`, "_blank");
     }
   };
 
-  // Completion screen
-  if (phase === "completed" && previewUrl) {
-    return (
-      <div className="h-screen bg-cover bg-center bg-no-repeat flex items-center justify-center" 
-           style={{
-             backgroundImage: `url('/lovable-uploads/bc537bc9-b912-4359-a294-eb543db318e3.png')`
-           }}>
-        <div className="w-full max-w-4xl mx-4 bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 overflow-hidden">
-          <div className="p-8">
-            {/* Preview Image */}
-            <div className="mb-6 rounded-xl overflow-hidden shadow-lg">
-              <img 
-                src={previewUrl} 
-                alt="Template Preview" 
-                className="w-full h-auto"
-              />
+  const handleStartOver = () => {
+    setWizardState({
+      selectedLayout: null,
+      selectedChannels: [],
+      copyInputs: { headline: "", subcopy: "", cta: "" },
+      includeProduct: false,
+      pdpUrl: "",
+      productImageUrl: null,
+      lifestyleDescription: "",
+      lifestyleImageUrl: null,
+    });
+    setPhase("layout-select");
+    setFigmaData(null);
+    setFilteredLayers([]);
+    setPreviewUrl(null);
+  };
+
+  // ==================== Step Indicator ====================
+
+  const getStepNumber = () => {
+    const steps: Phase[] = [
+      "layout-select",
+      "layout-confirm",
+      "channel-select",
+      "copy-collect",
+      "image-type-select",
+      "lifestyle-input",
+      "final-preview",
+    ];
+    const currentIndex = steps.findIndex((s) => 
+      phase === s || 
+      (phase === "syncing" && s === "channel-select") ||
+      (phase === "pdp-input" && s === "image-type-select") ||
+      (phase === "pdp-preview" && s === "image-type-select") ||
+      (phase === "lifestyle-generating" && s === "lifestyle-input") ||
+      (phase === "lifestyle-preview" && s === "lifestyle-input") ||
+      (phase === "final-generating" && s === "final-preview") ||
+      (phase === "completed" && s === "final-preview")
+    );
+    return currentIndex + 1;
+  };
+
+  const totalSteps = 7;
+
+  // ==================== Render Functions ====================
+
+  const renderYumiMessage = (message: string) => (
+    <div className="flex items-start gap-4 mb-6">
+      <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
+        <img
+          src="/lovable-uploads/1d0546ae-2d59-40cf-a231-60343eecc72a.png"
+          alt="Yumi"
+          className="w-full h-full object-cover"
+        />
+      </div>
+      <div className="flex-1">
+        <p className="text-lg text-gray-800 leading-relaxed">{message}</p>
+      </div>
+    </div>
+  );
+
+  const renderLayoutSelect = () => (
+    <div className="space-y-6">
+      {renderYumiMessage("안녕하세요! 어떤 레이아웃으로 프로모션 콘텐츠를 만들까요?")}
+      
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        {LAYOUT_OPTIONS.map((layout) => (
+          <div
+            key={layout.id}
+            onClick={() => layout.available && handleLayoutSelect(layout.id as "A" | "B")}
+            className={`relative rounded-xl overflow-hidden border-2 transition-all cursor-pointer ${
+              layout.available
+                ? "border-gray-200 hover:border-orange-400 hover:shadow-lg"
+                : "border-gray-100 opacity-60 cursor-not-allowed"
+            } ${wizardState.selectedLayout === layout.id ? "border-orange-400 ring-2 ring-orange-200" : ""}`}
+          >
+            <div className="aspect-[3/4] bg-gray-100">
+              {layout.thumbnail ? (
+                <img
+                  src={layout.thumbnail}
+                  alt={layout.name}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-gray-400">
+                  <span className="text-sm">Coming Soon</span>
+                </div>
+              )}
             </div>
-            
-            {/* Action Buttons */}
-            <div className="flex flex-wrap gap-4 justify-center mb-6">
-              <Button
-                onClick={() => handleDownload('png')}
-                disabled={isExporting}
-                className="bg-white/20 hover:bg-white/30 text-white border border-white/30"
-              >
-                {isExporting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}
-                {ui.downloadPng}
-              </Button>
-              <Button
-                onClick={() => handleDownload('svg')}
-                disabled={isExporting}
-                className="bg-white/20 hover:bg-white/30 text-white border border-white/30"
-              >
-                {isExporting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <FileText className="w-4 h-4 mr-2" />}
-                {ui.downloadSvg}
-              </Button>
-              <Button
-                onClick={openInFigma}
-                className="bg-white/20 hover:bg-white/30 text-white border border-white/30"
-              >
-                <ExternalLink className="w-4 h-4 mr-2" />
-                {ui.openFigma}
-              </Button>
+            <div className="p-3 bg-white">
+              <h4 className="font-semibold text-gray-900">{layout.name}</h4>
+              <p className="text-sm text-gray-500">{layout.description}</p>
             </div>
-            
-            {/* Go Home Button */}
-            <div className="text-center">
-              <Button
-                onClick={() => navigate("/home")}
-                className="bg-orange-400 hover:bg-orange-500 text-white px-8"
-              >
-                {ui.goHome}
-              </Button>
-            </div>
+            {!layout.available && (
+              <div className="absolute inset-0 bg-white/80 flex items-center justify-center">
+                <span className="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                  Coming Soon
+                </span>
+              </div>
+            )}
           </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const renderLayoutConfirm = () => {
+    const selectedLayout = LAYOUT_OPTIONS.find(
+      (l) => l.id === wizardState.selectedLayout
+    );
+
+    return (
+      <div className="space-y-6">
+        {renderYumiMessage(
+          selectedLayout?.requiresProduct
+            ? `${selectedLayout.name}를 선택하셨네요! 이 레이아웃은 제품 이미지와 라이프스타일 이미지가 모두 필요합니다. 진행하시겠습니까?`
+            : `${selectedLayout?.name}를 선택하셨네요! 이 레이아웃은 라이프스타일 이미지만 사용합니다. 진행하시겠습니까?`
+        )}
+
+        <div className="flex justify-center">
+          <div className="w-64 rounded-xl overflow-hidden shadow-lg">
+            <img
+              src={selectedLayout?.thumbnail}
+              alt={selectedLayout?.name}
+              className="w-full h-auto"
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-center gap-4">
+          <Button
+            variant="outline"
+            onClick={() => setPhase("layout-select")}
+            className="px-6"
+          >
+            다른 레이아웃 선택
+          </Button>
+          <Button
+            onClick={handleLayoutConfirm}
+            className="bg-orange-400 hover:bg-orange-500 text-white px-8"
+          >
+            확인 및 진행
+          </Button>
         </div>
       </div>
     );
-  }
+  };
+
+  const renderChannelSelect = () => (
+    <div className="space-y-6">
+      {renderYumiMessage("어떤 채널용 배너를 만들까요? 여러 개 선택 가능합니다.")}
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        {CHANNELS.map((channel) => (
+          <div
+            key={channel.id}
+            onClick={() => handleChannelToggle(channel.id)}
+            className={`p-4 rounded-xl border-2 cursor-pointer transition-all text-center ${
+              wizardState.selectedChannels.includes(channel.id)
+                ? "border-orange-400 bg-orange-50"
+                : "border-gray-200 hover:border-gray-300"
+            }`}
+          >
+            <div className="flex items-center justify-center gap-2">
+              {wizardState.selectedChannels.includes(channel.id) && (
+                <Check className="w-5 h-5 text-orange-500" />
+              )}
+              <span className="font-medium text-gray-900">{channel.name}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex justify-center">
+        <Button
+          onClick={handleChannelConfirm}
+          disabled={wizardState.selectedChannels.length === 0}
+          className="bg-orange-400 hover:bg-orange-500 text-white px-8"
+        >
+          선택 완료 ({wizardState.selectedChannels.length})
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderSyncing = () => (
+    <div className="space-y-6">
+      {renderYumiMessage("Figma 템플릿을 불러오는 중입니다...")}
+      
+      <div className="flex justify-center">
+        <Loader2 className="w-12 h-12 animate-spin text-orange-400" />
+      </div>
+    </div>
+  );
+
+  const renderCopyCollect = () => (
+    <div className="space-y-6">
+      {renderYumiMessage("배너에 들어갈 카피를 입력해주세요.")}
+
+      <div className="space-y-4 max-w-lg mx-auto">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Headline (Copy_Headline)
+          </label>
+          <Input
+            value={wizardState.copyInputs.headline}
+            onChange={(e) =>
+              setWizardState((prev) => ({
+                ...prev,
+                copyInputs: { ...prev.copyInputs, headline: e.target.value },
+              }))
+            }
+            placeholder="메인 헤드라인을 입력하세요"
+            className="w-full"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Subcopy (Copy_Subcopy)
+          </label>
+          <Textarea
+            value={wizardState.copyInputs.subcopy}
+            onChange={(e) =>
+              setWizardState((prev) => ({
+                ...prev,
+                copyInputs: { ...prev.copyInputs, subcopy: e.target.value },
+              }))
+            }
+            placeholder="서브 카피를 입력하세요"
+            rows={2}
+            className="w-full"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            CTA (Copy_CTA_White)
+          </label>
+          <Input
+            value={wizardState.copyInputs.cta}
+            onChange={(e) =>
+              setWizardState((prev) => ({
+                ...prev,
+                copyInputs: { ...prev.copyInputs, cta: e.target.value },
+              }))
+            }
+            placeholder="CTA 버튼 텍스트 (예: Shop Now)"
+            className="w-full"
+          />
+        </div>
+      </div>
+
+      <div className="flex justify-center">
+        <Button
+          onClick={handleCopySubmit}
+          className="bg-orange-400 hover:bg-orange-500 text-white px-8"
+        >
+          다음
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderImageTypeSelect = () => (
+    <div className="space-y-6">
+      {renderYumiMessage("라이프스타일 이미지에 제품을 포함하시겠습니까?")}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
+        <div
+          onClick={() => handleImageTypeSelect(true)}
+          className="p-6 rounded-xl border-2 border-gray-200 hover:border-orange-400 cursor-pointer transition-all text-center"
+        >
+          <div className="text-4xl mb-3">🛍️</div>
+          <h4 className="font-semibold text-gray-900 mb-2">예, 제품 포함</h4>
+          <p className="text-sm text-gray-500">
+            PDP URL에서 제품 이미지를 가져와 라이프스타일과 함께 표시합니다.
+          </p>
+        </div>
+
+        <div
+          onClick={() => handleImageTypeSelect(false)}
+          className="p-6 rounded-xl border-2 border-gray-200 hover:border-orange-400 cursor-pointer transition-all text-center"
+        >
+          <div className="text-4xl mb-3">🌅</div>
+          <h4 className="font-semibold text-gray-900 mb-2">아니오, 제품 없이</h4>
+          <p className="text-sm text-gray-500">
+            사람과 환경에 집중한 라이프스타일 이미지만 생성합니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderPdpInput = () => (
+    <div className="space-y-6">
+      {renderYumiMessage("제품 페이지(PDP) URL을 입력해주세요. 첫 번째 갤러리 이미지를 가져올게요.")}
+
+      <div className="max-w-lg mx-auto space-y-4">
+        <Input
+          value={wizardState.pdpUrl}
+          onChange={(e) =>
+            setWizardState((prev) => ({ ...prev, pdpUrl: e.target.value }))
+          }
+          placeholder="https://example.com/product/..."
+          className="w-full"
+        />
+
+        <div className="flex justify-center gap-4">
+          <Button
+            variant="outline"
+            onClick={() => handleImageTypeSelect(false)}
+          >
+            제품 없이 진행
+          </Button>
+          <Button
+            onClick={handlePdpSubmit}
+            disabled={!wizardState.pdpUrl.trim() || isLoading}
+            className="bg-orange-400 hover:bg-orange-500 text-white px-8"
+          >
+            {isLoading ? (
+              <Loader2 className="w-4 h-4 animate-spin mr-2" />
+            ) : null}
+            이미지 가져오기
+          </Button>
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderPdpPreview = () => (
+    <div className="space-y-6">
+      {renderYumiMessage("이 제품 이미지를 사용할까요?")}
+
+      <div className="flex justify-center">
+        <div className="w-64 h-64 rounded-xl overflow-hidden shadow-lg bg-gray-100">
+          {wizardState.productImageUrl ? (
+            <img
+              src={wizardState.productImageUrl}
+              alt="Product"
+              className="w-full h-full object-contain"
+            />
+          ) : (
+            <div className="w-full h-full flex items-center justify-center text-gray-400">
+              이미지 로딩 중...
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="flex justify-center gap-4">
+        <Button variant="outline" onClick={() => setPhase("pdp-input")}>
+          다른 URL 입력
+        </Button>
+        <Button
+          onClick={handlePdpConfirm}
+          className="bg-orange-400 hover:bg-orange-500 text-white px-8"
+        >
+          사용하기
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderLifestyleInput = () => (
+    <div className="space-y-6">
+      {renderYumiMessage(
+        wizardState.includeProduct
+          ? "제품과 함께 어떤 라이프스타일 씬을 원하시나요? 원하는 장면을 설명해주세요."
+          : "어떤 라이프스타일 씬을 원하시나요? 사람과 환경에 집중된 이미지로 만들어 드릴게요."
+      )}
+
+      <div className="max-w-lg mx-auto space-y-4">
+        <Textarea
+          value={wizardState.lifestyleDescription}
+          onChange={(e) =>
+            setWizardState((prev) => ({
+              ...prev,
+              lifestyleDescription: e.target.value,
+            }))
+          }
+          placeholder="예: 해변에서 친구들과 즐거운 시간을 보내는 장면, 따뜻한 햇살 아래..."
+          rows={4}
+          className="w-full"
+        />
+
+        <div className="flex flex-wrap gap-2">
+          {LIFESTYLE_SUGGESTIONS.map((suggestion) => (
+            <button
+              key={suggestion}
+              onClick={() =>
+                setWizardState((prev) => ({
+                  ...prev,
+                  lifestyleDescription: suggestion,
+                }))
+              }
+              className="px-3 py-1.5 text-sm bg-gray-100 hover:bg-gray-200 rounded-full transition-colors"
+            >
+              {suggestion}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      <div className="flex justify-center">
+        <Button
+          onClick={handleLifestyleGenerate}
+          disabled={!wizardState.lifestyleDescription.trim() || isLoading}
+          className="bg-orange-400 hover:bg-orange-500 text-white px-8"
+        >
+          {isLoading ? (
+            <Loader2 className="w-4 h-4 animate-spin mr-2" />
+          ) : null}
+          이미지 생성하기
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderLifestyleGenerating = () => (
+    <div className="space-y-6">
+      {renderYumiMessage("라이프스타일 이미지를 생성하고 있습니다...")}
+
+      <div className="flex flex-col items-center gap-4">
+        <Loader2 className="w-12 h-12 animate-spin text-orange-400" />
+        <p className="text-gray-500">AI가 이미지를 생성 중입니다. 잠시만 기다려주세요.</p>
+      </div>
+    </div>
+  );
+
+  const renderLifestylePreview = () => (
+    <div className="space-y-6">
+      {renderYumiMessage("이런 이미지는 어떠세요?")}
+
+      <div className="flex justify-center">
+        <div className="max-w-md rounded-xl overflow-hidden shadow-lg bg-gray-100">
+          {wizardState.lifestyleImageUrl ? (
+            <img
+              src={wizardState.lifestyleImageUrl}
+              alt="Lifestyle"
+              className="w-full h-auto"
+            />
+          ) : (
+            <div className="w-full h-64 flex items-center justify-center text-gray-400">
+              이미지 로딩 중...
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="flex justify-center gap-4">
+        <Button variant="outline" onClick={handleRegenerateLifestyle}>
+          <RefreshCw className="w-4 h-4 mr-2" />
+          다시 생성
+        </Button>
+        <Button
+          onClick={handleLifestyleConfirm}
+          className="bg-orange-400 hover:bg-orange-500 text-white px-8"
+        >
+          사용하기
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderFinalGenerating = () => (
+    <div className="space-y-6">
+      {renderYumiMessage("최종 배너를 생성하고 있습니다...")}
+
+      <div className="flex flex-col items-center gap-4">
+        <Loader2 className="w-12 h-12 animate-spin text-orange-400" />
+        <p className="text-gray-500">카피와 이미지를 조합 중입니다.</p>
+      </div>
+    </div>
+  );
+
+  const renderFinalPreview = () => (
+    <div className="space-y-6">
+      {renderYumiMessage("모든 준비가 완료되었습니다! 최종 결과물을 확인해주세요.")}
+
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
+        {/* Summary Card */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <h4 className="font-semibold text-gray-900 mb-3">📝 입력된 카피</h4>
+          <div className="space-y-2 text-sm">
+            <div>
+              <span className="text-gray-500">Headline:</span>{" "}
+              <span className="text-gray-900">{wizardState.copyInputs.headline}</span>
+            </div>
+            <div>
+              <span className="text-gray-500">Subcopy:</span>{" "}
+              <span className="text-gray-900">{wizardState.copyInputs.subcopy}</span>
+            </div>
+            <div>
+              <span className="text-gray-500">CTA:</span>{" "}
+              <span className="text-gray-900">{wizardState.copyInputs.cta}</span>
+            </div>
+          </div>
+        </div>
+
+        {/* Lifestyle Image Preview */}
+        <div className="bg-white rounded-xl border border-gray-200 p-4">
+          <h4 className="font-semibold text-gray-900 mb-3">🖼️ 라이프스타일 이미지</h4>
+          {wizardState.lifestyleImageUrl && (
+            <img
+              src={wizardState.lifestyleImageUrl}
+              alt="Lifestyle"
+              className="w-full h-40 object-cover rounded-lg"
+            />
+          )}
+        </div>
+      </div>
+
+      {/* Selected Channels */}
+      <div className="flex justify-center gap-2">
+        {wizardState.selectedChannels.map((channelId) => {
+          const channel = CHANNELS.find((c) => c.id === channelId);
+          return (
+            <span
+              key={channelId}
+              className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm"
+            >
+              {channel?.name}
+            </span>
+          );
+        })}
+      </div>
+
+      {/* Action Buttons */}
+      <div className="flex flex-wrap justify-center gap-4">
+        <Button
+          onClick={() => handleExport("png")}
+          disabled={isExporting}
+          variant="outline"
+          className="px-6"
+        >
+          {isExporting ? (
+            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+          ) : (
+            <Download className="w-4 h-4 mr-2" />
+          )}
+          PNG 다운로드
+        </Button>
+        <Button
+          onClick={() => handleExport("svg")}
+          disabled={isExporting}
+          variant="outline"
+          className="px-6"
+        >
+          <FileText className="w-4 h-4 mr-2" />
+          SVG 다운로드
+        </Button>
+        <Button onClick={openInFigma} variant="outline" className="px-6">
+          <ExternalLink className="w-4 h-4 mr-2" />
+          Figma에서 열기
+        </Button>
+      </div>
+
+      <div className="flex justify-center gap-4 pt-4">
+        <Button variant="ghost" onClick={handleStartOver}>
+          처음부터 다시
+        </Button>
+        <Button
+          onClick={() => navigate("/home")}
+          className="bg-orange-400 hover:bg-orange-500 text-white px-8"
+        >
+          홈으로 가기
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderError = () => (
+    <div className="space-y-6">
+      {renderYumiMessage(
+        loadError === "RATE_LIMIT"
+          ? "Figma API가 일시적으로 사용량이 많습니다. 잠시 후 다시 시도해주세요."
+          : "오류가 발생했습니다. 다시 시도해주세요."
+      )}
+
+      <div className="flex justify-center">
+        <Button
+          onClick={handleRetry}
+          className="bg-orange-400 hover:bg-orange-500 text-white px-8"
+        >
+          다시 시도
+        </Button>
+      </div>
+    </div>
+  );
+
+  const renderContent = () => {
+    switch (phase) {
+      case "loading":
+        return (
+          <div className="flex flex-col items-center justify-center py-12">
+            <Loader2 className="w-12 h-12 animate-spin text-orange-400" />
+            <p className="mt-4 text-gray-500">준비 중...</p>
+          </div>
+        );
+      case "layout-select":
+        return renderLayoutSelect();
+      case "layout-confirm":
+        return renderLayoutConfirm();
+      case "channel-select":
+        return renderChannelSelect();
+      case "syncing":
+        return renderSyncing();
+      case "copy-collect":
+        return renderCopyCollect();
+      case "image-type-select":
+        return renderImageTypeSelect();
+      case "pdp-input":
+        return renderPdpInput();
+      case "pdp-preview":
+        return renderPdpPreview();
+      case "lifestyle-input":
+        return renderLifestyleInput();
+      case "lifestyle-generating":
+        return renderLifestyleGenerating();
+      case "lifestyle-preview":
+        return renderLifestylePreview();
+      case "final-generating":
+        return renderFinalGenerating();
+      case "final-preview":
+      case "completed":
+        return renderFinalPreview();
+      case "error":
+        return renderError();
+      default:
+        return null;
+    }
+  };
+
+  // ==================== Main Render ====================
 
   return (
-    <div className="min-h-screen relative overflow-hidden" style={{
-      backgroundImage: `url('/lovable-uploads/bc537bc9-b912-4359-a294-eb543db318e3.png')`,
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat'
-    }}>
+    <div
+      className="min-h-screen relative overflow-hidden"
+      style={{
+        backgroundImage: `url('/lovable-uploads/bc537bc9-b912-4359-a294-eb543db318e3.png')`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
       {/* Background decorative elements */}
-      <div className="absolute inset-0 overflow-hidden">
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-10 -right-10 w-40 h-40 bg-white/10 rounded-full blur-xl"></div>
         <div className="absolute top-1/3 -left-20 w-60 h-60 bg-white/5 rounded-full blur-2xl"></div>
         <div className="absolute bottom-20 right-1/4 w-32 h-32 bg-white/10 rounded-full blur-xl"></div>
@@ -607,17 +1154,17 @@ const ChatInterface = () => {
         </Button>
       </div>
 
-      {/* Main chat container */}
+      {/* Main container - WIDER layout */}
       <div className="flex items-center justify-center min-h-screen p-4">
-        <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden relative">
-          {/* Chat header with Yumi's profile */}
+        <div className="w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden relative">
+          {/* Header */}
           <div className="bg-white p-6 border-b border-gray-100">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
-                <div className="w-16 h-16 rounded-full overflow-hidden">
-                  <img 
-                    src="/lovable-uploads/1d0546ae-2d59-40cf-a231-60343eecc72a.png" 
-                    alt="Yumi Profile" 
+                <div className="w-14 h-14 rounded-full overflow-hidden">
+                  <img
+                    src="/lovable-uploads/1d0546ae-2d59-40cf-a231-60343eecc72a.png"
+                    alt="Yumi Profile"
                     className="w-full h-full object-cover"
                   />
                 </div>
@@ -626,205 +1173,27 @@ const ChatInterface = () => {
                   <p className="text-gray-600">Promotional Content Designer</p>
                 </div>
               </div>
-              
-              {/* Language selector */}
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="flex items-center gap-2">
-                    <Globe className="w-4 h-4" />
-                    <span>{languages[currentLanguage].flag}</span>
-                    <span className="hidden sm:inline">{languages[currentLanguage].name}</span>
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  {Object.entries(languages).map(([code, lang]) => (
-                    <DropdownMenuItem
-                      key={code}
-                      onClick={() => setCurrentLanguage(code as LanguageCode)}
-                      className="flex items-center gap-2"
-                    >
-                      <span>{lang.flag}</span>
-                      <span>{lang.name}</span>
-                    </DropdownMenuItem>
-                  ))}
-                </DropdownMenuContent>
-              </DropdownMenu>
-            </div>
-          </div>
 
-          {/* Messages area */}
-          <div className="h-96 overflow-y-auto p-6 space-y-4 bg-gray-50">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex ${message.sender === "user" ? "justify-end" : "justify-start"}`}
-              >
-                <div
-                  className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl ${
-                    message.sender === "user"
-                      ? "text-white rounded-br-md"
-                      : message.type === "info" 
-                        ? "bg-blue-50 text-gray-900 shadow-sm rounded-bl-md border border-blue-100"
-                        : "bg-white text-gray-900 shadow-sm rounded-bl-md border border-gray-100"
-                  }`}
-                  style={message.sender === "user" ? { backgroundColor: "#5D4E49" } : {}}
-                >
-                  <p className="text-sm whitespace-pre-wrap">{message.content}</p>
-                </div>
-              </div>
-            ))}
-            
-            {/* Loading indicator */}
-            {isLoading && (
-              <div className="flex justify-start">
-                <div className="bg-white px-4 py-3 rounded-2xl rounded-bl-md shadow-sm border border-gray-100">
-                  <div className="flex items-center gap-2">
-                    <Loader2 className="w-4 h-4 animate-spin text-orange-400" />
-                    <span className="text-sm text-gray-500">{ui.loading}</span>
+              {/* Step Indicator */}
+              {phase !== "loading" && phase !== "error" && (
+                <div className="flex items-center gap-2 text-sm text-gray-500">
+                  <span>Step {getStepNumber()} / {totalSteps}</span>
+                  <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div
+                      className="h-full bg-orange-400 transition-all"
+                      style={{ width: `${(getStepNumber() / totalSteps) * 100}%` }}
+                    />
                   </div>
                 </div>
-              </div>
-            )}
-            
-            <div ref={messagesEndRef} />
+              )}
+            </div>
           </div>
 
-          {/* Error state with retry button */}
-          {phase === "error" && (
-            <div className="p-4 bg-white border-t border-gray-100">
-              <Button 
-                onClick={handleRetry}
-                className="w-full bg-orange-400 hover:bg-orange-500 text-white"
-              >
-                {ui.retryButton}
-              </Button>
-            </div>
-          )}
-          {phase === "channel-select" && (
-            <div className="p-4 bg-white border-t border-gray-100">
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-3">
-                  {CHANNELS.map((channel) => (
-                    <div 
-                      key={channel.id} 
-                      className={`flex items-center space-x-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                        selectedChannels.includes(channel.id)
-                          ? "border-orange-400 bg-orange-50"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
-                      onClick={() => handleChannelChange(channel.id, !selectedChannels.includes(channel.id))}
-                    >
-                      <Checkbox
-                        id={channel.id}
-                        checked={selectedChannels.includes(channel.id)}
-                        onCheckedChange={(checked) => handleChannelChange(channel.id, checked as boolean)}
-                      />
-                      <label 
-                        htmlFor={channel.id} 
-                        className="text-sm font-medium cursor-pointer flex-1"
-                      >
-                        {channel.name}
-                      </label>
-                    </div>
-                  ))}
-                </div>
-                <Button 
-                  onClick={handleChannelConfirm}
-                  className="w-full bg-orange-400 hover:bg-orange-500 text-white"
-                  disabled={selectedChannels.length === 0}
-                >
-                  {ui.confirmChannels} ({selectedChannels.length})
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {/* Input area for layer collection */}
-          {phase === "collecting" && currentGroupIndex < groupedLayers.length && (
-            <div className="p-4 bg-white border-t border-gray-100">
-              <div className="space-y-3">
-                {/* Current layer indicator */}
-                <div className="flex items-center justify-between text-sm text-gray-500">
-                  <span>
-                    {groupedLayers[currentGroupIndex]?.type === "TEXT" ? "📝" : "🖼️"}
-                    {" "}{groupedLayers[currentGroupIndex]?.name}
-                    {groupedLayers[currentGroupIndex]?.count > 1 && (
-                      <span className="ml-2 text-orange-500 text-xs">
-                        ({groupedLayers[currentGroupIndex]?.count}개 프레임)
-                      </span>
-                    )}
-                  </span>
-                  <span>{currentGroupIndex + 1} / {groupedLayers.length}</span>
-                </div>
-                
-                {/* Input field */}
-                <div className="flex gap-2">
-                  {groupedLayers[currentGroupIndex]?.type === "TEXT" ? (
-                    <Input
-                      value={inputValue}
-                      onChange={(e) => setInputValue(e.target.value)}
-                      placeholder={ui.typeResponse}
-                      className="flex-1"
-                      onKeyPress={(e) => e.key === "Enter" && handleInputSubmit()}
-                    />
-                  ) : (
-                    <Textarea
-                      value={inputValue}
-                      onChange={(e) => setInputValue(e.target.value)}
-                      placeholder={ui.enterDescription}
-                      className="flex-1"
-                      rows={2}
-                    />
-                  )}
-                  <Button 
-                    onClick={handleInputSubmit}
-                    disabled={!inputValue.trim()}
-                    size="icon"
-                    className="bg-orange-400 hover:bg-orange-500 self-end"
-                  >
-                    <Send className="w-4 h-4" />
-                  </Button>
-                </div>
-                
-                {/* Skip button */}
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleSkipLayer}
-                  className="text-gray-500 hover:text-gray-700"
-                >
-                  {ui.skipLayer}
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {/* Completion actions */}
-          {phase === "completed" && !previewUrl && (
-            <div className="p-4 bg-white border-t border-gray-100">
-              <div className="flex gap-3 justify-center">
-                <Button
-                  onClick={exportPreview}
-                  disabled={isExporting}
-                  className="bg-orange-400 hover:bg-orange-500"
-                >
-                  {isExporting ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  ) : (
-                    <Image className="w-4 h-4 mr-2" />
-                  )}
-                  {ui.previewButton}
-                </Button>
-                <Button
-                  onClick={openInFigma}
-                  variant="outline"
-                >
-                  <ExternalLink className="w-4 h-4 mr-2" />
-                  {ui.openFigma}
-                </Button>
-              </div>
-            </div>
-          )}
+          {/* Content Area - TALLER */}
+          <div className="min-h-[600px] p-8 bg-gray-50 overflow-y-auto">
+            {renderContent()}
+            <div ref={messagesEndRef} />
+          </div>
         </div>
       </div>
     </div>

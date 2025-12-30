@@ -56,3 +56,9 @@ verify_jwt = false
 
 [functions.yumi-figma-export]
 verify_jwt = false
+
+[functions.yumi-extract-pdp-image]
+verify_jwt = false
+
+[functions.yumi-generate-lifestyle]
+verify_jwt = false
