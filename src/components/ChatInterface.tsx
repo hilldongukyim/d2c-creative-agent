@@ -623,9 +623,9 @@ const ChatInterface = () => {
 
   // Initialize
   useEffect(() => {
-    // Start with layout selection (no Figma API call yet)
+    // Start with channel selection first
     setTimeout(() => {
-      setPhase("layout-select");
+      setPhase("channel-select");
     }, 1000);
   }, []);
 
@@ -644,8 +644,14 @@ const ChatInterface = () => {
     setPhase("layout-confirm");
   };
 
-  const handleLayoutConfirm = () => {
-    setPhase("channel-select");
+  const handleLayoutConfirm = async () => {
+    // After layout confirm, sync Figma (for Type A) or proceed to copy
+    if (wizardState.selectedLayout === "A") {
+      setPhase("syncing");
+      await loadFigmaLayers();
+    } else {
+      setPhase("copy-collect");
+    }
   };
 
   const handleChannelToggle = (channelId: string) => {
@@ -657,7 +663,7 @@ const ChatInterface = () => {
     }));
   };
 
-  const handleChannelConfirm = async () => {
+  const handleChannelConfirm = () => {
     if (wizardState.selectedChannels.length === 0) {
       toast({
         title: "Channel Required",
@@ -667,13 +673,8 @@ const ChatInterface = () => {
       return;
     }
 
-    // Only sync Figma for Type A
-    if (wizardState.selectedLayout === "A") {
-      setPhase("syncing");
-      await loadFigmaLayers();
-    } else {
-      setPhase("copy-collect");
-    }
+    // After channel selection, proceed to layout selection
+    setPhase("layout-select");
   };
 
   const loadFigmaLayers = async () => {
@@ -951,7 +952,7 @@ const ChatInterface = () => {
       lifestyleDescription: "",
       lifestyleImageUrl: null,
     });
-    setPhase("layout-select");
+    setPhase("channel-select");
     setFigmaData(null);
     setFilteredLayers([]);
     setPreviewUrl(null);
@@ -961,9 +962,9 @@ const ChatInterface = () => {
 
   const getStepNumber = () => {
     const steps: Phase[] = [
+      "channel-select",
       "layout-select",
       "layout-confirm",
-      "channel-select",
       "copy-collect",
       "image-type-select",
       "lifestyle-input",
@@ -971,7 +972,7 @@ const ChatInterface = () => {
     ];
     const currentIndex = steps.findIndex((s) => 
       phase === s || 
-      (phase === "syncing" && s === "channel-select") ||
+      (phase === "syncing" && s === "layout-confirm") ||
       (phase === "pdp-input" && s === "image-type-select") ||
       (phase === "pdp-preview" && s === "image-type-select") ||
       (phase === "lifestyle-generating" && s === "lifestyle-input") ||
