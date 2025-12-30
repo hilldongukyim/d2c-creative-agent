@@ -2,9 +2,462 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ArrowLeft, Loader2, Download, FileText, ExternalLink, Check, RefreshCw } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { ArrowLeft, Loader2, Download, FileText, ExternalLink, Check, RefreshCw, Globe } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
+
+// ==================== Translations ====================
+
+type LanguageCode = "en" | "ja" | "th" | "es" | "pt" | "de" | "fr";
+
+interface Translations {
+  layoutQuestion: string;
+  layoutConfirmProduct: string;
+  layoutConfirmLifestyle: string;
+  channelQuestion: string;
+  copyQuestion: string;
+  imageTypeQuestion: string;
+  yesIncludeProduct: string;
+  noWithoutProduct: string;
+  productDescription: string;
+  lifestyleDescription: string;
+  pdpQuestion: string;
+  pdpConfirmQuestion: string;
+  lifestyleQuestionWithProduct: string;
+  lifestyleQuestionWithoutProduct: string;
+  generatingLifestyle: string;
+  lifestylePreviewQuestion: string;
+  generatingFinal: string;
+  finalComplete: string;
+  rateLimitError: string;
+  genericError: string;
+  selectOther: string;
+  confirmProceed: string;
+  selectionComplete: string;
+  next: string;
+  useThis: string;
+  regenerate: string;
+  retry: string;
+  startOver: string;
+  goHome: string;
+  downloadPng: string;
+  downloadSvg: string;
+  openInFigma: string;
+  headlinePlaceholder: string;
+  subcopyPlaceholder: string;
+  ctaPlaceholder: string;
+  pdpPlaceholder: string;
+  lifestylePlaceholder: string;
+  getImage: string;
+  generateImage: string;
+  proceedWithoutProduct: string;
+  inputCopy: string;
+  comingSoon: string;
+  step: string;
+  preparing: string;
+  syncing: string;
+  combiningAssets: string;
+  lifestyleSuggestions: string[];
+}
+
+const translations: Record<LanguageCode, Translations> = {
+  en: {
+    layoutQuestion: "Hi there! Which layout would you like to use for your promotional content?",
+    layoutConfirmProduct: "You selected {name}! This layout requires both product and lifestyle images. Would you like to proceed?",
+    layoutConfirmLifestyle: "You selected {name}! This layout uses only lifestyle images. Would you like to proceed?",
+    channelQuestion: "Which channels do you need banners for? You can select multiple.",
+    copyQuestion: "Please enter the copy for your banners.",
+    imageTypeQuestion: "Would you like to include a product in the lifestyle image?",
+    yesIncludeProduct: "Yes, include product",
+    noWithoutProduct: "No, without product",
+    productDescription: "We'll fetch the product image from the PDP URL and display it with the lifestyle image.",
+    lifestyleDescription: "We'll create a lifestyle image focused on people and environment.",
+    pdpQuestion: "Please enter the product page (PDP) URL. We'll fetch the first gallery image.",
+    pdpConfirmQuestion: "Would you like to use this product image?",
+    lifestyleQuestionWithProduct: "What lifestyle scene would you like with the product? Please describe the scene.",
+    lifestyleQuestionWithoutProduct: "What lifestyle scene would you like? We'll create an image focused on people and environment.",
+    generatingLifestyle: "Generating the lifestyle image...",
+    lifestylePreviewQuestion: "How about this image?",
+    generatingFinal: "Creating your final banners...",
+    finalComplete: "All done! Please review your final results.",
+    rateLimitError: "Figma API is temporarily busy. Please try again in 1 minute.",
+    genericError: "An error occurred. Please try again.",
+    selectOther: "Select another layout",
+    confirmProceed: "Confirm & Proceed",
+    selectionComplete: "Selection Complete",
+    next: "Next",
+    useThis: "Use this",
+    regenerate: "Regenerate",
+    retry: "Retry",
+    startOver: "Start Over",
+    goHome: "Go to Home",
+    downloadPng: "Download PNG",
+    downloadSvg: "Download SVG",
+    openInFigma: "Open in Figma",
+    headlinePlaceholder: "Enter your main headline",
+    subcopyPlaceholder: "Enter your subcopy",
+    ctaPlaceholder: "CTA button text (e.g., Shop Now)",
+    pdpPlaceholder: "https://example.com/product/...",
+    lifestylePlaceholder: "e.g., Friends enjoying time at the beach under warm sunlight...",
+    getImage: "Get Image",
+    generateImage: "Generate Image",
+    proceedWithoutProduct: "Proceed without product",
+    inputCopy: "Entered Copy",
+    comingSoon: "Coming Soon",
+    step: "Step",
+    preparing: "Preparing...",
+    syncing: "Loading Figma template...",
+    combiningAssets: "Combining copy and images...",
+    lifestyleSuggestions: [
+      "Relaxing at the beach",
+      "Chatting with friends at a cafe",
+      "Walking through city streets",
+      "Picnic in the park",
+      "Cozy relaxation at home"
+    ]
+  },
+  ja: {
+    layoutQuestion: "こんにちは！どのレイアウトでプロモーションコンテンツを作成しますか？",
+    layoutConfirmProduct: "{name}を選択しました！このレイアウトは製品画像とライフスタイル画像の両方が必要です。続行しますか？",
+    layoutConfirmLifestyle: "{name}を選択しました！このレイアウトはライフスタイル画像のみを使用します。続行しますか？",
+    channelQuestion: "どのチャンネル用のバナーが必要ですか？複数選択できます。",
+    copyQuestion: "バナーのコピーを入力してください。",
+    imageTypeQuestion: "ライフスタイル画像に製品を含めますか？",
+    yesIncludeProduct: "はい、製品を含める",
+    noWithoutProduct: "いいえ、製品なし",
+    productDescription: "PDP URLから製品画像を取得し、ライフスタイル画像と一緒に表示します。",
+    lifestyleDescription: "人と環境に焦点を当てたライフスタイル画像を作成します。",
+    pdpQuestion: "製品ページ（PDP）のURLを入力してください。最初のギャラリー画像を取得します。",
+    pdpConfirmQuestion: "この製品画像を使用しますか？",
+    lifestyleQuestionWithProduct: "製品と一緒にどんなライフスタイルシーンを希望しますか？シーンを説明してください。",
+    lifestyleQuestionWithoutProduct: "どんなライフスタイルシーンを希望しますか？人と環境に焦点を当てた画像を作成します。",
+    generatingLifestyle: "ライフスタイル画像を生成中...",
+    lifestylePreviewQuestion: "この画像はいかがですか？",
+    generatingFinal: "最終バナーを作成中...",
+    finalComplete: "完了！最終結果をご確認ください。",
+    rateLimitError: "Figma APIが一時的にビジーです。1分後にもう一度お試しください。",
+    genericError: "エラーが発生しました。もう一度お試しください。",
+    selectOther: "別のレイアウトを選択",
+    confirmProceed: "確認して続行",
+    selectionComplete: "選択完了",
+    next: "次へ",
+    useThis: "これを使用",
+    regenerate: "再生成",
+    retry: "再試行",
+    startOver: "最初から",
+    goHome: "ホームへ",
+    downloadPng: "PNG ダウンロード",
+    downloadSvg: "SVG ダウンロード",
+    openInFigma: "Figmaで開く",
+    headlinePlaceholder: "メインヘッドラインを入力",
+    subcopyPlaceholder: "サブコピーを入力",
+    ctaPlaceholder: "CTAボタンテキスト（例：今すぐ購入）",
+    pdpPlaceholder: "https://example.com/product/...",
+    lifestylePlaceholder: "例：暖かい日差しの下でビーチで友達と楽しい時間...",
+    getImage: "画像を取得",
+    generateImage: "画像を生成",
+    proceedWithoutProduct: "製品なしで続行",
+    inputCopy: "入力されたコピー",
+    comingSoon: "近日公開",
+    step: "ステップ",
+    preparing: "準備中...",
+    syncing: "Figmaテンプレートを読み込み中...",
+    combiningAssets: "コピーと画像を合成中...",
+    lifestyleSuggestions: [
+      "ビーチでリラックス",
+      "カフェで友達とおしゃべり",
+      "街を散歩",
+      "公園でピクニック",
+      "家で快適にリラックス"
+    ]
+  },
+  th: {
+    layoutQuestion: "สวัสดีค่ะ! คุณต้องการใช้เลย์เอาต์แบบใดสำหรับเนื้อหาโปรโมชั่น?",
+    layoutConfirmProduct: "คุณเลือก {name}! เลย์เอาต์นี้ต้องใช้ทั้งภาพสินค้าและภาพไลฟ์สไตล์ ต้องการดำเนินการต่อหรือไม่?",
+    layoutConfirmLifestyle: "คุณเลือก {name}! เลย์เอาต์นี้ใช้เฉพาะภาพไลฟ์สไตล์ ต้องการดำเนินการต่อหรือไม่?",
+    channelQuestion: "คุณต้องการแบนเนอร์สำหรับช่องทางใด? สามารถเลือกได้หลายรายการ",
+    copyQuestion: "กรุณาใส่ข้อความสำหรับแบนเนอร์",
+    imageTypeQuestion: "คุณต้องการรวมสินค้าในภาพไลฟ์สไตล์หรือไม่?",
+    yesIncludeProduct: "ใช่ รวมสินค้า",
+    noWithoutProduct: "ไม่ ไม่ต้องมีสินค้า",
+    productDescription: "เราจะดึงภาพสินค้าจาก URL PDP และแสดงพร้อมกับภาพไลฟ์สไตล์",
+    lifestyleDescription: "เราจะสร้างภาพไลฟ์สไตล์ที่เน้นคนและสภาพแวดล้อม",
+    pdpQuestion: "กรุณาใส่ URL หน้าสินค้า (PDP) เราจะดึงภาพแกลเลอรีแรก",
+    pdpConfirmQuestion: "คุณต้องการใช้ภาพสินค้านี้หรือไม่?",
+    lifestyleQuestionWithProduct: "คุณต้องการฉากไลฟ์สไตล์แบบใดกับสินค้า? กรุณาอธิบายฉาก",
+    lifestyleQuestionWithoutProduct: "คุณต้องการฉากไลฟ์สไตล์แบบใด? เราจะสร้างภาพที่เน้นคนและสภาพแวดล้อม",
+    generatingLifestyle: "กำลังสร้างภาพไลฟ์สไตล์...",
+    lifestylePreviewQuestion: "ภาพนี้เป็นอย่างไรบ้าง?",
+    generatingFinal: "กำลังสร้างแบนเนอร์สุดท้าย...",
+    finalComplete: "เสร็จสิ้น! กรุณาตรวจสอบผลลัพธ์สุดท้าย",
+    rateLimitError: "Figma API ไม่ว่างชั่วคราว กรุณาลองใหม่ใน 1 นาที",
+    genericError: "เกิดข้อผิดพลาด กรุณาลองใหม่",
+    selectOther: "เลือกเลย์เอาต์อื่น",
+    confirmProceed: "ยืนยันและดำเนินการต่อ",
+    selectionComplete: "เลือกเสร็จสิ้น",
+    next: "ถัดไป",
+    useThis: "ใช้สิ่งนี้",
+    regenerate: "สร้างใหม่",
+    retry: "ลองใหม่",
+    startOver: "เริ่มต้นใหม่",
+    goHome: "ไปหน้าหลัก",
+    downloadPng: "ดาวน์โหลด PNG",
+    downloadSvg: "ดาวน์โหลด SVG",
+    openInFigma: "เปิดใน Figma",
+    headlinePlaceholder: "ใส่พาดหัวหลัก",
+    subcopyPlaceholder: "ใส่ข้อความรอง",
+    ctaPlaceholder: "ข้อความปุ่ม CTA (เช่น ซื้อเลย)",
+    pdpPlaceholder: "https://example.com/product/...",
+    lifestylePlaceholder: "เช่น เพื่อนๆ เพลิดเพลินกับเวลาที่ชายหาดใต้แสงแดดอบอุ่น...",
+    getImage: "ดึงภาพ",
+    generateImage: "สร้างภาพ",
+    proceedWithoutProduct: "ดำเนินการต่อโดยไม่มีสินค้า",
+    inputCopy: "ข้อความที่ใส่",
+    comingSoon: "เร็วๆ นี้",
+    step: "ขั้นตอน",
+    preparing: "กำลังเตรียม...",
+    syncing: "กำลังโหลดเทมเพลต Figma...",
+    combiningAssets: "กำลังรวมข้อความและภาพ...",
+    lifestyleSuggestions: [
+      "พักผ่อนที่ชายหาด",
+      "พูดคุยกับเพื่อนที่คาเฟ่",
+      "เดินเล่นในเมือง",
+      "ปิกนิกในสวน",
+      "พักผ่อนอย่างสบายที่บ้าน"
+    ]
+  },
+  es: {
+    layoutQuestion: "¡Hola! ¿Qué diseño te gustaría usar para tu contenido promocional?",
+    layoutConfirmProduct: "¡Seleccionaste {name}! Este diseño requiere imágenes de producto y estilo de vida. ¿Deseas continuar?",
+    layoutConfirmLifestyle: "¡Seleccionaste {name}! Este diseño usa solo imágenes de estilo de vida. ¿Deseas continuar?",
+    channelQuestion: "¿Para qué canales necesitas banners? Puedes seleccionar varios.",
+    copyQuestion: "Por favor ingresa el texto para tus banners.",
+    imageTypeQuestion: "¿Te gustaría incluir un producto en la imagen de estilo de vida?",
+    yesIncludeProduct: "Sí, incluir producto",
+    noWithoutProduct: "No, sin producto",
+    productDescription: "Obtendremos la imagen del producto desde la URL del PDP y la mostraremos con la imagen de estilo de vida.",
+    lifestyleDescription: "Crearemos una imagen de estilo de vida enfocada en personas y ambiente.",
+    pdpQuestion: "Por favor ingresa la URL de la página del producto (PDP). Obtendremos la primera imagen de la galería.",
+    pdpConfirmQuestion: "¿Te gustaría usar esta imagen de producto?",
+    lifestyleQuestionWithProduct: "¿Qué escena de estilo de vida te gustaría con el producto? Por favor describe la escena.",
+    lifestyleQuestionWithoutProduct: "¿Qué escena de estilo de vida te gustaría? Crearemos una imagen enfocada en personas y ambiente.",
+    generatingLifestyle: "Generando la imagen de estilo de vida...",
+    lifestylePreviewQuestion: "¿Qué te parece esta imagen?",
+    generatingFinal: "Creando tus banners finales...",
+    finalComplete: "¡Listo! Por favor revisa tus resultados finales.",
+    rateLimitError: "La API de Figma está temporalmente ocupada. Por favor intenta de nuevo en 1 minuto.",
+    genericError: "Ocurrió un error. Por favor intenta de nuevo.",
+    selectOther: "Seleccionar otro diseño",
+    confirmProceed: "Confirmar y Continuar",
+    selectionComplete: "Selección Completa",
+    next: "Siguiente",
+    useThis: "Usar esto",
+    regenerate: "Regenerar",
+    retry: "Reintentar",
+    startOver: "Empezar de Nuevo",
+    goHome: "Ir al Inicio",
+    downloadPng: "Descargar PNG",
+    downloadSvg: "Descargar SVG",
+    openInFigma: "Abrir en Figma",
+    headlinePlaceholder: "Ingresa tu titular principal",
+    subcopyPlaceholder: "Ingresa tu subtexto",
+    ctaPlaceholder: "Texto del botón CTA (ej., Comprar Ahora)",
+    pdpPlaceholder: "https://example.com/product/...",
+    lifestylePlaceholder: "ej., Amigos disfrutando en la playa bajo la cálida luz del sol...",
+    getImage: "Obtener Imagen",
+    generateImage: "Generar Imagen",
+    proceedWithoutProduct: "Continuar sin producto",
+    inputCopy: "Texto Ingresado",
+    comingSoon: "Próximamente",
+    step: "Paso",
+    preparing: "Preparando...",
+    syncing: "Cargando plantilla de Figma...",
+    combiningAssets: "Combinando texto e imágenes...",
+    lifestyleSuggestions: [
+      "Relajándose en la playa",
+      "Charlando con amigos en un café",
+      "Paseando por las calles de la ciudad",
+      "Picnic en el parque",
+      "Relajación acogedora en casa"
+    ]
+  },
+  pt: {
+    layoutQuestion: "Olá! Qual layout você gostaria de usar para seu conteúdo promocional?",
+    layoutConfirmProduct: "Você selecionou {name}! Este layout requer imagens de produto e estilo de vida. Deseja continuar?",
+    layoutConfirmLifestyle: "Você selecionou {name}! Este layout usa apenas imagens de estilo de vida. Deseja continuar?",
+    channelQuestion: "Para quais canais você precisa de banners? Você pode selecionar vários.",
+    copyQuestion: "Por favor, insira o texto para seus banners.",
+    imageTypeQuestion: "Você gostaria de incluir um produto na imagem de estilo de vida?",
+    yesIncludeProduct: "Sim, incluir produto",
+    noWithoutProduct: "Não, sem produto",
+    productDescription: "Buscaremos a imagem do produto da URL do PDP e exibiremos com a imagem de estilo de vida.",
+    lifestyleDescription: "Criaremos uma imagem de estilo de vida focada em pessoas e ambiente.",
+    pdpQuestion: "Por favor, insira a URL da página do produto (PDP). Buscaremos a primeira imagem da galeria.",
+    pdpConfirmQuestion: "Você gostaria de usar esta imagem do produto?",
+    lifestyleQuestionWithProduct: "Qual cena de estilo de vida você gostaria com o produto? Por favor descreva a cena.",
+    lifestyleQuestionWithoutProduct: "Qual cena de estilo de vida você gostaria? Criaremos uma imagem focada em pessoas e ambiente.",
+    generatingLifestyle: "Gerando a imagem de estilo de vida...",
+    lifestylePreviewQuestion: "O que acha desta imagem?",
+    generatingFinal: "Criando seus banners finais...",
+    finalComplete: "Pronto! Por favor revise seus resultados finais.",
+    rateLimitError: "A API do Figma está temporariamente ocupada. Por favor tente novamente em 1 minuto.",
+    genericError: "Ocorreu um erro. Por favor tente novamente.",
+    selectOther: "Selecionar outro layout",
+    confirmProceed: "Confirmar e Continuar",
+    selectionComplete: "Seleção Completa",
+    next: "Próximo",
+    useThis: "Usar isso",
+    regenerate: "Regenerar",
+    retry: "Tentar Novamente",
+    startOver: "Recomeçar",
+    goHome: "Ir para Início",
+    downloadPng: "Baixar PNG",
+    downloadSvg: "Baixar SVG",
+    openInFigma: "Abrir no Figma",
+    headlinePlaceholder: "Insira seu título principal",
+    subcopyPlaceholder: "Insira seu subtexto",
+    ctaPlaceholder: "Texto do botão CTA (ex., Compre Agora)",
+    pdpPlaceholder: "https://example.com/product/...",
+    lifestylePlaceholder: "ex., Amigos aproveitando na praia sob a luz quente do sol...",
+    getImage: "Obter Imagem",
+    generateImage: "Gerar Imagem",
+    proceedWithoutProduct: "Continuar sem produto",
+    inputCopy: "Texto Inserido",
+    comingSoon: "Em Breve",
+    step: "Passo",
+    preparing: "Preparando...",
+    syncing: "Carregando template do Figma...",
+    combiningAssets: "Combinando texto e imagens...",
+    lifestyleSuggestions: [
+      "Relaxando na praia",
+      "Conversando com amigos em um café",
+      "Passeando pelas ruas da cidade",
+      "Piquenique no parque",
+      "Relaxamento aconchegante em casa"
+    ]
+  },
+  de: {
+    layoutQuestion: "Hallo! Welches Layout möchtest du für deinen Werbeinhalt verwenden?",
+    layoutConfirmProduct: "Du hast {name} ausgewählt! Dieses Layout erfordert sowohl Produkt- als auch Lifestyle-Bilder. Möchtest du fortfahren?",
+    layoutConfirmLifestyle: "Du hast {name} ausgewählt! Dieses Layout verwendet nur Lifestyle-Bilder. Möchtest du fortfahren?",
+    channelQuestion: "Für welche Kanäle benötigst du Banner? Du kannst mehrere auswählen.",
+    copyQuestion: "Bitte gib den Text für deine Banner ein.",
+    imageTypeQuestion: "Möchtest du ein Produkt im Lifestyle-Bild einbeziehen?",
+    yesIncludeProduct: "Ja, Produkt einbeziehen",
+    noWithoutProduct: "Nein, ohne Produkt",
+    productDescription: "Wir holen das Produktbild von der PDP-URL und zeigen es mit dem Lifestyle-Bild an.",
+    lifestyleDescription: "Wir erstellen ein Lifestyle-Bild mit Fokus auf Menschen und Umgebung.",
+    pdpQuestion: "Bitte gib die Produktseiten-URL (PDP) ein. Wir holen das erste Galeriebild.",
+    pdpConfirmQuestion: "Möchtest du dieses Produktbild verwenden?",
+    lifestyleQuestionWithProduct: "Welche Lifestyle-Szene möchtest du mit dem Produkt? Bitte beschreibe die Szene.",
+    lifestyleQuestionWithoutProduct: "Welche Lifestyle-Szene möchtest du? Wir erstellen ein Bild mit Fokus auf Menschen und Umgebung.",
+    generatingLifestyle: "Lifestyle-Bild wird generiert...",
+    lifestylePreviewQuestion: "Wie findest du dieses Bild?",
+    generatingFinal: "Deine finalen Banner werden erstellt...",
+    finalComplete: "Fertig! Bitte überprüfe deine Endergebnisse.",
+    rateLimitError: "Figma API ist vorübergehend beschäftigt. Bitte versuche es in 1 Minute erneut.",
+    genericError: "Ein Fehler ist aufgetreten. Bitte versuche es erneut.",
+    selectOther: "Anderes Layout wählen",
+    confirmProceed: "Bestätigen & Fortfahren",
+    selectionComplete: "Auswahl Abgeschlossen",
+    next: "Weiter",
+    useThis: "Dies verwenden",
+    regenerate: "Neu generieren",
+    retry: "Erneut versuchen",
+    startOver: "Neu beginnen",
+    goHome: "Zur Startseite",
+    downloadPng: "PNG herunterladen",
+    downloadSvg: "SVG herunterladen",
+    openInFigma: "In Figma öffnen",
+    headlinePlaceholder: "Gib deine Hauptüberschrift ein",
+    subcopyPlaceholder: "Gib deinen Untertext ein",
+    ctaPlaceholder: "CTA-Button-Text (z.B., Jetzt kaufen)",
+    pdpPlaceholder: "https://example.com/product/...",
+    lifestylePlaceholder: "z.B., Freunde genießen Zeit am Strand unter warmem Sonnenlicht...",
+    getImage: "Bild holen",
+    generateImage: "Bild generieren",
+    proceedWithoutProduct: "Ohne Produkt fortfahren",
+    inputCopy: "Eingegebener Text",
+    comingSoon: "Demnächst",
+    step: "Schritt",
+    preparing: "Vorbereitung...",
+    syncing: "Figma-Vorlage wird geladen...",
+    combiningAssets: "Text und Bilder werden kombiniert...",
+    lifestyleSuggestions: [
+      "Entspannung am Strand",
+      "Mit Freunden im Café plaudern",
+      "Durch die Straßen der Stadt spazieren",
+      "Picknick im Park",
+      "Gemütliche Entspannung zu Hause"
+    ]
+  },
+  fr: {
+    layoutQuestion: "Bonjour ! Quel layout souhaitez-vous utiliser pour votre contenu promotionnel ?",
+    layoutConfirmProduct: "Vous avez sélectionné {name} ! Ce layout nécessite des images de produit et de style de vie. Voulez-vous continuer ?",
+    layoutConfirmLifestyle: "Vous avez sélectionné {name} ! Ce layout utilise uniquement des images de style de vie. Voulez-vous continuer ?",
+    channelQuestion: "Pour quels canaux avez-vous besoin de bannières ? Vous pouvez en sélectionner plusieurs.",
+    copyQuestion: "Veuillez entrer le texte pour vos bannières.",
+    imageTypeQuestion: "Souhaitez-vous inclure un produit dans l'image de style de vie ?",
+    yesIncludeProduct: "Oui, inclure le produit",
+    noWithoutProduct: "Non, sans produit",
+    productDescription: "Nous récupérerons l'image du produit depuis l'URL PDP et l'afficherons avec l'image de style de vie.",
+    lifestyleDescription: "Nous créerons une image de style de vie axée sur les personnes et l'environnement.",
+    pdpQuestion: "Veuillez entrer l'URL de la page produit (PDP). Nous récupérerons la première image de la galerie.",
+    pdpConfirmQuestion: "Souhaitez-vous utiliser cette image de produit ?",
+    lifestyleQuestionWithProduct: "Quelle scène de style de vie souhaitez-vous avec le produit ? Veuillez décrire la scène.",
+    lifestyleQuestionWithoutProduct: "Quelle scène de style de vie souhaitez-vous ? Nous créerons une image axée sur les personnes et l'environnement.",
+    generatingLifestyle: "Génération de l'image de style de vie...",
+    lifestylePreviewQuestion: "Que pensez-vous de cette image ?",
+    generatingFinal: "Création de vos bannières finales...",
+    finalComplete: "Terminé ! Veuillez vérifier vos résultats finaux.",
+    rateLimitError: "L'API Figma est temporairement occupée. Veuillez réessayer dans 1 minute.",
+    genericError: "Une erreur s'est produite. Veuillez réessayer.",
+    selectOther: "Sélectionner un autre layout",
+    confirmProceed: "Confirmer et Continuer",
+    selectionComplete: "Sélection Terminée",
+    next: "Suivant",
+    useThis: "Utiliser ceci",
+    regenerate: "Régénérer",
+    retry: "Réessayer",
+    startOver: "Recommencer",
+    goHome: "Aller à l'Accueil",
+    downloadPng: "Télécharger PNG",
+    downloadSvg: "Télécharger SVG",
+    openInFigma: "Ouvrir dans Figma",
+    headlinePlaceholder: "Entrez votre titre principal",
+    subcopyPlaceholder: "Entrez votre sous-texte",
+    ctaPlaceholder: "Texte du bouton CTA (ex., Acheter Maintenant)",
+    pdpPlaceholder: "https://example.com/product/...",
+    lifestylePlaceholder: "ex., Des amis profitant du temps à la plage sous la chaleur du soleil...",
+    getImage: "Obtenir l'Image",
+    generateImage: "Générer l'Image",
+    proceedWithoutProduct: "Continuer sans produit",
+    inputCopy: "Texte Saisi",
+    comingSoon: "Bientôt Disponible",
+    step: "Étape",
+    preparing: "Préparation...",
+    syncing: "Chargement du modèle Figma...",
+    combiningAssets: "Combinaison du texte et des images...",
+    lifestyleSuggestions: [
+      "Détente à la plage",
+      "Discussion entre amis dans un café",
+      "Promenade dans les rues de la ville",
+      "Pique-nique au parc",
+      "Détente confortable à la maison"
+    ]
+  }
+};
+
+const LANGUAGE_OPTIONS: { code: LanguageCode; name: string; flag: string }[] = [
+  { code: "en", name: "English", flag: "🇺🇸" },
+  { code: "ja", name: "日本語", flag: "🇯🇵" },
+  { code: "th", name: "ไทย", flag: "🇹🇭" },
+  { code: "es", name: "Español", flag: "🇪🇸" },
+  { code: "pt", name: "Português", flag: "🇧🇷" },
+  { code: "de", name: "Deutsch", flag: "🇩🇪" },
+  { code: "fr", name: "Français", flag: "🇫🇷" },
+];
 import { supabase } from "@/integrations/supabase/client";
 
 // ==================== Types ====================
@@ -117,13 +570,7 @@ const CHANNELS = [
   { id: "email", name: "Email (CRM)", keywords: ["email", "edm", "newsletter", "crm"] },
 ];
 
-const LIFESTYLE_SUGGESTIONS = [
-  "해변에서 여유로운 시간",
-  "카페에서 친구들과 대화",
-  "도시 거리 산책",
-  "공원에서 피크닉",
-  "집에서 편안한 휴식",
-];
+// LIFESTYLE_SUGGESTIONS moved to translations
 
 // ==================== Component ====================
 
@@ -131,6 +578,10 @@ const ChatInterface = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  // Language
+  const [currentLanguage, setCurrentLanguage] = useState<LanguageCode>("en");
+  const t = translations[currentLanguage];
 
   // Phase & Loading
   const [phase, setPhase] = useState<Phase>("loading");
@@ -184,8 +635,8 @@ const ChatInterface = () => {
     const layout = LAYOUT_OPTIONS.find((l) => l.id === layoutId);
     if (!layout?.available) {
       toast({
-        title: "준비 중",
-        description: "이 레이아웃은 아직 준비 중입니다.",
+        title: t.comingSoon,
+        description: t.comingSoon,
       });
       return;
     }
@@ -209,8 +660,8 @@ const ChatInterface = () => {
   const handleChannelConfirm = async () => {
     if (wizardState.selectedChannels.length === 0) {
       toast({
-        title: "채널 선택 필요",
-        description: "최소 하나의 채널을 선택해주세요.",
+        title: "Channel Required",
+        description: "Please select at least one channel.",
         variant: "destructive",
       });
       return;
@@ -552,7 +1003,7 @@ const ChatInterface = () => {
 
   const renderLayoutSelect = () => (
     <div className="space-y-6">
-      {renderYumiMessage("안녕하세요! 어떤 레이아웃으로 프로모션 콘텐츠를 만들까요?")}
+      {renderYumiMessage(t.layoutQuestion)}
       
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
         {LAYOUT_OPTIONS.map((layout) => (
@@ -574,7 +1025,7 @@ const ChatInterface = () => {
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center text-gray-400">
-                  <span className="text-sm">Coming Soon</span>
+                  <span className="text-sm">{t.comingSoon}</span>
                 </div>
               )}
             </div>
@@ -585,7 +1036,7 @@ const ChatInterface = () => {
             {!layout.available && (
               <div className="absolute inset-0 bg-white/80 flex items-center justify-center">
                 <span className="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                  Coming Soon
+                  {t.comingSoon}
                 </span>
               </div>
             )}
@@ -604,8 +1055,8 @@ const ChatInterface = () => {
       <div className="space-y-6">
         {renderYumiMessage(
           selectedLayout?.requiresProduct
-            ? `${selectedLayout.name}를 선택하셨네요! 이 레이아웃은 제품 이미지와 라이프스타일 이미지가 모두 필요합니다. 진행하시겠습니까?`
-            : `${selectedLayout?.name}를 선택하셨네요! 이 레이아웃은 라이프스타일 이미지만 사용합니다. 진행하시겠습니까?`
+            ? t.layoutConfirmProduct.replace("{name}", selectedLayout?.name || "")
+            : t.layoutConfirmLifestyle.replace("{name}", selectedLayout?.name || "")
         )}
 
         <div className="flex justify-center">
@@ -624,13 +1075,13 @@ const ChatInterface = () => {
             onClick={() => setPhase("layout-select")}
             className="px-6"
           >
-            다른 레이아웃 선택
+            {t.selectOther}
           </Button>
           <Button
             onClick={handleLayoutConfirm}
             className="bg-orange-400 hover:bg-orange-500 text-white px-8"
           >
-            확인 및 진행
+            {t.confirmProceed}
           </Button>
         </div>
       </div>
@@ -639,7 +1090,7 @@ const ChatInterface = () => {
 
   const renderChannelSelect = () => (
     <div className="space-y-6">
-      {renderYumiMessage("어떤 채널용 배너를 만들까요? 여러 개 선택 가능합니다.")}
+      {renderYumiMessage(t.channelQuestion)}
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         {CHANNELS.map((channel) => (
@@ -668,7 +1119,7 @@ const ChatInterface = () => {
           disabled={wizardState.selectedChannels.length === 0}
           className="bg-orange-400 hover:bg-orange-500 text-white px-8"
         >
-          선택 완료 ({wizardState.selectedChannels.length})
+          {t.selectionComplete} ({wizardState.selectedChannels.length})
         </Button>
       </div>
     </div>
@@ -676,7 +1127,7 @@ const ChatInterface = () => {
 
   const renderSyncing = () => (
     <div className="space-y-6">
-      {renderYumiMessage("Figma 템플릿을 불러오는 중입니다...")}
+      {renderYumiMessage(t.syncing)}
       
       <div className="flex justify-center">
         <Loader2 className="w-12 h-12 animate-spin text-orange-400" />
@@ -686,7 +1137,7 @@ const ChatInterface = () => {
 
   const renderCopyCollect = () => (
     <div className="space-y-6">
-      {renderYumiMessage("배너에 들어갈 카피를 입력해주세요.")}
+      {renderYumiMessage(t.copyQuestion)}
 
       <div className="space-y-4 max-w-lg mx-auto">
         <div>
@@ -701,7 +1152,7 @@ const ChatInterface = () => {
                 copyInputs: { ...prev.copyInputs, headline: e.target.value },
               }))
             }
-            placeholder="메인 헤드라인을 입력하세요"
+            placeholder={t.headlinePlaceholder}
             className="w-full"
           />
         </div>
@@ -718,7 +1169,7 @@ const ChatInterface = () => {
                 copyInputs: { ...prev.copyInputs, subcopy: e.target.value },
               }))
             }
-            placeholder="서브 카피를 입력하세요"
+            placeholder={t.subcopyPlaceholder}
             rows={2}
             className="w-full"
           />
@@ -736,7 +1187,7 @@ const ChatInterface = () => {
                 copyInputs: { ...prev.copyInputs, cta: e.target.value },
               }))
             }
-            placeholder="CTA 버튼 텍스트 (예: Shop Now)"
+            placeholder={t.ctaPlaceholder}
             className="w-full"
           />
         </div>
@@ -747,7 +1198,7 @@ const ChatInterface = () => {
           onClick={handleCopySubmit}
           className="bg-orange-400 hover:bg-orange-500 text-white px-8"
         >
-          다음
+          {t.next}
         </Button>
       </div>
     </div>
@@ -755,7 +1206,7 @@ const ChatInterface = () => {
 
   const renderImageTypeSelect = () => (
     <div className="space-y-6">
-      {renderYumiMessage("라이프스타일 이미지에 제품을 포함하시겠습니까?")}
+      {renderYumiMessage(t.imageTypeQuestion)}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-2xl mx-auto">
         <div
@@ -763,10 +1214,8 @@ const ChatInterface = () => {
           className="p-6 rounded-xl border-2 border-gray-200 hover:border-orange-400 cursor-pointer transition-all text-center"
         >
           <div className="text-4xl mb-3">🛍️</div>
-          <h4 className="font-semibold text-gray-900 mb-2">예, 제품 포함</h4>
-          <p className="text-sm text-gray-500">
-            PDP URL에서 제품 이미지를 가져와 라이프스타일과 함께 표시합니다.
-          </p>
+          <h4 className="font-semibold text-gray-900 mb-2">{t.yesIncludeProduct}</h4>
+          <p className="text-sm text-gray-500">{t.productDescription}</p>
         </div>
 
         <div
@@ -774,10 +1223,8 @@ const ChatInterface = () => {
           className="p-6 rounded-xl border-2 border-gray-200 hover:border-orange-400 cursor-pointer transition-all text-center"
         >
           <div className="text-4xl mb-3">🌅</div>
-          <h4 className="font-semibold text-gray-900 mb-2">아니오, 제품 없이</h4>
-          <p className="text-sm text-gray-500">
-            사람과 환경에 집중한 라이프스타일 이미지만 생성합니다.
-          </p>
+          <h4 className="font-semibold text-gray-900 mb-2">{t.noWithoutProduct}</h4>
+          <p className="text-sm text-gray-500">{t.lifestyleDescription}</p>
         </div>
       </div>
     </div>
@@ -785,7 +1232,7 @@ const ChatInterface = () => {
 
   const renderPdpInput = () => (
     <div className="space-y-6">
-      {renderYumiMessage("제품 페이지(PDP) URL을 입력해주세요. 첫 번째 갤러리 이미지를 가져올게요.")}
+      {renderYumiMessage(t.pdpQuestion)}
 
       <div className="max-w-lg mx-auto space-y-4">
         <Input
@@ -793,26 +1240,21 @@ const ChatInterface = () => {
           onChange={(e) =>
             setWizardState((prev) => ({ ...prev, pdpUrl: e.target.value }))
           }
-          placeholder="https://example.com/product/..."
+          placeholder={t.pdpPlaceholder}
           className="w-full"
         />
 
         <div className="flex justify-center gap-4">
-          <Button
-            variant="outline"
-            onClick={() => handleImageTypeSelect(false)}
-          >
-            제품 없이 진행
+          <Button variant="outline" onClick={() => handleImageTypeSelect(false)}>
+            {t.proceedWithoutProduct}
           </Button>
           <Button
             onClick={handlePdpSubmit}
             disabled={!wizardState.pdpUrl.trim() || isLoading}
             className="bg-orange-400 hover:bg-orange-500 text-white px-8"
           >
-            {isLoading ? (
-              <Loader2 className="w-4 h-4 animate-spin mr-2" />
-            ) : null}
-            이미지 가져오기
+            {isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+            {t.getImage}
           </Button>
         </div>
       </div>
@@ -821,45 +1263,28 @@ const ChatInterface = () => {
 
   const renderPdpPreview = () => (
     <div className="space-y-6">
-      {renderYumiMessage("이 제품 이미지를 사용할까요?")}
+      {renderYumiMessage(t.pdpConfirmQuestion)}
 
       <div className="flex justify-center">
         <div className="w-64 h-64 rounded-xl overflow-hidden shadow-lg bg-gray-100">
           {wizardState.productImageUrl ? (
-            <img
-              src={wizardState.productImageUrl}
-              alt="Product"
-              className="w-full h-full object-contain"
-            />
+            <img src={wizardState.productImageUrl} alt="Product" className="w-full h-full object-contain" />
           ) : (
-            <div className="w-full h-full flex items-center justify-center text-gray-400">
-              이미지 로딩 중...
-            </div>
+            <div className="w-full h-full flex items-center justify-center text-gray-400">Loading...</div>
           )}
         </div>
       </div>
 
       <div className="flex justify-center gap-4">
-        <Button variant="outline" onClick={() => setPhase("pdp-input")}>
-          다른 URL 입력
-        </Button>
-        <Button
-          onClick={handlePdpConfirm}
-          className="bg-orange-400 hover:bg-orange-500 text-white px-8"
-        >
-          사용하기
-        </Button>
+        <Button variant="outline" onClick={() => setPhase("pdp-input")}>{t.selectOther}</Button>
+        <Button onClick={handlePdpConfirm} className="bg-orange-400 hover:bg-orange-500 text-white px-8">{t.useThis}</Button>
       </div>
     </div>
   );
 
   const renderLifestyleInput = () => (
     <div className="space-y-6">
-      {renderYumiMessage(
-        wizardState.includeProduct
-          ? "제품과 함께 어떤 라이프스타일 씬을 원하시나요? 원하는 장면을 설명해주세요."
-          : "어떤 라이프스타일 씬을 원하시나요? 사람과 환경에 집중된 이미지로 만들어 드릴게요."
-      )}
+      {renderYumiMessage(wizardState.includeProduct ? t.lifestyleQuestionWithProduct : t.lifestyleQuestionWithoutProduct)}
 
       <div className="max-w-lg mx-auto space-y-4">
         <Textarea
@@ -870,13 +1295,13 @@ const ChatInterface = () => {
               lifestyleDescription: e.target.value,
             }))
           }
-          placeholder="예: 해변에서 친구들과 즐거운 시간을 보내는 장면, 따뜻한 햇살 아래..."
+          placeholder={t.lifestylePlaceholder}
           rows={4}
           className="w-full"
         />
 
         <div className="flex flex-wrap gap-2">
-          {LIFESTYLE_SUGGESTIONS.map((suggestion) => (
+          {t.lifestyleSuggestions.map((suggestion) => (
             <button
               key={suggestion}
               onClick={() =>
@@ -899,10 +1324,8 @@ const ChatInterface = () => {
           disabled={!wizardState.lifestyleDescription.trim() || isLoading}
           className="bg-orange-400 hover:bg-orange-500 text-white px-8"
         >
-          {isLoading ? (
-            <Loader2 className="w-4 h-4 animate-spin mr-2" />
-          ) : null}
-          이미지 생성하기
+          {isLoading ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : null}
+          {t.generateImage}
         </Button>
       </div>
     </div>
@@ -910,172 +1333,90 @@ const ChatInterface = () => {
 
   const renderLifestyleGenerating = () => (
     <div className="space-y-6">
-      {renderYumiMessage("라이프스타일 이미지를 생성하고 있습니다...")}
-
+      {renderYumiMessage(t.generatingLifestyle)}
       <div className="flex flex-col items-center gap-4">
         <Loader2 className="w-12 h-12 animate-spin text-orange-400" />
-        <p className="text-gray-500">AI가 이미지를 생성 중입니다. 잠시만 기다려주세요.</p>
       </div>
     </div>
   );
 
   const renderLifestylePreview = () => (
     <div className="space-y-6">
-      {renderYumiMessage("이런 이미지는 어떠세요?")}
-
+      {renderYumiMessage(t.lifestylePreviewQuestion)}
       <div className="flex justify-center">
         <div className="max-w-md rounded-xl overflow-hidden shadow-lg bg-gray-100">
           {wizardState.lifestyleImageUrl ? (
-            <img
-              src={wizardState.lifestyleImageUrl}
-              alt="Lifestyle"
-              className="w-full h-auto"
-            />
+            <img src={wizardState.lifestyleImageUrl} alt="Lifestyle" className="w-full h-auto" />
           ) : (
-            <div className="w-full h-64 flex items-center justify-center text-gray-400">
-              이미지 로딩 중...
-            </div>
+            <div className="w-full h-64 flex items-center justify-center text-gray-400">Loading...</div>
           )}
         </div>
       </div>
-
       <div className="flex justify-center gap-4">
         <Button variant="outline" onClick={handleRegenerateLifestyle}>
-          <RefreshCw className="w-4 h-4 mr-2" />
-          다시 생성
+          <RefreshCw className="w-4 h-4 mr-2" />{t.regenerate}
         </Button>
-        <Button
-          onClick={handleLifestyleConfirm}
-          className="bg-orange-400 hover:bg-orange-500 text-white px-8"
-        >
-          사용하기
-        </Button>
+        <Button onClick={handleLifestyleConfirm} className="bg-orange-400 hover:bg-orange-500 text-white px-8">{t.useThis}</Button>
       </div>
     </div>
   );
 
   const renderFinalGenerating = () => (
     <div className="space-y-6">
-      {renderYumiMessage("최종 배너를 생성하고 있습니다...")}
-
+      {renderYumiMessage(t.generatingFinal)}
       <div className="flex flex-col items-center gap-4">
         <Loader2 className="w-12 h-12 animate-spin text-orange-400" />
-        <p className="text-gray-500">카피와 이미지를 조합 중입니다.</p>
+        <p className="text-gray-500">{t.combiningAssets}</p>
       </div>
     </div>
   );
 
   const renderFinalPreview = () => (
     <div className="space-y-6">
-      {renderYumiMessage("모든 준비가 완료되었습니다! 최종 결과물을 확인해주세요.")}
-
+      {renderYumiMessage(t.finalComplete)}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-4xl mx-auto">
-        {/* Summary Card */}
         <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <h4 className="font-semibold text-gray-900 mb-3">📝 입력된 카피</h4>
+          <h4 className="font-semibold text-gray-900 mb-3">📝 {t.inputCopy}</h4>
           <div className="space-y-2 text-sm">
-            <div>
-              <span className="text-gray-500">Headline:</span>{" "}
-              <span className="text-gray-900">{wizardState.copyInputs.headline}</span>
-            </div>
-            <div>
-              <span className="text-gray-500">Subcopy:</span>{" "}
-              <span className="text-gray-900">{wizardState.copyInputs.subcopy}</span>
-            </div>
-            <div>
-              <span className="text-gray-500">CTA:</span>{" "}
-              <span className="text-gray-900">{wizardState.copyInputs.cta}</span>
-            </div>
+            <div><span className="text-gray-500">Headline:</span> <span className="text-gray-900">{wizardState.copyInputs.headline}</span></div>
+            <div><span className="text-gray-500">Subcopy:</span> <span className="text-gray-900">{wizardState.copyInputs.subcopy}</span></div>
+            <div><span className="text-gray-500">CTA:</span> <span className="text-gray-900">{wizardState.copyInputs.cta}</span></div>
           </div>
         </div>
-
-        {/* Lifestyle Image Preview */}
         <div className="bg-white rounded-xl border border-gray-200 p-4">
-          <h4 className="font-semibold text-gray-900 mb-3">🖼️ 라이프스타일 이미지</h4>
-          {wizardState.lifestyleImageUrl && (
-            <img
-              src={wizardState.lifestyleImageUrl}
-              alt="Lifestyle"
-              className="w-full h-40 object-cover rounded-lg"
-            />
-          )}
+          <h4 className="font-semibold text-gray-900 mb-3">🖼️ Lifestyle Image</h4>
+          {wizardState.lifestyleImageUrl && <img src={wizardState.lifestyleImageUrl} alt="Lifestyle" className="w-full h-40 object-cover rounded-lg" />}
         </div>
       </div>
-
-      {/* Selected Channels */}
       <div className="flex justify-center gap-2">
         {wizardState.selectedChannels.map((channelId) => {
           const channel = CHANNELS.find((c) => c.id === channelId);
-          return (
-            <span
-              key={channelId}
-              className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm"
-            >
-              {channel?.name}
-            </span>
-          );
+          return <span key={channelId} className="px-3 py-1 bg-orange-100 text-orange-700 rounded-full text-sm">{channel?.name}</span>;
         })}
       </div>
-
-      {/* Action Buttons */}
       <div className="flex flex-wrap justify-center gap-4">
-        <Button
-          onClick={() => handleExport("png")}
-          disabled={isExporting}
-          variant="outline"
-          className="px-6"
-        >
-          {isExporting ? (
-            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-          ) : (
-            <Download className="w-4 h-4 mr-2" />
-          )}
-          PNG 다운로드
+        <Button onClick={() => handleExport("png")} disabled={isExporting} variant="outline" className="px-6">
+          {isExporting ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Download className="w-4 h-4 mr-2" />}{t.downloadPng}
         </Button>
-        <Button
-          onClick={() => handleExport("svg")}
-          disabled={isExporting}
-          variant="outline"
-          className="px-6"
-        >
-          <FileText className="w-4 h-4 mr-2" />
-          SVG 다운로드
+        <Button onClick={() => handleExport("svg")} disabled={isExporting} variant="outline" className="px-6">
+          <FileText className="w-4 h-4 mr-2" />{t.downloadSvg}
         </Button>
         <Button onClick={openInFigma} variant="outline" className="px-6">
-          <ExternalLink className="w-4 h-4 mr-2" />
-          Figma에서 열기
+          <ExternalLink className="w-4 h-4 mr-2" />{t.openInFigma}
         </Button>
       </div>
-
       <div className="flex justify-center gap-4 pt-4">
-        <Button variant="ghost" onClick={handleStartOver}>
-          처음부터 다시
-        </Button>
-        <Button
-          onClick={() => navigate("/home")}
-          className="bg-orange-400 hover:bg-orange-500 text-white px-8"
-        >
-          홈으로 가기
-        </Button>
+        <Button variant="ghost" onClick={handleStartOver}>{t.startOver}</Button>
+        <Button onClick={() => navigate("/home")} className="bg-orange-400 hover:bg-orange-500 text-white px-8">{t.goHome}</Button>
       </div>
     </div>
   );
 
   const renderError = () => (
     <div className="space-y-6">
-      {renderYumiMessage(
-        loadError === "RATE_LIMIT"
-          ? "Figma API가 일시적으로 사용량이 많습니다. 잠시 후 다시 시도해주세요."
-          : "오류가 발생했습니다. 다시 시도해주세요."
-      )}
-
+      {renderYumiMessage(loadError === "RATE_LIMIT" ? t.rateLimitError : t.genericError)}
       <div className="flex justify-center">
-        <Button
-          onClick={handleRetry}
-          className="bg-orange-400 hover:bg-orange-500 text-white px-8"
-        >
-          다시 시도
-        </Button>
+        <Button onClick={handleRetry} className="bg-orange-400 hover:bg-orange-500 text-white px-8">{t.retry}</Button>
       </div>
     </div>
   );
@@ -1086,7 +1427,7 @@ const ChatInterface = () => {
         return (
           <div className="flex flex-col items-center justify-center py-12">
             <Loader2 className="w-12 h-12 animate-spin text-orange-400" />
-            <p className="mt-4 text-gray-500">준비 중...</p>
+            <p className="mt-4 text-gray-500">{t.preparing}</p>
           </div>
         );
       case "layout-select":
@@ -1162,11 +1503,7 @@ const ChatInterface = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <div className="w-14 h-14 rounded-full overflow-hidden">
-                  <img
-                    src="/lovable-uploads/1d0546ae-2d59-40cf-a231-60343eecc72a.png"
-                    alt="Yumi Profile"
-                    className="w-full h-full object-cover"
-                  />
+                  <img src="/lovable-uploads/1d0546ae-2d59-40cf-a231-60343eecc72a.png" alt="Yumi Profile" className="w-full h-full object-cover" />
                 </div>
                 <div>
                   <h2 className="text-xl font-semibold text-gray-900">Yumi</h2>
@@ -1174,18 +1511,35 @@ const ChatInterface = () => {
                 </div>
               </div>
 
-              {/* Step Indicator */}
-              {phase !== "loading" && phase !== "error" && (
-                <div className="flex items-center gap-2 text-sm text-gray-500">
-                  <span>Step {getStepNumber()} / {totalSteps}</span>
-                  <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
-                    <div
-                      className="h-full bg-orange-400 transition-all"
-                      style={{ width: `${(getStepNumber() / totalSteps) * 100}%` }}
-                    />
+              <div className="flex items-center gap-4">
+                {/* Language Selector */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="sm" className="flex items-center gap-2">
+                      <Globe className="w-4 h-4" />
+                      <span>{LANGUAGE_OPTIONS.find(l => l.code === currentLanguage)?.flag}</span>
+                      <span className="hidden sm:inline">{LANGUAGE_OPTIONS.find(l => l.code === currentLanguage)?.name}</span>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    {LANGUAGE_OPTIONS.map((lang) => (
+                      <DropdownMenuItem key={lang.code} onClick={() => setCurrentLanguage(lang.code)} className="flex items-center gap-2">
+                        <span>{lang.flag}</span><span>{lang.name}</span>
+                      </DropdownMenuItem>
+                    ))}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+
+                {/* Step Indicator */}
+                {phase !== "loading" && phase !== "error" && (
+                  <div className="flex items-center gap-2 text-sm text-gray-500">
+                    <span>{t.step} {getStepNumber()} / {totalSteps}</span>
+                    <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                      <div className="h-full bg-orange-400 transition-all" style={{ width: `${(getStepNumber() / totalSteps) * 100}%` }} />
+                    </div>
                   </div>
-                </div>
-              )}
+                )}
+              </div>
             </div>
           </div>
 
