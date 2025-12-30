@@ -99,24 +99,14 @@ function extractLayers(node: FigmaNode, path: string = ""): ExtractedLayer[] {
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Fetch with exponential backoff for rate limiting
-async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 5): Promise<Response> {
-  const baseDelay = 5000; // Start with 5 seconds
-  
+async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 3): Promise<Response> {
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     const response = await fetch(url, options);
     
     if (response.status === 429) {
-      // Rate limited - use exponential backoff
-      const retryAfterHeader = response.headers.get('Retry-After');
-      let waitTime: number;
-      
-      if (retryAfterHeader) {
-        // Use Retry-After header if available
-        waitTime = parseInt(retryAfterHeader, 10) * 1000;
-      } else {
-        // Exponential backoff: 5s, 15s, 30s, 45s, 60s
-        waitTime = Math.min(baseDelay * Math.pow(2, attempt), 60000);
-      }
+      // Rate limited - use simple exponential backoff (ignore Retry-After header as it may be unreliable)
+      // Wait 10s, 20s, 30s
+      const waitTime = (attempt + 1) * 10000;
       
       console.log(`Rate limited. Waiting ${waitTime / 1000}s before retry ${attempt + 1}/${maxRetries}`);
       await delay(waitTime);
