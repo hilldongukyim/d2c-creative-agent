@@ -524,7 +524,7 @@ const LAYOUT_OPTIONS: LayoutOption[] = [
   {
     id: "A",
     name: "Type A",
-    description: "Product + Lifestyle",
+    description: "1 Lifestyle image with product",
     thumbnail: "/layout-type-a.jpg",
     available: true,
     requiresProduct: true,
@@ -532,7 +532,7 @@ const LAYOUT_OPTIONS: LayoutOption[] = [
   {
     id: "B",
     name: "Type B",
-    description: "Lifestyle Only",
+    description: "1 Product image + 1 Lifestyle image",
     thumbnail: "/layout-type-b.jpg",
     available: false, // Coming soon
     requiresProduct: false,
