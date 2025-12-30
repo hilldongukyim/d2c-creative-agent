@@ -11,6 +11,34 @@ const FIGMA_CONFIG = {
   fileName: "Promotion-Banners"
 };
 
+// In-memory cache with TTL (5 minutes)
+interface CacheEntry {
+  data: any;
+  timestamp: number;
+}
+
+const cache: Map<string, CacheEntry> = new Map();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
+function getCachedData(key: string): any | null {
+  const entry = cache.get(key);
+  if (!entry) return null;
+  
+  if (Date.now() - entry.timestamp > CACHE_TTL) {
+    cache.delete(key);
+    return null;
+  }
+  
+  return entry.data;
+}
+
+function setCachedData(key: string, data: any): void {
+  cache.set(key, {
+    data,
+    timestamp: Date.now()
+  });
+}
+
 interface FigmaNode {
   id: string;
   name: string;
@@ -70,16 +98,27 @@ function extractLayers(node: FigmaNode, path: string = ""): ExtractedLayer[] {
 // Simple delay function
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
-// Fetch with retry for rate limiting
-async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 3): Promise<Response> {
+// Fetch with exponential backoff for rate limiting
+async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 5): Promise<Response> {
+  const baseDelay = 5000; // Start with 5 seconds
+  
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     const response = await fetch(url, options);
     
     if (response.status === 429) {
-      // Rate limited - wait and retry
-      const retryAfter = parseInt(response.headers.get('Retry-After') || '5', 10);
-      const waitTime = Math.min(retryAfter * 1000, 10000); // Max 10 seconds
-      console.log(`Rate limited. Waiting ${waitTime}ms before retry ${attempt + 1}/${maxRetries}`);
+      // Rate limited - use exponential backoff
+      const retryAfterHeader = response.headers.get('Retry-After');
+      let waitTime: number;
+      
+      if (retryAfterHeader) {
+        // Use Retry-After header if available
+        waitTime = parseInt(retryAfterHeader, 10) * 1000;
+      } else {
+        // Exponential backoff: 5s, 15s, 30s, 45s, 60s
+        waitTime = Math.min(baseDelay * Math.pow(2, attempt), 60000);
+      }
+      
+      console.log(`Rate limited. Waiting ${waitTime / 1000}s before retry ${attempt + 1}/${maxRetries}`);
       await delay(waitTime);
       continue;
     }
@@ -87,7 +126,7 @@ async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 3)
     return response;
   }
   
-  throw new Error('Rate limit exceeded after multiple retries. Please try again in a few minutes.');
+  throw new Error('RATE_LIMIT_EXCEEDED');
 }
 
 serve(async (req) => {
@@ -101,6 +140,21 @@ serve(async (req) => {
     
     if (!FIGMA_ACCESS_TOKEN) {
       throw new Error('FIGMA_ACCESS_TOKEN is not configured');
+    }
+
+    // Check cache first
+    const cacheKey = `figma_${FIGMA_CONFIG.fileKey}`;
+    const cachedData = getCachedData(cacheKey);
+    
+    if (cachedData) {
+      console.log('Returning cached Figma data');
+      return new Response(JSON.stringify({
+        success: true,
+        ...cachedData,
+        fromCache: true
+      }), {
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
     }
 
     console.log(`Fetching Figma file: ${FIGMA_CONFIG.fileKey}`);
@@ -122,7 +176,7 @@ serve(async (req) => {
       if (figmaResponse.status === 429) {
         return new Response(JSON.stringify({ 
           success: false, 
-          error: 'Figma API rate limit exceeded. Please wait a moment and try again.',
+          error: 'Figma API 사용량이 많습니다. 1분 후에 다시 시도해주세요.',
           errorCode: 'RATE_LIMIT'
         }), {
           status: 429,
@@ -158,8 +212,8 @@ serve(async (req) => {
 
     console.log(`Found ${textLayers.length} text layers, ${imageLayers.length} image layers`);
 
-    return new Response(JSON.stringify({
-      success: true,
+    // Prepare response data
+    const responseData = {
       fileName: figmaData.name,
       fileKey: FIGMA_CONFIG.fileKey,
       lastModified: figmaData.lastModified,
@@ -169,6 +223,16 @@ serve(async (req) => {
         totalImageLayers: imageLayers.length
       },
       layers: allLayers
+    };
+
+    // Cache the data
+    setCachedData(cacheKey, responseData);
+    console.log('Figma data cached for 5 minutes');
+
+    return new Response(JSON.stringify({
+      success: true,
+      ...responseData,
+      fromCache: false
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
@@ -176,11 +240,13 @@ serve(async (req) => {
   } catch (error) {
     console.error('Error in yumi-figma-layers:', error);
     
-    const isRateLimit = error.message?.includes('Rate limit');
+    const isRateLimit = error.message === 'RATE_LIMIT_EXCEEDED' || error.message?.includes('Rate limit');
     
     return new Response(JSON.stringify({ 
       success: false, 
-      error: error.message,
+      error: isRateLimit 
+        ? 'Figma API 사용량이 많습니다. 1분 후에 다시 시도해주세요.'
+        : error.message,
       errorCode: isRateLimit ? 'RATE_LIMIT' : 'UNKNOWN'
     }), {
       status: isRateLimit ? 429 : 500,
