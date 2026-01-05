@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import Logo from '@/components/Logo';
-import VideoCard from '@/components/VideoCard';
 
 const CoverPage = () => {
   const navigate = useNavigate();
@@ -11,21 +9,6 @@ const CoverPage = () => {
     x: 0,
     y: 0
   });
-
-  const videoConfigs = [
-    { src: "/crew-video-1.mp4", gradient: "bg-gradient-to-br from-purple-500/35 to-pink-500/35", id: "crew-video-1" },
-    { src: "/crew-video-2-new.mp4", gradient: "bg-gradient-to-br from-blue-500/30 to-cyan-500/30", id: "crew-video-2" },
-    { src: "/crew-video-3.mp4", gradient: "bg-gradient-to-br from-green-500/25 to-emerald-500/25", id: "crew-video-3" },
-    { src: "/crew-video-4.mp4", gradient: "bg-gradient-to-br from-orange-500/35 to-red-500/35", id: "crew-video-4" },
-    { src: "/crew-video-5.mp4", gradient: "bg-gradient-to-br from-yellow-500/30 to-amber-500/30", id: "crew-video-5" },
-    { src: "/crew-video-6.mp4", gradient: "bg-gradient-to-br from-indigo-500/25 to-purple-500/25", id: "crew-video-6" },
-//{ src: "/crew-video-7.mp4", gradient: "bg-gradient-to-br from-rose-500/20 to-pink-500/20", id: "crew-video-7" },
-    { src: "/crew-video-8.mp4", gradient: "bg-gradient-to-br from-teal-500/22 to-blue-500/22", id: "crew-video-8" },
-//{ src: "/crew-video-9.mp4", gradient: "bg-gradient-to-br from-emerald-500/25 to-green-500/25", id: "crew-video-9" },
-//{ src: "/crew-video-10.mp4", gradient: "bg-gradient-to-br from-violet-500/25 to-purple-500/25", id: "crew-video-10" },
-    { src: "/crew-video-11.mp4", gradient: "bg-gradient-to-br from-cyan-500/25 to-blue-500/25", id: "crew-video-11" },
-//{ src: "/crew-video-12.mp4", gradient: "bg-gradient-to-br from-amber-500/25 to-orange-500/25", id: "crew-video-12" },
-  ];
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -60,27 +43,8 @@ const CoverPage = () => {
       {/* Background decoration */}
       <div className="absolute inset-0 bg-gradient-to-r from-primary/5 via-transparent to-secondary/5" />
       
-      {/* Crew Videos - horizontal banner slide */}
-      <div className="absolute bottom-12 left-0 w-full h-72 overflow-hidden pointer-events-none">
-        <div className="flex animate-slide space-x-4" style={{width: 'calc(300% + 200px)'}}>
-          {/* Render video sets for seamless loop */}
-          {[...Array(3)].map((_, setIndex) => (
-            <div key={setIndex} className="flex space-x-4 min-w-max">
-              {videoConfigs.map((video, index) => (
-                <VideoCard
-                  key={`${setIndex}-${index}`}
-                  src={video.src}
-                  gradientClasses={video.gradient}
-                  id={setIndex === 0 ? video.id : undefined}
-                />
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
-      
       {/* Main content */}
-      <div className="text-center space-y-8 z-10 max-w-4xl mx-auto px-6 -mt-48">
+      <div className="text-center space-y-8 z-10 max-w-4xl mx-auto px-6">
         {/* Title */}
         <div className="space-y-4">
           <h1 className="text-7xl md:text-8xl font-bold bg-gradient-to-b from-gradient-title-start to-gradient-title-end bg-clip-text text-transparent">
