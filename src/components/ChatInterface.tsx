@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { ArrowLeft, Loader2, Download, FileText, ExternalLink, Check, RefreshCw, Globe } from "lucide-react";
+import { ArrowLeft, Loader2, Download, FileText, ExternalLink, Check, RefreshCw, Globe, RotateCcw } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
@@ -518,6 +518,13 @@ interface FigmaData {
   layers: FigmaLayer[];
 }
 
+interface ChatHistoryItem {
+  phase: Phase;
+  question: string;
+  answer: string;
+  wizardStateSnapshot: WizardState;
+}
+
 // ==================== Constants ====================
 
 const LAYOUT_OPTIONS: LayoutOption[] = [
@@ -612,6 +619,29 @@ const ChatInterface = () => {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isExporting, setIsExporting] = useState(false);
 
+  // Chat History State
+  const [chatHistory, setChatHistory] = useState<ChatHistoryItem[]>([]);
+
+  // Add to history function
+  const addToHistory = (phase: Phase, question: string, answer: string) => {
+    setChatHistory(prev => [...prev, {
+      phase,
+      question,
+      answer,
+      wizardStateSnapshot: { ...wizardState }
+    }]);
+  };
+
+  // Go back to a specific phase
+  const goBackToPhase = (targetIndex: number) => {
+    const targetItem = chatHistory[targetIndex];
+    if (targetItem) {
+      setChatHistory(prev => prev.slice(0, targetIndex));
+      setWizardState(targetItem.wizardStateSnapshot);
+      setPhase(targetItem.phase);
+    }
+  };
+
   // Scroll to bottom when messages change
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -645,6 +675,10 @@ const ChatInterface = () => {
   };
 
   const handleLayoutConfirm = async () => {
+    // Add to history
+    const selectedLayout = LAYOUT_OPTIONS.find(l => l.id === wizardState.selectedLayout);
+    addToHistory("layout-confirm", t.layoutQuestion, selectedLayout?.name || "");
+
     // After layout confirm, sync Figma (for Type A) or proceed to copy
     if (wizardState.selectedLayout === "A") {
       setPhase("syncing");
@@ -672,6 +706,13 @@ const ChatInterface = () => {
       });
       return;
     }
+
+    // Add to history
+    const selectedChannelNames = wizardState.selectedChannels
+      .map(id => CHANNELS.find(c => c.id === id)?.name)
+      .filter(Boolean)
+      .join(", ");
+    addToHistory("channel-select", t.channelQuestion, selectedChannelNames);
 
     // After channel selection, proceed to layout selection
     setPhase("layout-select");
@@ -768,11 +809,15 @@ const ChatInterface = () => {
       });
       return;
     }
+    // Add to history
+    addToHistory("copy-collect", t.copyQuestion, `${headline} / ${cta}`);
     setPhase("image-type-select");
   };
 
   const handleImageTypeSelect = (includeProduct: boolean) => {
     setWizardState((prev) => ({ ...prev, includeProduct }));
+    // Add to history
+    addToHistory("image-type-select", t.imageTypeQuestion, includeProduct ? t.yesIncludeProduct : t.noWithoutProduct);
     if (includeProduct) {
       setPhase("pdp-input");
     } else {
@@ -825,6 +870,8 @@ const ChatInterface = () => {
   };
 
   const handlePdpConfirm = () => {
+    // Add to history
+    addToHistory("pdp-preview", t.pdpConfirmQuestion, "Product image selected");
     setPhase("lifestyle-input");
   };
 
@@ -880,6 +927,9 @@ const ChatInterface = () => {
   };
 
   const handleLifestyleConfirm = async () => {
+    // Add to history
+    addToHistory("lifestyle-preview", t.lifestylePreviewQuestion, wizardState.lifestyleDescription);
+    
     setPhase("final-generating");
     
     // For now, just show the preview
@@ -956,6 +1006,7 @@ const ChatInterface = () => {
     setFigmaData(null);
     setFilteredLayers([]);
     setPreviewUrl(null);
+    setChatHistory([]); // Clear history on start over
   };
 
   // ==================== Step Indicator ====================
@@ -987,8 +1038,40 @@ const ChatInterface = () => {
 
   // ==================== Render Functions ====================
 
+  const renderChatHistory = () => {
+    if (chatHistory.length === 0) return null;
+
+    return (
+      <div className="space-y-3 mb-6 pb-4 border-b border-gray-200">
+        {chatHistory.map((item, index) => (
+          <div
+            key={index}
+            onClick={() => goBackToPhase(index)}
+            className="flex items-start gap-3 p-3 bg-gray-100/70 rounded-xl cursor-pointer hover:bg-gray-200/70 transition-all duration-200 group animate-fade-in"
+            style={{ animationDelay: `${index * 50}ms` }}
+          >
+            <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
+              <img
+                src="/lovable-uploads/1d0546ae-2d59-40cf-a231-60343eecc72a.png"
+                alt="Yumi"
+                className="w-full h-full object-cover"
+              />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-xs text-gray-500 truncate">{item.question}</p>
+              <p className="text-sm font-medium text-gray-800 truncate">{item.answer}</p>
+            </div>
+            <div className="flex items-center gap-1 text-gray-400 group-hover:text-orange-500 transition-colors">
+              <RotateCcw className="w-4 h-4" />
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   const renderYumiMessage = (message: string) => (
-    <div className="flex items-start gap-4 mb-6">
+    <div className="flex items-start gap-4 mb-6 animate-fade-in">
       <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
         <img
           src="/lovable-uploads/1d0546ae-2d59-40cf-a231-60343eecc72a.png"
@@ -1496,23 +1579,23 @@ const ChatInterface = () => {
         </Button>
       </div>
 
-      {/* Main container - WIDER layout */}
+      {/* Main container - Compact layout */}
       <div className="flex items-center justify-center min-h-screen p-4">
-        <div className="w-full max-w-5xl bg-white rounded-3xl shadow-2xl overflow-hidden relative">
+        <div className="w-full max-w-3xl bg-white rounded-3xl shadow-2xl overflow-hidden relative">
           {/* Header */}
-          <div className="bg-white p-6 border-b border-gray-100">
+          <div className="bg-white p-4 border-b border-gray-100">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-14 h-14 rounded-full overflow-hidden">
+              <div className="flex items-center gap-3">
+                <div className="w-12 h-12 rounded-full overflow-hidden">
                   <img src="/lovable-uploads/1d0546ae-2d59-40cf-a231-60343eecc72a.png" alt="Yumi Profile" className="w-full h-full object-cover" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-semibold text-gray-900">Yumi</h2>
-                  <p className="text-gray-600">Promotional Content Designer</p>
+                  <h2 className="text-lg font-semibold text-gray-900">Yumi</h2>
+                  <p className="text-sm text-gray-600">Promotional Content Designer</p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3">
                 {/* Language Selector */}
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
@@ -1535,7 +1618,7 @@ const ChatInterface = () => {
                 {phase !== "loading" && phase !== "error" && (
                   <div className="flex items-center gap-2 text-sm text-gray-500">
                     <span>{t.step} {getStepNumber()} / {totalSteps}</span>
-                    <div className="w-24 h-2 bg-gray-200 rounded-full overflow-hidden">
+                    <div className="w-20 h-1.5 bg-gray-200 rounded-full overflow-hidden">
                       <div className="h-full bg-orange-400 transition-all" style={{ width: `${(getStepNumber() / totalSteps) * 100}%` }} />
                     </div>
                   </div>
@@ -1544,9 +1627,12 @@ const ChatInterface = () => {
             </div>
           </div>
 
-          {/* Content Area - TALLER */}
-          <div className="min-h-[600px] p-8 bg-gray-50 overflow-y-auto">
-            {renderContent()}
+          {/* Content Area - Scrollable with history */}
+          <div className="max-h-[500px] min-h-[400px] p-6 bg-gray-50 overflow-y-auto scroll-smooth">
+            {renderChatHistory()}
+            <div className="animate-fade-in">
+              {renderContent()}
+            </div>
             <div ref={messagesEndRef} />
           </div>
         </div>
