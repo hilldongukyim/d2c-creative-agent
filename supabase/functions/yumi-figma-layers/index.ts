@@ -11,14 +11,14 @@ const FIGMA_CONFIG = {
   fileName: "Promotion-Banners"
 };
 
-// In-memory cache with TTL (5 minutes)
+// In-memory cache with TTL (10 minutes - increased to reduce API calls)
 interface CacheEntry {
   data: any;
   timestamp: number;
 }
 
 const cache: Map<string, CacheEntry> = new Map();
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+const CACHE_TTL = 10 * 60 * 1000; // 10 minutes (increased from 5 minutes)
 
 function getCachedData(key: string): any | null {
   const entry = cache.get(key);
@@ -99,14 +99,15 @@ function extractLayers(node: FigmaNode, path: string = ""): ExtractedLayer[] {
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Fetch with exponential backoff for rate limiting
-async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 3): Promise<Response> {
+// Increased wait times: 30s, 60s, 90s, 120s to better handle Figma rate limits
+async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 4): Promise<Response> {
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     const response = await fetch(url, options);
     
     if (response.status === 429) {
-      // Rate limited - use simple exponential backoff (ignore Retry-After header as it may be unreliable)
-      // Wait 10s, 20s, 30s
-      const waitTime = (attempt + 1) * 10000;
+      // Rate limited - use longer exponential backoff
+      // Wait 30s, 60s, 90s, 120s (increased from 10s, 20s, 30s)
+      const waitTime = (attempt + 1) * 30000;
       
       console.log(`Rate limited. Waiting ${waitTime / 1000}s before retry ${attempt + 1}/${maxRetries}`);
       await delay(waitTime);
