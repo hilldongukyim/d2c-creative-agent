@@ -1,9 +1,61 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ArrowLeft, Loader2, Download, FileText, ExternalLink, Check, RefreshCw, Globe, RotateCcw } from "lucide-react";
+
+// Typing Animation Hook
+const useTypingAnimation = (text: string, speed: number = 30, enabled: boolean = true) => {
+  const [displayedText, setDisplayedText] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+
+  useEffect(() => {
+    if (!enabled) {
+      setDisplayedText(text);
+      setIsTyping(false);
+      return;
+    }
+
+    setDisplayedText("");
+    setIsTyping(true);
+    let currentIndex = 0;
+
+    const timer = setInterval(() => {
+      if (currentIndex < text.length) {
+        setDisplayedText(text.slice(0, currentIndex + 1));
+        currentIndex++;
+      } else {
+        setIsTyping(false);
+        clearInterval(timer);
+      }
+    }, speed);
+
+    return () => clearInterval(timer);
+  }, [text, speed, enabled]);
+
+  return { displayedText, isTyping };
+};
+
+// Typing Message Component
+const TypingMessage = ({ message, onComplete }: { message: string; onComplete?: () => void }) => {
+  const { displayedText, isTyping } = useTypingAnimation(message, 25, true);
+
+  useEffect(() => {
+    if (!isTyping && onComplete) {
+      onComplete();
+    }
+  }, [isTyping, onComplete]);
+
+  return (
+    <p className="text-lg text-gray-800 leading-relaxed">
+      {displayedText}
+      {isTyping && (
+        <span className="inline-block w-0.5 h-5 bg-orange-400 ml-1 animate-pulse" />
+      )}
+    </p>
+  );
+};
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
@@ -1070,7 +1122,7 @@ const ChatInterface = () => {
     );
   };
 
-  const renderYumiMessage = (message: string) => (
+  const renderYumiMessage = (message: string, enableTyping: boolean = true) => (
     <div className="flex items-start gap-4 mb-6 animate-fade-in">
       <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
         <img
@@ -1080,7 +1132,11 @@ const ChatInterface = () => {
         />
       </div>
       <div className="flex-1">
-        <p className="text-lg text-gray-800 leading-relaxed">{message}</p>
+        {enableTyping ? (
+          <TypingMessage message={message} />
+        ) : (
+          <p className="text-lg text-gray-800 leading-relaxed">{message}</p>
+        )}
       </div>
     </div>
   );
