@@ -1,6 +1,5 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Search, UserPlus, ChevronDown } from "lucide-react";
@@ -23,6 +22,8 @@ const CoverPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [crewFormOpen, setCrewFormOpen] = useState(false);
   const [kaiPopupOpen, setKaiPopupOpen] = useState(false);
+  const [isCrewVisible, setIsCrewVisible] = useState(false);
+  const crewSectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const handleMouseMove = (e: MouseEvent) => {
@@ -43,6 +44,23 @@ const CoverPage = () => {
       document.head.appendChild(meta);
     }
     meta.content = desc;
+  }, []);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsCrewVisible(true);
+        }
+      },
+      { threshold: 0.1 }
+    );
+
+    if (crewSectionRef.current) {
+      observer.observe(crewSectionRef.current);
+    }
+
+    return () => observer.disconnect();
   }, []);
 
   const scrollToCrewSection = () => {
@@ -91,9 +109,9 @@ const CoverPage = () => {
   };
 
   return (
-    <div className="relative">
+    <div className="h-screen overflow-y-auto snap-y snap-mandatory">
       {/* Hero Section */}
-      <section className="min-h-screen bg-gradient-to-br from-background via-background/95 to-accent/5 flex flex-col items-center justify-center relative overflow-hidden">
+      <section className="h-screen snap-start bg-gradient-to-br from-background via-background/95 to-accent/5 flex flex-col items-center justify-center relative overflow-hidden">
         <Logo />
         
         {/* Mouse following gradient */}
@@ -132,19 +150,23 @@ const CoverPage = () => {
       </section>
 
       {/* Crew Section */}
-      <section id="crew-section" className="min-h-screen bg-gradient-to-br from-background to-secondary/20 p-6 relative overflow-hidden">
-        <div className="max-w-6xl mx-auto relative z-10">
+      <section 
+        ref={crewSectionRef}
+        id="crew-section" 
+        className="min-h-screen snap-start bg-gradient-to-br from-background to-secondary/20 p-6 relative overflow-hidden"
+      >
+        <div className={`max-w-6xl mx-auto relative z-10 transition-all duration-700 ${isCrewVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <header className="text-center mb-12 pt-8">
-            <h2 className="font-bold text-foreground mb-4 text-2xl">
+            <h2 className={`font-bold text-foreground mb-4 text-2xl transition-all duration-700 delay-100 ${isCrewVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
               Meet<br className="sm:hidden" /> AI Twin Crew
             </h2>
-            <p className="text-muted-foreground max-w-2xl mx-auto text-xs">
+            <p className={`text-muted-foreground max-w-2xl mx-auto text-xs transition-all duration-700 delay-200 ${isCrewVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
               An intelligent agent team that helps and accelerates the work of internal employees. Through clear structure and collaboration, we deliver faster, more accurate results.
             </p>
           </header>
 
           {/* Search and Action Bar */}
-          <div className="mb-8 flex gap-4 items-center justify-center">
+          <div className={`mb-8 flex gap-4 items-center justify-center transition-all duration-700 delay-300 ${isCrewVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input 
@@ -161,7 +183,7 @@ const CoverPage = () => {
             </Button>
           </div>
 
-          <section className="mt-12">
+          <section className={`mt-12 transition-all duration-700 delay-400 ${isCrewVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
             <ContactOrder 
               agents={[
                 { name: "Yumi", image: aliceProfile },
