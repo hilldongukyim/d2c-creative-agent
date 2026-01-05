@@ -116,11 +116,11 @@ const CoverPage = () => {
         
         {/* Mouse following gradient */}
         <div 
-          className="absolute w-96 h-96 rounded-full opacity-20 pointer-events-none transition-all duration-300 ease-out"
+          className="absolute w-[600px] h-[600px] rounded-full opacity-35 pointer-events-none transition-all duration-300 ease-out"
           style={{
-            background: 'radial-gradient(circle, hsl(0 70% 60% / 0.4) 0%, hsl(0 70% 60% / 0.2) 30%, transparent 70%)',
-            left: mousePosition.x - 192,
-            top: mousePosition.y - 192
+            background: 'radial-gradient(circle, hsl(0 70% 55% / 0.5) 0%, hsl(0 70% 55% / 0.25) 35%, transparent 70%)',
+            left: mousePosition.x - 300,
+            top: mousePosition.y - 300
           }}
         />
         
