@@ -22,7 +22,7 @@ const AnitaCamera = () => {
     }
 
     // Subscribe to session channel to get product image info
-    const channel = supabase.channel(`anita-camera-${sessionId}`);
+    const channel = supabase.channel(`zoe-camera-${sessionId}`);
     
     channel
       .on("broadcast", { event: "product-info" }, (payload) => {
@@ -76,7 +76,7 @@ const AnitaCamera = () => {
         }
 
         // Send result back to PC via broadcast
-        const channel = supabase.channel(`anita-camera-${sessionId}`);
+        const channel = supabase.channel(`zoe-camera-${sessionId}`);
         await channel.subscribe();
         
         channel.send({

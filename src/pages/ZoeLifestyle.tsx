@@ -383,7 +383,7 @@ const AnitaLifestyle = () => {
   useEffect(() => {
     if (!sessionId || !showQRDialog) return;
 
-    const channel = supabase.channel(`anita-camera-${sessionId}`);
+    const channel = supabase.channel(`zoe-camera-${sessionId}`);
 
     channel
       .on("broadcast", { event: "photo-result" }, async (payload) => {
@@ -616,7 +616,7 @@ const AnitaLifestyle = () => {
 
   const getQRCodeUrl = () => {
     const baseUrl = window.location.origin;
-    return `${baseUrl}/anita-camera/${sessionId}`;
+    return `${baseUrl}/zoe-camera/${sessionId}`;
   };
 
   const isAnyLoading = isLoading || isGenerating || isUpscaling || isResizing || isEditing || isCompositing || isGeneratingVideo;
