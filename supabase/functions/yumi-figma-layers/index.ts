@@ -1,4 +1,5 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -11,38 +12,8 @@ const FIGMA_CONFIG = {
   fileName: "Promotion-Banners"
 };
 
-// In-memory cache with TTL (30 minutes - significantly increased to reduce API calls)
-// Note: This cache persists only within a single edge function instance
-interface CacheEntry {
-  data: any;
-  timestamp: number;
-}
-
-const cache: Map<string, CacheEntry> = new Map();
-const CACHE_TTL = 30 * 60 * 1000; // 30 minutes (increased from 10 minutes)
-
-// Last API call timestamp to enforce minimum interval between calls
-let lastApiCallTime = 0;
-const MIN_API_INTERVAL = 60000; // 1 minute minimum between API calls
-
-function getCachedData(key: string): any | null {
-  const entry = cache.get(key);
-  if (!entry) return null;
-  
-  if (Date.now() - entry.timestamp > CACHE_TTL) {
-    cache.delete(key);
-    return null;
-  }
-  
-  return entry.data;
-}
-
-function setCachedData(key: string, data: any): void {
-  cache.set(key, {
-    data,
-    timestamp: Date.now()
-  });
-}
+// Cache TTL in minutes
+const CACHE_TTL_MINUTES = 30;
 
 interface FigmaNode {
   id: string;
@@ -104,16 +75,12 @@ function extractLayers(node: FigmaNode, path: string = ""): ExtractedLayer[] {
 const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // Fetch with exponential backoff for rate limiting
-// Increased wait times: 30s, 60s, 90s, 120s to better handle Figma rate limits
-async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 4): Promise<Response> {
+async function fetchWithRetry(url: string, options: RequestInit, maxRetries = 3): Promise<Response> {
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     const response = await fetch(url, options);
     
     if (response.status === 429) {
-      // Rate limited - use longer exponential backoff
-      // Wait 30s, 60s, 90s, 120s (increased from 10s, 20s, 30s)
       const waitTime = (attempt + 1) * 30000;
-      
       console.log(`Rate limited. Waiting ${waitTime / 1000}s before retry ${attempt + 1}/${maxRetries}`);
       await delay(waitTime);
       continue;
@@ -133,60 +100,102 @@ serve(async (req) => {
 
   try {
     const FIGMA_ACCESS_TOKEN = Deno.env.get('FIGMA_ACCESS_TOKEN');
+    const SUPABASE_URL = Deno.env.get('SUPABASE_URL');
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     
     if (!FIGMA_ACCESS_TOKEN) {
       throw new Error('FIGMA_ACCESS_TOKEN is not configured');
     }
 
-    // Check cache first
-    const cacheKey = `figma_${FIGMA_CONFIG.fileKey}`;
-    const cachedData = getCachedData(cacheKey);
-    
-    if (cachedData) {
-      console.log('Returning cached Figma data');
-      return new Response(JSON.stringify({
-        success: true,
-        ...cachedData,
-        fromCache: true
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+    if (!SUPABASE_URL || !SUPABASE_SERVICE_ROLE_KEY) {
+      throw new Error('Supabase credentials not configured');
     }
 
-    // Check if we need to wait before making another API call
-    const timeSinceLastCall = Date.now() - lastApiCallTime;
-    if (lastApiCallTime > 0 && timeSinceLastCall < MIN_API_INTERVAL) {
-      const waitTime = Math.ceil((MIN_API_INTERVAL - timeSinceLastCall) / 1000);
-      console.log(`Rate limiting: Need to wait ${waitTime}s before next API call`);
-      return new Response(JSON.stringify({ 
-        success: false, 
-        error: `Figma API 호출 간격 제한 중입니다. ${waitTime}초 후에 다시 시도해주세요.`,
-        errorCode: 'RATE_LIMIT',
-        retryAfter: waitTime
-      }), {
-        status: 429,
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+    // Create Supabase client with service role key
+    const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+
+    // Check database cache first
+    const { data: cachedData, error: cacheError } = await supabase
+      .from('figma_cache')
+      .select('*')
+      .eq('file_key', FIGMA_CONFIG.fileKey)
+      .single();
+
+    if (!cacheError && cachedData) {
+      const expiresAt = new Date(cachedData.expires_at);
+      const now = new Date();
+
+      if (expiresAt > now) {
+        console.log('Returning cached Figma data from database');
+        return new Response(JSON.stringify({
+          success: true,
+          fileName: cachedData.file_name,
+          fileKey: cachedData.file_key,
+          ...cachedData.layers,
+          fromCache: true,
+          cachedAt: cachedData.cached_at,
+          expiresAt: cachedData.expires_at
+        }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      } else {
+        console.log('Database cache expired, fetching fresh data');
+      }
     }
 
     console.log(`Fetching Figma file: ${FIGMA_CONFIG.fileKey}`);
-    lastApiCallTime = Date.now();
 
     // Fetch Figma file structure with retry
-    const figmaResponse = await fetchWithRetry(
-      `https://api.figma.com/v1/files/${FIGMA_CONFIG.fileKey}`,
-      {
-        headers: {
-          'X-Figma-Token': FIGMA_ACCESS_TOKEN,
-        },
+    let figmaResponse: Response;
+    try {
+      figmaResponse = await fetchWithRetry(
+        `https://api.figma.com/v1/files/${FIGMA_CONFIG.fileKey}`,
+        {
+          headers: {
+            'X-Figma-Token': FIGMA_ACCESS_TOKEN,
+          },
+        }
+      );
+    } catch (error) {
+      // If rate limited and we have expired cache, use it as fallback
+      if (error.message === 'RATE_LIMIT_EXCEEDED' && cachedData) {
+        console.log('Rate limited, using expired cache as fallback');
+        return new Response(JSON.stringify({
+          success: true,
+          fileName: cachedData.file_name,
+          fileKey: cachedData.file_key,
+          ...cachedData.layers,
+          fromCache: true,
+          isExpiredCache: true,
+          cachedAt: cachedData.cached_at
+        }), {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
       }
-    );
+      throw error;
+    }
 
     if (!figmaResponse.ok) {
       const errorText = await figmaResponse.text();
       console.error('Figma API error:', figmaResponse.status, errorText);
       
       if (figmaResponse.status === 429) {
+        // If rate limited and we have expired cache, use it
+        if (cachedData) {
+          console.log('Rate limited, using expired cache as fallback');
+          return new Response(JSON.stringify({
+            success: true,
+            fileName: cachedData.file_name,
+            fileKey: cachedData.file_key,
+            ...cachedData.layers,
+            fromCache: true,
+            isExpiredCache: true,
+            cachedAt: cachedData.cached_at
+          }), {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          });
+        }
+
         return new Response(JSON.stringify({ 
           success: false, 
           error: 'Figma API 사용량이 많습니다. 1분 후에 다시 시도해주세요.',
@@ -227,8 +236,6 @@ serve(async (req) => {
 
     // Prepare response data
     const responseData = {
-      fileName: figmaData.name,
-      fileKey: FIGMA_CONFIG.fileKey,
       lastModified: figmaData.lastModified,
       pages,
       summary: {
@@ -238,12 +245,32 @@ serve(async (req) => {
       layers: allLayers
     };
 
-    // Cache the data
-    setCachedData(cacheKey, responseData);
-    console.log('Figma data cached for 5 minutes');
+    // Save to database cache (upsert)
+    const expiresAt = new Date(Date.now() + CACHE_TTL_MINUTES * 60 * 1000);
+    
+    const { error: upsertError } = await supabase
+      .from('figma_cache')
+      .upsert({
+        file_key: FIGMA_CONFIG.fileKey,
+        file_name: figmaData.name,
+        layers: responseData,
+        cached_at: new Date().toISOString(),
+        expires_at: expiresAt.toISOString(),
+        updated_at: new Date().toISOString()
+      }, {
+        onConflict: 'file_key'
+      });
+
+    if (upsertError) {
+      console.error('Error saving to cache:', upsertError);
+    } else {
+      console.log(`Figma data cached in database until ${expiresAt.toISOString()}`);
+    }
 
     return new Response(JSON.stringify({
       success: true,
+      fileName: figmaData.name,
+      fileKey: FIGMA_CONFIG.fileKey,
       ...responseData,
       fromCache: false
     }), {

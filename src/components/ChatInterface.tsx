@@ -1553,20 +1553,52 @@ const ChatInterface = () => {
     </div>
   );
 
-  const renderError = () => (
-    <div className="space-y-6">
-      {renderYumiMessage(loadError === "RATE_LIMIT" ? t.rateLimitError : t.genericError)}
-      <div className="flex flex-col items-center gap-4">
-        {loadError === "RATE_LIMIT" && (
-          <p className="text-sm text-gray-500 text-center">
-            Figma API 호출 제한에 도달했습니다.<br/>
-            1~2분 후에 다시 시도해주세요.
-          </p>
-        )}
-        <Button onClick={handleRetry} className="bg-orange-400 hover:bg-orange-500 text-white px-8">{t.retry}</Button>
+  const renderError = () => {
+    const [retryDisabled, setRetryDisabled] = useState(false);
+    const [countdown, setCountdown] = useState(0);
+
+    const handleRetryWithDebounce = () => {
+      if (retryDisabled) return;
+      
+      setRetryDisabled(true);
+      setCountdown(30);
+      
+      // Start countdown
+      const interval = setInterval(() => {
+        setCountdown(prev => {
+          if (prev <= 1) {
+            clearInterval(interval);
+            setRetryDisabled(false);
+            return 0;
+          }
+          return prev - 1;
+        });
+      }, 1000);
+
+      handleRetry();
+    };
+
+    return (
+      <div className="space-y-6">
+        {renderYumiMessage(loadError === "RATE_LIMIT" ? t.rateLimitError : t.genericError)}
+        <div className="flex flex-col items-center gap-4">
+          {loadError === "RATE_LIMIT" && (
+            <p className="text-sm text-gray-500 text-center">
+              Figma API 호출 제한에 도달했습니다.<br/>
+              캐시된 데이터가 없어 잠시 후 다시 시도해주세요.
+            </p>
+          )}
+          <Button 
+            onClick={handleRetryWithDebounce} 
+            disabled={retryDisabled}
+            className="bg-orange-400 hover:bg-orange-500 text-white px-8 disabled:opacity-50"
+          >
+            {retryDisabled ? `${countdown}초 후 재시도 가능` : t.retry}
+          </Button>
+        </div>
       </div>
-    </div>
-  );
+    );
+  };
 
   const renderContent = () => {
     switch (phase) {
