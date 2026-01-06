@@ -363,7 +363,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                           {item.name.charAt(0)}
                                         </div>}
                                     </div>
-                                    {(item.name === "Ben" || item.name === "Kai" || item.name === "Noa" || item.name === "Candy") && (
+                                    {(item.name === "Ben" || item.name === "Kai" || item.name === "Noa" || item.name === "Candy" || item.name === "Zoe") && (
                                       <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-green-500 rounded-full border-2 border-background" />
                                     )}
                                     {(item.name === "Anita" || item.name === "Maple" || item.name === "Mateo") && (
@@ -395,7 +395,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                             }}>
                                         </div>}
                                     </div>
-                                    {(item.name === "Ben" || item.name === "Kai" || item.name === "Noa" || item.name === "Candy") && (
+                                    {(item.name === "Ben" || item.name === "Kai" || item.name === "Noa" || item.name === "Candy" || item.name === "Zoe") && (
                                       <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-green-500 rounded-full border-2 border-background" />
                                     )}
                                     {(item.name === "Anita" || item.name === "Maple" || item.name === "Mateo") && (
@@ -426,7 +426,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                         {item.name.charAt(0)}
                                       </div>}
                                   </div>
-                                  {(item.name === "Ben" || item.name === "Kai" || item.name === "Noa" || item.name === "Candy") && (
+                                  {(item.name === "Ben" || item.name === "Kai" || item.name === "Noa" || item.name === "Candy" || item.name === "Zoe") && (
                                     <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-green-500 rounded-full border-2 border-background" />
                                   )}
                                   {(item.name === "Anita" || item.name === "Maple" || item.name === "Mateo") && (
