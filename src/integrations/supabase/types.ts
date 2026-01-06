@@ -14,7 +14,39 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      figma_cache: {
+        Row: {
+          cached_at: string | null
+          created_at: string | null
+          expires_at: string | null
+          file_key: string
+          file_name: string | null
+          id: string
+          layers: Json | null
+          updated_at: string | null
+        }
+        Insert: {
+          cached_at?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          file_key: string
+          file_name?: string | null
+          id?: string
+          layers?: Json | null
+          updated_at?: string | null
+        }
+        Update: {
+          cached_at?: string | null
+          created_at?: string | null
+          expires_at?: string | null
+          file_key?: string
+          file_name?: string | null
+          id?: string
+          layers?: Json | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
