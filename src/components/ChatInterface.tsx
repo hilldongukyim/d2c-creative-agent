@@ -781,8 +781,15 @@ const ChatInterface = () => {
 
       if (!data.success) {
         if (data.errorCode === "RATE_LIMIT") {
+          const retryAfter = data.retryAfter || 60;
           setLoadError("RATE_LIMIT");
           setPhase("error");
+          
+          // Auto-retry after the specified time
+          console.log(`Rate limited. Will auto-retry in ${retryAfter} seconds`);
+          setTimeout(() => {
+            handleRetry();
+          }, retryAfter * 1000);
           return;
         }
         throw new Error(data.error || "Failed to load Figma layers");
@@ -1555,7 +1562,13 @@ const ChatInterface = () => {
   const renderError = () => (
     <div className="space-y-6">
       {renderYumiMessage(loadError === "RATE_LIMIT" ? t.rateLimitError : t.genericError)}
-      <div className="flex justify-center">
+      <div className="flex flex-col items-center gap-4">
+        {loadError === "RATE_LIMIT" && (
+          <div className="flex items-center gap-2 text-sm text-gray-500">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            <span>자동으로 재시도 중...</span>
+          </div>
+        )}
         <Button onClick={handleRetry} className="bg-orange-400 hover:bg-orange-500 text-white px-8">{t.retry}</Button>
       </div>
     </div>
