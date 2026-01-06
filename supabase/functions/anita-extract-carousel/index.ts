@@ -48,18 +48,15 @@ function isValidExternalUrl(urlString: string): { valid: boolean; error?: string
   }
 }
 
-// Extract product gallery images from the TOP carousel
+// Extract product gallery images from various gallery patterns
 function extractCarouselImages(html: string, baseUrl: string): string[] {
   const images: string[] = [];
   const seen = new Set<string>();
 
-  console.log("=== Extracting TOP gallery images ===");
+  console.log("=== Extracting gallery images ===");
 
   const addImage = (src: string, source: string) => {
-    if (!src) {
-      console.log(`[${source}] Empty src`);
-      return false;
-    }
+    if (!src) return false;
     
     // Normalize URL - remove /jcr:content/... suffix if present
     let cleanSrc = src;
@@ -68,53 +65,112 @@ function extractCarouselImages(html: string, baseUrl: string): string[] {
       cleanSrc = src.substring(0, jcrIndex);
     }
     
-    if (seen.has(cleanSrc)) {
-      return false;
-    }
+    if (seen.has(cleanSrc)) return false;
     
-    // Only apply minimal filters
+    // Filter out non-product images
     if (cleanSrc.endsWith('.svg')) return false;
     if (cleanSrc.includes('logo')) return false;
     if (cleanSrc.includes('qrcode') || cleanSrc.includes('qr-code')) return false;
+    if (cleanSrc.includes('icon')) return false;
+    if (cleanSrc.includes('placeholder')) return false;
+    if (cleanSrc.includes('spinner') || cleanSrc.includes('loading')) return false;
     
     seen.add(cleanSrc);
     const fullUrl = cleanSrc.startsWith('http') ? cleanSrc : new URL(cleanSrc, baseUrl).href;
     images.push(fullUrl);
-    console.log(`✓ Image [${images.length}]:`, fullUrl);
+    console.log(`✓ [${source}] Image ${images.length}:`, fullUrl.substring(0, 100));
     return true;
   };
 
-  // Step 1: Find the FIRST swiper-wrapper
+  // Pattern 1: Swiper wrapper (LG specific)
   const swiperMatch = html.match(/(<div[^>]*id="swiper-wrapper-[^"]*"[^>]*>)([\s\S]*?)(<div[^>]*class="[^"]*swiper-button|<div[^>]*class="[^"]*swiper-pagination)/i);
   
-  if (!swiperMatch) {
-    console.log("No swiper-wrapper found");
-    return images;
+  if (swiperMatch) {
+    console.log("Found swiper wrapper pattern");
+    const swiperContent = swiperMatch[2];
+    const items = swiperContent.split(/<div[^>]*class="cmp-carousel__item\s+swiper-slide\s+c-carousel__item[^"]*"[^>]*>/i);
+    
+    for (let i = 1; i < items.length && i <= 20; i++) {
+      const itemContent = items[i];
+      const imgSrcMatch = itemContent.match(/<img[^>]*\ssrc="([^"]+)"/i);
+      if (imgSrcMatch) {
+        addImage(imgSrcMatch[1], `swiper-${i}`);
+      } else {
+        const dataSrcMatch = itemContent.match(/<img[^>]*\sdata-src="([^"]+)"/i);
+        if (dataSrcMatch) {
+          addImage(dataSrcMatch[1], `swiper-data-${i}`);
+        }
+      }
+    }
   }
 
-  const swiperContent = swiperMatch[2];
-  console.log(`Swiper content length: ${swiperContent.length}`);
+  // Pattern 2: Generic swiper-slide pattern
+  if (images.length === 0) {
+    console.log("Trying generic swiper-slide pattern");
+    const slideMatches = html.matchAll(/<div[^>]*class="[^"]*swiper-slide[^"]*"[^>]*>([\s\S]*?)(?=<div[^>]*class="[^"]*swiper-slide|<\/div>\s*<\/div>)/gi);
+    let count = 0;
+    for (const match of slideMatches) {
+      if (count >= 20) break;
+      const imgMatch = match[1].match(/<img[^>]*(?:src|data-src)="([^"]+)"/i);
+      if (imgMatch) {
+        addImage(imgMatch[1], `slide-${count}`);
+        count++;
+      }
+    }
+  }
 
-  // Step 2: Split content by carousel items
-  const items = swiperContent.split(/<div[^>]*class="cmp-carousel__item\s+swiper-slide\s+c-carousel__item[^"]*"[^>]*>/i);
-  
-  console.log(`Found ${items.length - 1} carousel items`);
+  // Pattern 3: Product gallery with data-gallery attribute
+  if (images.length === 0) {
+    console.log("Trying data-gallery pattern");
+    const galleryMatch = html.match(/<[^>]*data-gallery[^>]*>([\s\S]*?)(?=<\/section>|<\/div>\s*<\/div>\s*<\/div>)/i);
+    if (galleryMatch) {
+      const imgMatches = galleryMatch[1].matchAll(/<img[^>]*(?:src|data-src)="([^"]+)"/gi);
+      for (const match of imgMatches) {
+        addImage(match[1], 'gallery');
+      }
+    }
+  }
 
-  // Process each item
-  for (let i = 1; i < items.length && i <= 20; i++) {
-    const itemContent = items[i];
-    
-    // Find img with src attribute - simple direct extraction
-    const imgSrcMatch = itemContent.match(/<img[^>]*\ssrc="([^"]+)"/i);
-    if (imgSrcMatch) {
-      console.log(`Item ${i} found src:`, imgSrcMatch[1].substring(0, 100));
-      addImage(imgSrcMatch[1], `item-${i}`);
-    } else {
-      // Try data-src
-      const dataSrcMatch = itemContent.match(/<img[^>]*\sdata-src="([^"]+)"/i);
-      if (dataSrcMatch) {
-        console.log(`Item ${i} found data-src:`, dataSrcMatch[1].substring(0, 100));
-        addImage(dataSrcMatch[1], `item-${i}-data`);
+  // Pattern 4: Product image containers (common class patterns)
+  if (images.length === 0) {
+    console.log("Trying product-image class patterns");
+    const patterns = [
+      /class="[^"]*(?:product-image|pdp-image|gallery-image|hero-image)[^"]*"[^>]*>[\s\S]*?<img[^>]*(?:src|data-src)="([^"]+)"/gi,
+      /<img[^>]*class="[^"]*(?:product-image|pdp-image|gallery-image|hero-image)[^"]*"[^>]*(?:src|data-src)="([^"]+)"/gi,
+    ];
+    for (const pattern of patterns) {
+      const matches = html.matchAll(pattern);
+      for (const match of matches) {
+        addImage(match[1], 'product-class');
+      }
+    }
+  }
+
+  // Pattern 5: OG image as fallback
+  if (images.length === 0) {
+    console.log("Trying og:image fallback");
+    const ogMatch = html.match(/<meta[^>]*property="og:image"[^>]*content="([^"]+)"/i) ||
+                    html.match(/<meta[^>]*content="([^"]+)"[^>]*property="og:image"/i);
+    if (ogMatch) {
+      addImage(ogMatch[1], 'og-image');
+    }
+  }
+
+  // Pattern 6: Large product images (look for images with product-like URLs)
+  if (images.length === 0) {
+    console.log("Trying large image pattern");
+    const imgMatches = html.matchAll(/<img[^>]*(?:src|data-src)="([^"]+)"/gi);
+    for (const match of imgMatches) {
+      const src = match[1];
+      // Filter for likely product images
+      if (
+        (src.includes('/images/') || src.includes('/product') || src.includes('/media/')) &&
+        !src.includes('thumb') &&
+        !src.includes('icon') &&
+        !src.includes('badge')
+      ) {
+        addImage(src, 'large-img');
+        if (images.length >= 10) break;
       }
     }
   }
@@ -124,9 +180,9 @@ function extractCarouselImages(html: string, baseUrl: string): string[] {
   const baseUrls = new Set<string>();
   
   for (const img of images) {
-    const baseUrl = img.replace(/\/jcr:content.*$/, '');
-    if (!baseUrls.has(baseUrl)) {
-      baseUrls.add(baseUrl);
+    const imgBase = img.replace(/\/jcr:content.*$/, '');
+    if (!baseUrls.has(imgBase)) {
+      baseUrls.add(imgBase);
       uniqueImages.push(img);
     }
   }
@@ -140,17 +196,6 @@ function extractProductDimensions(html: string): { width?: string; height?: stri
   console.log("=== Extracting product dimensions ===");
   
   const dimensions: { width?: string; height?: string; depth?: string; raw?: string } = {};
-  
-  // Try to find spec/dimension section patterns
-  // Pattern 1: Look for dimension rows with W x H x D format
-  const dimensionPatterns = [
-    // W x H x D pattern (e.g., "1200 x 800 x 350 mm")
-    /(?:dimension|size|spec)[^<]*?(\d+(?:\.\d+)?)\s*[x×]\s*(\d+(?:\.\d+)?)\s*[x×]\s*(\d+(?:\.\d+)?)\s*(mm|cm|inch)?/gi,
-    // Individual dimension patterns
-    /(?:width|가로)[^<]*?[:\s]+(\d+(?:\.\d+)?)\s*(mm|cm|inch)?/gi,
-    /(?:height|높이|세로)[^<]*?[:\s]+(\d+(?:\.\d+)?)\s*(mm|cm|inch)?/gi,
-    /(?:depth|깊이)[^<]*?[:\s]+(\d+(?:\.\d+)?)\s*(mm|cm|inch)?/gi,
-  ];
   
   // Pattern for "Size (W x H x D)" format common in LG spec tables
   const sizeWHDMatch = html.match(/(?:size|dimension)[^<]*?\(?\s*W\s*[x×]\s*H\s*[x×]\s*D\s*\)?[^<]*?(\d+(?:\.\d+)?)\s*[x×]\s*(\d+(?:\.\d+)?)\s*[x×]\s*(\d+(?:\.\d+)?)\s*(mm|cm)?/i);
@@ -168,15 +213,9 @@ function extractProductDimensions(html: string): { width?: string; height?: stri
   const heightMatch = html.match(/(?:<td[^>]*>|<th[^>]*>|<dt[^>]*>|<span[^>]*>)[^<]*(?:height|높이|세로|H)[^<]*(?:<\/td>|<\/th>|<\/dt>|<\/span>)[^<]*(?:<td[^>]*>|<dd[^>]*>|<span[^>]*>)[^<]*?(\d+(?:\.\d+)?)\s*(mm|cm)?/i);
   const depthMatch = html.match(/(?:<td[^>]*>|<th[^>]*>|<dt[^>]*>|<span[^>]*>)[^<]*(?:depth|깊이|D)[^<]*(?:<\/td>|<\/th>|<\/dt>|<\/span>)[^<]*(?:<td[^>]*>|<dd[^>]*>|<span[^>]*>)[^<]*?(\d+(?:\.\d+)?)\s*(mm|cm)?/i);
 
-  if (widthMatch) {
-    dimensions.width = widthMatch[1] + (widthMatch[2] || 'mm');
-  }
-  if (heightMatch) {
-    dimensions.height = heightMatch[1] + (heightMatch[2] || 'mm');
-  }
-  if (depthMatch) {
-    dimensions.depth = depthMatch[1] + (depthMatch[2] || 'mm');
-  }
+  if (widthMatch) dimensions.width = widthMatch[1] + (widthMatch[2] || 'mm');
+  if (heightMatch) dimensions.height = heightMatch[1] + (heightMatch[2] || 'mm');
+  if (depthMatch) dimensions.depth = depthMatch[1] + (depthMatch[2] || 'mm');
 
   // Also try to find raw dimension string for complex formats
   const rawDimensionMatch = html.match(/(?:dimension|size|spec)[^<]*?[:\s]*(\d+(?:\.\d+)?(?:\s*[x×]\s*\d+(?:\.\d+)?){1,2})\s*(mm|cm|inch)?/i);
@@ -255,6 +294,7 @@ serve(async (req) => {
 
     const FIRECRAWL_API_KEY = Deno.env.get("FIRECRAWL_API_KEY");
     if (!FIRECRAWL_API_KEY) {
+      console.error("FIRECRAWL_API_KEY not found in environment");
       return new Response(JSON.stringify({ error: "Firecrawl API key not configured" }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -262,6 +302,7 @@ serve(async (req) => {
     }
 
     console.log("Extracting carousel images from URL:", url);
+    console.log("Starting Firecrawl API call...");
 
     const response = await fetch("https://api.firecrawl.dev/v1/scrape", {
       method: "POST",
@@ -272,21 +313,34 @@ serve(async (req) => {
       body: JSON.stringify({
         url: url,
         formats: ["rawHtml"],
-        waitFor: 15000,
+        waitFor: 8000, // Reduced from 15000 to avoid timeout
       }),
     });
 
+    console.log("Firecrawl API response status:", response.status);
+    console.log("Firecrawl API response ok:", response.ok);
+
     if (!response.ok) {
-      return new Response(JSON.stringify({ error: "Failed to scrape URL" }), {
+      const errorText = await response.text();
+      console.error("Firecrawl API error response:", errorText);
+      return new Response(JSON.stringify({ 
+        error: "Failed to scrape URL",
+        details: `Status: ${response.status}` 
+      }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     const data = await response.json();
+    console.log("Firecrawl response success:", data.success);
 
     if (!data.success) {
-      return new Response(JSON.stringify({ error: "Scrape failed" }), {
+      console.error("Firecrawl scrape failed:", data.error || "Unknown error");
+      return new Response(JSON.stringify({ 
+        error: "Scrape failed",
+        details: data.error || "Unknown Firecrawl error"
+      }), {
         status: 500,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -295,10 +349,23 @@ serve(async (req) => {
     const html = data.data?.rawHtml || "";
     console.log("HTML length:", html.length);
 
+    if (html.length === 0) {
+      console.error("Empty HTML received from Firecrawl");
+      return new Response(JSON.stringify({ 
+        error: "Empty HTML received from page",
+        details: "The page may be protected or require authentication"
+      }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const images = extractCarouselImages(html, url);
     const productName = extractProductName(html, url);
     const productDimensions = extractProductDimensions(html);
+    
     console.log("Total images extracted:", images.length);
+    console.log("Product name:", productName);
     console.log("Product dimensions:", productDimensions);
 
     return new Response(JSON.stringify({
@@ -310,8 +377,12 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (error) {
-    console.error("Error:", error);
-    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Extract failed" }), {
+    console.error("Error in anita-extract-carousel:", error);
+    console.error("Error stack:", error instanceof Error ? error.stack : "No stack");
+    return new Response(JSON.stringify({ 
+      error: error instanceof Error ? error.message : "Extract failed",
+      details: "An unexpected error occurred during extraction"
+    }), {
       status: 500,
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
