@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { ArrowLeft, Loader2, Download, Search, Sparkles, ZoomIn, Square, RectangleVertical, RectangleHorizontal, Film, RefreshCw, Camera, Smartphone, Pencil, Send, MessageCircle, Check } from "lucide-react";
+import { ArrowLeft, Loader2, Download, Search, Sparkles, ZoomIn, Square, RectangleVertical, RectangleHorizontal, Film, RefreshCw, Camera, Smartphone, Pencil, Send, MessageCircle, Check, RotateCcw } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +13,21 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { QRCodeSVG } from "qrcode.react";
 import FeedbackDialog from "@/components/BenFeedbackDialog";
 
+// State snapshot for revert functionality
+interface StateSnapshot {
+  url: string;
+  carouselImages: string[];
+  selectedImage: string | null;
+  generatedImage: string | null;
+  generatedVideoUrl: string | null;
+  isUpscaled: boolean;
+  currentAspectRatio: "16:9" | "1:1" | "9:16" | "custom";
+  productName: string;
+  productDimensions: { width?: string; height?: string; depth?: string; raw?: string } | null;
+  showInput: boolean;
+  inputType: "url" | "select" | "action" | "edit" | null;
+}
+
 // Chat message type
 interface ChatMessage {
   id: string;
@@ -20,6 +35,7 @@ interface ChatMessage {
   content: string;
   component?: React.ReactNode;
   timestamp: Date;
+  snapshot?: StateSnapshot; // Snapshot of state at this message
 }
 
 // Typing animation hook
@@ -149,11 +165,55 @@ const ZoeLifestyle = () => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, showInput]);
 
+  // Create a snapshot of current state
+  const createSnapshot = (): StateSnapshot => ({
+    url,
+    carouselImages,
+    selectedImage,
+    generatedImage,
+    generatedVideoUrl,
+    isUpscaled,
+    currentAspectRatio,
+    productName,
+    productDimensions,
+    showInput,
+    inputType,
+  });
+
+  // Revert to a specific message
+  const handleRevertToMessage = (messageId: string) => {
+    const messageIndex = messages.findIndex(m => m.id === messageId);
+    if (messageIndex === -1) return;
+
+    const targetMessage = messages[messageIndex];
+    
+    // Restore state from snapshot
+    if (targetMessage.snapshot) {
+      setUrl(targetMessage.snapshot.url);
+      setCarouselImages(targetMessage.snapshot.carouselImages);
+      setSelectedImage(targetMessage.snapshot.selectedImage);
+      setGeneratedImage(targetMessage.snapshot.generatedImage);
+      setGeneratedVideoUrl(targetMessage.snapshot.generatedVideoUrl);
+      setIsUpscaled(targetMessage.snapshot.isUpscaled);
+      setCurrentAspectRatio(targetMessage.snapshot.currentAspectRatio);
+      setProductName(targetMessage.snapshot.productName);
+      setProductDimensions(targetMessage.snapshot.productDimensions);
+      setShowInput(targetMessage.snapshot.showInput);
+      setInputType(targetMessage.snapshot.inputType);
+    }
+
+    // Remove messages after this point
+    setMessages(prev => prev.slice(0, messageIndex + 1));
+    
+    toast.success("Reverted to this point");
+  };
+
   const addMessage = (message: Omit<ChatMessage, "id" | "timestamp">) => {
     const newMessage: ChatMessage = {
       ...message,
       id: Date.now().toString(),
       timestamp: new Date(),
+      snapshot: createSnapshot(), // Save state snapshot with each message
     };
     setMessages(prev => [...prev, newMessage]);
     return newMessage.id;
@@ -658,13 +718,24 @@ const ZoeLifestyle = () => {
       {/* Chat Area */}
       <div className="flex-1 overflow-y-auto pt-20 pb-32 px-4">
         <div className="max-w-2xl mx-auto space-y-4">
-          {messages.map((msg) => (
-            <div key={msg.id}>
+          {messages.map((msg, index) => (
+            <div key={msg.id} className="group relative">
               {msg.type === "zoe" ? (
                 <ZoeMessage content={msg.content} showTyping={false} />
               ) : msg.type === "user" ? (
                 <UserMessage content={msg.content} />
               ) : null}
+              
+              {/* Revert button - show on hover for messages after the first one */}
+              {index > 0 && !isAnyLoading && (
+                <button
+                  onClick={() => handleRevertToMessage(msg.id)}
+                  className="absolute -right-2 top-0 opacity-0 group-hover:opacity-100 transition-opacity bg-white/90 hover:bg-gray-100 text-gray-500 hover:text-gray-700 rounded-full p-1.5 shadow-sm border border-gray-200"
+                  title="Revert to this point"
+                >
+                  <RotateCcw className="w-3 h-3" />
+                </button>
+              )}
             </div>
           ))}
           
