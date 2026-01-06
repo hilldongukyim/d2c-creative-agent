@@ -11,14 +11,19 @@ const FIGMA_CONFIG = {
   fileName: "Promotion-Banners"
 };
 
-// In-memory cache with TTL (10 minutes - increased to reduce API calls)
+// In-memory cache with TTL (30 minutes - significantly increased to reduce API calls)
+// Note: This cache persists only within a single edge function instance
 interface CacheEntry {
   data: any;
   timestamp: number;
 }
 
 const cache: Map<string, CacheEntry> = new Map();
-const CACHE_TTL = 10 * 60 * 1000; // 10 minutes (increased from 5 minutes)
+const CACHE_TTL = 30 * 60 * 1000; // 30 minutes (increased from 10 minutes)
+
+// Last API call timestamp to enforce minimum interval between calls
+let lastApiCallTime = 0;
+const MIN_API_INTERVAL = 60000; // 1 minute minimum between API calls
 
 function getCachedData(key: string): any | null {
   const entry = cache.get(key);
@@ -148,7 +153,24 @@ serve(async (req) => {
       });
     }
 
+    // Check if we need to wait before making another API call
+    const timeSinceLastCall = Date.now() - lastApiCallTime;
+    if (lastApiCallTime > 0 && timeSinceLastCall < MIN_API_INTERVAL) {
+      const waitTime = Math.ceil((MIN_API_INTERVAL - timeSinceLastCall) / 1000);
+      console.log(`Rate limiting: Need to wait ${waitTime}s before next API call`);
+      return new Response(JSON.stringify({ 
+        success: false, 
+        error: `Figma API 호출 간격 제한 중입니다. ${waitTime}초 후에 다시 시도해주세요.`,
+        errorCode: 'RATE_LIMIT',
+        retryAfter: waitTime
+      }), {
+        status: 429,
+        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      });
+    }
+
     console.log(`Fetching Figma file: ${FIGMA_CONFIG.fileKey}`);
+    lastApiCallTime = Date.now();
 
     // Fetch Figma file structure with retry
     const figmaResponse = await fetchWithRetry(
