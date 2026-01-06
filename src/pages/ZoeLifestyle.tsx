@@ -87,7 +87,7 @@ const UserMessage = ({ content }: { content: string }) => (
   </div>
 );
 
-const AnitaLifestyle = () => {
+const ZoeLifestyle = () => {
   const navigate = useNavigate();
   const isMobile = useIsMobile();
   const chatEndRef = useRef<HTMLDivElement>(null);
@@ -132,7 +132,7 @@ const AnitaLifestyle = () => {
     const greeting: ChatMessage = {
       id: "greeting",
       type: "zoe",
-      content: "안녕하세요! 저는 Zoe예요. 🎨\n제품 이미지를 멋진 라이프스타일 이미지로 바꿔드릴게요.\n\n변환하고 싶은 제품의 PDP URL을 알려주시겠어요?",
+      content: "Hi there! I'm Zoe. 🎨\nI can transform your product images into beautiful lifestyle images.\n\nCould you share the PDP URL of the product you'd like to transform?",
       timestamp: new Date(),
     };
     setMessages([greeting]);
@@ -187,7 +187,7 @@ const AnitaLifestyle = () => {
 
   const handleUrlSubmit = async () => {
     if (!url) {
-      toast.error("URL을 입력해주세요");
+      toast.error("Please enter a URL");
       return;
     }
 
@@ -198,7 +198,7 @@ const AnitaLifestyle = () => {
 
     // Add Zoe's response
     setTimeout(() => {
-      addMessage({ type: "zoe", content: "좋아요! URL을 확인하고 있어요... 잠시만 기다려주세요. ✨" });
+      addMessage({ type: "zoe", content: "Great! Let me check the URL... Please wait a moment. ✨" });
     }, 300);
 
     setIsLoading(true);
@@ -209,7 +209,7 @@ const AnitaLifestyle = () => {
 
       if (error) throw error;
       if (!data.success || !data.images || data.images.length === 0) {
-        addMessage({ type: "zoe", content: "이런, 이 URL에서는 제품 이미지를 찾지 못했어요. 😅\n다른 URL을 알려주시겠어요?" });
+        addMessage({ type: "zoe", content: "Oops, I couldn't find any product images from this URL. 😅\nCould you try another URL?" });
         setShowInput(true);
         setInputType("url");
         return;
@@ -219,12 +219,12 @@ const AnitaLifestyle = () => {
       setProductName(data.productName || "product");
       setProductDimensions(data.productDimensions || null);
 
-      const dimensionInfo = data.productDimensions?.raw ? `\n(제품 크기: ${data.productDimensions.raw})` : '';
+      const dimensionInfo = data.productDimensions?.raw ? `\n(Product dimensions: ${data.productDimensions.raw})` : '';
       
       setTimeout(() => {
         addMessage({ 
           type: "zoe", 
-          content: `${data.images.length}개의 제품 이미지를 찾았어요! 🎉${dimensionInfo}\n\n어떤 이미지로 라이프스타일 이미지를 만들어 드릴까요? 아래에서 선택해주세요!` 
+          content: `I found ${data.images.length} product images! 🎉${dimensionInfo}\n\nWhich image would you like me to use for the lifestyle image? Please select one below!` 
         });
         
         setTimeout(() => {
@@ -235,7 +235,7 @@ const AnitaLifestyle = () => {
       
     } catch (error) {
       console.error("Error extracting images:", error);
-      addMessage({ type: "zoe", content: "URL 분석 중 오류가 발생했어요. 😢\n다른 URL로 다시 시도해볼까요?" });
+      addMessage({ type: "zoe", content: "An error occurred while analyzing the URL. 😢\nWould you like to try another URL?" });
       setShowInput(true);
       setInputType("url");
     } finally {
@@ -249,19 +249,19 @@ const AnitaLifestyle = () => {
 
   const handleImageConfirm = () => {
     if (!selectedImage) {
-      toast.error("이미지를 선택해주세요");
+      toast.error("Please select an image");
       return;
     }
 
     // Add user selection message
-    addMessage({ type: "user", content: "이 이미지로 할게요!" });
+    addMessage({ type: "user", content: "I'll go with this image!" });
     setShowInput(false);
     setInputType(null);
 
     setTimeout(() => {
       addMessage({ 
         type: "zoe", 
-        content: "좋은 선택이에요! 👍\n\n이제 어떻게 해드릴까요?\n• AI 라이프스타일 생성 - AI가 멋진 배경을 만들어드려요\n• 내 사진 사용 - 직접 찍은 사진에 합성해드려요" 
+        content: "Great choice! 👍\n\nWhat would you like me to do?\n• AI Lifestyle Generation - AI will create a beautiful background\n• Use My Photo - Composite onto your own photo" 
       });
       
       setTimeout(() => {
@@ -272,12 +272,12 @@ const AnitaLifestyle = () => {
   };
 
   const handleGenerateLifestyle = async () => {
-    addMessage({ type: "user", content: "AI 라이프스타일로 만들어주세요!" });
+    addMessage({ type: "user", content: "Generate an AI lifestyle image!" });
     setShowInput(false);
     setInputType(null);
 
     setTimeout(() => {
-      addMessage({ type: "zoe", content: "알겠어요! AI가 열심히 그리고 있어요... 🎨\n약 30초 정도 걸려요. 잠시만 기다려주세요!" });
+      addMessage({ type: "zoe", content: "Got it! AI is working hard on this... 🎨\nIt takes about 30 seconds. Please wait!" });
     }, 300);
 
     setIsGenerating(true);
@@ -302,7 +302,7 @@ const AnitaLifestyle = () => {
       setTimeout(() => {
         addMessage({ 
           type: "zoe", 
-          content: "완성됐어요! ✨\n어떠세요? 마음에 드시면 다운로드하시고, 수정이 필요하면 아래에서 원하시는 작업을 선택해주세요!" 
+          content: "All done! ✨\nHow does it look? If you like it, download it. If you need any changes, select an option below!" 
         });
         
         setTimeout(() => {
@@ -313,7 +313,7 @@ const AnitaLifestyle = () => {
       
     } catch (error) {
       console.error("Error generating lifestyle image:", error);
-      addMessage({ type: "zoe", content: "이미지 생성 중 오류가 발생했어요. 😢\n다시 시도해볼까요?" });
+      addMessage({ type: "zoe", content: "An error occurred while generating the image. 😢\nWould you like to try again?" });
       setShowInput(true);
       setInputType("action");
     } finally {
@@ -322,7 +322,7 @@ const AnitaLifestyle = () => {
   };
 
   const handleCameraClick = async () => {
-    addMessage({ type: "user", content: "내 사진에 합성해주세요!" });
+    addMessage({ type: "user", content: "Composite onto my photo!" });
     setShowInput(false);
     
     if (isMobile) {
@@ -333,7 +333,7 @@ const AnitaLifestyle = () => {
       setShowQRDialog(true);
       setIsWaitingForMobile(true);
       
-      addMessage({ type: "zoe", content: "QR 코드를 스마트폰으로 스캔하시면, 카메라로 사진을 찍으실 수 있어요! 📱" });
+      addMessage({ type: "zoe", content: "Scan the QR code with your smartphone to take a photo! 📱" });
     }
   };
 
@@ -341,7 +341,7 @@ const AnitaLifestyle = () => {
     const file = event.target.files?.[0];
     if (!file || !selectedImage) return;
 
-    addMessage({ type: "zoe", content: "사진을 받았어요! 제품을 합성하고 있어요... 🔧\n약 1분 정도 걸릴 수 있어요." });
+    addMessage({ type: "zoe", content: "Got your photo! Compositing the product... 🔧\nThis may take about a minute." });
     
     setIsCompositing(true);
     try {
@@ -364,14 +364,14 @@ const AnitaLifestyle = () => {
         setGeneratedImage(`data:image/png;base64,${data.imageBase64}`);
         setCurrentAspectRatio("custom");
         
-        addMessage({ type: "zoe", content: "합성 완료! 🎉\n제품이 사진에 자연스럽게 들어갔어요. 어떠세요?" });
+        addMessage({ type: "zoe", content: "Composite complete! 🎉\nThe product fits naturally into your photo. What do you think?" });
         setShowInput(true);
         setInputType("edit");
       };
       reader.readAsDataURL(file);
     } catch (error) {
       console.error("Error compositing:", error);
-      addMessage({ type: "zoe", content: "합성 중 오류가 발생했어요. 😢\n다시 시도해볼까요?" });
+      addMessage({ type: "zoe", content: "An error occurred during compositing. 😢\nWould you like to try again?" });
       setShowInput(true);
       setInputType("action");
     } finally {
@@ -395,7 +395,7 @@ const AnitaLifestyle = () => {
           setShowQRDialog(false);
           setIsWaitingForMobile(false);
           
-          addMessage({ type: "zoe", content: "모바일에서 촬영한 사진으로 합성을 완료했어요! 📱✨" });
+          addMessage({ type: "zoe", content: "Composite complete with the photo from your mobile! 📱✨" });
           setShowInput(true);
           setInputType("edit");
         }
@@ -410,10 +410,10 @@ const AnitaLifestyle = () => {
   const handleUpscale = async () => {
     if (!generatedImage) return;
     
-    addMessage({ type: "user", content: "4K로 업스케일 해주세요!" });
+    addMessage({ type: "user", content: "Upscale to 4K!" });
     setShowInput(false);
     
-    addMessage({ type: "zoe", content: "4K 고화질로 업스케일하고 있어요... 🔍\n약 30초 정도 걸려요!" });
+    addMessage({ type: "zoe", content: "Upscaling to 4K high resolution... 🔍\nThis takes about 30 seconds!" });
     
     setIsUpscaling(true);
     try {
@@ -429,12 +429,12 @@ const AnitaLifestyle = () => {
       setGeneratedImage(`data:image/png;base64,${data.imageBase64}`);
       setIsUpscaled(true);
       
-      addMessage({ type: "zoe", content: "4K 업스케일 완료! 🎉\n이제 초고화질 이미지를 다운로드할 수 있어요." });
+      addMessage({ type: "zoe", content: "4K upscale complete! 🎉\nYou can now download the ultra-high resolution image." });
       setShowInput(true);
       setInputType("edit");
     } catch (error) {
       console.error("Error upscaling:", error);
-      addMessage({ type: "zoe", content: "업스케일 중 오류가 발생했어요. 😢" });
+      addMessage({ type: "zoe", content: "An error occurred during upscaling. 😢" });
       setShowInput(true);
       setInputType("edit");
     } finally {
@@ -445,11 +445,11 @@ const AnitaLifestyle = () => {
   const handleResize = async (ratio: "16:9" | "1:1" | "9:16") => {
     if (!generatedImage || currentAspectRatio === ratio) return;
     
-    const ratioLabels = { "16:9": "가로형 (16:9)", "1:1": "정사각형 (1:1)", "9:16": "세로형 (9:16)" };
-    addMessage({ type: "user", content: `${ratioLabels[ratio]}으로 변경해주세요!` });
+    const ratioLabels = { "16:9": "Landscape (16:9)", "1:1": "Square (1:1)", "9:16": "Portrait (9:16)" };
+    addMessage({ type: "user", content: `Change to ${ratioLabels[ratio]}!` });
     setShowInput(false);
     
-    addMessage({ type: "zoe", content: `${ratioLabels[ratio]}로 리사이징하고 있어요... 📐` });
+    addMessage({ type: "zoe", content: `Resizing to ${ratioLabels[ratio]}... 📐` });
     
     setIsResizing(true);
     try {
@@ -466,12 +466,12 @@ const AnitaLifestyle = () => {
       setCurrentAspectRatio(ratio);
       setIsUpscaled(false);
       
-      addMessage({ type: "zoe", content: "리사이징 완료! ✂️\n새로운 비율로 이미지를 만들었어요." });
+      addMessage({ type: "zoe", content: "Resize complete! ✂️\nCreated the image with the new aspect ratio." });
       setShowInput(true);
       setInputType("edit");
     } catch (error) {
       console.error("Error resizing:", error);
-      addMessage({ type: "zoe", content: "리사이징 중 오류가 발생했어요. 😢" });
+      addMessage({ type: "zoe", content: "An error occurred during resizing. 😢" });
       setShowInput(true);
       setInputType("edit");
     } finally {
@@ -482,12 +482,12 @@ const AnitaLifestyle = () => {
   const handleEditImage = async () => {
     if (!generatedImage || !editPrompt.trim()) return;
     
-    addMessage({ type: "user", content: `이미지를 수정해주세요: "${editPrompt}"` });
+    addMessage({ type: "user", content: `Edit the image: "${editPrompt}"` });
     setShowInput(false);
     const currentPrompt = editPrompt;
     setEditPrompt("");
     
-    addMessage({ type: "zoe", content: "요청하신 대로 이미지를 수정하고 있어요... ✏️\n약 30초 정도 걸려요!" });
+    addMessage({ type: "zoe", content: "Editing the image as requested... ✏️\nThis takes about 30 seconds!" });
     
     setIsEditing(true);
     try {
@@ -503,12 +503,12 @@ const AnitaLifestyle = () => {
       setGeneratedImage(`data:image/png;base64,${data.imageBase64}`);
       setIsUpscaled(false);
       
-      addMessage({ type: "zoe", content: "수정 완료! 🎨\n요청하신 대로 이미지를 변경했어요. 어떠세요?" });
+      addMessage({ type: "zoe", content: "Edit complete! 🎨\nI've made the changes you requested. How does it look?" });
       setShowInput(true);
       setInputType("edit");
     } catch (error) {
       console.error("Error editing:", error);
-      addMessage({ type: "zoe", content: "이미지 수정 중 오류가 발생했어요. 😢\n다시 시도해볼까요?" });
+      addMessage({ type: "zoe", content: "An error occurred while editing the image. 😢\nWould you like to try again?" });
       setShowInput(true);
       setInputType("edit");
     } finally {
@@ -519,10 +519,10 @@ const AnitaLifestyle = () => {
   const handleGenerateVideo = async () => {
     if (!generatedImage) return;
     
-    addMessage({ type: "user", content: "동영상으로 만들어주세요!" });
+    addMessage({ type: "user", content: "Create a video!" });
     setShowInput(false);
     
-    addMessage({ type: "zoe", content: "이미지를 동영상으로 변환하고 있어요... 🎬\n약 2-3분 정도 걸릴 수 있어요. 조금만 기다려주세요!" });
+    addMessage({ type: "zoe", content: "Converting the image to video... 🎬\nThis may take 2-3 minutes. Please wait!" });
     
     setGeneratedVideoUrl(null);
     setIsGeneratingVideo(true);
@@ -538,12 +538,12 @@ const AnitaLifestyle = () => {
 
       setGeneratedVideoUrl(data.videoUrl);
       
-      addMessage({ type: "zoe", content: "동영상 생성 완료! 🎉\n아래에서 동영상을 확인하고 다운로드할 수 있어요." });
+      addMessage({ type: "zoe", content: "Video generation complete! 🎉\nYou can preview and download the video below." });
       setShowInput(true);
       setInputType("edit");
     } catch (error) {
       console.error("Error generating video:", error);
-      addMessage({ type: "zoe", content: "동영상 생성 중 오류가 발생했어요. 😢\n나중에 다시 시도해주세요." });
+      addMessage({ type: "zoe", content: "An error occurred during video generation. 😢\nPlease try again later." });
       setShowInput(true);
       setInputType("edit");
     } finally {
@@ -552,7 +552,7 @@ const AnitaLifestyle = () => {
   };
 
   const handleRegenerate = async () => {
-    addMessage({ type: "user", content: "다른 스타일로 다시 만들어주세요!" });
+    addMessage({ type: "user", content: "Generate a different style!" });
     setShowInput(false);
     
     await handleGenerateLifestyle();
@@ -572,7 +572,7 @@ const AnitaLifestyle = () => {
     link.click();
     document.body.removeChild(link);
     
-    addMessage({ type: "zoe", content: "다운로드 완료! 📥\n다른 작업이 필요하시면 말씀해주세요." });
+    addMessage({ type: "zoe", content: "Download complete! 📥\nLet me know if you need anything else." });
   };
 
   const handleDownloadVideo = () => {
@@ -605,7 +605,7 @@ const AnitaLifestyle = () => {
     setTimeout(() => {
       addMessage({
         type: "zoe",
-        content: "새로운 이미지를 만들어볼까요? 🎨\n제품 PDP URL을 알려주세요!",
+        content: "Shall we create a new image? 🎨\nPlease share the product PDP URL!",
       });
       setTimeout(() => {
         setShowInput(true);
@@ -679,7 +679,7 @@ const AnitaLifestyle = () => {
               <div className="bg-white rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
                 <div className="flex items-center gap-2">
                   <Loader2 className="w-4 h-4 animate-spin text-purple-500" />
-                  <span className="text-sm text-gray-500">작업 중...</span>
+                  <span className="text-sm text-gray-500">Working...</span>
                 </div>
               </div>
             </div>
@@ -726,7 +726,7 @@ const AnitaLifestyle = () => {
                   className="mt-2 bg-indigo-500 hover:bg-indigo-600"
                 >
                   <Download className="w-3 h-3 mr-1" />
-                  동영상 다운로드
+                  Download Video
                 </Button>
               </div>
             </div>
@@ -746,7 +746,7 @@ const AnitaLifestyle = () => {
                 type="url"
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
-                placeholder="PDP URL을 입력해주세요..."
+                placeholder="Enter PDP URL..."
                 className="flex-1"
                 onKeyDown={(e) => e.key === "Enter" && handleUrlSubmit()}
               />
@@ -786,7 +786,7 @@ const AnitaLifestyle = () => {
                 disabled={!selectedImage}
                 className="w-full bg-purple-500 hover:bg-purple-600"
               >
-                이 이미지로 선택
+                Select This Image
               </Button>
             </div>
           )}
@@ -796,11 +796,11 @@ const AnitaLifestyle = () => {
             <div className="flex gap-2 flex-wrap justify-center">
               <Button onClick={handleGenerateLifestyle} disabled={isAnyLoading} className="bg-purple-500 hover:bg-purple-600">
                 <Sparkles className="w-4 h-4 mr-2" />
-                AI 라이프스타일 생성
+                AI Lifestyle Generation
               </Button>
               <Button onClick={handleCameraClick} disabled={isAnyLoading} variant="outline" className="border-teal-300 text-teal-600">
                 <Camera className="w-4 h-4 mr-2" />
-                내 사진 사용
+                Use My Photo
               </Button>
             </div>
           )}
@@ -813,7 +813,7 @@ const AnitaLifestyle = () => {
                 <Input
                   value={editPrompt}
                   onChange={(e) => setEditPrompt(e.target.value)}
-                  placeholder="이미지 수정 요청을 입력하세요..."
+                  placeholder="Enter your edit request..."
                   className="flex-1"
                   onKeyDown={(e) => e.key === "Enter" && editPrompt.trim() && handleEditImage()}
                 />
@@ -830,27 +830,27 @@ const AnitaLifestyle = () => {
               <div className="flex gap-2 flex-wrap justify-center">
                 <Button onClick={handleDownload} disabled={isAnyLoading} size="sm" className="bg-purple-500 hover:bg-purple-600">
                   <Download className="w-3 h-3 mr-1" />
-                  다운로드
+                  Download
                 </Button>
                 {!isUpscaled && (
                   <Button onClick={handleUpscale} disabled={isAnyLoading} size="sm" variant="outline">
                     <ZoomIn className="w-3 h-3 mr-1" />
-                    4K 업스케일
+                    4K Upscale
                   </Button>
                 )}
                 <Button onClick={handleRegenerate} disabled={isAnyLoading} size="sm" variant="outline">
                   <RefreshCw className="w-3 h-3 mr-1" />
-                  다시 생성
+                  Regenerate
                 </Button>
                 <Button onClick={handleGenerateVideo} disabled={isAnyLoading} size="sm" variant="outline">
                   <Film className="w-3 h-3 mr-1" />
-                  동영상
+                  Video
                 </Button>
               </div>
 
               {/* Resize options */}
               <div className="flex gap-2 justify-center items-center">
-                <span className="text-xs text-gray-500">비율:</span>
+                <span className="text-xs text-gray-500">Ratio:</span>
                 <Button 
                   size="sm" 
                   variant={currentAspectRatio === "16:9" ? "default" : "outline"} 
@@ -883,7 +883,7 @@ const AnitaLifestyle = () => {
               {/* Start over */}
               <div className="flex justify-center">
                 <Button onClick={handleStartOver} size="sm" variant="ghost" className="text-gray-500">
-                  처음부터 다시 시작
+                  Start Over
                 </Button>
               </div>
             </div>
@@ -907,10 +907,10 @@ const AnitaLifestyle = () => {
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Smartphone className="w-5 h-5" />
-              모바일로 사진 촬영
+              Take Photo on Mobile
             </DialogTitle>
             <DialogDescription>
-              QR 코드를 스마트폰으로 스캔하여 사진을 촬영하세요
+              Scan the QR code with your smartphone to take a photo
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col items-center gap-4 p-4">
@@ -922,7 +922,7 @@ const AnitaLifestyle = () => {
             {isWaitingForMobile && (
               <div className="flex items-center gap-2 text-sm text-gray-500">
                 <Loader2 className="w-4 h-4 animate-spin" />
-                모바일 연결 대기 중...
+                Waiting for mobile connection...
               </div>
             )}
           </div>
@@ -940,4 +940,4 @@ const AnitaLifestyle = () => {
   );
 };
 
-export default AnitaLifestyle;
+export default ZoeLifestyle;
