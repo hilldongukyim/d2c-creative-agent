@@ -86,7 +86,7 @@ const Home = () => {
     if (lower === "mateo") return navigate("/crawling");
     if (lower === "allen") return navigate("/allen-qa");
     if (lower === "maple") return navigate("/maple-pdp");
-    if (lower === "anita" || lower === "zoe") return navigate("/anita-lifestyle");
+    if (lower === "anita" || lower === "zoe") return navigate("/zoe-lifestyle");
     if (lower === "levi") {
       window.open("https://request-page-craft.lovable.app/", "_blank");
       return;

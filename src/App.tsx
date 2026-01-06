@@ -13,8 +13,8 @@ import AllenQA from "./pages/AllenQA";
 import NotFound from "./pages/NotFound";
 import Crawling from "./pages/Crawling";
 import MaplePDP from "./pages/MaplePDP";
-import AnitaLifestyle from "./pages/AnitaLifestyle";
-import AnitaCamera from "./pages/AnitaCamera";
+import ZoeLifestyle from "./pages/ZoeLifestyle";
+import ZoeCamera from "./pages/ZoeCamera";
 
 const queryClient = new QueryClient();
 
@@ -32,8 +32,8 @@ const App = () => (
         <Route path="/allen-qa" element={<AllenQA />} />
         <Route path="/crawling" element={<Crawling />} />
         <Route path="/maple-pdp" element={<MaplePDP />} />
-        <Route path="/anita-lifestyle" element={<AnitaLifestyle />} />
-        <Route path="/anita-camera/:sessionId" element={<AnitaCamera />} />
+        <Route path="/zoe-lifestyle" element={<ZoeLifestyle />} />
+        <Route path="/zoe-camera/:sessionId" element={<ZoeCamera />} />
         {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
         <Route path="*" element={<NotFound />} />
       </Routes>
