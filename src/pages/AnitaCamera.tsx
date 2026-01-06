@@ -128,12 +128,12 @@ const AnitaCamera = () => {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-3 mb-4">
             <img
-              src="/lovable-uploads/anita-profile.png"
-              alt="Anita"
+              src="/lovable-uploads/zoe-profile.png"
+              alt="Zoe"
               className="w-12 h-12 rounded-full border-2 border-white shadow-lg"
             />
             <div className="text-left">
-              <h1 className="text-xl font-bold text-gray-800">Anita</h1>
+              <h1 className="text-xl font-bold text-gray-800">Zoe</h1>
               <p className="text-xs text-gray-600">Lifestyle Artist</p>
             </div>
           </div>
