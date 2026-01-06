@@ -512,12 +512,12 @@ const AnitaLifestyle = () => {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-4 mb-4">
             <img
-              src="/lovable-uploads/anita-profile.png"
-              alt="Anita"
+              src="/lovable-uploads/zoe-profile.png"
+              alt="Zoe"
               className="w-16 h-16 rounded-full border-2 border-white shadow-lg"
             />
             <div className="text-left">
-              <h1 className="text-2xl font-bold text-gray-800">Anita</h1>
+              <h1 className="text-2xl font-bold text-gray-800">Zoe</h1>
               <p className="text-sm text-gray-600">Lifestyle Artist</p>
             </div>
           </div>
@@ -982,7 +982,7 @@ const AnitaLifestyle = () => {
       <FeedbackDialog
         open={showFeedbackDialog}
         onOpenChange={setShowFeedbackDialog}
-        crewName="Anita"
+        crewName="Zoe"
         productUrls={[url].filter(Boolean)}
       />
     </div>
