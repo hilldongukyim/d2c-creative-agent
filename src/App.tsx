@@ -25,6 +25,7 @@ const App = () => (
       <Sonner />
       <Routes>
         <Route path="/" element={<CoverPage />} />
+        <Route path="/home" element={<Index />} />
         <Route path="/promotional" element={<PromotionalWorkflow />} />
         <Route path="/pto-gallery" element={<PTOGallery />} />
         <Route path="/tasks" element={<TaskOverview />} />
