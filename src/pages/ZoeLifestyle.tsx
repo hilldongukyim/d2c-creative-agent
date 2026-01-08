@@ -31,7 +31,7 @@ interface StateSnapshot {
 // Chat message type
 interface ChatMessage {
   id: string;
-  type: "zoe" | "user" | "system";
+  type: "anita" | "user" | "system";
   content: string;
   component?: React.ReactNode;
   timestamp: Date;
@@ -70,8 +70,8 @@ const useTypingAnimation = (text: string, speed: number = 30, enabled: boolean =
   return { displayedText, isComplete };
 };
 
-// Zoe message bubble component
-const ZoeMessage = ({ content, showTyping = true, onComplete }: { content: string; showTyping?: boolean; onComplete?: () => void }) => {
+// Anita message bubble component
+const AnitaMessage = ({ content, showTyping = true, onComplete }: { content: string; showTyping?: boolean; onComplete?: () => void }) => {
   const { displayedText, isComplete } = useTypingAnimation(content, 25, showTyping);
 
   useEffect(() => {
@@ -83,8 +83,8 @@ const ZoeMessage = ({ content, showTyping = true, onComplete }: { content: strin
   return (
     <div className="flex gap-3 items-start">
       <img
-        src="/lovable-uploads/zoe-profile.png"
-        alt="Zoe"
+        src="/lovable-uploads/anita-profile.png"
+        alt="Anita"
         className="w-10 h-10 rounded-full border-2 border-white shadow-md flex-shrink-0"
       />
       <div className="bg-white rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm max-w-[80%]">
@@ -147,8 +147,8 @@ const ZoeLifestyle = () => {
   useEffect(() => {
     const greeting: ChatMessage = {
       id: "greeting",
-      type: "zoe",
-      content: "Hi there! I'm Zoe. 🎨\nI can transform your product images into beautiful lifestyle images.\n\nCould you share the PDP URL of the product you'd like to transform?",
+      type: "anita",
+      content: "Hi there! I'm Anita. 🎨\nI can transform your product images into beautiful lifestyle images.\n\nCould you share the PDP URL of the product you'd like to transform?",
       timestamp: new Date(),
     };
     setMessages([greeting]);
@@ -256,9 +256,9 @@ const ZoeLifestyle = () => {
     setShowInput(false);
     setInputType(null);
 
-    // Add Zoe's response
+    // Add Anita's response
     setTimeout(() => {
-      addMessage({ type: "zoe", content: "Great! Let me check the URL... Please wait a moment. ✨" });
+      addMessage({ type: "anita", content: "Great! Let me check the URL... Please wait a moment. ✨" });
     }, 300);
 
     setIsLoading(true);
@@ -269,7 +269,7 @@ const ZoeLifestyle = () => {
 
       if (error) throw error;
       if (!data.success || !data.images || data.images.length === 0) {
-        addMessage({ type: "zoe", content: "Oops, I couldn't find any product images from this URL. 😅\nCould you try another URL?" });
+        addMessage({ type: "anita", content: "Oops, I couldn't find any product images from this URL. 😅\nCould you try another URL?" });
         setShowInput(true);
         setInputType("url");
         return;
@@ -283,7 +283,7 @@ const ZoeLifestyle = () => {
       
       setTimeout(() => {
         addMessage({ 
-          type: "zoe", 
+          type: "anita", 
           content: `I found ${data.images.length} product images! 🎉${dimensionInfo}\n\nWhich image would you like me to use for the lifestyle image? Please select one below!` 
         });
         
@@ -295,7 +295,7 @@ const ZoeLifestyle = () => {
       
     } catch (error) {
       console.error("Error extracting images:", error);
-      addMessage({ type: "zoe", content: "An error occurred while analyzing the URL. 😢\nWould you like to try another URL?" });
+      addMessage({ type: "anita", content: "An error occurred while analyzing the URL. 😢\nWould you like to try another URL?" });
       setShowInput(true);
       setInputType("url");
     } finally {
@@ -320,7 +320,7 @@ const ZoeLifestyle = () => {
 
     setTimeout(() => {
       addMessage({ 
-        type: "zoe", 
+        type: "anita", 
         content: "Great choice! 👍\n\nWhat would you like me to do?\n• AI Lifestyle Generation - AI will create a beautiful background\n• Use My Photo - Composite onto your own photo" 
       });
       
@@ -337,7 +337,7 @@ const ZoeLifestyle = () => {
     setInputType(null);
 
     setTimeout(() => {
-      addMessage({ type: "zoe", content: "Got it! AI is working hard on this... 🎨\nIt takes about 30 seconds. Please wait!" });
+      addMessage({ type: "anita", content: "Got it! AI is working hard on this... 🎨\nIt takes about 30 seconds. Please wait!" });
     }, 300);
 
     setIsGenerating(true);
@@ -361,7 +361,7 @@ const ZoeLifestyle = () => {
       
       setTimeout(() => {
         addMessage({ 
-          type: "zoe", 
+          type: "anita", 
           content: "All done! ✨\nHow does it look? If you like it, download it. If you need any changes, select an option below!" 
         });
         
@@ -373,7 +373,7 @@ const ZoeLifestyle = () => {
       
     } catch (error) {
       console.error("Error generating lifestyle image:", error);
-      addMessage({ type: "zoe", content: "An error occurred while generating the image. 😢\nWould you like to try again?" });
+      addMessage({ type: "anita", content: "An error occurred while generating the image. 😢\nWould you like to try again?" });
       setShowInput(true);
       setInputType("action");
     } finally {
@@ -393,7 +393,7 @@ const ZoeLifestyle = () => {
       setShowQRDialog(true);
       setIsWaitingForMobile(true);
       
-      addMessage({ type: "zoe", content: "Scan the QR code with your smartphone to take a photo! 📱" });
+      addMessage({ type: "anita", content: "Scan the QR code with your smartphone to take a photo! 📱" });
     }
   };
 
@@ -401,7 +401,7 @@ const ZoeLifestyle = () => {
     const file = event.target.files?.[0];
     if (!file || !selectedImage) return;
 
-    addMessage({ type: "zoe", content: "Got your photo! Compositing the product... 🔧\nThis may take about a minute." });
+    addMessage({ type: "anita", content: "Got your photo! Compositing the product... 🔧\nThis may take about a minute." });
     
     setIsCompositing(true);
     try {
@@ -424,14 +424,14 @@ const ZoeLifestyle = () => {
         setGeneratedImage(`data:image/png;base64,${data.imageBase64}`);
         setCurrentAspectRatio("custom");
         
-        addMessage({ type: "zoe", content: "Composite complete! 🎉\nThe product fits naturally into your photo. What do you think?" });
+        addMessage({ type: "anita", content: "Composite complete! 🎉\nThe product fits naturally into your photo. What do you think?" });
         setShowInput(true);
         setInputType("edit");
       };
       reader.readAsDataURL(file);
     } catch (error) {
       console.error("Error compositing:", error);
-      addMessage({ type: "zoe", content: "An error occurred during compositing. 😢\nWould you like to try again?" });
+      addMessage({ type: "anita", content: "An error occurred during compositing. 😢\nWould you like to try again?" });
       setShowInput(true);
       setInputType("action");
     } finally {
@@ -443,7 +443,7 @@ const ZoeLifestyle = () => {
   useEffect(() => {
     if (!sessionId || !showQRDialog) return;
 
-    const channel = supabase.channel(`zoe-camera-${sessionId}`);
+    const channel = supabase.channel(`anita-camera-${sessionId}`);
 
     channel
       .on("broadcast", { event: "photo-result" }, async (payload) => {
@@ -455,7 +455,7 @@ const ZoeLifestyle = () => {
           setShowQRDialog(false);
           setIsWaitingForMobile(false);
           
-          addMessage({ type: "zoe", content: "Composite complete with the photo from your mobile! 📱✨" });
+          addMessage({ type: "anita", content: "Composite complete with the photo from your mobile! 📱✨" });
           setShowInput(true);
           setInputType("edit");
         }
@@ -473,7 +473,7 @@ const ZoeLifestyle = () => {
     addMessage({ type: "user", content: "Upscale to 4K!" });
     setShowInput(false);
     
-    addMessage({ type: "zoe", content: "Upscaling to 4K high resolution... 🔍\nThis takes about 30 seconds!" });
+    addMessage({ type: "anita", content: "Upscaling to 4K high resolution... 🔍\nThis takes about 30 seconds!" });
     
     setIsUpscaling(true);
     try {
@@ -489,12 +489,12 @@ const ZoeLifestyle = () => {
       setGeneratedImage(`data:image/png;base64,${data.imageBase64}`);
       setIsUpscaled(true);
       
-      addMessage({ type: "zoe", content: "4K upscale complete! 🎉\nYou can now download the ultra-high resolution image." });
+      addMessage({ type: "anita", content: "4K upscale complete! 🎉\nYou can now download the ultra-high resolution image." });
       setShowInput(true);
       setInputType("edit");
     } catch (error) {
       console.error("Error upscaling:", error);
-      addMessage({ type: "zoe", content: "An error occurred during upscaling. 😢" });
+      addMessage({ type: "anita", content: "An error occurred during upscaling. 😢" });
       setShowInput(true);
       setInputType("edit");
     } finally {
@@ -509,7 +509,7 @@ const ZoeLifestyle = () => {
     addMessage({ type: "user", content: `Change to ${ratioLabels[ratio]}!` });
     setShowInput(false);
     
-    addMessage({ type: "zoe", content: `Resizing to ${ratioLabels[ratio]}... 📐` });
+    addMessage({ type: "anita", content: `Resizing to ${ratioLabels[ratio]}... 📐` });
     
     setIsResizing(true);
     try {
@@ -526,12 +526,12 @@ const ZoeLifestyle = () => {
       setCurrentAspectRatio(ratio);
       setIsUpscaled(false);
       
-      addMessage({ type: "zoe", content: "Resize complete! ✂️\nCreated the image with the new aspect ratio." });
+      addMessage({ type: "anita", content: "Resize complete! ✂️\nCreated the image with the new aspect ratio." });
       setShowInput(true);
       setInputType("edit");
     } catch (error) {
       console.error("Error resizing:", error);
-      addMessage({ type: "zoe", content: "An error occurred during resizing. 😢" });
+      addMessage({ type: "anita", content: "An error occurred during resizing. 😢" });
       setShowInput(true);
       setInputType("edit");
     } finally {
@@ -547,7 +547,7 @@ const ZoeLifestyle = () => {
     const currentPrompt = editPrompt;
     setEditPrompt("");
     
-    addMessage({ type: "zoe", content: "Editing the image as requested... ✏️\nThis takes about 30 seconds!" });
+    addMessage({ type: "anita", content: "Editing the image as requested... ✏️\nThis takes about 30 seconds!" });
     
     setIsEditing(true);
     try {
@@ -563,12 +563,12 @@ const ZoeLifestyle = () => {
       setGeneratedImage(`data:image/png;base64,${data.imageBase64}`);
       setIsUpscaled(false);
       
-      addMessage({ type: "zoe", content: "Edit complete! 🎨\nI've made the changes you requested. How does it look?" });
+      addMessage({ type: "anita", content: "Edit complete! 🎨\nI've made the changes you requested. How does it look?" });
       setShowInput(true);
       setInputType("edit");
     } catch (error) {
       console.error("Error editing:", error);
-      addMessage({ type: "zoe", content: "An error occurred while editing the image. 😢\nWould you like to try again?" });
+      addMessage({ type: "anita", content: "An error occurred while editing the image. 😢\nWould you like to try again?" });
       setShowInput(true);
       setInputType("edit");
     } finally {
@@ -582,7 +582,7 @@ const ZoeLifestyle = () => {
     addMessage({ type: "user", content: "Create a video!" });
     setShowInput(false);
     
-    addMessage({ type: "zoe", content: "Converting the image to video... 🎬\nThis may take 2-3 minutes. Please wait!" });
+    addMessage({ type: "anita", content: "Converting the image to video... 🎬\nThis may take 2-3 minutes. Please wait!" });
     
     setGeneratedVideoUrl(null);
     setIsGeneratingVideo(true);
@@ -598,12 +598,12 @@ const ZoeLifestyle = () => {
 
       setGeneratedVideoUrl(data.videoUrl);
       
-      addMessage({ type: "zoe", content: "Video generation complete! 🎉\nYou can preview and download the video below." });
+      addMessage({ type: "anita", content: "Video generation complete! 🎉\nYou can preview and download the video below." });
       setShowInput(true);
       setInputType("edit");
     } catch (error) {
       console.error("Error generating video:", error);
-      addMessage({ type: "zoe", content: "An error occurred during video generation. 😢\nPlease try again later." });
+      addMessage({ type: "anita", content: "An error occurred during video generation. 😢\nPlease try again later." });
       setShowInput(true);
       setInputType("edit");
     } finally {
@@ -626,13 +626,13 @@ const ZoeLifestyle = () => {
     const sizeStr = isUpscaled ? "3840x2160" : (currentAspectRatio === "1:1" ? "1080x1080" : currentAspectRatio === "9:16" ? "1080x1920" : "1920x1080");
     const safeName = productName.replace(/[^a-zA-Z0-9]/g, "_").slice(0, 20);
     
-    link.download = `Zoe_${safeName}_${dateStr}_${sizeStr}.png`;
+    link.download = `Anita_${safeName}_${dateStr}_${sizeStr}.png`;
     link.href = generatedImage;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
     
-    addMessage({ type: "zoe", content: "Download complete! 📥\nLet me know if you need anything else." });
+    addMessage({ type: "anita", content: "Download complete! 📥\nLet me know if you need anything else." });
   };
 
   const handleDownloadVideo = () => {
@@ -642,7 +642,7 @@ const ZoeLifestyle = () => {
     const dateStr = new Date().toISOString().slice(2, 10).replace(/-/g, "");
     const safeName = productName.replace(/[^a-zA-Z0-9]/g, "_").slice(0, 20);
     
-    link.download = `Zoe_${safeName}_${dateStr}_video.mp4`;
+    link.download = `Anita_${safeName}_${dateStr}_video.mp4`;
     link.href = generatedVideoUrl;
     link.target = "_blank";
     document.body.appendChild(link);
@@ -664,7 +664,7 @@ const ZoeLifestyle = () => {
     // Restart conversation
     setTimeout(() => {
       addMessage({
-        type: "zoe",
+        type: "anita",
         content: "Shall we create a new image? 🎨\nPlease share the product PDP URL!",
       });
       setTimeout(() => {
@@ -696,12 +696,12 @@ const ZoeLifestyle = () => {
           </Button>
           <div className="flex items-center gap-2">
             <img
-              src="/lovable-uploads/zoe-profile.png"
-              alt="Zoe"
+              src="/lovable-uploads/anita-profile.png"
+              alt="Anita"
               className="w-8 h-8 rounded-full border-2 border-purple-200"
             />
             <div className="text-left">
-              <p className="text-sm font-semibold text-gray-800">Zoe</p>
+              <p className="text-sm font-semibold text-gray-800">Anita</p>
               <p className="text-xs text-gray-500">Lifestyle Artist</p>
             </div>
           </div>
@@ -720,8 +720,8 @@ const ZoeLifestyle = () => {
         <div className="max-w-2xl mx-auto space-y-4">
           {messages.map((msg, index) => (
             <div key={msg.id} className="group relative">
-              {msg.type === "zoe" ? (
-                <ZoeMessage content={msg.content} showTyping={false} />
+              {msg.type === "anita" ? (
+                <AnitaMessage content={msg.content} showTyping={false} />
               ) : msg.type === "user" ? (
                 <UserMessage content={msg.content} />
               ) : null}
@@ -1004,7 +1004,7 @@ const ZoeLifestyle = () => {
       <FeedbackDialog
         open={showFeedbackDialog}
         onOpenChange={setShowFeedbackDialog}
-        crewName="Zoe"
+        crewName="Anita"
         productUrls={[url].filter(Boolean)}
       />
     </div>
