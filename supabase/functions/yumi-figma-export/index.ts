@@ -7,7 +7,7 @@ const corsHeaders = {
 
 // Fixed Figma file configuration
 const FIGMA_CONFIG = {
-  fileKey: "bjwT2QqOSmjHejS5z2XzqE",
+  fileKey: "2pFBBAAUfwvuw0xLy7nGgJ",
   fileName: "Promotion-Banners"
 };
 
