@@ -14,7 +14,7 @@ import { toast } from "sonner";
 interface FeedbackDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  crewName: "Ben" | "Zoe";
+  crewName: "Ben" | "Anita";
   productUrls: string[];
 }
 
