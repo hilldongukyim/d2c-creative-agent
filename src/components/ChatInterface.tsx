@@ -866,7 +866,7 @@ const ChatInterface = () => {
     setIsLoading(true);
 
     try {
-      // Update text variables in Figma
+      // Update text variables in Figma (only for selected channels)
       const { data, error } = await supabase.functions.invoke(
         "yumi-figma-update-text",
         {
@@ -876,6 +876,7 @@ const ChatInterface = () => {
               { variableName: "subcopy", value: subcopy },
               { variableName: "cta", value: cta },
             ],
+            selectedChannels: wizardState.selectedChannels,
           },
         }
       );
