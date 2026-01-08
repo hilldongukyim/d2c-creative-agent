@@ -10,6 +10,14 @@ const FIGMA_CONFIG = {
   fileKey: "2pFBBAAUfwvuw0xLy7nGgJ",
 };
 
+// Channel configurations with keywords to match frame names
+const CHANNEL_CONFIG = [
+  { id: "criteo", name: "Criteo", keywords: ["criteo"] },
+  { id: "dv360", name: "DV360", keywords: ["dv360", "dv 360", "display"] },
+  { id: "social", name: "Social", keywords: ["social", "facebook", "instagram", "meta"] },
+  { id: "email", name: "Email", keywords: ["email", "edm", "newsletter", "crm"] },
+];
+
 // Variable names we expect to exist/create
 const EXPECTED_VARIABLES = [
   { name: "headline", displayName: "Copy_Headline" },
@@ -49,13 +57,17 @@ serve(async (req) => {
       throw new Error('FIGMA_ACCESS_TOKEN is not configured');
     }
 
-    const { textUpdates } = await req.json() as { textUpdates: TextUpdate[] };
+    const { textUpdates, selectedChannels } = await req.json() as { 
+      textUpdates: TextUpdate[]; 
+      selectedChannels?: string[];
+    };
 
     if (!textUpdates || textUpdates.length === 0) {
       throw new Error('No text updates provided');
     }
 
     console.log(`Updating ${textUpdates.length} text variables`);
+    console.log(`Selected channels: ${selectedChannels?.join(', ') || 'all'}`);
 
     // Step 1: Get current local variables from Figma
     const variablesResponse = await fetch(
@@ -83,26 +95,31 @@ serve(async (req) => {
     let variables = variablesData.meta?.variables || {};
     let collections = variablesData.meta?.variableCollections || {};
 
-    // Find or create "Copy" collection
+    // Find "Copy" collection (or create if not exists)
+    let copyCollection: VariableCollectionInfo | null = null;
     let copyCollectionId: string | null = null;
-    let copyCollectionModeId: string | null = null;
 
-    // Look for existing "Copy" or "Text" collection
     for (const [id, collection] of Object.entries(collections)) {
       const col = collection as VariableCollectionInfo;
       if (col.name.toLowerCase().includes('copy') || col.name.toLowerCase().includes('text')) {
+        copyCollection = col;
         copyCollectionId = id;
-        copyCollectionModeId = col.defaultModeId;
-        console.log(`Found existing collection: ${col.name} (${id})`);
+        console.log(`Found existing collection: ${col.name} (${id}) with ${col.modes.length} modes`);
         break;
       }
     }
 
-    // If no collection exists, we need to create one
-    const variablesToCreate: Array<{ name: string; searchName: string }> = [];
-    const existingVariables: Map<string, VariableInfo> = new Map();
+    // Check which channel modes need to be targeted
+    const targetChannels = selectedChannels && selectedChannels.length > 0 
+      ? selectedChannels 
+      : CHANNEL_CONFIG.map(c => c.id); // If no channels selected, update all
 
-    // Check which variables already exist
+    console.log(`Target channels for update: ${targetChannels.join(', ')}`);
+
+    // Find existing variables
+    const existingVariables: Map<string, VariableInfo> = new Map();
+    const variablesToCreate: Array<{ name: string; searchName: string }> = [];
+
     for (const expected of EXPECTED_VARIABLES) {
       let found = false;
       for (const [id, variable] of Object.entries(variables)) {
@@ -111,9 +128,9 @@ serve(async (req) => {
         if (v.resolvedType === 'STRING' && 
             (varNameLower.includes(expected.name.toLowerCase()) || 
              varNameLower.includes(expected.displayName.toLowerCase()))) {
-          existingVariables.set(expected.name, v);
+          existingVariables.set(expected.name, { ...v, id });
           found = true;
-          console.log(`Found existing variable: ${v.name} for ${expected.name}`);
+          console.log(`Found existing variable: ${v.name} (${id})`);
           break;
         }
       }
@@ -122,47 +139,48 @@ serve(async (req) => {
       }
     }
 
-    // Create missing variables and collection if needed
-    if (variablesToCreate.length > 0) {
-      console.log(`Creating ${variablesToCreate.length} missing variables`);
+    // Create collection and/or variables if needed
+    if (!copyCollectionId || variablesToCreate.length > 0) {
+      console.log(`Need to create: collection=${!copyCollectionId}, variables=${variablesToCreate.length}`);
 
       const createPayload: any = {
         variableModeValues: []
       };
 
-      // If no collection exists, create one
+      // Create collection if not exists
       if (!copyCollectionId) {
-        console.log('Creating new Copy collection');
+        console.log('Creating new Copy collection with channel modes');
         createPayload.variableCollections = [{
           action: "CREATE",
           id: "temp_collection_id",
           name: "Copy",
-          initialModeId: "temp_mode_id"
+          initialModeId: "temp_mode_default"
         }];
         copyCollectionId = "temp_collection_id";
-        copyCollectionModeId = "temp_mode_id";
       }
 
-      // Create the missing variables
-      createPayload.variables = variablesToCreate.map((v, index) => ({
-        action: "CREATE",
-        id: `temp_var_${index}`,
-        name: v.name,
-        resolvedType: "STRING",
-        variableCollectionId: copyCollectionId
-      }));
+      // Create variables if any missing
+      if (variablesToCreate.length > 0) {
+        const updateToValueMap = new Map<string, string>();
+        for (const update of textUpdates) {
+          updateToValueMap.set(update.variableName.toLowerCase(), update.value);
+        }
 
-      // Set initial values for new variables
-      const updateToValueMap: Map<string, string> = new Map();
-      for (const update of textUpdates) {
-        updateToValueMap.set(update.variableName.toLowerCase(), update.value);
+        createPayload.variables = variablesToCreate.map((v, index) => ({
+          action: "CREATE",
+          id: `temp_var_${index}`,
+          name: v.name,
+          resolvedType: "STRING",
+          variableCollectionId: copyCollectionId
+        }));
+
+        // Set initial value for default mode
+        createPayload.variableModeValues = variablesToCreate.map((v, index) => ({
+          variableId: `temp_var_${index}`,
+          modeId: copyCollection?.defaultModeId || "temp_mode_default",
+          value: updateToValueMap.get(v.searchName.toLowerCase()) || ""
+        }));
       }
-
-      createPayload.variableModeValues = variablesToCreate.map((v, index) => ({
-        variableId: `temp_var_${index}`,
-        modeId: copyCollectionModeId,
-        value: updateToValueMap.get(v.searchName.toLowerCase()) || ""
-      }));
 
       console.log('Create payload:', JSON.stringify(createPayload, null, 2));
 
@@ -180,66 +198,96 @@ serve(async (req) => {
 
       if (!createResponse.ok) {
         const errorText = await createResponse.text();
-        console.error('Failed to create variables:', createResponse.status, errorText);
-        throw new Error(`Failed to create Figma variables: ${createResponse.status} - ${errorText}`);
+        console.error('Failed to create:', createResponse.status, errorText);
+        throw new Error(`Failed to create Figma variables: ${createResponse.status}`);
       }
 
       const createResult = await createResponse.json();
-      console.log('Variables created successfully:', JSON.stringify(createResult, null, 2));
+      console.log('Created successfully');
 
       // Map temp IDs to real IDs
-      const tempIdToRealId = createResult.tempIdToRealId || {};
+      const tempIdToRealId = createResult.meta?.tempIdToRealId || createResult.tempIdToRealId || {};
       
-      // Update our tracking with new real IDs
       for (let i = 0; i < variablesToCreate.length; i++) {
-        const tempId = `temp_var_${i}`;
-        const realId = tempIdToRealId[tempId];
+        const realId = tempIdToRealId[`temp_var_${i}`];
         if (realId) {
           existingVariables.set(variablesToCreate[i].searchName, {
             id: realId,
             name: variablesToCreate[i].name,
             resolvedType: 'STRING',
-            variableCollectionId: tempIdToRealId[copyCollectionId] || copyCollectionId,
+            variableCollectionId: tempIdToRealId['temp_collection_id'] || copyCollectionId!,
             valuesByMode: {}
           });
         }
       }
 
-      // Update collection and mode IDs if they were created
+      // Update collection ID if created
       if (tempIdToRealId['temp_collection_id']) {
         copyCollectionId = tempIdToRealId['temp_collection_id'];
       }
-      if (tempIdToRealId['temp_mode_id']) {
-        copyCollectionModeId = tempIdToRealId['temp_mode_id'];
-      }
 
+      // Refetch collection info
+      const refetchResponse = await fetch(
+        `https://api.figma.com/v1/files/${FIGMA_CONFIG.fileKey}/variables/local`,
+        { headers: { 'X-Figma-Token': FIGMA_ACCESS_TOKEN } }
+      );
+      if (refetchResponse.ok) {
+        const refetchData = await refetchResponse.json();
+        collections = refetchData.meta?.variableCollections || {};
+        copyCollection = collections[copyCollectionId!] as VariableCollectionInfo || null;
+      }
+    }
+
+    if (!copyCollection) {
       return new Response(JSON.stringify({
-        success: true,
-        message: 'Variables created and values set',
-        createdCount: variablesToCreate.length,
-        tempIdToRealId: createResult.meta?.tempIdToRealId || tempIdToRealId
+        success: false,
+        error: 'Could not find or create Copy collection'
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
-    // Step 2: Update existing variables
+    // Get modes from collection
+    const modes = copyCollection.modes || [];
+    console.log(`Collection has ${modes.length} modes: ${modes.map(m => m.name).join(', ')}`);
+
+    // Find modes that match selected channels
+    const targetModeIds: string[] = [];
+    for (const channelId of targetChannels) {
+      const channelConfig = CHANNEL_CONFIG.find(c => c.id === channelId);
+      if (!channelConfig) continue;
+
+      // Find mode matching this channel
+      for (const mode of modes) {
+        const modeNameLower = mode.name.toLowerCase();
+        if (channelConfig.keywords.some(kw => modeNameLower.includes(kw.toLowerCase()))) {
+          targetModeIds.push(mode.modeId);
+          console.log(`Channel ${channelId} matched mode: ${mode.name} (${mode.modeId})`);
+          break;
+        }
+      }
+    }
+
+    // If no specific modes found, use default mode
+    if (targetModeIds.length === 0) {
+      console.log(`No specific modes found for channels, using default mode`);
+      targetModeIds.push(copyCollection.defaultModeId);
+    }
+
+    // Build variable mode values for update
     const variableModeValues: Array<{ variableId: string; modeId: string; value: string }> = [];
 
     for (const update of textUpdates) {
       const varInfo = existingVariables.get(update.variableName.toLowerCase());
       if (varInfo) {
-        // Get the collection to find the mode
-        const collection = collections[varInfo.variableCollectionId] as VariableCollectionInfo;
-        const modeId = collection?.defaultModeId;
-        
-        if (modeId) {
+        // Update for each target mode
+        for (const modeId of targetModeIds) {
           variableModeValues.push({
             variableId: varInfo.id,
             modeId: modeId,
             value: update.value
           });
-          console.log(`Will update: ${varInfo.name} -> "${update.value}"`);
+          console.log(`Will update ${varInfo.name} in mode ${modeId} -> "${update.value}"`);
         }
       }
     }
@@ -247,15 +295,16 @@ serve(async (req) => {
     if (variableModeValues.length === 0) {
       return new Response(JSON.stringify({
         success: false,
-        error: 'No variables to update after creation attempt',
-        existingVariables: Array.from(existingVariables.entries()).map(([k, v]) => ({ key: k, name: v.name, id: v.id }))
+        error: 'No variables to update',
+        existingVariables: Array.from(existingVariables.entries()).map(([k, v]) => ({ key: k, name: v.name, id: v.id })),
+        modes: modes.map(m => ({ name: m.name, id: m.modeId }))
       }), {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
 
     // Update the variables
-    console.log('Updating variables:', JSON.stringify(variableModeValues, null, 2));
+    console.log(`Updating ${variableModeValues.length} variable-mode combinations`);
 
     const updateResponse = await fetch(
       `https://api.figma.com/v1/files/${FIGMA_CONFIG.fileKey}/variables`,
@@ -273,18 +322,21 @@ serve(async (req) => {
 
     if (!updateResponse.ok) {
       const errorText = await updateResponse.text();
-      console.error('Failed to update variables:', updateResponse.status, errorText);
-      throw new Error(`Failed to update Figma variables: ${updateResponse.status} - ${errorText}`);
+      console.error('Failed to update:', updateResponse.status, errorText);
+      throw new Error(`Failed to update Figma variables: ${updateResponse.status}`);
     }
 
     const updateResult = await updateResponse.json();
-    console.log('Variables updated successfully:', updateResult);
+    console.log('Variables updated successfully');
 
     return new Response(JSON.stringify({
       success: true,
       updatedCount: variableModeValues.length,
+      targetChannels: targetChannels,
+      targetModes: targetModeIds.length,
       updates: variableModeValues.map(v => ({
         variableId: v.variableId,
+        modeId: v.modeId,
         newValue: v.value
       }))
     }), {
