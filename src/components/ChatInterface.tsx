@@ -852,7 +852,7 @@ const ChatInterface = () => {
     }
   };
 
-  const handleCopySubmit = () => {
+  const handleCopySubmit = async () => {
     const { headline, subcopy, cta } = wizardState.copyInputs;
     if (!headline.trim() || !subcopy.trim() || !cta.trim()) {
       toast({
@@ -862,6 +862,52 @@ const ChatInterface = () => {
       });
       return;
     }
+
+    setIsLoading(true);
+
+    try {
+      // Update text variables in Figma
+      const { data, error } = await supabase.functions.invoke(
+        "yumi-figma-update-text",
+        {
+          body: {
+            textUpdates: [
+              { variableName: "headline", value: headline },
+              { variableName: "subcopy", value: subcopy },
+              { variableName: "cta", value: cta },
+            ],
+          },
+        }
+      );
+
+      if (error) {
+        console.error("Error updating Figma text:", error);
+        // Don't block the flow, just log the error
+        toast({
+          title: "Figma 업데이트 알림",
+          description: "텍스트 업데이트를 시도했지만 일부 문제가 발생했습니다. 계속 진행합니다.",
+          variant: "default",
+        });
+      } else if (data?.success) {
+        console.log("Figma text updated successfully:", data);
+        toast({
+          title: "성공",
+          description: `${data.updatedCount}개의 텍스트가 Figma에 업데이트되었습니다.`,
+        });
+      } else if (data?.error) {
+        console.log("Figma text update info:", data);
+        // Log available variables for debugging
+        if (data.availableStringVariables) {
+          console.log("Available STRING variables:", data.availableStringVariables);
+        }
+      }
+    } catch (error: any) {
+      console.error("Error updating Figma text:", error);
+      // Continue anyway - don't block the user flow
+    } finally {
+      setIsLoading(false);
+    }
+
     // Add to history
     addToHistory("copy-collect", t.copyQuestion, `${headline} / ${cta}`);
     setPhase("image-type-select");
