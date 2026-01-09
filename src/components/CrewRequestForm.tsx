@@ -9,12 +9,26 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 
+export type CrewFormData = {
+  crewName: string;
+  role: string;
+  division: string;
+  team: string;
+  skills: string;
+  description: string;
+  agentUrl: string;
+  comment: string;
+  requestedBy: string;
+  selectedImage: string;
+};
+
 type CrewRequestFormProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
+  onSubmitSuccess?: (data: CrewFormData) => void;
 };
 
-const CrewRequestForm = ({ open, onOpenChange }: CrewRequestFormProps) => {
+const CrewRequestForm = ({ open, onOpenChange, onSubmitSuccess }: CrewRequestFormProps) => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
@@ -81,6 +95,7 @@ const CrewRequestForm = ({ open, onOpenChange }: CrewRequestFormProps) => {
           title: "Request Submitted",
           description: "Your crew registration request has been sent and email notification delivered.",
         });
+        onSubmitSuccess?.(formData);
       }
       
       onOpenChange(false);

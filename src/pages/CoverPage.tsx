@@ -7,8 +7,9 @@ import Logo from '@/components/Logo';
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import FunctionMap from "../components/FunctionMap";
 import ContactOrder from "../components/ContactOrder";
-import CrewRequestForm from "../components/CrewRequestForm";
+import CrewRequestForm, { CrewFormData } from "../components/CrewRequestForm";
 import KaiBackgroundRemovalPopup from "../components/KaiBackgroundRemovalPopup";
+import CrewRequestNotification, { CrewRequest } from "../components/CrewRequestNotification";
 
 const aliceProfile = "/lovable-uploads/d004c9d6-0491-459c-8639-7730374641aa.png";
 const benProfile = "/lovable-uploads/ben-profile-v2.png";
@@ -23,6 +24,7 @@ const CoverPage = () => {
   const [crewFormOpen, setCrewFormOpen] = useState(false);
   const [kaiPopupOpen, setKaiPopupOpen] = useState(false);
   const [isCrewVisible, setIsCrewVisible] = useState(false);
+  const [submittedRequests, setSubmittedRequests] = useState<CrewRequest[]>([]);
   const crewSectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -108,8 +110,27 @@ const CoverPage = () => {
     setComingSoonOpen(true);
   };
 
+  const handleCrewSubmitSuccess = (data: CrewFormData) => {
+    const newRequest: CrewRequest = {
+      id: Date.now().toString(),
+      ...data,
+      submittedAt: new Date(),
+    };
+    setSubmittedRequests(prev => [...prev, newRequest]);
+  };
+
+  const handleClearRequest = (id: string) => {
+    setSubmittedRequests(prev => prev.filter(req => req.id !== id));
+  };
+
   return (
     <div className="h-screen overflow-y-auto snap-y snap-mandatory">
+      {/* Notification Bell */}
+      <CrewRequestNotification 
+        requests={submittedRequests} 
+        onClearRequest={handleClearRequest} 
+      />
+
       {/* Hero Section */}
       <section className="h-screen snap-start bg-gradient-to-br from-background via-background/95 to-accent/5 flex flex-col items-center justify-center relative overflow-hidden">
         <Logo />
@@ -215,7 +236,11 @@ const CoverPage = () => {
         </AlertDialog>
 
         {/* Crew Registration Form */}
-        <CrewRequestForm open={crewFormOpen} onOpenChange={setCrewFormOpen} />
+        <CrewRequestForm 
+          open={crewFormOpen} 
+          onOpenChange={setCrewFormOpen} 
+          onSubmitSuccess={handleCrewSubmitSuccess}
+        />
 
         {/* Kai Background Removal Popup */}
         <KaiBackgroundRemovalPopup open={kaiPopupOpen} onOpenChange={setKaiPopupOpen} />
