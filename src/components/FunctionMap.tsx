@@ -59,11 +59,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       description: "Boris serves as the promotion team coordinator, assisting in marketing campaign planning and connecting specialized departments.",
       personality: "Always ready to help, enjoys fast and efficient communication."
     },
-    "levi": {
-      description: "Levi automates promotion workflows by processing uploaded forms or chatbot inputs. He handles promotion page creation by sending data to RPA systems that input promotion details into the platform, and generates discount coupons for products during campaigns through the same automated pipeline.",
-      personality: "Has technical mindset, demonstrates strong focus and patience in problem-solving.",
-      admin: { name: "RPA OP Team", email: "rpa.opteam@lgepartner.com" }
-    },
     "yumi": {
       description: "Yumi is an EI-Form designer for LG Electronics brand templates, creating clean and intuitive designs that comply with brand guidelines.",
       personality: "Executes requests immediately, interested in fast and efficient design.",
@@ -198,13 +193,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         name: "Theo",
         role: "NPI Operation Manager",
         imageSrc: "/lovable-uploads/theo-profile.png"
-      }]
-    }, {
-      title: "Platform Operation Team",
-      items: [{
-        name: "Levi",
-        role: "Promotion Configurator",
-        imageSrc: "/lovable-uploads/levi-profile.png"
       }]
     }]
   }, {
@@ -353,7 +341,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                     {(item.name === "Maple" || item.name === "Mateo") && (
                                       <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-yellow-500 rounded-full border-2 border-background" />
                                     )}
-                                    {(item.name === "Yumi" || item.name === "Clara" || item.name === "Luna" || item.name === "Levi" || item.name === "Theo") && (
+                                    {(item.name === "Yumi" || item.name === "Clara" || item.name === "Luna" || item.name === "Theo") && (
                                       <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-red-500 rounded-full border-2 border-background" />
                                     )}
                                   </div>
