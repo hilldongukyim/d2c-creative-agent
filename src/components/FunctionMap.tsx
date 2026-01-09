@@ -102,11 +102,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       personality: "Organized and detail-oriented, excels at managing complex product data. Product Catalog, Review syndication, Data extract.",
       admin: { name: "Jaeho Lee", email: "jaeho10.lee@lge.com" }
     },
-    "ava": {
-      description: "Checks and reports SKU-level status to ensure timely upload of LG.com PDP.",
-      personality: "Systematic with excellent communication skills, excels at facilitating work collaboration. PDP Tracker, SKU status.",
-      admin: { name: "Jason Lee", email: "jasonc.lee@lge.com" }
-    },
     "luna": {
       description: "Creates audiences and offers in Adobe Target using natural language input.",
       personality: "Innovative and efficient, excels at automating complex marketing workflows. API Integration, Natural Language-Based Rule Setup, Offer in Adobe Target, Audience Automation.",
@@ -162,10 +157,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         name: "Maple",
         role: "Content Crawler",
         imageSrc: "/lovable-uploads/maple-profile.png"
-      }, {
-        name: "Ava",
-        role: "PDP Manager",
-        imageSrc: "/lovable-uploads/ava-profile.png"
       }, {
         name: "Kai",
         role: "Background Remover",
@@ -362,7 +353,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                     {(item.name === "Maple" || item.name === "Mateo") && (
                                       <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-yellow-500 rounded-full border-2 border-background" />
                                     )}
-                                    {(item.name === "Yumi" || item.name === "Dan" || item.name === "Ava" || item.name === "Clara" || item.name === "Luna" || item.name === "Levi" || item.name === "Theo") && (
+                                    {(item.name === "Yumi" || item.name === "Clara" || item.name === "Luna" || item.name === "Levi" || item.name === "Theo") && (
                                       <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-red-500 rounded-full border-2 border-background" />
                                     )}
                                   </div>
