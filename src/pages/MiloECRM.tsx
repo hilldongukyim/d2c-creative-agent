@@ -4,15 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { ArrowLeft, Download, RotateCcw, Type } from "lucide-react";
-
-interface LayoutTemplate {
-  id: string;
-  name: string;
-  cleanImage: string;
-  previewImage: string;
-  textFields: TextFieldConfig[];
-}
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { ArrowLeft, Download, RotateCcw, Type, Settings, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Bold, Italic, Plus, Minus, Lock } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 
 interface TextFieldConfig {
   id: string;
@@ -27,11 +21,19 @@ interface TextFieldConfig {
   maxWidth?: number;
 }
 
+interface LayoutTemplate {
+  id: string;
+  name: string;
+  cleanImage: string;
+  previewImage: string;
+  textFields: TextFieldConfig[];
+}
+
 interface TextFieldValue {
   [key: string]: string;
 }
 
-const layoutTemplates: LayoutTemplate[] = [
+const defaultLayoutTemplates: LayoutTemplate[] = [
   {
     id: 'coupon-20',
     name: '20% Discount Coupon',
@@ -90,12 +92,40 @@ const layoutTemplates: LayoutTemplate[] = [
   },
 ];
 
+const STORAGE_KEY = 'milo-layout-templates';
+const ADMIN_PASSWORD = '1010';
+
 const MiloECRM: React.FC = () => {
   const navigate = useNavigate();
   const [selectedLayout, setSelectedLayout] = useState<LayoutTemplate | null>(null);
   const [textValues, setTextValues] = useState<TextFieldValue>({});
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDownloading, setIsDownloading] = useState(false);
+  
+  // Admin mode states
+  const [isAdminMode, setIsAdminMode] = useState(false);
+  const [showPasswordDialog, setShowPasswordDialog] = useState(false);
+  const [passwordInput, setPasswordInput] = useState('');
+  const [selectedFieldId, setSelectedFieldId] = useState<string | null>(null);
+
+  // Load templates from localStorage or use defaults
+  const [layoutTemplates, setLayoutTemplates] = useState<LayoutTemplate[]>(() => {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return defaultLayoutTemplates;
+      }
+    }
+    return defaultLayoutTemplates;
+  });
+
+  // Save templates to localStorage
+  const saveTemplates = (templates: LayoutTemplate[]) => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(templates));
+    setLayoutTemplates(templates);
+  };
 
   const handleLayoutSelect = (layout: LayoutTemplate) => {
     setSelectedLayout(layout);
@@ -104,6 +134,7 @@ const MiloECRM: React.FC = () => {
       initialValues[field.id] = field.defaultValue;
     });
     setTextValues(initialValues);
+    setSelectedFieldId(null);
   };
 
   const handleTextChange = (fieldId: string, value: string) => {
@@ -132,7 +163,6 @@ const MiloECRM: React.FC = () => {
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      // Load the clean image
       const img = new Image();
       img.crossOrigin = 'anonymous';
       
@@ -142,30 +172,22 @@ const MiloECRM: React.FC = () => {
         img.src = selectedLayout.cleanImage;
       });
 
-      // Set canvas size to match image
       canvas.width = img.width;
       canvas.height = img.height;
-
-      // Draw the clean image
       ctx.drawImage(img, 0, 0);
 
-      // Calculate scale factor (preview is displayed at fixed size)
       const previewWidth = 400;
       const scaleX = img.width / previewWidth;
       const scaleY = img.height / (previewWidth * (img.height / img.width));
 
-      // Draw text fields
       selectedLayout.textFields.forEach(field => {
         const text = textValues[field.id] || field.defaultValue;
-        
         ctx.font = `${field.fontStyle} ${field.fontWeight} ${field.fontSize * scaleX}px "LG EI Text", sans-serif`;
         ctx.fillStyle = field.color;
         ctx.textBaseline = 'middle';
-        
         ctx.fillText(text, field.x * scaleX, field.y * scaleY);
       });
 
-      // Download
       const link = document.createElement('a');
       link.download = `milo-${selectedLayout.id}-${Date.now()}.png`;
       link.href = canvas.toDataURL('image/png');
@@ -181,29 +203,140 @@ const MiloECRM: React.FC = () => {
     if (selectedLayout) {
       setSelectedLayout(null);
       setTextValues({});
+      setSelectedFieldId(null);
     } else {
       navigate('/');
     }
+  };
+
+  const handlePasswordSubmit = () => {
+    if (passwordInput === ADMIN_PASSWORD) {
+      setIsAdminMode(true);
+      setShowPasswordDialog(false);
+      setPasswordInput('');
+      toast({
+        title: "Admin Mode Enabled",
+        description: "You can now adjust text positions and styles.",
+      });
+    } else {
+      toast({
+        title: "Incorrect Password",
+        description: "Please try again.",
+        variant: "destructive",
+      });
+      setPasswordInput('');
+    }
+  };
+
+  const handleAdminLogout = () => {
+    setIsAdminMode(false);
+    setSelectedFieldId(null);
+    toast({
+      title: "Admin Mode Disabled",
+      description: "Changes have been saved.",
+    });
+  };
+
+  // Admin functions to update field properties
+  const updateFieldProperty = (fieldId: string, property: keyof TextFieldConfig, value: number | string) => {
+    if (!selectedLayout) return;
+
+    const updatedTextFields = selectedLayout.textFields.map(field =>
+      field.id === fieldId ? { ...field, [property]: value } : field
+    );
+
+    const updatedLayout = { ...selectedLayout, textFields: updatedTextFields };
+    setSelectedLayout(updatedLayout);
+
+    // Update in templates
+    const updatedTemplates = layoutTemplates.map(t =>
+      t.id === selectedLayout.id ? updatedLayout : t
+    );
+    saveTemplates(updatedTemplates);
+  };
+
+  const moveField = (fieldId: string, direction: 'up' | 'down' | 'left' | 'right', step: number = 2) => {
+    const field = selectedLayout?.textFields.find(f => f.id === fieldId);
+    if (!field) return;
+
+    switch (direction) {
+      case 'up':
+        updateFieldProperty(fieldId, 'y', field.y - step);
+        break;
+      case 'down':
+        updateFieldProperty(fieldId, 'y', field.y + step);
+        break;
+      case 'left':
+        updateFieldProperty(fieldId, 'x', field.x - step);
+        break;
+      case 'right':
+        updateFieldProperty(fieldId, 'x', field.x + step);
+        break;
+    }
+  };
+
+  const changeFontSize = (fieldId: string, delta: number) => {
+    const field = selectedLayout?.textFields.find(f => f.id === fieldId);
+    if (!field) return;
+    const newSize = Math.max(8, Math.min(72, field.fontSize + delta));
+    updateFieldProperty(fieldId, 'fontSize', newSize);
+  };
+
+  const toggleBold = (fieldId: string) => {
+    const field = selectedLayout?.textFields.find(f => f.id === fieldId);
+    if (!field) return;
+    const weights = ['300', '400', '500', '600', '700'];
+    const currentIndex = weights.indexOf(field.fontWeight);
+    const newWeight = field.fontWeight === '700' ? '400' : '700';
+    updateFieldProperty(fieldId, 'fontWeight', newWeight);
+  };
+
+  const toggleItalic = (fieldId: string) => {
+    const field = selectedLayout?.textFields.find(f => f.id === fieldId);
+    if (!field) return;
+    const newStyle = field.fontStyle === 'italic' ? 'normal' : 'italic';
+    updateFieldProperty(fieldId, 'fontStyle', newStyle);
+  };
+
+  const getSelectedField = () => {
+    if (!selectedFieldId || !selectedLayout) return null;
+    return selectedLayout.textFields.find(f => f.id === selectedFieldId);
   };
 
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b bg-card sticky top-0 z-10">
-        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center gap-4">
-          <Button variant="ghost" size="icon" onClick={handleBack}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div className="flex items-center gap-3">
-            <img 
-              src="/lovable-uploads/milo-profile.png" 
-              alt="Milo" 
-              className="h-10 w-10 rounded-full object-cover"
-            />
-            <div>
-              <h1 className="text-lg font-semibold text-foreground">Milo</h1>
-              <p className="text-sm text-muted-foreground">eCRM Designer</p>
+        <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button variant="ghost" size="icon" onClick={handleBack}>
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div className="flex items-center gap-3">
+              <img 
+                src="/lovable-uploads/milo-profile.png" 
+                alt="Milo" 
+                className="h-10 w-10 rounded-full object-cover"
+              />
+              <div>
+                <h1 className="text-lg font-semibold text-foreground">Milo</h1>
+                <p className="text-sm text-muted-foreground">eCRM Designer</p>
+              </div>
             </div>
+          </div>
+
+          {/* Admin Button */}
+          <div className="flex items-center gap-2">
+            {isAdminMode ? (
+              <Button variant="outline" size="sm" onClick={handleAdminLogout} className="gap-2">
+                <Lock className="h-4 w-4" />
+                Exit Admin
+              </Button>
+            ) : (
+              <Button variant="ghost" size="icon" onClick={() => setShowPasswordDialog(true)}>
+                <Settings className="h-5 w-5 text-muted-foreground" />
+              </Button>
+            )}
           </div>
         </div>
       </header>
@@ -274,7 +407,11 @@ const MiloECRM: React.FC = () => {
                   {selectedLayout.textFields.map(field => (
                     <div
                       key={field.id}
-                      className="absolute whitespace-nowrap"
+                      className={`absolute whitespace-nowrap cursor-pointer transition-all ${
+                        isAdminMode && selectedFieldId === field.id 
+                          ? 'ring-2 ring-primary ring-offset-2' 
+                          : ''
+                      }`}
                       style={{
                         left: `${field.x}px`,
                         top: `${field.y}px`,
@@ -286,12 +423,134 @@ const MiloECRM: React.FC = () => {
                         fontFamily: '"LG EI Text", sans-serif',
                         transform: 'translateY(-50%)',
                       }}
+                      onClick={() => isAdminMode && setSelectedFieldId(field.id)}
                     >
                       {textValues[field.id] || field.defaultValue}
                     </div>
                   ))}
                 </div>
               </div>
+
+              {/* Admin Controls */}
+              {isAdminMode && selectedFieldId && (
+                <Card className="border-primary">
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm flex items-center gap-2">
+                      <Settings className="h-4 w-4" />
+                      Admin: {getSelectedField()?.label}
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {/* Position Controls */}
+                    <div className="space-y-2">
+                      <Label className="text-xs text-muted-foreground">Position</Label>
+                      <div className="flex items-center justify-center gap-1">
+                        <div className="grid grid-cols-3 gap-1">
+                          <div />
+                          <Button 
+                            variant="outline" 
+                            size="icon" 
+                            className="h-8 w-8"
+                            onClick={() => moveField(selectedFieldId, 'up')}
+                          >
+                            <ChevronUp className="h-4 w-4" />
+                          </Button>
+                          <div />
+                          <Button 
+                            variant="outline" 
+                            size="icon" 
+                            className="h-8 w-8"
+                            onClick={() => moveField(selectedFieldId, 'left')}
+                          >
+                            <ChevronLeft className="h-4 w-4" />
+                          </Button>
+                          <div className="h-8 w-8 flex items-center justify-center text-xs text-muted-foreground">
+                            {getSelectedField()?.x},{getSelectedField()?.y}
+                          </div>
+                          <Button 
+                            variant="outline" 
+                            size="icon" 
+                            className="h-8 w-8"
+                            onClick={() => moveField(selectedFieldId, 'right')}
+                          >
+                            <ChevronRight className="h-4 w-4" />
+                          </Button>
+                          <div />
+                          <Button 
+                            variant="outline" 
+                            size="icon" 
+                            className="h-8 w-8"
+                            onClick={() => moveField(selectedFieldId, 'down')}
+                          >
+                            <ChevronDown className="h-4 w-4" />
+                          </Button>
+                          <div />
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Font Size Controls */}
+                    <div className="space-y-2">
+                      <Label className="text-xs text-muted-foreground">Font Size: {getSelectedField()?.fontSize}px</Label>
+                      <div className="flex items-center gap-2">
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="h-8 w-8"
+                          onClick={() => changeFontSize(selectedFieldId, -1)}
+                        >
+                          <Minus className="h-4 w-4" />
+                        </Button>
+                        <div className="flex-1 h-2 bg-muted rounded-full">
+                          <div 
+                            className="h-full bg-primary rounded-full transition-all"
+                            style={{ width: `${((getSelectedField()?.fontSize || 16) / 72) * 100}%` }}
+                          />
+                        </div>
+                        <Button 
+                          variant="outline" 
+                          size="icon" 
+                          className="h-8 w-8"
+                          onClick={() => changeFontSize(selectedFieldId, 1)}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    </div>
+
+                    {/* Style Controls */}
+                    <div className="space-y-2">
+                      <Label className="text-xs text-muted-foreground">Style</Label>
+                      <div className="flex items-center gap-2">
+                        <Button 
+                          variant={getSelectedField()?.fontWeight === '700' ? 'default' : 'outline'}
+                          size="sm"
+                          className="gap-2"
+                          onClick={() => toggleBold(selectedFieldId)}
+                        >
+                          <Bold className="h-4 w-4" />
+                          Bold
+                        </Button>
+                        <Button 
+                          variant={getSelectedField()?.fontStyle === 'italic' ? 'default' : 'outline'}
+                          size="sm"
+                          className="gap-2"
+                          onClick={() => toggleItalic(selectedFieldId)}
+                        >
+                          <Italic className="h-4 w-4" />
+                          Italic
+                        </Button>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {isAdminMode && !selectedFieldId && (
+                <p className="text-sm text-muted-foreground text-center py-4">
+                  Click on a text element above to edit its position and style
+                </p>
+              )}
 
               {/* Hidden Canvas for Download */}
               <canvas ref={canvasRef} className="hidden" />
@@ -307,7 +566,15 @@ const MiloECRM: React.FC = () => {
               <Card>
                 <CardContent className="pt-6 space-y-4">
                   {selectedLayout.textFields.map(field => (
-                    <div key={field.id} className="space-y-2">
+                    <div 
+                      key={field.id} 
+                      className={`space-y-2 p-3 rounded-lg transition-colors ${
+                        isAdminMode && selectedFieldId === field.id 
+                          ? 'bg-primary/10 border border-primary' 
+                          : 'hover:bg-muted/50'
+                      }`}
+                      onClick={() => isAdminMode && setSelectedFieldId(field.id)}
+                    >
                       <Label htmlFor={field.id}>{field.label}</Label>
                       <Input
                         id={field.id}
@@ -317,6 +584,7 @@ const MiloECRM: React.FC = () => {
                       />
                       <p className="text-xs text-muted-foreground">
                         Font: {field.fontSize}px, {field.fontWeight}, {field.fontStyle}
+                        {isAdminMode && ` | Position: (${field.x}, ${field.y})`}
                       </p>
                     </div>
                   ))}
@@ -341,6 +609,38 @@ const MiloECRM: React.FC = () => {
           </div>
         )}
       </main>
+
+      {/* Password Dialog */}
+      <Dialog open={showPasswordDialog} onOpenChange={setShowPasswordDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Lock className="h-5 w-5" />
+              Admin Access
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <p className="text-sm text-muted-foreground">
+              Enter the admin password to adjust text positions and styles.
+            </p>
+            <Input
+              type="password"
+              placeholder="Enter password"
+              value={passwordInput}
+              onChange={(e) => setPasswordInput(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handlePasswordSubmit()}
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowPasswordDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handlePasswordSubmit}>
+              Unlock
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
