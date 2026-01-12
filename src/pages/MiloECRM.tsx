@@ -75,14 +75,34 @@ const ADMIN_PASSWORD = '1010';
 // Removed fields (kept here to auto-migrate any previously saved templates)
 const DISABLED_FIELD_IDS = new Set(['subheadline', 'discountLabel']);
 
-const normalizeLayoutTemplate = (t: LayoutTemplate): LayoutTemplate => ({
-  ...t,
-  textFields: (t.textFields || []).filter((f) => !DISABLED_FIELD_IDS.has(f.id)),
-});
+const normalizeLayoutTemplate = (savedTemplate: LayoutTemplate): LayoutTemplate => {
+  // Filter out disabled fields
+  const filteredFields = (savedTemplate.textFields || []).filter((f) => !DISABLED_FIELD_IDS.has(f.id));
+  
+  return {
+    ...savedTemplate,
+    textFields: filteredFields,
+  };
+};
+
+const mergeWithDefaults = (savedTemplates: LayoutTemplate[]): LayoutTemplate[] => {
+  // Create a map of saved templates by id
+  const savedMap = new Map(savedTemplates.map(t => [t.id, t]));
+  
+  // Merge: use saved template if exists (preserving admin changes), otherwise use default
+  return defaultLayoutTemplates.map(defaultT => {
+    const saved = savedMap.get(defaultT.id);
+    if (saved) {
+      // Use saved template but ensure disabled fields are removed
+      return normalizeLayoutTemplate(saved);
+    }
+    return normalizeLayoutTemplate(defaultT);
+  });
+};
 
 const normalizeTemplates = (templates: unknown): LayoutTemplate[] => {
-  if (!Array.isArray(templates)) return defaultLayoutTemplates.map(normalizeLayoutTemplate);
-  return (templates as LayoutTemplate[]).map(normalizeLayoutTemplate);
+  if (!Array.isArray(templates)) return defaultLayoutTemplates.map(t => normalizeLayoutTemplate(t));
+  return mergeWithDefaults(templates as LayoutTemplate[]);
 };
 
 const MiloECRM: React.FC = () => {
