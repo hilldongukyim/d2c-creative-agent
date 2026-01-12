@@ -250,8 +250,8 @@ const CoverPage = () => {
             </p>
           </header>
 
-          {/* Search and Action Bar */}
-          <div className={`mb-8 flex gap-4 items-center justify-center transition-all duration-700 delay-300 ${isCrewVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
+          {/* Search Bar */}
+          <div className={`mb-8 flex items-center justify-center transition-all duration-700 delay-300 ${isCrewVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
             <div className="relative flex-1 max-w-md">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input 
@@ -262,10 +262,6 @@ const CoverPage = () => {
                 placeholder="Search crew..." 
               />
             </div>
-            <Button onClick={() => setCrewFormOpen(true)} variant="outline" className="gap-2 px-3 sm:px-4">
-              <UserPlus className="w-4 h-4" />
-              <span className="hidden sm:inline">Register</span>
-            </Button>
           </div>
 
           <section className={`mt-12 transition-all duration-700 delay-400 ${isCrewVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
