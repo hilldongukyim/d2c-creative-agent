@@ -36,8 +36,8 @@ interface TextFieldValue {
 
 const defaultLayoutTemplates: LayoutTemplate[] = [
   {
-    id: 'coupon-20',
-    name: '20% Discount Coupon',
+    id: 'coupon',
+    name: 'Coupon',
     cleanImage: '/lovable-uploads/milo-coupon-clean.png',
     previewImage: '/lovable-uploads/milo-coupon-20.png',
     textFields: [
