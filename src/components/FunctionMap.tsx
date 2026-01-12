@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 type ProfileMap = {
   yumi: string;
   ben: string;
@@ -30,17 +30,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
   highlightName,
   supportSection
 }) => {
-  const [hoveredProfile, setHoveredProfile] = useState<{
-    name: string;
-    role: string;
-  } | null>(null);
-  const [hoverPosition, setHoverPosition] = useState<{
-    x: number;
-    y: number;
-  }>({
-    x: 0,
-    y: 0
-  });
+  const containerRef = useRef<HTMLElement | null>(null);
 
   // Crew member profiles with descriptions, personality traits, and admin info
   const crewProfiles: Record<string, {
@@ -132,23 +122,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       personality: "Organized and analytical, excels at data aggregation and insights delivery."
     }
   };
-  const handleMouseEnter = (event: React.MouseEvent, name: string, role: string, teamTitle?: string) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-
-    // For Intern team members, position popup on the left side
-    const isInternMember = teamTitle === "Intern";
-    setHoverPosition({
-      x: isInternMember ? rect.left - 5 : rect.right + 5,
-      y: rect.top + rect.height / 2
-    });
-    setHoveredProfile({
-      name,
-      role
-    });
-  };
-  const handleMouseLeave = () => {
-    setHoveredProfile(null);
-  };
   // Organizational structure with divisions
   const divisions = [{
     name: "Marketing",
@@ -216,7 +189,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       items: []
     }]
   }];
-  const containerRef = useRef<HTMLElement | null>(null);
   useEffect(() => {
     // Clear previous dim states and highlights
     const allProfiles = containerRef.current?.querySelectorAll('[data-profile-name]');
@@ -336,14 +308,14 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                         {team.title === "DAM" || team.title === "Promotion" ? <div className="space-y-3">
                             {/* First row - Candy only */}
                             <div className="flex justify-center">
-                                {team.items.slice(0, 1).map(item => <div key={`${team.title}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1" onMouseEnter={e => handleMouseEnter(e, item.name, item.role)} onMouseLeave={handleMouseLeave} onClick={e => {
+                                {team.items.slice(0, 1).map(item => <div key={`${team.title}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1" onClick={e => {
                         e.stopPropagation();
                         console.log('Clicked profile:', item.name);
                         onProfileClick?.(item.name);
                       }} role="button" tabIndex={0}>
                                   <div className="relative">
                                     <div className={`h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden ${item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
-                                      {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{
+                                      {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className="h-full w-full object-cover" loading="lazy" /> : <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{
                               backgroundColor: '#6B6B6B'
                             }}>
                                           {item.name.charAt(0)}
@@ -369,14 +341,14 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                             </div>
                             {/* Second row - Maya and On Hiring */}
                             <div className="flex justify-center gap-3">
-                                {team.items.slice(1).map(item => <div key={`${team.title}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1" onMouseEnter={e => handleMouseEnter(e, item.name, item.role)} onMouseLeave={handleMouseLeave} onClick={e => {
+                                {team.items.slice(1).map(item => <div key={`${team.title}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1" onClick={e => {
                         e.stopPropagation();
                         console.log('Clicked profile:', item.name);
                         onProfileClick?.(item.name);
                       }} role="button" tabIndex={0}>
                                   <div className="relative">
                                     <div className={`h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden ${item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
-                                      {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{
+                                      {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className="h-full w-full object-cover" loading="lazy" /> : <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{
                               backgroundColor: '#6B6B6B'
                             }}>
                                         </div>}
@@ -400,13 +372,13 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                 </div>)}
                             </div>
                           </div> : <div className="grid grid-cols-2 gap-4 justify-items-center">
-                             {team.items.map(item => <div key={`${team.title}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1" onMouseEnter={e => handleMouseEnter(e, item.name, item.role)} onMouseLeave={handleMouseLeave} onClick={e => {
+                             {team.items.map(item => <div key={`${team.title}-${item.name}`} data-profile-name={item.name.toLowerCase()} className="group flex flex-col items-center text-center cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring rounded-md p-1" onClick={e => {
                       e.stopPropagation();
                       onProfileClick?.(item.name);
                     }} role="button" tabIndex={0}>
                                 <div className="relative">
                                   <div className={`h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden ${item.name === "Boris" ? "border-2 border-red-500" : ""}`}>
-                                    {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className={`h-full w-full object-cover transition-transform duration-300 ${hoveredProfile?.name.toLowerCase() === item.name.toLowerCase() ? 'scale-125' : ''}`} loading="lazy" /> : <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{
+                                    {item.imageSrc ? <img src={item.imageSrc} alt={`${item.name} profile image`} className="h-full w-full object-cover" loading="lazy" /> : <div className="h-full w-full flex items-center justify-center text-foreground/80 text-sm font-medium" style={{
                             backgroundColor: '#6B6B6B'
                           }}>
                                         {item.name.charAt(0)}
@@ -442,21 +414,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         </div>
       </div>
 
-      {/* Hover Popup - Text Only - Hidden on mobile */}
-      {hoveredProfile && <div className="hidden sm:block fixed z-50 bg-card border border-border/20 rounded-xl p-6 shadow-xl max-w-sm animate-fade-in pointer-events-none" style={{
-      left: hoverPosition.x,
-      top: hoverPosition.y,
-      transform: hoverPosition.x < window.innerWidth / 2 ? 'translateY(-50%)' : 'translateX(-100%) translateY(-50%)'
-    }}>
-          <div className="text-sm text-foreground leading-relaxed">
-            {crewProfiles[hoveredProfile.name.toLowerCase()]?.description || `${hoveredProfile.name} is responsible for ${hoveredProfile.role} role.`}
-          </div>
-          {crewProfiles[hoveredProfile.name.toLowerCase()]?.admin && (
-            <div className="mt-3 pt-3 border-t border-border/30 text-xs text-muted-foreground">
-              <span>Admin: {crewProfiles[hoveredProfile.name.toLowerCase()]?.admin?.name}, {crewProfiles[hoveredProfile.name.toLowerCase()]?.admin?.email}</span>
-            </div>
-          )}
-        </div>}
     </section>;
 };
 export default FunctionMap;

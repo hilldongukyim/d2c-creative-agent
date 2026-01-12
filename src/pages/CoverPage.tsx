@@ -40,6 +40,7 @@ const CoverPage = () => {
     name: string;
     role: string;
     image: string;
+    detailImage?: string;
     description: string;
     isComingSoon: boolean;
     ctaLabel?: string;
@@ -95,6 +96,7 @@ const CoverPage = () => {
     description: string; 
     role: string; 
     image: string; 
+    detailImage?: string;
     isComingSoon: boolean;
     ctaLabel?: string;
     ctaAction?: () => void;
@@ -105,7 +107,7 @@ const CoverPage = () => {
     "fiona": { description: "Fiona is dedicated to account deletion and cleanup tasks, ensuring safe account management through compliance with data security and privacy regulations.", role: "Account Manager", image: "/lovable-uploads/fiona-profile.png", isComingSoon: true },
     "boris": { description: "Boris serves as the promotion team coordinator, assisting in marketing campaign planning and connecting specialized departments.", role: "Promotion Coordinator", image: "", isComingSoon: true },
     "yumi": { description: "Yumi is an EI-Form designer for LG Electronics brand templates, creating clean and intuitive designs that comply with brand guidelines.", role: "El-Form Designer", image: aliceProfile, isComingSoon: false, ctaLabel: "Work with Yumi", ctaAction: () => navigate("/promotional") },
-    "ben": { description: "Ben creates dotcom PTO model gallery images. Generates images reflecting accurate information with consistent and stable quality.", role: "PTO Image Creator", image: benProfile, isComingSoon: false, ctaLabel: "Work with Ben", ctaAction: () => navigate("/pto-gallery") },
+    "ben": { description: "Ben creates dotcom PTO model gallery images. Generates images reflecting accurate information with consistent and stable quality.", role: "PTO Image Creator", image: benProfile, detailImage: "/lovable-uploads/ben-detail-image.png", isComingSoon: false, ctaLabel: "Work with Ben", ctaAction: () => navigate("/pto-gallery") },
     "pip": { description: "Pip is a Content QA specialist who reviews whether content is created according to Content Creation Guidelines and Brand Guidelines.", role: "Content QA", image: "/lovable-uploads/76efa2dd-a233-469b-8c78-0957e563f8a4.png", isComingSoon: true },
     "mateo": { description: "Mateo avoids repetitive manual tasks. Upload an Excel template to perform crawling based on models and retailers.", role: "Crawler", image: "/lovable-uploads/mateo-profile.png", isComingSoon: false, ctaLabel: "Work with Mateo", ctaAction: () => navigate("/crawling") },
     "theo": { description: "Theo is the Content Operation manager who supports subsidiary/BU representatives with NPI product registration requests.", role: "NPI Operation Manager", image: "/lovable-uploads/theo-profile.png", isComingSoon: true },
@@ -150,6 +152,7 @@ const CoverPage = () => {
         name: name,
         role: profile.role,
         image: profile.image,
+        detailImage: profile.detailImage,
         description: profile.description,
         isComingSoon: profile.isComingSoon,
         ctaLabel: profile.ctaLabel,
@@ -350,6 +353,7 @@ const CoverPage = () => {
             crewName={selectedCrewProfile.name}
             crewRole={selectedCrewProfile.role}
             crewImage={selectedCrewProfile.image}
+            crewDetailImage={selectedCrewProfile.detailImage}
             crewDescription={selectedCrewProfile.description}
             isComingSoon={selectedCrewProfile.isComingSoon}
             ctaLabel={selectedCrewProfile.ctaLabel}

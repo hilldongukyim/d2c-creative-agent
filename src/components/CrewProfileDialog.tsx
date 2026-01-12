@@ -16,6 +16,7 @@ interface CrewProfileDialogProps {
   crewName: string;
   crewRole: string;
   crewImage: string;
+  crewDetailImage?: string;
   crewDescription: string;
   isComingSoon?: boolean;
   ctaLabel?: string;
@@ -35,6 +36,7 @@ const CrewProfileDialog: React.FC<CrewProfileDialogProps> = ({
   crewName,
   crewRole,
   crewImage,
+  crewDetailImage,
   crewDescription,
   isComingSoon = false,
   ctaLabel,
@@ -186,35 +188,35 @@ const CrewProfileDialog: React.FC<CrewProfileDialogProps> = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-md max-h-[85vh] overflow-hidden flex flex-col">
-        <DialogHeader>
-          <DialogTitle className="sr-only">{crewName} Profile</DialogTitle>
+      <DialogContent className="sm:max-w-lg max-h-[85vh] overflow-hidden flex flex-col p-0">
+        <DialogHeader className="sr-only">
+          <DialogTitle>{crewName} Profile</DialogTitle>
         </DialogHeader>
 
-        <div className="flex flex-col items-center text-center pb-4">
-          <div className="relative">
-            <div className="h-24 w-24 rounded-full overflow-hidden border-4 border-primary/20">
-              {crewImage ? (
-                <img
-                  src={crewImage}
-                  alt={crewName}
-                  className="h-full w-full object-cover"
-                />
-              ) : (
-                <div className="h-full w-full bg-muted flex items-center justify-center text-2xl font-bold text-muted-foreground">
-                  {crewName.charAt(0)}
-                </div>
-              )}
+        {/* 16:9 Cover Image */}
+        <div className="relative w-full aspect-video overflow-hidden bg-muted">
+          {(crewDetailImage || crewImage) ? (
+            <img
+              src={crewDetailImage || crewImage}
+              alt={crewName}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <div className="h-full w-full bg-gradient-to-br from-primary/20 to-primary/5 flex items-center justify-center">
+              <span className="text-6xl font-bold text-primary/30">{crewName.charAt(0)}</span>
             </div>
-            {isComingSoon && (
-              <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-yellow-500 text-yellow-950 text-[10px] font-medium px-2 py-0.5 rounded-full">
-                Coming Soon
-              </span>
-            )}
-          </div>
-          <h3 className="text-xl font-semibold mt-3">{crewName}</h3>
+          )}
+          {isComingSoon && (
+            <span className="absolute top-3 right-3 bg-yellow-500 text-yellow-950 text-xs font-medium px-3 py-1 rounded-full">
+              Coming Soon
+            </span>
+          )}
+        </div>
+
+        <div className="flex flex-col items-center text-center px-6 pb-4">
+          <h3 className="text-xl font-semibold">{crewName}</h3>
           <p className="text-sm text-muted-foreground">{crewRole}</p>
-          <p className="text-sm text-foreground/80 mt-3 px-4 leading-relaxed">
+          <p className="text-sm text-foreground/80 mt-3 leading-relaxed">
             {crewDescription}
           </p>
 
@@ -256,7 +258,7 @@ const CrewProfileDialog: React.FC<CrewProfileDialogProps> = ({
 
         {/* Review Form */}
         {showReviewForm && (
-          <form onSubmit={handleSubmitReview} className="border-t pt-4 space-y-3">
+          <form onSubmit={handleSubmitReview} className="border-t mx-6 pt-4 space-y-3">
             <div className="space-y-2">
               <Label htmlFor="reviewer-name">Your Name</Label>
               <Input
@@ -285,7 +287,7 @@ const CrewProfileDialog: React.FC<CrewProfileDialogProps> = ({
 
         {/* Reviews List */}
         {reviews.length > 0 && (
-          <div className="border-t pt-4 flex-1 overflow-hidden">
+          <div className="border-t mx-6 pt-4 pb-6 flex-1 overflow-hidden">
             <h4 className="text-sm font-semibold mb-3 flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />
               Reviews ({reviews.length})
