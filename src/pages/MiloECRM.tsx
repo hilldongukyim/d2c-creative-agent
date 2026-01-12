@@ -51,7 +51,7 @@ const defaultLayoutTemplates: LayoutTemplate[] = [
         fontWeight: '500',
         fontStyle: 'italic',
         color: '#FFFFFF',
-        maxWidth: 180,
+        maxWidth: 320,
       },
       {
         id: 'discount',
@@ -63,7 +63,7 @@ const defaultLayoutTemplates: LayoutTemplate[] = [
         fontWeight: '700',
         fontStyle: 'normal',
         color: '#FFFFFF',
-        maxWidth: 200,
+        maxWidth: 320,
       },
     ],
   },
