@@ -1,16 +1,18 @@
 import React from "react";
-import { MessageSquare, Mail } from "lucide-react";
+import { MessageSquare, Mail, Shield } from "lucide-react";
 
 interface SupportSectionProps {
   onMochiRequestClick: () => void;
   onMochiHistoryClick: () => void;
   onMellClick: () => void;
+  onFionaClick: () => void;
 }
 
 const SupportSection: React.FC<SupportSectionProps> = ({
   onMochiRequestClick,
   onMochiHistoryClick,
   onMellClick,
+  onFionaClick,
 }) => {
   const supportMembers = [
     {
@@ -29,6 +31,14 @@ const SupportSection: React.FC<SupportSectionProps> = ({
       icon: Mail,
       onClick: onMellClick,
     },
+    {
+      id: "fiona",
+      name: "Fiona",
+      role: "Admin Dashboard",
+      image: "/lovable-uploads/fiona-admin-profile.png",
+      icon: Shield,
+      onClick: onFionaClick,
+    },
   ];
 
   return (
@@ -37,7 +47,7 @@ const SupportSection: React.FC<SupportSectionProps> = ({
         <h4 className="text-sm font-semibold text-muted-foreground mb-3 text-center">
           Support Team
         </h4>
-        <div className="grid grid-cols-2 gap-4 justify-items-center">
+        <div className="grid grid-cols-3 gap-4 justify-items-center">
           {supportMembers.map((member) => (
             <div
               key={member.id}
