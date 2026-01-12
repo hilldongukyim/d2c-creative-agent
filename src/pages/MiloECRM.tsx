@@ -2,6 +2,7 @@ import React, { useState, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
@@ -43,21 +44,9 @@ const defaultLayoutTemplates: LayoutTemplate[] = [
       {
         id: 'headline',
         label: 'Headline',
-        defaultValue: 'Exclusive Discount',
+        defaultValue: 'Exclusive Discount\nfor you',
         x: 55,
-        y: 65,
-        fontSize: 18,
-        fontWeight: '500',
-        fontStyle: 'italic',
-        color: '#FFFFFF',
-        maxWidth: 180,
-      },
-      {
-        id: 'subheadline',
-        label: 'Subheadline',
-        defaultValue: 'for you',
-        x: 55,
-        y: 88,
+        y: 75,
         fontSize: 18,
         fontWeight: '500',
         fontStyle: 'italic',
@@ -67,26 +56,14 @@ const defaultLayoutTemplates: LayoutTemplate[] = [
       {
         id: 'discount',
         label: 'Discount Amount',
-        defaultValue: '20%',
+        defaultValue: '20% OFF',
         x: 55,
         y: 145,
         fontSize: 42,
         fontWeight: '700',
         fontStyle: 'normal',
         color: '#FFFFFF',
-        maxWidth: 120,
-      },
-      {
-        id: 'discountLabel',
-        label: 'Discount Label',
-        defaultValue: 'OFF',
-        x: 153,
-        y: 145,
-        fontSize: 28,
-        fontWeight: '300',
-        fontStyle: 'normal',
-        color: '#FFFFFF',
-        maxWidth: 80,
+        maxWidth: 200,
       },
     ],
   },
@@ -407,7 +384,7 @@ const MiloECRM: React.FC = () => {
                   {selectedLayout.textFields.map(field => (
                     <div
                       key={field.id}
-                      className={`absolute whitespace-nowrap cursor-pointer transition-all ${
+                      className={`absolute whitespace-pre-wrap cursor-pointer transition-all ${
                         isAdminMode && selectedFieldId === field.id 
                           ? 'ring-2 ring-primary ring-offset-2' 
                           : ''
@@ -421,7 +398,7 @@ const MiloECRM: React.FC = () => {
                         color: field.color,
                         maxWidth: field.maxWidth ? `${field.maxWidth}px` : undefined,
                         fontFamily: '"LG EI Text", sans-serif',
-                        transform: 'translateY(-50%)',
+                        lineHeight: 1.3,
                       }}
                       onClick={() => isAdminMode && setSelectedFieldId(field.id)}
                     >
@@ -576,11 +553,13 @@ const MiloECRM: React.FC = () => {
                       onClick={() => isAdminMode && setSelectedFieldId(field.id)}
                     >
                       <Label htmlFor={field.id}>{field.label}</Label>
-                      <Input
+                      <Textarea
                         id={field.id}
                         value={textValues[field.id] || ''}
                         onChange={(e) => handleTextChange(field.id, e.target.value)}
                         placeholder={field.defaultValue}
+                        rows={2}
+                        className="resize-none"
                       />
                       <p className="text-xs text-muted-foreground">
                         Font: {field.fontSize}px, {field.fontWeight}, {field.fontStyle}
