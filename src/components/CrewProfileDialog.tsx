@@ -47,11 +47,25 @@ const CrewProfileDialog: React.FC<CrewProfileDialogProps> = ({
   const [reviewerName, setReviewerName] = useState("");
   const [reviewText, setReviewText] = useState("");
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [hasLikedInSession, setHasLikedInSession] = useState(false);
+  const [sessionLikeId, setSessionLikeId] = useState<string | null>(null);
+
+  // Get session storage key for this crew member
+  const getSessionLikeKey = () => `crew_like_${crewName.toLowerCase()}`;
 
   useEffect(() => {
     if (open) {
       fetchLikes();
       fetchReviews();
+      // Check if user has liked in this session
+      const storedLikeId = sessionStorage.getItem(getSessionLikeKey());
+      if (storedLikeId) {
+        setHasLikedInSession(true);
+        setSessionLikeId(storedLikeId);
+      } else {
+        setHasLikedInSession(false);
+        setSessionLikeId(null);
+      }
     }
   }, [open, crewName]);
 
@@ -74,22 +88,56 @@ const CrewProfileDialog: React.FC<CrewProfileDialogProps> = ({
 
   const handleLike = async () => {
     setIsLiking(true);
-    const { error } = await supabase.from("crew_likes").insert({
-      crew_name: crewName.toLowerCase(),
-    });
+    
+    if (hasLikedInSession && sessionLikeId) {
+      // Unlike - delete the like from this session
+      const { error } = await supabase
+        .from("crew_likes")
+        .delete()
+        .eq("id", sessionLikeId);
 
-    if (error) {
-      toast({
-        title: "Error",
-        description: "Failed to add like. Please try again.",
-        variant: "destructive",
-      });
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Failed to remove like. Please try again.",
+          variant: "destructive",
+        });
+      } else {
+        setLikeCount((prev) => Math.max(0, prev - 1));
+        setHasLikedInSession(false);
+        setSessionLikeId(null);
+        sessionStorage.removeItem(getSessionLikeKey());
+        toast({
+          title: "Like Removed",
+          description: `You removed your like from ${crewName}.`,
+        });
+      }
     } else {
-      setLikeCount((prev) => prev + 1);
-      toast({
-        title: "Liked!",
-        description: `You liked ${crewName}!`,
-      });
+      // Like - add a new like
+      const { data, error } = await supabase
+        .from("crew_likes")
+        .insert({
+          crew_name: crewName.toLowerCase(),
+        })
+        .select("id")
+        .single();
+
+      if (error) {
+        toast({
+          title: "Error",
+          description: "Failed to add like. Please try again.",
+          variant: "destructive",
+        });
+      } else {
+        setLikeCount((prev) => prev + 1);
+        setHasLikedInSession(true);
+        setSessionLikeId(data.id);
+        sessionStorage.setItem(getSessionLikeKey(), data.id);
+        toast({
+          title: "Liked!",
+          description: `You liked ${crewName}!`,
+        });
+      }
     }
     setIsLiking(false);
   };
@@ -185,13 +233,13 @@ const CrewProfileDialog: React.FC<CrewProfileDialogProps> = ({
           {/* Like Button */}
           <div className="flex items-center gap-4 mt-4">
             <Button
-              variant="outline"
+              variant={hasLikedInSession ? "default" : "outline"}
               size="sm"
               className="gap-2"
               onClick={handleLike}
               disabled={isLiking}
             >
-              <Heart className={`h-4 w-4 ${likeCount > 0 ? "fill-red-500 text-red-500" : ""}`} />
+              <Heart className={`h-4 w-4 ${hasLikedInSession ? "fill-white text-white" : likeCount > 0 ? "fill-red-500 text-red-500" : ""}`} />
               <span>{likeCount}</span>
             </Button>
             <Button
