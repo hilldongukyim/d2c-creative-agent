@@ -22,13 +22,13 @@ type FunctionMapProps = {
   profiles: ProfileMap;
   onProfileClick?: (name: string) => void;
   highlightName?: string;
-  mochiSection?: React.ReactNode;
+  supportSection?: React.ReactNode;
 };
 const FunctionMap: React.FC<FunctionMapProps> = ({
   profiles,
   onProfileClick,
   highlightName,
-  mochiSection
+  supportSection
 }) => {
   const [hoveredProfile, setHoveredProfile] = useState<{
     name: string;
@@ -118,6 +118,14 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       description: "Anita is a Lifestyle Artist who creates compelling lifestyle content and visual storytelling for marketing campaigns.",
       personality: "Creative and artistic, excels at capturing lifestyle moments and brand aesthetics. Lifestyle Content, Visual Storytelling, Brand Aesthetics.",
       admin: { name: "Donguk Yim", email: "donguk.yim@lge.com" }
+    },
+    "mochi": {
+      description: "Mochi handles user requests for new AI crew members or development needs. Submit your pain points and improvement ideas.",
+      personality: "Friendly and responsive, excels at understanding user needs and facilitating communication."
+    },
+    "mell": {
+      description: "Mell manages email announcements and newsletters, keeping the team informed about updates, changes, and important news.",
+      personality: "Clear communicator, excels at organizing and distributing information effectively."
     }
   };
   const handleMouseEnter = (event: React.MouseEvent, name: string, role: string, teamTitle?: string) => {
@@ -425,8 +433,8 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
 
           </div>
 
-          {/* Mochi Section - Standalone Crew */}
-          {mochiSection}
+          {/* Support Section - Support Team */}
+          {supportSection}
         </div>
       </div>
 
