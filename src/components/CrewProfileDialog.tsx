@@ -5,7 +5,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Heart, MessageSquare, Send, User } from "lucide-react";
+import { Heart, MessageSquare, Send, User, ArrowRight } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
@@ -18,6 +18,8 @@ interface CrewProfileDialogProps {
   crewImage: string;
   crewDescription: string;
   isComingSoon?: boolean;
+  ctaLabel?: string;
+  onCtaClick?: () => void;
 }
 
 interface Review {
@@ -35,6 +37,8 @@ const CrewProfileDialog: React.FC<CrewProfileDialogProps> = ({
   crewImage,
   crewDescription,
   isComingSoon = false,
+  ctaLabel,
+  onCtaClick,
 }) => {
   const [likeCount, setLikeCount] = useState(0);
   const [reviews, setReviews] = useState<Review[]>([]);
@@ -127,6 +131,11 @@ const CrewProfileDialog: React.FC<CrewProfileDialogProps> = ({
     setIsSubmittingReview(false);
   };
 
+  const handleCtaClick = () => {
+    onOpenChange(false);
+    onCtaClick?.();
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-md max-h-[85vh] overflow-hidden flex flex-col">
@@ -160,6 +169,18 @@ const CrewProfileDialog: React.FC<CrewProfileDialogProps> = ({
           <p className="text-sm text-foreground/80 mt-3 px-4 leading-relaxed">
             {crewDescription}
           </p>
+
+          {/* CTA Button */}
+          {ctaLabel && onCtaClick && !isComingSoon && (
+            <Button
+              onClick={handleCtaClick}
+              className="mt-4 gap-2"
+              size="sm"
+            >
+              {ctaLabel}
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          )}
 
           {/* Like Button */}
           <div className="flex items-center gap-4 mt-4">
