@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      crew_likes: {
+        Row: {
+          created_at: string
+          crew_name: string
+          id: string
+        }
+        Insert: {
+          created_at?: string
+          crew_name: string
+          id?: string
+        }
+        Update: {
+          created_at?: string
+          crew_name?: string
+          id?: string
+        }
+        Relationships: []
+      }
+      crew_reviews: {
+        Row: {
+          created_at: string
+          crew_name: string
+          id: string
+          review_text: string
+          reviewer_name: string
+        }
+        Insert: {
+          created_at?: string
+          crew_name: string
+          id?: string
+          review_text: string
+          reviewer_name: string
+        }
+        Update: {
+          created_at?: string
+          crew_name?: string
+          id?: string
+          review_text?: string
+          reviewer_name?: string
+        }
+        Relationships: []
+      }
       figma_cache: {
         Row: {
           cached_at: string | null

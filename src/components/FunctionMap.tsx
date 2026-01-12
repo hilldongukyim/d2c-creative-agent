@@ -126,6 +126,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     "mell": {
       description: "Mell manages email announcements and newsletters, keeping the team informed about updates, changes, and important news.",
       personality: "Clear communicator, excels at organizing and distributing information effectively."
+    },
+    "fiona-admin": {
+      description: "Fiona provides admin access to view all crew activities, requests, and engagement metrics in a comprehensive dashboard.",
+      personality: "Organized and analytical, excels at data aggregation and insights delivery."
     }
   };
   const handleMouseEnter = (event: React.MouseEvent, name: string, role: string, teamTitle?: string) => {
