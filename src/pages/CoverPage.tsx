@@ -42,6 +42,8 @@ const CoverPage = () => {
     image: string;
     description: string;
     isComingSoon: boolean;
+    ctaLabel?: string;
+    ctaAction?: () => void;
   } | null>(null);
   const crewSectionRef = useRef<HTMLElement>(null);
 
@@ -89,24 +91,34 @@ const CoverPage = () => {
   };
 
   // Crew profiles data for the profile dialog
-  const crewProfiles: Record<string, { description: string; role: string; image: string; isComingSoon: boolean }> = {
+  type CrewProfile = { 
+    description: string; 
+    role: string; 
+    image: string; 
+    isComingSoon: boolean;
+    ctaLabel?: string;
+    ctaAction?: () => void;
+  };
+
+  const crewProfiles: Record<string, CrewProfile> = {
     "vee": { description: "Vee serves as the central command center for all AI agents, coordinating complex workflows and optimizing collaboration between teams.", role: "Super Agent", image: "/lovable-uploads/vee-profile.png", isComingSoon: true },
     "fiona": { description: "Fiona is dedicated to account deletion and cleanup tasks, ensuring safe account management through compliance with data security and privacy regulations.", role: "Account Manager", image: "/lovable-uploads/fiona-profile.png", isComingSoon: true },
     "boris": { description: "Boris serves as the promotion team coordinator, assisting in marketing campaign planning and connecting specialized departments.", role: "Promotion Coordinator", image: "", isComingSoon: true },
-    "yumi": { description: "Yumi is an EI-Form designer for LG Electronics brand templates, creating clean and intuitive designs that comply with brand guidelines.", role: "El-Form Designer", image: aliceProfile, isComingSoon: false },
-    "ben": { description: "Ben creates dotcom PTO model gallery images. Generates images reflecting accurate information with consistent and stable quality.", role: "PTO Image Creator", image: benProfile, isComingSoon: false },
+    "yumi": { description: "Yumi is an EI-Form designer for LG Electronics brand templates, creating clean and intuitive designs that comply with brand guidelines.", role: "El-Form Designer", image: aliceProfile, isComingSoon: false, ctaLabel: "Work with Yumi", ctaAction: () => navigate("/promotional") },
+    "ben": { description: "Ben creates dotcom PTO model gallery images. Generates images reflecting accurate information with consistent and stable quality.", role: "PTO Image Creator", image: benProfile, isComingSoon: false, ctaLabel: "Work with Ben", ctaAction: () => navigate("/pto-gallery") },
     "pip": { description: "Pip is a Content QA specialist who reviews whether content is created according to Content Creation Guidelines and Brand Guidelines.", role: "Content QA", image: "/lovable-uploads/76efa2dd-a233-469b-8c78-0957e563f8a4.png", isComingSoon: true },
-    "mateo": { description: "Mateo avoids repetitive manual tasks. Upload an Excel template to perform crawling based on models and retailers.", role: "Crawler", image: "/lovable-uploads/mateo-profile.png", isComingSoon: false },
+    "mateo": { description: "Mateo avoids repetitive manual tasks. Upload an Excel template to perform crawling based on models and retailers.", role: "Crawler", image: "/lovable-uploads/mateo-profile.png", isComingSoon: false, ctaLabel: "Work with Mateo", ctaAction: () => navigate("/crawling") },
     "theo": { description: "Theo is the Content Operation manager who supports subsidiary/BU representatives with NPI product registration requests.", role: "NPI Operation Manager", image: "/lovable-uploads/theo-profile.png", isComingSoon: true },
-    "kai": { description: "Kai is a background removal specialist responsible for image editing and post-processing.", role: "Background Remover", image: "/lovable-uploads/84e535ab-1fa5-418e-93aa-73fa3b361219.png", isComingSoon: false },
-    "maple": { description: "Maple crawls live content from LG.COM. Currently, only homepage hero banners can be viewed.", role: "Content Crawler", image: "/lovable-uploads/maple-profile.png", isComingSoon: false },
-    "noa": { description: "Noa helps with practical work based on product information from PIM (Product Information Management).", role: "Product Information Manager", image: "/lovable-uploads/noa-profile.png", isComingSoon: false },
-    "luna": { description: "Creates audiences and offers in Adobe Target using natural language input.", role: "Personalized Marketing Expert", image: "/lovable-uploads/luna-profile.png", isComingSoon: false },
-    "clara": { description: "Creates personalized images by crawling SKU data.", role: "Personalized Content Consultant", image: "/lovable-uploads/a4614e4b-7d0d-429f-8b4c-ddc8b85ee3ad.png", isComingSoon: false },
-    "candy": { description: "Oversees DAM user guides, tutorials, and on-boarding.", role: "DAM Tutor", image: "/lovable-uploads/candy-profile.png", isComingSoon: false },
-    "anita": { description: "Anita is a Lifestyle Artist who creates compelling lifestyle content and visual storytelling for marketing campaigns.", role: "Lifestyle Artist", image: "/lovable-uploads/anita-profile.png", isComingSoon: false },
-    "ava": { description: "Ava tracks and monitors PDP content across different regions and platforms.", role: "PDP Tracker", image: "/lovable-uploads/ava-profile.png", isComingSoon: true },
-    "levi": { description: "Levi handles request management and workflow coordination for the team.", role: "Request Manager", image: "/lovable-uploads/levi-profile.png", isComingSoon: true },
+    "kai": { description: "Kai is a background removal specialist responsible for image editing and post-processing.", role: "Background Remover", image: "/lovable-uploads/84e535ab-1fa5-418e-93aa-73fa3b361219.png", isComingSoon: false, ctaLabel: "Work with Kai", ctaAction: () => setKaiPopupOpen(true) },
+    "maple": { description: "Maple crawls live content from LG.COM. Currently, only homepage hero banners can be viewed.", role: "Content Crawler", image: "/lovable-uploads/maple-profile.png", isComingSoon: false, ctaLabel: "Work with Maple", ctaAction: () => navigate("/maple-pdp") },
+    "noa": { description: "Noa helps with practical work based on product information from PIM (Product Information Management).", role: "Product Information Manager", image: "/lovable-uploads/noa-profile.png", isComingSoon: false, ctaLabel: "Work with Noa", ctaAction: () => window.open("https://aiagent.pimds.aws.lge.com/", "_blank") },
+    "luna": { description: "Creates audiences and offers in Adobe Target using natural language input.", role: "Personalized Marketing Expert", image: "/lovable-uploads/luna-profile.png", isComingSoon: false, ctaLabel: "Work with Luna", ctaAction: () => window.open("https://luna-marketing.lovable.app", "_blank") },
+    "clara": { description: "Creates personalized images by crawling SKU data.", role: "Personalized Content Consultant", image: "/lovable-uploads/a4614e4b-7d0d-429f-8b4c-ddc8b85ee3ad.png", isComingSoon: false, ctaLabel: "Work with Clara", ctaAction: () => window.open("https://blank-canvas-coupone.lovable.app/", "_blank") },
+    "candy": { description: "Oversees DAM user guides, tutorials, and on-boarding.", role: "DAM Tutor", image: "/lovable-uploads/candy-profile.png", isComingSoon: false, ctaLabel: "Work with Candy", ctaAction: () => window.open("https://candy-global-dam-product-owner.lovable.app/", "_blank") },
+    "anita": { description: "Anita is a Lifestyle Artist who creates compelling lifestyle content and visual storytelling for marketing campaigns.", role: "Lifestyle Artist", image: "/lovable-uploads/anita-profile.png", isComingSoon: false, ctaLabel: "Work with Anita", ctaAction: () => navigate("/zoe-lifestyle") },
+    "zoe": { description: "Zoe is a Lifestyle Artist who creates compelling lifestyle content and visual storytelling for marketing campaigns.", role: "Lifestyle Artist", image: "/lovable-uploads/zoe-profile.png", isComingSoon: false, ctaLabel: "Work with Zoe", ctaAction: () => navigate("/zoe-lifestyle") },
+    "ava": { description: "Ava tracks and monitors PDP content across different regions and platforms.", role: "PDP Tracker", image: "/lovable-uploads/ava-profile.png", isComingSoon: false, ctaLabel: "Work with Ava", ctaAction: () => window.open("https://pdptracker.lovable.app", "_blank") },
+    "levi": { description: "Levi handles request management and workflow coordination for the team.", role: "Request Manager", image: "/lovable-uploads/levi-profile.png", isComingSoon: false, ctaLabel: "Work with Levi", ctaAction: () => window.open("https://request-page-craft.lovable.app/", "_blank") },
     "haruto": { description: "Haruto specializes in data analysis and insights generation.", role: "Data Analyst", image: "/lovable-uploads/haruto-profile.png", isComingSoon: true },
     "harvey": { description: "Harvey manages content distribution and publication workflows.", role: "Content Publisher", image: "/lovable-uploads/harvey-profile.png", isComingSoon: true },
     "carmen": { description: "Carmen coordinates cross-functional marketing initiatives.", role: "Marketing Coordinator", image: "/lovable-uploads/carmen-profile.png", isComingSoon: true },
@@ -115,63 +127,24 @@ const CoverPage = () => {
     "kofi": { description: "Kofi specializes in performance optimization and analytics.", role: "Performance Analyst", image: "/lovable-uploads/kofi-profile.png", isComingSoon: true },
     "rosa": { description: "Rosa handles creative direction and brand consistency.", role: "Creative Director", image: "/lovable-uploads/rosa-profile.png", isComingSoon: true },
     "tango": { description: "Tango manages automation workflows and process optimization.", role: "Automation Expert", image: "/lovable-uploads/tango-profile.png", isComingSoon: true },
+    "mochi": { description: "Mochi receives and manages development requests from the team. Submit your feature requests and track their progress.", role: "Development Request Manager", image: "/lovable-uploads/mochi-profile.png", isComingSoon: false, ctaLabel: "Submit Request", ctaAction: () => setDevRequestFormOpen(true) },
+    "mell": { description: "Mell manages newsletter subscriptions and communication preferences for the team.", role: "Newsletter Manager", image: "/lovable-uploads/mell-profile.png", isComingSoon: false, ctaLabel: "Subscribe", ctaAction: () => setMellDialogOpen(true) },
+    "fiona-admin": { description: "Fiona is the admin dashboard manager. Access crew requests, development requests, and crew popularity analytics.", role: "Admin Dashboard", image: "/lovable-uploads/fiona-admin-profile.png", isComingSoon: false, ctaLabel: "Access Dashboard", ctaAction: () => setFionaDialogOpen(true) },
   };
 
   const handleProfileClick = (name: string) => {
     const lower = name.toLowerCase();
     
-    // Get crew profile data
-    const profile = crewProfiles[lower];
-    
-    // Handle specific navigations
-    if (lower === "yumi") return navigate("/promotional");
-    if (lower === "ben") return navigate("/pto-gallery");
-    if (lower === "mateo") return navigate("/crawling");
-    if (lower === "allen") return navigate("/allen-qa");
-    if (lower === "maple") return navigate("/maple-pdp");
-    if (lower === "anita" || lower === "zoe") return navigate("/zoe-lifestyle");
-    if (lower === "levi") {
-      window.open("https://request-page-craft.lovable.app/", "_blank");
-      return;
-    }
-    if (lower === "candy") {
-      window.open("https://candy-global-dam-product-owner.lovable.app/", "_blank");
-      return;
-    }
-    if (lower === "clara") {
-      window.open("https://blank-canvas-coupone.lovable.app/", "_blank");
-      return;
-    }
-    if (lower === "kai") {
-      setKaiPopupOpen(true);
-      return;
-    }
-    if (lower === "noa") {
-      window.open("https://aiagent.pimds.aws.lge.com/", "_blank");
-      return;
-    }
-    if (lower === "ava") {
-      window.open("https://pdptracker.lovable.app", "_blank");
-      return;
-    }
-    if (lower === "luna") {
-      window.open("https://luna-marketing.lovable.app", "_blank");
-      return;
-    }
-    if (lower === "mochi") {
-      setDevRequestFormOpen(true);
-      return;
-    }
-    if (lower === "mell") {
-      setMellDialogOpen(true);
-      return;
-    }
-    if (lower === "fiona") {
+    // Special case for Fiona admin (in support section)
+    if (lower === "fiona-admin" || (lower === "fiona" && name.includes("Admin"))) {
       setFionaDialogOpen(true);
       return;
     }
     
-    // For other crew members, show the profile dialog
+    // Get crew profile data
+    const profile = crewProfiles[lower];
+    
+    // For all crew members, show the profile dialog first
     if (profile) {
       setSelectedCrewProfile({
         name: name,
@@ -179,6 +152,8 @@ const CoverPage = () => {
         image: profile.image,
         description: profile.description,
         isComingSoon: profile.isComingSoon,
+        ctaLabel: profile.ctaLabel,
+        ctaAction: profile.ctaAction,
       });
       setCrewProfileDialogOpen(true);
     } else {
@@ -377,6 +352,8 @@ const CoverPage = () => {
             crewImage={selectedCrewProfile.image}
             crewDescription={selectedCrewProfile.description}
             isComingSoon={selectedCrewProfile.isComingSoon}
+            ctaLabel={selectedCrewProfile.ctaLabel}
+            onCtaClick={selectedCrewProfile.ctaAction}
           />
         )}
       </section>
