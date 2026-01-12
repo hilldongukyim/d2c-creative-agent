@@ -6,11 +6,20 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Lock, UserPlus, MessageSquare, Heart, Calendar, Users, MapPin, Mail, TrendingUp } from "lucide-react";
+import { Lock, UserPlus, MessageSquare, Heart, Calendar, Users, MapPin, Mail, TrendingUp, Trash2, RotateCcw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { DevelopmentRequest } from "./DevelopmentRequestForm";
 import { CrewRequest } from "./CrewRequestNotification";
+import { toast } from "@/hooks/use-toast";
+
+interface Review {
+  id: string;
+  crew_name: string;
+  reviewer_name: string;
+  review_text: string;
+  created_at: string;
+}
 
 interface FionaAdminDialogProps {
   open: boolean;
@@ -37,13 +46,23 @@ const FionaAdminDialog: React.FC<FionaAdminDialogProps> = ({
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [likeStats, setLikeStats] = useState<CrewLikeStat[]>([]);
+  const [reviews, setReviews] = useState<Review[]>([]);
   const [isLoadingStats, setIsLoadingStats] = useState(false);
 
   useEffect(() => {
     if (isAuthenticated && open) {
       fetchLikeStats();
+      fetchReviews();
     }
   }, [isAuthenticated, open]);
+
+  const fetchReviews = async () => {
+    const { data } = await supabase
+      .from("crew_reviews")
+      .select("*")
+      .order("created_at", { ascending: false });
+    setReviews(data || []);
+  };
 
   const fetchLikeStats = async () => {
     setIsLoadingStats(true);
@@ -73,6 +92,48 @@ const FionaAdminDialog: React.FC<FionaAdminDialogProps> = ({
       setLikeStats(stats);
     }
     setIsLoadingStats(false);
+  };
+
+  const handleDeleteReview = async (reviewId: string) => {
+    const { error } = await supabase
+      .from("crew_reviews")
+      .delete()
+      .eq("id", reviewId);
+    
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to delete review.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Deleted",
+        description: "Review has been deleted.",
+      });
+      fetchReviews();
+    }
+  };
+
+  const handleResetCrewLikes = async (crewName: string) => {
+    const { error } = await supabase
+      .from("crew_likes")
+      .delete()
+      .eq("crew_name", crewName);
+    
+    if (error) {
+      toast({
+        title: "Error",
+        description: "Failed to reset likes.",
+        variant: "destructive",
+      });
+    } else {
+      toast({
+        title: "Reset Complete",
+        description: `All likes for ${crewName} have been reset.`,
+      });
+      fetchLikeStats();
+    }
   };
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
@@ -175,7 +236,7 @@ const FionaAdminDialog: React.FC<FionaAdminDialogProps> = ({
             </DialogHeader>
 
             <Tabs defaultValue="timeline" className="mt-4">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-4">
                 <TabsTrigger value="timeline" className="gap-2">
                   <Calendar className="h-4 w-4" />
                   Timeline
@@ -183,6 +244,10 @@ const FionaAdminDialog: React.FC<FionaAdminDialogProps> = ({
                 <TabsTrigger value="requests" className="gap-2">
                   <MessageSquare className="h-4 w-4" />
                   Requests
+                </TabsTrigger>
+                <TabsTrigger value="reviews" className="gap-2">
+                  <Users className="h-4 w-4" />
+                  Reviews
                 </TabsTrigger>
                 <TabsTrigger value="likes" className="gap-2">
                   <Heart className="h-4 w-4" />
@@ -305,6 +370,49 @@ const FionaAdminDialog: React.FC<FionaAdminDialogProps> = ({
                 </ScrollArea>
               </TabsContent>
 
+              {/* Reviews Tab */}
+              <TabsContent value="reviews" className="mt-4">
+                <ScrollArea className="h-[400px] pr-4">
+                  <div className="flex items-center gap-2 mb-4">
+                    <Users className="h-5 w-5 text-primary" />
+                    <h4 className="font-semibold">All Reviews ({reviews.length})</h4>
+                  </div>
+                  {reviews.length === 0 ? (
+                    <div className="text-center py-12 text-muted-foreground">
+                      <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                      <p>No reviews yet.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {reviews.map((review) => (
+                        <div key={review.id} className="bg-muted/50 rounded-lg p-3">
+                          <div className="flex items-start justify-between gap-2">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <Badge variant="outline" className="capitalize">{review.crew_name}</Badge>
+                                <span className="text-xs text-muted-foreground">
+                                  {format(new Date(review.created_at), "MMM d, yyyy h:mm a")}
+                                </span>
+                              </div>
+                              <p className="text-sm font-medium">{review.reviewer_name}</p>
+                              <p className="text-sm text-muted-foreground mt-1">{review.review_text}</p>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="h-8 w-8 text-destructive hover:text-destructive hover:bg-destructive/10"
+                              onClick={() => handleDeleteReview(review.id)}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </ScrollArea>
+              </TabsContent>
+
               {/* Likes Tab */}
               <TabsContent value="likes" className="mt-4">
                 <ScrollArea className="h-[400px] pr-4">
@@ -339,6 +447,15 @@ const FionaAdminDialog: React.FC<FionaAdminDialogProps> = ({
                               <Heart className="h-4 w-4 fill-red-500 text-red-500" />
                               <span className="font-semibold">{stat.like_count}</span>
                             </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              className="text-destructive hover:text-destructive hover:bg-destructive/10 gap-1"
+                              onClick={() => handleResetCrewLikes(stat.crew_name)}
+                            >
+                              <RotateCcw className="h-3 w-3" />
+                              Reset
+                            </Button>
                           </div>
                           {/* Like dates */}
                           <div className="pl-12 space-y-1">
