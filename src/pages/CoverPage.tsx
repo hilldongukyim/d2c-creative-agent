@@ -10,6 +10,9 @@ import ContactOrder from "../components/ContactOrder";
 import CrewRequestForm, { CrewFormData } from "../components/CrewRequestForm";
 import KaiBackgroundRemovalPopup from "../components/KaiBackgroundRemovalPopup";
 import CrewRequestNotification, { CrewRequest } from "../components/CrewRequestNotification";
+import MochiSection from "../components/MochiSection";
+import DevelopmentRequestForm, { DevelopmentRequest } from "../components/DevelopmentRequestForm";
+import AdminRequestHistory from "../components/AdminRequestHistory";
 
 const aliceProfile = "/lovable-uploads/d004c9d6-0491-459c-8639-7730374641aa.png";
 const benProfile = "/lovable-uploads/ben-profile-v2.png";
@@ -25,6 +28,9 @@ const CoverPage = () => {
   const [kaiPopupOpen, setKaiPopupOpen] = useState(false);
   const [isCrewVisible, setIsCrewVisible] = useState(false);
   const [submittedRequests, setSubmittedRequests] = useState<CrewRequest[]>([]);
+  const [devRequestFormOpen, setDevRequestFormOpen] = useState(false);
+  const [adminHistoryOpen, setAdminHistoryOpen] = useState(false);
+  const [developmentRequests, setDevelopmentRequests] = useState<DevelopmentRequest[]>([]);
   const crewSectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -123,6 +129,14 @@ const CoverPage = () => {
     setSubmittedRequests(prev => prev.filter(req => req.id !== id));
   };
 
+  const handleDevRequestSuccess = (data: DevelopmentRequest) => {
+    setDevelopmentRequests(prev => [...prev, data]);
+  };
+
+  const handleDeleteDevRequest = (id: string) => {
+    setDevelopmentRequests(prev => prev.filter(req => req.id !== id));
+  };
+
   return (
     <div className="h-screen overflow-y-auto snap-y snap-mandatory">
       {/* Notification Bell */}
@@ -215,7 +229,13 @@ const CoverPage = () => {
             <FunctionMap 
               profiles={{ yumi: aliceProfile, ben: benProfile }} 
               onProfileClick={handleProfileClick} 
-              highlightName={searchTerm || highlightName || undefined} 
+              highlightName={searchTerm || highlightName || undefined}
+              mochiSection={
+                <MochiSection 
+                  onRequestClick={() => setDevRequestFormOpen(true)}
+                  onHistoryClick={() => setAdminHistoryOpen(true)}
+                />
+              }
             />
           </section>
         </div>
@@ -244,6 +264,21 @@ const CoverPage = () => {
 
         {/* Kai Background Removal Popup */}
         <KaiBackgroundRemovalPopup open={kaiPopupOpen} onOpenChange={setKaiPopupOpen} />
+
+        {/* Development Request Form - Mochi */}
+        <DevelopmentRequestForm
+          open={devRequestFormOpen}
+          onOpenChange={setDevRequestFormOpen}
+          onSubmitSuccess={handleDevRequestSuccess}
+        />
+
+        {/* Admin Request History */}
+        <AdminRequestHistory
+          open={adminHistoryOpen}
+          onOpenChange={setAdminHistoryOpen}
+          requests={developmentRequests}
+          onDeleteRequest={handleDeleteDevRequest}
+        />
       </section>
     </div>
   );

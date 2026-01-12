@@ -22,11 +22,13 @@ type FunctionMapProps = {
   profiles: ProfileMap;
   onProfileClick?: (name: string) => void;
   highlightName?: string;
+  mochiSection?: React.ReactNode;
 };
 const FunctionMap: React.FC<FunctionMapProps> = ({
   profiles,
   onProfileClick,
-  highlightName
+  highlightName,
+  mochiSection
 }) => {
   const [hoveredProfile, setHoveredProfile] = useState<{
     name: string;
@@ -422,6 +424,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
             </div>
 
           </div>
+
+          {/* Mochi Section - Standalone Crew */}
+          {mochiSection}
         </div>
       </div>
 
