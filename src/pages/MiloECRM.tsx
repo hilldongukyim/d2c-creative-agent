@@ -72,6 +72,19 @@ const defaultLayoutTemplates: LayoutTemplate[] = [
 const STORAGE_KEY = 'milo-layout-templates';
 const ADMIN_PASSWORD = '1010';
 
+// Removed fields (kept here to auto-migrate any previously saved templates)
+const DISABLED_FIELD_IDS = new Set(['subheadline', 'discountLabel']);
+
+const normalizeLayoutTemplate = (t: LayoutTemplate): LayoutTemplate => ({
+  ...t,
+  textFields: (t.textFields || []).filter((f) => !DISABLED_FIELD_IDS.has(f.id)),
+});
+
+const normalizeTemplates = (templates: unknown): LayoutTemplate[] => {
+  if (!Array.isArray(templates)) return defaultLayoutTemplates.map(normalizeLayoutTemplate);
+  return (templates as LayoutTemplate[]).map(normalizeLayoutTemplate);
+};
+
 const MiloECRM: React.FC = () => {
   const navigate = useNavigate();
   const [selectedLayout, setSelectedLayout] = useState<LayoutTemplate | null>(null);
@@ -90,24 +103,26 @@ const MiloECRM: React.FC = () => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       try {
-        return JSON.parse(saved);
+        return normalizeTemplates(JSON.parse(saved));
       } catch {
-        return defaultLayoutTemplates;
+        return defaultLayoutTemplates.map(normalizeLayoutTemplate);
       }
     }
-    return defaultLayoutTemplates;
+    return defaultLayoutTemplates.map(normalizeLayoutTemplate);
   });
 
   // Save templates to localStorage
   const saveTemplates = (templates: LayoutTemplate[]) => {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(templates));
-    setLayoutTemplates(templates);
+    const normalized = normalizeTemplates(templates);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(normalized));
+    setLayoutTemplates(normalized);
   };
 
   const handleLayoutSelect = (layout: LayoutTemplate) => {
-    setSelectedLayout(layout);
+    const normalizedLayout = normalizeLayoutTemplate(layout);
+    setSelectedLayout(normalizedLayout);
     const initialValues: TextFieldValue = {};
-    layout.textFields.forEach(field => {
+    normalizedLayout.textFields.forEach(field => {
       initialValues[field.id] = field.defaultValue;
     });
     setTextValues(initialValues);
