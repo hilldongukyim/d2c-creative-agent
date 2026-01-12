@@ -54,6 +54,47 @@ function isValidExternalUrl(urlString: string): { valid: boolean; error?: string
   }
 }
 
+async function captureScreenshot(
+  url: string, 
+  apiKey: string, 
+  mobile: boolean
+): Promise<{ screenshot?: string; error?: string }> {
+  const requestBody: any = {
+    url: url,
+    formats: ["screenshot@fullPage"],
+    waitFor: 5000,
+  };
+
+  if (mobile) {
+    requestBody.mobile = true;
+  }
+
+  console.log(`Capturing ${mobile ? 'mobile' : 'PC'} screenshot for:`, url);
+
+  const response = await fetch("https://api.firecrawl.dev/v1/scrape", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(requestBody),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error(`Firecrawl API error (${mobile ? 'mobile' : 'PC'}):`, response.status, errorText);
+    return { error: `Failed to capture ${mobile ? 'mobile' : 'PC'} screenshot` };
+  }
+
+  const data = await response.json();
+  
+  if (!data.success) {
+    return { error: data.error || `${mobile ? 'Mobile' : 'PC'} scrape failed` };
+  }
+
+  return { screenshot: data.data?.screenshot || null };
+}
+
 serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
@@ -89,6 +130,38 @@ serve(async (req) => {
     }
 
     console.log("Scraping URL:", url, "Mode:", mode);
+
+    // Handle screenshot-both mode - capture both PC and Mobile screenshots
+    if (mode === "screenshot-both") {
+      console.log("Capturing both PC and Mobile screenshots...");
+      
+      // Capture both in parallel
+      const [pcResult, mobileResult] = await Promise.all([
+        captureScreenshot(url, FIRECRAWL_API_KEY, false),
+        captureScreenshot(url, FIRECRAWL_API_KEY, true),
+      ]);
+
+      if (pcResult.error && mobileResult.error) {
+        return new Response(JSON.stringify({ 
+          error: "Failed to capture screenshots",
+          details: { pc: pcResult.error, mobile: mobileResult.error }
+        }), {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      }
+
+      console.log("Both screenshots captured successfully");
+      
+      return new Response(JSON.stringify({
+        success: true,
+        mode: "screenshot-both",
+        pcScreenshot: pcResult.screenshot || null,
+        mobileScreenshot: mobileResult.screenshot || null,
+      }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
     
     const isScreenshot = mode === "screenshot-pc" || mode === "screenshot-mobile";
     const isMobile = mode === "screenshot-mobile";

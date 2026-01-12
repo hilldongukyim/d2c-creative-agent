@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Send, Loader2, RotateCcw, Mic, ListChecks, Monitor, Smartphone, Download, X, Play, Pause, Video } from "lucide-react";
+import { ArrowLeft, Send, Loader2, RotateCcw, Mic, ListChecks, Monitor, Smartphone, Download, X, Play, Pause, Video, Layers } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { ScreenshotCropEditor } from "@/components/ScreenshotCropEditor";
 
 interface PodcastSegment {
   imageUrl: string;
@@ -20,9 +21,11 @@ interface Message {
   script?: string;
   segments?: PodcastSegment[];
   videoBlob?: Blob;
+  pcScreenshot?: string;
+  mobileScreenshot?: string;
 }
 
-type AnalysisOption = "podcast" | "video-podcast" | "audit" | "screenshot-pc" | "screenshot-mobile";
+type AnalysisOption = "podcast" | "video-podcast" | "audit" | "screenshot-pc" | "screenshot-mobile" | "screenshot-both";
 
 const MaplePDP = () => {
   const navigate = useNavigate();
@@ -35,6 +38,10 @@ const MaplePDP = () => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentAudioIndex, setCurrentAudioIndex] = useState<number | null>(null);
   const [videoGenerationProgress, setVideoGenerationProgress] = useState<string | null>(null);
+  const [cropEditorData, setCropEditorData] = useState<{
+    pcScreenshot?: string;
+    mobileScreenshot?: string;
+  } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -63,7 +70,12 @@ const MaplePDP = () => {
     }
   };
 
-  const fetchPageContent = async (url: string, mode: string = "content"): Promise<{ content?: string; screenshot?: string }> => {
+  const fetchPageContent = async (url: string, mode: string = "content"): Promise<{ 
+    content?: string; 
+    screenshot?: string;
+    pcScreenshot?: string;
+    mobileScreenshot?: string;
+  }> => {
     const response = await fetch(
       `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/maple-scrape`,
       {
@@ -81,7 +93,12 @@ const MaplePDP = () => {
     const data = await response.json();
     if (!data.success) throw new Error(data.error || "Scrape failed");
 
-    return { content: data.content?.slice(0, 15000), screenshot: data.screenshot };
+    return { 
+      content: data.content?.slice(0, 15000), 
+      screenshot: data.screenshot,
+      pcScreenshot: data.pcScreenshot,
+      mobileScreenshot: data.mobileScreenshot,
+    };
   };
 
   const loadImage = (src: string): Promise<HTMLImageElement> => {
@@ -298,7 +315,31 @@ const MaplePDP = () => {
     setMessages((prev) => prev.filter((m) => m.role !== "options"));
 
     try {
-      if (option === "screenshot-pc" || option === "screenshot-mobile") {
+      if (option === "screenshot-both") {
+        // Capture both PC and Mobile screenshots
+        setMessages((prev) => [...prev, { role: "assistant", content: "Capturing PC & Mobile screenshots... 📸\nThis may take a moment." }]);
+        
+        const { pcScreenshot, mobileScreenshot } = await fetchPageContent(url, "screenshot-both");
+        
+        if (pcScreenshot || mobileScreenshot) {
+          setMessages((prev) => {
+            const newMessages = [...prev];
+            newMessages[newMessages.length - 1] = {
+              role: "assistant",
+              content: `Screenshots captured! Click "Open Editor" to select and crop areas.`,
+              pcScreenshot,
+              mobileScreenshot,
+            };
+            return newMessages;
+          });
+        } else {
+          setMessages((prev) => {
+            const newMessages = [...prev];
+            newMessages[newMessages.length - 1] = { role: "assistant", content: "Failed to capture screenshots. Please try again." };
+            return newMessages;
+          });
+        }
+      } else if (option === "screenshot-pc" || option === "screenshot-mobile") {
         setMessages((prev) => [...prev, { role: "assistant", content: `Taking ${option === "screenshot-pc" ? "PC" : "Mobile (iPhone)"} screenshot... 📸` }]);
         
         const { screenshot } = await fetchPageContent(url, option);
@@ -560,6 +601,7 @@ const MaplePDP = () => {
     setIsPlaying(false);
     setCurrentAudioIndex(null);
     setVideoGenerationProgress(null);
+    setCropEditorData(null);
   };
 
   const handleDownloadScreenshot = (e: React.MouseEvent, screenshotUrl: string) => {
@@ -618,8 +660,21 @@ const MaplePDP = () => {
     URL.revokeObjectURL(url);
   };
 
+  const handleOpenCropEditor = (pcScreenshot?: string, mobileScreenshot?: string) => {
+    setCropEditorData({ pcScreenshot, mobileScreenshot });
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 flex flex-col">
+      {/* Crop Editor Modal */}
+      {cropEditorData && (
+        <ScreenshotCropEditor
+          pcScreenshot={cropEditorData.pcScreenshot}
+          mobileScreenshot={cropEditorData.mobileScreenshot}
+          onClose={() => setCropEditorData(null)}
+        />
+      )}
+
       {/* Fullscreen Image Modal */}
       {fullscreenImage && (
         <div 
@@ -786,8 +841,59 @@ const MaplePDP = () => {
                         </div>
                       )}
 
-                      {/* Screenshot */}
-                      {message.screenshot && (
+                      {/* Screenshot Both - Open Editor Button */}
+                      {(message.pcScreenshot || message.mobileScreenshot) && (
+                        <div className="mt-4 space-y-3">
+                          <div className="flex gap-3 flex-wrap">
+                            {message.pcScreenshot && (
+                              <div className="flex-1 min-w-[200px]">
+                                <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
+                                  <Monitor className="w-3 h-3" /> PC Preview
+                                </p>
+                                <div 
+                                  className="rounded-lg overflow-hidden border border-border cursor-pointer hover:opacity-90 transition-opacity"
+                                  onClick={() => setFullscreenImage(message.pcScreenshot!)}
+                                >
+                                  <img 
+                                    src={message.pcScreenshot} 
+                                    alt="PC Screenshot" 
+                                    className="w-full h-32 object-cover object-top"
+                                  />
+                                </div>
+                              </div>
+                            )}
+                            {message.mobileScreenshot && (
+                              <div className="flex-1 min-w-[200px]">
+                                <p className="text-xs text-muted-foreground mb-2 flex items-center gap-1">
+                                  <Smartphone className="w-3 h-3" /> Mobile Preview
+                                </p>
+                                <div 
+                                  className="rounded-lg overflow-hidden border border-border cursor-pointer hover:opacity-90 transition-opacity"
+                                  onClick={() => setFullscreenImage(message.mobileScreenshot!)}
+                                >
+                                  <img 
+                                    src={message.mobileScreenshot} 
+                                    alt="Mobile Screenshot" 
+                                    className="w-full h-32 object-cover object-top"
+                                  />
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                          <Button
+                            variant="default"
+                            size="sm"
+                            onClick={() => handleOpenCropEditor(message.pcScreenshot, message.mobileScreenshot)}
+                            className="flex items-center gap-2"
+                          >
+                            <Layers className="w-4 h-4" />
+                            Open Crop Editor
+                          </Button>
+                        </div>
+                      )}
+
+                      {/* Single Screenshot */}
+                      {message.screenshot && !message.pcScreenshot && !message.mobileScreenshot && (
                         <div className="mt-3 space-y-2">
                           <div 
                             className="rounded-lg overflow-hidden border border-border cursor-pointer hover:opacity-90 transition-opacity inline-block"
@@ -817,6 +923,15 @@ const MaplePDP = () => {
                               className="text-muted-foreground"
                             >
                               View Full Size
+                            </Button>
+                            <Button
+                              variant="default"
+                              size="sm"
+                              onClick={() => handleOpenCropEditor(message.screenshot, undefined)}
+                              className="flex items-center gap-2"
+                            >
+                              <Layers className="w-4 h-4" />
+                              Crop Editor
                             </Button>
                           </div>
                         </div>
@@ -858,6 +973,16 @@ const MaplePDP = () => {
                         >
                           <ListChecks className="w-4 h-4" />
                           Content Audit
+                        </Button>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleOptionSelect("screenshot-both")}
+                          disabled={isLoading}
+                          className="flex items-center gap-2 bg-secondary/50 border-secondary hover:bg-secondary"
+                        >
+                          <Layers className="w-4 h-4" />
+                          Screenshot (Both)
                         </Button>
                         <Button
                           variant="outline"
@@ -904,20 +1029,19 @@ const MaplePDP = () => {
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder="Enter a PDP URL..."
-              className="flex-1 bg-transparent border-0 resize-none focus-visible:ring-0 p-0 min-h-[24px] max-h-[200px] text-foreground placeholder:text-muted-foreground"
+              className="flex-1 bg-transparent border-0 resize-none focus-visible:ring-0 focus-visible:ring-offset-0 text-foreground placeholder:text-muted-foreground min-h-[24px] max-h-[200px] py-0"
               rows={1}
               disabled={isLoading}
             />
             <Button
-              onClick={handleSend}
-              disabled={isLoading || !input.trim()}
               size="icon"
-              className="h-8 w-8 rounded-full bg-foreground hover:bg-foreground/90 disabled:bg-muted flex-shrink-0"
+              onClick={handleSend}
+              disabled={!input.trim() || isLoading}
+              className="h-8 w-8 rounded-full bg-primary hover:bg-primary/90 flex-shrink-0"
             >
               {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" />}
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground text-center mt-2">Maple creates video podcasts synced with product images 🎬</p>
         </div>
       </div>
     </div>
