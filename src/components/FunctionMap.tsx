@@ -104,6 +104,11 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       personality: "Organized and supportive, excels at managing digital assets and guiding users. Digital Asset Management, AEM, DAM On-Boarding, DAM Guide.",
       admin: { name: "Yunju bak", email: "yunju.bak@lge.com" }
     },
+    "milo": {
+      description: "Milo is an eCRM Designer who creates email content based on pre-designed layouts. He helps produce modular email components by customizing text, visuals, and formatting to match brand guidelines for customer communications.",
+      personality: "Detail-oriented and creative, excels at crafting visually appealing email content. eCRM Design, Email Marketing, Modular Content, Brand Compliance.",
+      admin: { name: "Donguk Yim", email: "donguk.yim@lge.com" }
+    },
     "anita": {
       description: "Anita is a Lifestyle Artist who creates compelling lifestyle content and visual storytelling for marketing campaigns.",
       personality: "Creative and artistic, excels at capturing lifestyle moments and brand aesthetics. Lifestyle Content, Visual Storytelling, Brand Aesthetics.",
@@ -155,6 +160,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         name: "Anita",
         role: "Lifestyle Artist",
         imageSrc: "/lovable-uploads/anita-profile.png"
+      }, {
+        name: "Milo",
+        role: "eCRM Designer",
+        imageSrc: "/lovable-uploads/milo-profile.png"
       }]
     }, {
       title: "On-Site Marketing Team",
@@ -321,7 +330,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                           {item.name.charAt(0)}
                                         </div>}
                                     </div>
-                                    {(item.name === "Ben" || item.name === "Kai" || item.name === "Noa" || item.name === "Candy" || item.name === "Anita") && (
+                                    {(item.name === "Ben" || item.name === "Kai" || item.name === "Noa" || item.name === "Candy" || item.name === "Anita" || item.name === "Milo") && (
                                       <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-green-500 rounded-full border-2 border-background" />
                                     )}
                                     {(item.name === "Maple" || item.name === "Mateo") && (
@@ -353,7 +362,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                             }}>
                                         </div>}
                                     </div>
-                                    {(item.name === "Ben" || item.name === "Kai" || item.name === "Noa" || item.name === "Candy" || item.name === "Anita") && (
+                                    {(item.name === "Ben" || item.name === "Kai" || item.name === "Noa" || item.name === "Candy" || item.name === "Anita" || item.name === "Milo") && (
                                       <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-green-500 rounded-full border-2 border-background" />
                                     )}
                                     {(item.name === "Maple" || item.name === "Mateo") && (
@@ -384,7 +393,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                                         {item.name.charAt(0)}
                                       </div>}
                                   </div>
-                                  {(item.name === "Ben" || item.name === "Kai" || item.name === "Noa" || item.name === "Candy" || item.name === "Anita") && (
+                                  {(item.name === "Ben" || item.name === "Kai" || item.name === "Noa" || item.name === "Candy" || item.name === "Anita" || item.name === "Milo") && (
                                     <span className="absolute bottom-0 right-0 z-10 h-3.5 w-3.5 bg-green-500 rounded-full border-2 border-background" />
                                   )}
                                   {(item.name === "Maple" || item.name === "Mateo") && (
