@@ -22,6 +22,7 @@ interface FionaAdminDialogProps {
 interface CrewLikeStat {
   crew_name: string;
   like_count: number;
+  likes: { id: string; created_at: string }[];
 }
 
 const ADMIN_PASSWORD = "1010";
@@ -46,19 +47,27 @@ const FionaAdminDialog: React.FC<FionaAdminDialogProps> = ({
 
   const fetchLikeStats = async () => {
     setIsLoadingStats(true);
-    // Fetch all likes and group by crew_name
+    // Fetch all likes with dates and group by crew_name
     const { data } = await supabase
       .from("crew_likes")
-      .select("crew_name");
+      .select("id, crew_name, created_at")
+      .order("created_at", { ascending: false });
 
     if (data) {
-      const counts: Record<string, number> = {};
+      const grouped: Record<string, { id: string; created_at: string }[]> = {};
       data.forEach((like) => {
-        counts[like.crew_name] = (counts[like.crew_name] || 0) + 1;
+        if (!grouped[like.crew_name]) {
+          grouped[like.crew_name] = [];
+        }
+        grouped[like.crew_name].push({ id: like.id, created_at: like.created_at });
       });
       
-      const stats = Object.entries(counts)
-        .map(([crew_name, like_count]) => ({ crew_name, like_count }))
+      const stats = Object.entries(grouped)
+        .map(([crew_name, likes]) => ({ 
+          crew_name, 
+          like_count: likes.length,
+          likes 
+        }))
         .sort((a, b) => b.like_count - a.like_count);
       
       setLikeStats(stats);
@@ -313,21 +322,40 @@ const FionaAdminDialog: React.FC<FionaAdminDialogProps> = ({
                       <p>No likes recorded yet.</p>
                     </div>
                   ) : (
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                       {likeStats.map((stat, index) => (
                         <div
                           key={stat.crew_name}
-                          className="flex items-center gap-4 bg-muted/50 rounded-lg p-3"
+                          className="bg-muted/50 rounded-lg p-4"
                         >
-                          <div className="flex items-center justify-center h-8 w-8 rounded-full bg-primary/10 text-primary font-semibold">
-                            {index + 1}
+                          <div className="flex items-center gap-4 mb-3">
+                            <div className="flex items-center justify-center h-8 w-8 rounded-full bg-primary/10 text-primary font-semibold">
+                              {index + 1}
+                            </div>
+                            <div className="flex-1">
+                              <span className="font-medium capitalize">{stat.crew_name}</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <Heart className="h-4 w-4 fill-red-500 text-red-500" />
+                              <span className="font-semibold">{stat.like_count}</span>
+                            </div>
                           </div>
-                          <div className="flex-1">
-                            <span className="font-medium capitalize">{stat.crew_name}</span>
-                          </div>
-                          <div className="flex items-center gap-2">
-                            <Heart className="h-4 w-4 fill-red-500 text-red-500" />
-                            <span className="font-semibold">{stat.like_count}</span>
+                          {/* Like dates */}
+                          <div className="pl-12 space-y-1">
+                            <p className="text-xs text-muted-foreground mb-2">Like History:</p>
+                            <div className="flex flex-wrap gap-2">
+                              {stat.likes.slice(0, 10).map((like) => (
+                                <Badge key={like.id} variant="outline" className="text-xs">
+                                  <Calendar className="h-3 w-3 mr-1" />
+                                  {format(new Date(like.created_at), "MMM d, yyyy h:mm a")}
+                                </Badge>
+                              ))}
+                              {stat.likes.length > 10 && (
+                                <Badge variant="secondary" className="text-xs">
+                                  +{stat.likes.length - 10} more
+                                </Badge>
+                              )}
+                            </div>
                           </div>
                         </div>
                       ))}
