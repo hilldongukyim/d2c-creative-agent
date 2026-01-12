@@ -10,10 +10,10 @@ import ContactOrder from "../components/ContactOrder";
 import CrewRequestForm, { CrewFormData } from "../components/CrewRequestForm";
 import KaiBackgroundRemovalPopup from "../components/KaiBackgroundRemovalPopup";
 import CrewRequestNotification, { CrewRequest } from "../components/CrewRequestNotification";
-import MochiSection from "../components/MochiSection";
+import SupportSection from "../components/SupportSection";
 import DevelopmentRequestForm, { DevelopmentRequest } from "../components/DevelopmentRequestForm";
 import AdminRequestHistory from "../components/AdminRequestHistory";
-
+import MellNewsletterDialog from "../components/MellNewsletterDialog";
 const aliceProfile = "/lovable-uploads/d004c9d6-0491-459c-8639-7730374641aa.png";
 const benProfile = "/lovable-uploads/ben-profile-v2.png";
 
@@ -31,6 +31,7 @@ const CoverPage = () => {
   const [devRequestFormOpen, setDevRequestFormOpen] = useState(false);
   const [adminHistoryOpen, setAdminHistoryOpen] = useState(false);
   const [developmentRequests, setDevelopmentRequests] = useState<DevelopmentRequest[]>([]);
+  const [mellDialogOpen, setMellDialogOpen] = useState(false);
   const crewSectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
@@ -110,6 +111,14 @@ const CoverPage = () => {
     }
     if (lower === "luna") {
       window.open("https://luna-marketing.lovable.app", "_blank");
+      return;
+    }
+    if (lower === "mochi") {
+      setDevRequestFormOpen(true);
+      return;
+    }
+    if (lower === "mell") {
+      setMellDialogOpen(true);
       return;
     }
     setSelectedName(name);
@@ -230,10 +239,11 @@ const CoverPage = () => {
               profiles={{ yumi: aliceProfile, ben: benProfile }} 
               onProfileClick={handleProfileClick} 
               highlightName={searchTerm || highlightName || undefined}
-              mochiSection={
-                <MochiSection 
-                  onRequestClick={() => setDevRequestFormOpen(true)}
-                  onHistoryClick={() => setAdminHistoryOpen(true)}
+              supportSection={
+                <SupportSection 
+                  onMochiRequestClick={() => setDevRequestFormOpen(true)}
+                  onMochiHistoryClick={() => setAdminHistoryOpen(true)}
+                  onMellClick={() => setMellDialogOpen(true)}
                 />
               }
             />
@@ -278,6 +288,12 @@ const CoverPage = () => {
           onOpenChange={setAdminHistoryOpen}
           requests={developmentRequests}
           onDeleteRequest={handleDeleteDevRequest}
+        />
+
+        {/* Mell Newsletter Dialog */}
+        <MellNewsletterDialog
+          open={mellDialogOpen}
+          onOpenChange={setMellDialogOpen}
         />
       </section>
     </div>
