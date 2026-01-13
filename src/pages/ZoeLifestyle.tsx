@@ -682,42 +682,49 @@ const ZoeLifestyle = () => {
   const isAnyLoading = isLoading || isGenerating || isUpscaling || isResizing || isEditing || isCompositing || isGeneratingVideo;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#E8D5E0] via-[#F0E6E8] to-[#E8D5E0] flex flex-col">
-      {/* Header */}
-      <div className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-gray-100">
-        <div className="flex items-center justify-between px-4 py-3 max-w-4xl mx-auto">
-          <Button
-            onClick={() => navigate("/home")}
-            variant="ghost"
-            size="sm"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
-          </Button>
-          <div className="flex items-center gap-2">
-            <img
-              src="/lovable-uploads/anita-profile.png"
-              alt="Anita"
-              className="w-8 h-8 rounded-full border-2 border-purple-200"
-            />
-            <div className="text-left">
-              <p className="text-sm font-semibold text-gray-800">Anita</p>
-              <p className="text-xs text-gray-500">Lifestyle Artist</p>
-            </div>
-          </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={() => setShowFeedbackDialog(true)}
-          >
-            <MessageCircle className="w-4 h-4" />
-          </Button>
-        </div>
+    <div className="min-h-screen bg-gradient-to-br from-[#E8D5E0] via-[#F0E6E8] to-[#E8D5E0] flex flex-col items-center justify-center p-4">
+      {/* Back Button */}
+      <div className="fixed top-4 left-4 z-50">
+        <Button
+          onClick={() => navigate("/home")}
+          variant="ghost"
+          size="sm"
+          className="bg-white/80 backdrop-blur-sm hover:bg-white/90"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back
+        </Button>
       </div>
 
-      {/* Chat Area */}
-      <div className="flex-1 overflow-y-auto pt-20 pb-32 px-4">
-        <div className="max-w-2xl mx-auto space-y-4">
+      {/* Feedback Button */}
+      <div className="fixed top-4 right-4 z-50">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setShowFeedbackDialog(true)}
+          className="bg-white/80 backdrop-blur-sm hover:bg-white/90"
+        >
+          <MessageCircle className="w-4 h-4" />
+        </Button>
+      </div>
+
+      {/* Main Chat Box */}
+      <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl flex flex-col overflow-hidden" style={{ maxHeight: "85vh" }}>
+        {/* Header inside box */}
+        <div className="flex items-center gap-3 px-5 py-4 border-b border-gray-100 bg-gradient-to-r from-purple-50 to-pink-50">
+          <img
+            src="/lovable-uploads/anita-profile.png"
+            alt="Anita"
+            className="w-10 h-10 rounded-full border-2 border-purple-200 shadow-sm"
+          />
+          <div className="text-left">
+            <p className="text-base font-semibold text-gray-800">Anita</p>
+            <p className="text-xs text-gray-500">Lifestyle Artist</p>
+          </div>
+        </div>
+
+        {/* Chat Area */}
+        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4" style={{ minHeight: "300px" }}>
           {messages.map((msg, index) => (
             <div key={msg.id} className="group relative">
               {msg.type === "anita" ? (
@@ -743,11 +750,11 @@ const ZoeLifestyle = () => {
           {isAnyLoading && (
             <div className="flex gap-3 items-start">
               <img
-                src="/lovable-uploads/zoe-profile.png"
-                alt="Zoe"
+                src="/lovable-uploads/anita-profile.png"
+                alt="Anita"
                 className="w-10 h-10 rounded-full border-2 border-white shadow-md flex-shrink-0"
               />
-              <div className="bg-white rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
+              <div className="bg-gray-100 rounded-2xl rounded-tl-sm px-4 py-3 shadow-sm">
                 <div className="flex items-center gap-2">
                   <Loader2 className="w-4 h-4 animate-spin text-purple-500" />
                   <span className="text-sm text-gray-500">Working...</span>
@@ -760,11 +767,11 @@ const ZoeLifestyle = () => {
           {generatedImage && !isGenerating && (
             <div className="flex gap-3 items-start">
               <img
-                src="/lovable-uploads/zoe-profile.png"
-                alt="Zoe"
+                src="/lovable-uploads/anita-profile.png"
+                alt="Anita"
                 className="w-10 h-10 rounded-full border-2 border-white shadow-md flex-shrink-0"
               />
-              <div className="bg-white rounded-2xl rounded-tl-sm p-2 shadow-sm max-w-[90%]">
+              <div className="bg-gray-100 rounded-2xl rounded-tl-sm p-2 shadow-sm max-w-[90%]">
                 <img
                   src={generatedImage}
                   alt="Generated"
@@ -781,11 +788,11 @@ const ZoeLifestyle = () => {
           {generatedVideoUrl && !isGeneratingVideo && (
             <div className="flex gap-3 items-start">
               <img
-                src="/lovable-uploads/zoe-profile.png"
-                alt="Zoe"
+                src="/lovable-uploads/anita-profile.png"
+                alt="Anita"
                 className="w-10 h-10 rounded-full border-2 border-white shadow-md flex-shrink-0"
               />
-              <div className="bg-white rounded-2xl rounded-tl-sm p-2 shadow-sm max-w-[90%]">
+              <div className="bg-gray-100 rounded-2xl rounded-tl-sm p-2 shadow-sm max-w-[90%]">
                 <video
                   src={generatedVideoUrl}
                   controls
@@ -805,11 +812,9 @@ const ZoeLifestyle = () => {
           
           <div ref={chatEndRef} />
         </div>
-      </div>
 
-      {/* Input Area */}
-      <div className="fixed bottom-0 left-0 right-0 bg-white/95 backdrop-blur-md border-t border-gray-100 p-4">
-        <div className="max-w-2xl mx-auto">
+        {/* Input Area - inside the box */}
+        <div className="border-t border-gray-100 bg-gray-50 p-4">
           {/* URL Input */}
           {showInput && inputType === "url" && (
             <div className="flex gap-2">
@@ -818,7 +823,7 @@ const ZoeLifestyle = () => {
                 value={url}
                 onChange={(e) => setUrl(e.target.value)}
                 placeholder="Enter PDP URL..."
-                className="flex-1"
+                className="flex-1 bg-white"
                 onKeyDown={(e) => e.key === "Enter" && handleUrlSubmit()}
               />
               <Button
@@ -885,7 +890,7 @@ const ZoeLifestyle = () => {
                   value={editPrompt}
                   onChange={(e) => setEditPrompt(e.target.value)}
                   placeholder="Enter your edit request..."
-                  className="flex-1"
+                  className="flex-1 bg-white"
                   onKeyDown={(e) => e.key === "Enter" && editPrompt.trim() && handleEditImage()}
                 />
                 <Button
