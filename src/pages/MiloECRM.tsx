@@ -6,7 +6,9 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { ArrowLeft, Download, RotateCcw, Type, Settings, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Bold, Italic, Plus, Minus, Lock } from "lucide-react";
+import { ArrowLeft, Download, RotateCcw, Type, Settings, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Bold, Italic, Plus, Minus, Lock, Eye, EyeOff } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
 
 interface TextFieldConfig {
@@ -20,6 +22,12 @@ interface TextFieldConfig {
   fontStyle: string;
   color: string;
   maxWidth?: number;
+  visible?: boolean;
+}
+
+interface PlainBoardVariant {
+  color: 'black' | 'active-red' | 'warm-grey' | 'dark-grey';
+  size: 'normal' | 'narrow';
 }
 
 interface LayoutTemplate {
@@ -28,11 +36,80 @@ interface LayoutTemplate {
   cleanImage: string;
   previewImage: string;
   textFields: TextFieldConfig[];
+  isPlainBoard?: boolean;
+  plainBoardVariant?: PlainBoardVariant;
 }
 
 interface TextFieldValue {
   [key: string]: string;
 }
+
+// Plain Board color configurations
+const plainBoardColors = {
+  'black': { bg: '#000000', textColor: '#FFFFFF', label: 'Black' },
+  'active-red': { bg: '#F43F3F', textColor: '#FFFFFF', label: 'Active Red' },
+  'warm-grey': { bg: '#E8E4DF', textColor: '#000000', label: 'Warm Grey' },
+  'dark-grey': { bg: '#6B6B6B', textColor: '#FFFFFF', label: 'Dark Grey' },
+};
+
+const plainBoardImages: Record<string, Record<string, string>> = {
+  'black': {
+    'normal': '/lovable-uploads/plain-board-black.png',
+    'narrow': '/lovable-uploads/plain-board-black-narrow.png',
+  },
+  'active-red': {
+    'normal': '/lovable-uploads/plain-board-active-red.png',
+    'narrow': '/lovable-uploads/plain-board-active-red-narrow.png',
+  },
+  'warm-grey': {
+    'normal': '/lovable-uploads/plain-board-warm-grey.png',
+    'narrow': '/lovable-uploads/plain-board-warm-grey-narrow.png',
+  },
+  'dark-grey': {
+    'normal': '/lovable-uploads/plain-board-dark-grey.png',
+    'narrow': '/lovable-uploads/plain-board-dark-grey-narrow.png',
+  },
+};
+
+const getPlainBoardTemplate = (color: string, size: string): LayoutTemplate => {
+  const colorConfig = plainBoardColors[color as keyof typeof plainBoardColors];
+  return {
+    id: `plain-board-${color}-${size}`,
+    name: `Plain Board - ${colorConfig.label} (${size === 'narrow' ? 'Narrow' : 'Normal'})`,
+    cleanImage: plainBoardImages[color][size],
+    previewImage: plainBoardImages[color][size],
+    isPlainBoard: true,
+    plainBoardVariant: { color: color as PlainBoardVariant['color'], size: size as PlainBoardVariant['size'] },
+    textFields: [
+      {
+        id: 'text1',
+        label: 'Text 1',
+        defaultValue: 'Text Line 1',
+        x: 20,
+        y: size === 'narrow' ? 30 : 60,
+        fontSize: size === 'narrow' ? 16 : 24,
+        fontWeight: '400',
+        fontStyle: 'normal',
+        color: colorConfig.textColor,
+        maxWidth: 360,
+        visible: true,
+      },
+      {
+        id: 'text2',
+        label: 'Text 2',
+        defaultValue: 'Text Line 2',
+        x: 20,
+        y: size === 'narrow' ? 55 : 100,
+        fontSize: size === 'narrow' ? 14 : 20,
+        fontWeight: '400',
+        fontStyle: 'normal',
+        color: colorConfig.textColor,
+        maxWidth: 360,
+        visible: true,
+      },
+    ],
+  };
+};
 
 const defaultLayoutTemplates: LayoutTemplate[] = [
   {
@@ -52,6 +129,7 @@ const defaultLayoutTemplates: LayoutTemplate[] = [
         fontStyle: 'italic',
         color: '#FFFFFF',
         maxWidth: 320,
+        visible: true,
       },
       {
         id: 'discount',
@@ -64,6 +142,43 @@ const defaultLayoutTemplates: LayoutTemplate[] = [
         fontStyle: 'normal',
         color: '#FFFFFF',
         maxWidth: 320,
+        visible: true,
+      },
+    ],
+  },
+  {
+    id: 'plain-board',
+    name: 'Plain Board',
+    cleanImage: '/lovable-uploads/plain-board-black.png',
+    previewImage: '/lovable-uploads/plain-board-black.png',
+    isPlainBoard: true,
+    plainBoardVariant: { color: 'black', size: 'normal' },
+    textFields: [
+      {
+        id: 'text1',
+        label: 'Text 1',
+        defaultValue: 'Text Line 1',
+        x: 20,
+        y: 60,
+        fontSize: 24,
+        fontWeight: '400',
+        fontStyle: 'normal',
+        color: '#FFFFFF',
+        maxWidth: 360,
+        visible: true,
+      },
+      {
+        id: 'text2',
+        label: 'Text 2',
+        defaultValue: 'Text Line 2',
+        x: 20,
+        y: 100,
+        fontSize: 20,
+        fontWeight: '400',
+        fontStyle: 'normal',
+        color: '#FFFFFF',
+        maxWidth: 360,
+        visible: true,
       },
     ],
   },
@@ -196,6 +311,9 @@ const MiloECRM: React.FC = () => {
       const scaleY = img.height / (previewWidth * (img.height / img.width));
 
       selectedLayout.textFields.forEach(field => {
+        // Skip hidden fields
+        if (field.visible === false) return;
+        
         const text = textValues[field.id] || field.defaultValue;
         ctx.font = `${field.fontStyle} ${field.fontWeight} ${field.fontSize * scaleX}px "LG EI Text", sans-serif`;
         ctx.fillStyle = field.color;
@@ -253,7 +371,7 @@ const MiloECRM: React.FC = () => {
   };
 
   // Admin functions to update field properties
-  const updateFieldProperty = (fieldId: string, property: keyof TextFieldConfig, value: number | string) => {
+  const updateFieldProperty = (fieldId: string, property: keyof TextFieldConfig, value: number | string | boolean) => {
     if (!selectedLayout) return;
 
     const updatedTextFields = selectedLayout.textFields.map(field =>
@@ -268,6 +386,54 @@ const MiloECRM: React.FC = () => {
       t.id === selectedLayout.id ? updatedLayout : t
     );
     saveTemplates(updatedTemplates);
+  };
+
+  // Toggle field visibility
+  const toggleFieldVisibility = (fieldId: string) => {
+    const field = selectedLayout?.textFields.find(f => f.id === fieldId);
+    if (!field) return;
+    updateFieldProperty(fieldId, 'visible', !(field.visible !== false));
+  };
+
+  // Change Plain Board variant (color/size)
+  const changePlainBoardVariant = (color: string, size: string) => {
+    if (!selectedLayout?.isPlainBoard) return;
+    
+    const newTemplate = getPlainBoardTemplate(color, size);
+    // Preserve current text field settings from selected layout
+    const preservedFields = newTemplate.textFields.map((newField, index) => {
+      const existingField = selectedLayout.textFields[index];
+      if (existingField) {
+        return {
+          ...newField,
+          x: existingField.x,
+          y: existingField.y,
+          fontSize: existingField.fontSize,
+          fontWeight: existingField.fontWeight,
+          fontStyle: existingField.fontStyle,
+          visible: existingField.visible,
+          // Update color based on new background
+          color: plainBoardColors[color as keyof typeof plainBoardColors].textColor,
+        };
+      }
+      return newField;
+    });
+    
+    const updatedLayout = { ...newTemplate, textFields: preservedFields };
+    setSelectedLayout(updatedLayout);
+    
+    // Save to templates
+    const existingIndex = layoutTemplates.findIndex(t => t.id === 'plain-board');
+    if (existingIndex >= 0) {
+      const updatedTemplates = [...layoutTemplates];
+      updatedTemplates[existingIndex] = { ...updatedLayout, id: 'plain-board' };
+      saveTemplates(updatedTemplates);
+    }
+  };
+
+  // Change font weight with more options
+  const changeFontWeight = (fieldId: string, weight: string) => {
+    updateFieldProperty(fieldId, 'fontWeight', weight);
   };
 
   const moveField = (fieldId: string, direction: 'up' | 'down' | 'left' | 'right', step: number = 2) => {
@@ -513,7 +679,7 @@ const MiloECRM: React.FC = () => {
                     className="w-full h-auto"
                   />
                   {/* Text Overlays */}
-                  {selectedLayout.textFields.map(field => (
+                  {selectedLayout.textFields.filter(field => field.visible !== false).map(field => (
                     <div
                       key={field.id}
                       className={`absolute whitespace-pre-wrap select-none ${
@@ -679,19 +845,85 @@ const MiloECRM: React.FC = () => {
                 <h2 className="text-lg font-semibold text-foreground">Edit Text</h2>
               </div>
 
+              {/* Plain Board Controls */}
+              {selectedLayout.isPlainBoard && (
+                <Card>
+                  <CardHeader className="pb-2">
+                    <CardTitle className="text-sm">Board Settings</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-xs text-muted-foreground">Color</Label>
+                        <Select 
+                          value={selectedLayout.plainBoardVariant?.color || 'black'}
+                          onValueChange={(color) => changePlainBoardVariant(color, selectedLayout.plainBoardVariant?.size || 'normal')}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="black">Black</SelectItem>
+                            <SelectItem value="active-red">Active Red</SelectItem>
+                            <SelectItem value="warm-grey">Warm Grey</SelectItem>
+                            <SelectItem value="dark-grey">Dark Grey</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-xs text-muted-foreground">Size</Label>
+                        <Select 
+                          value={selectedLayout.plainBoardVariant?.size || 'normal'}
+                          onValueChange={(size) => changePlainBoardVariant(selectedLayout.plainBoardVariant?.color || 'black', size)}
+                        >
+                          <SelectTrigger>
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="normal">Normal</SelectItem>
+                            <SelectItem value="narrow">Narrow</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
               <Card>
                 <CardContent className="pt-6 space-y-4">
                   {selectedLayout.textFields.map(field => (
                     <div 
                       key={field.id} 
                       className={`space-y-2 p-3 rounded-lg transition-colors ${
+                        field.visible === false ? 'opacity-50' : ''
+                      } ${
                         isAdminMode && selectedFieldId === field.id 
                           ? 'bg-primary/10 border border-primary' 
                           : 'hover:bg-muted/50'
                       }`}
                       onClick={() => isAdminMode && setSelectedFieldId(field.id)}
                     >
-                      <Label htmlFor={field.id}>{field.label}</Label>
+                      <div className="flex items-center justify-between">
+                        <Label htmlFor={field.id}>{field.label}</Label>
+                        <div className="flex items-center gap-2">
+                          <button
+                            type="button"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleFieldVisibility(field.id);
+                            }}
+                            className="text-muted-foreground hover:text-foreground transition-colors"
+                            title={field.visible !== false ? 'Hide text' : 'Show text'}
+                          >
+                            {field.visible !== false ? (
+                              <Eye className="h-4 w-4" />
+                            ) : (
+                              <EyeOff className="h-4 w-4" />
+                            )}
+                          </button>
+                        </div>
+                      </div>
                       <Textarea
                         id={field.id}
                         value={textValues[field.id] || ''}
@@ -699,11 +931,29 @@ const MiloECRM: React.FC = () => {
                         placeholder={field.defaultValue}
                         rows={2}
                         className="resize-none"
+                        disabled={field.visible === false}
                       />
-                      <p className="text-xs text-muted-foreground">
-                        Font: {field.fontSize}px, {field.fontWeight}, {field.fontStyle}
-                        {isAdminMode && ` | Position: (${field.x}, ${field.y})`}
-                      </p>
+                      <div className="flex items-center justify-between text-xs text-muted-foreground">
+                        <span>Font: {field.fontSize}px, {field.fontWeight}, {field.fontStyle}</span>
+                        <div className="flex items-center gap-2">
+                          <Select 
+                            value={field.fontWeight}
+                            onValueChange={(weight) => changeFontWeight(field.id, weight)}
+                          >
+                            <SelectTrigger className="h-6 w-24 text-xs">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="300">Light</SelectItem>
+                              <SelectItem value="400">Regular</SelectItem>
+                              <SelectItem value="500">Medium</SelectItem>
+                              <SelectItem value="600">SemiBold</SelectItem>
+                              <SelectItem value="700">Bold</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                      {isAdminMode && <p className="text-xs text-muted-foreground">Position: ({field.x}, {field.y})</p>}
                     </div>
                   ))}
                 </CardContent>
