@@ -139,10 +139,13 @@ const MiloECRM: React.FC = () => {
   };
 
   const handleLayoutSelect = (layout: LayoutTemplate) => {
-    const normalizedLayout = normalizeLayoutTemplate(layout);
-    setSelectedLayout(normalizedLayout);
+    // Find the saved template from layoutTemplates (which includes localStorage data)
+    const savedTemplate = layoutTemplates.find(t => t.id === layout.id);
+    const templateToUse = savedTemplate ? normalizeLayoutTemplate(savedTemplate) : normalizeLayoutTemplate(layout);
+    
+    setSelectedLayout(templateToUse);
     const initialValues: TextFieldValue = {};
-    normalizedLayout.textFields.forEach(field => {
+    templateToUse.textFields.forEach(field => {
       initialValues[field.id] = field.defaultValue;
     });
     setTextValues(initialValues);
