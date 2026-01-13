@@ -205,7 +205,7 @@ const PTOGallery = () => {
             <Button 
               variant="outline"
               className="text-white border-white hover:bg-white hover:text-black px-6 py-2 text-base transition-all duration-300"
-              onClick={() => navigate("/home")}
+              onClick={() => navigate("/")}
             >
               Back to Home
             </Button>
@@ -219,7 +219,7 @@ const PTOGallery = () => {
           <div className="mb-6">
             <Button 
               variant="ghost" 
-              onClick={() => navigate("/home")}
+              onClick={() => navigate("/")}
               className="mb-4 text-gray-400 hover:text-gray-300"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />

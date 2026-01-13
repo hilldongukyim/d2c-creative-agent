@@ -268,7 +268,7 @@ const WorkflowDashboard = () => {
           <div className="flex justify-between items-start mb-6">
             <Button 
               variant="ghost" 
-              onClick={() => navigate("/home")}
+              onClick={() => navigate("/")}
               className="mb-4"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />

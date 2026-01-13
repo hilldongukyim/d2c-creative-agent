@@ -114,7 +114,7 @@ const Crawling = () => {
         <div className="mb-6">
           <Button
             variant="ghost"
-            onClick={() => navigate("/home")} 
+            onClick={() => navigate("/")} 
             className="mb-4 text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="h-4 w-4 mr-2" />

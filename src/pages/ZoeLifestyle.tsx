@@ -686,7 +686,7 @@ const ZoeLifestyle = () => {
       {/* Back Button */}
       <div className="fixed top-4 left-4 z-50">
         <Button
-          onClick={() => navigate("/home")}
+          onClick={() => navigate("/")}
           variant="ghost"
           size="sm"
           className="bg-white/80 backdrop-blur-sm hover:bg-white/90"

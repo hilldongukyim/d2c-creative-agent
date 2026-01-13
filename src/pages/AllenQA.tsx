@@ -26,7 +26,7 @@ const AllenQA = () => {
       
       {/* Home button */}
       <div className="fixed top-4 right-4 z-50">
-        <Button onClick={() => navigate('/home')} variant="outline" size="sm" className="flex items-center gap-2">
+        <Button onClick={() => navigate('/')} variant="outline" size="sm" className="flex items-center gap-2">
           <Home className="h-4 w-4" />
           Home
         </Button>
