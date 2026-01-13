@@ -153,10 +153,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         role: "Product Information Manager",
         imageSrc: "/lovable-uploads/noa-profile.png"
       }, {
-        name: "Candy",
-        role: "DAM Tutor",
-        imageSrc: "/lovable-uploads/candy-profile.png"
-      }, {
         name: "Anita",
         role: "Lifestyle Artist",
         imageSrc: "/lovable-uploads/anita-profile.png"
@@ -189,6 +185,13 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         name: "Theo",
         role: "NPI Operation Manager",
         imageSrc: "/lovable-uploads/theo-profile.png"
+      }]
+    }, {
+      title: "Platform Operation Team",
+      items: [{
+        name: "Candy",
+        role: "DAM Tutor",
+        imageSrc: "/lovable-uploads/candy-profile.png"
       }]
     }]
   }, {
