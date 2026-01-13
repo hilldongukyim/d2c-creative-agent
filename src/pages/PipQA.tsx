@@ -123,7 +123,7 @@ const PipQA = () => {
       <div className="max-w-4xl mx-auto mb-6">
         <Button 
           variant="ghost" 
-          onClick={() => navigate('/home')}
+          onClick={() => navigate('/')}
           className="mb-4"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
