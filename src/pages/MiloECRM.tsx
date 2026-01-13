@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -318,6 +318,100 @@ const MiloECRM: React.FC = () => {
     return selectedLayout.textFields.find(f => f.id === selectedFieldId);
   };
 
+  // Drag state for text fields
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStartPos, setDragStartPos] = useState({ x: 0, y: 0 });
+  const [dragFieldStartPos, setDragFieldStartPos] = useState({ x: 0, y: 0 });
+  const previewContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleMouseDown = (e: React.MouseEvent, fieldId: string) => {
+    if (!isAdminMode) return;
+    e.preventDefault();
+    e.stopPropagation();
+    
+    setSelectedFieldId(fieldId);
+    setIsDragging(true);
+    setDragStartPos({ x: e.clientX, y: e.clientY });
+    
+    const field = selectedLayout?.textFields.find(f => f.id === fieldId);
+    if (field) {
+      setDragFieldStartPos({ x: field.x, y: field.y });
+    }
+  };
+
+  const handleMouseMove = useCallback((e: MouseEvent) => {
+    if (!isDragging || !selectedFieldId || !selectedLayout) return;
+    
+    const deltaX = e.clientX - dragStartPos.x;
+    const deltaY = e.clientY - dragStartPos.y;
+    
+    const newX = Math.max(0, dragFieldStartPos.x + deltaX);
+    const newY = Math.max(0, dragFieldStartPos.y + deltaY);
+    
+    // Update position without saving to localStorage during drag
+    const updatedTextFields = selectedLayout.textFields.map(field =>
+      field.id === selectedFieldId ? { ...field, x: newX, y: newY } : field
+    );
+    setSelectedLayout({ ...selectedLayout, textFields: updatedTextFields });
+  }, [isDragging, selectedFieldId, selectedLayout, dragStartPos, dragFieldStartPos]);
+
+  const handleMouseUp = useCallback(() => {
+    if (isDragging && selectedFieldId && selectedLayout) {
+      // Save to localStorage when drag ends
+      const updatedTemplates = layoutTemplates.map(t =>
+        t.id === selectedLayout.id ? selectedLayout : t
+      );
+      saveTemplates(updatedTemplates);
+    }
+    setIsDragging(false);
+  }, [isDragging, selectedFieldId, selectedLayout, layoutTemplates]);
+
+  // Global mouse events for drag
+  useEffect(() => {
+    if (isDragging) {
+      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isDragging, handleMouseMove, handleMouseUp]);
+
+  // Keyboard arrow key support
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!isAdminMode || !selectedFieldId) return;
+      
+      // Don't interfere with input fields
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) return;
+      
+      const step = e.shiftKey ? 10 : 2; // Shift for larger steps
+      
+      switch (e.key) {
+        case 'ArrowUp':
+          e.preventDefault();
+          moveField(selectedFieldId, 'up', step);
+          break;
+        case 'ArrowDown':
+          e.preventDefault();
+          moveField(selectedFieldId, 'down', step);
+          break;
+        case 'ArrowLeft':
+          e.preventDefault();
+          moveField(selectedFieldId, 'left', step);
+          break;
+        case 'ArrowRight':
+          e.preventDefault();
+          moveField(selectedFieldId, 'right', step);
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isAdminMode, selectedFieldId, moveField]);
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -422,7 +516,13 @@ const MiloECRM: React.FC = () => {
                   {selectedLayout.textFields.map(field => (
                     <div
                       key={field.id}
-                      className={`absolute whitespace-pre-wrap cursor-pointer transition-all ${
+                      className={`absolute whitespace-pre-wrap select-none ${
+                        isAdminMode 
+                          ? isDragging && selectedFieldId === field.id
+                            ? 'cursor-grabbing'
+                            : 'cursor-grab'
+                          : 'cursor-default'
+                      } ${
                         isAdminMode && selectedFieldId === field.id 
                           ? 'ring-2 ring-primary ring-offset-2' 
                           : ''
@@ -439,6 +539,7 @@ const MiloECRM: React.FC = () => {
                         lineHeight: 1.3,
                       }}
                       onClick={() => isAdminMode && setSelectedFieldId(field.id)}
+                      onMouseDown={(e) => handleMouseDown(e, field.id)}
                     >
                       {textValues[field.id] || field.defaultValue}
                     </div>
