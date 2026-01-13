@@ -1595,7 +1595,7 @@ const ChatInterface = () => {
       </div>
       <div className="flex justify-center gap-4 pt-4">
         <Button variant="ghost" onClick={handleStartOver}>{t.startOver}</Button>
-        <Button onClick={() => navigate("/home")} className="bg-orange-400 hover:bg-orange-500 text-white px-8">{t.goHome}</Button>
+        <Button onClick={() => navigate("/")} className="bg-orange-400 hover:bg-orange-500 text-white px-8">{t.goHome}</Button>
       </div>
     </div>
   );
@@ -1713,7 +1713,7 @@ const ChatInterface = () => {
       <div className="absolute top-6 left-6 z-10">
         <Button
           variant="ghost"
-          onClick={() => navigate("/home")}
+          onClick={() => navigate("/")}
           className="text-white hover:bg-white/10 flex items-center gap-2"
         >
           <ArrowLeft className="w-4 h-4" />
