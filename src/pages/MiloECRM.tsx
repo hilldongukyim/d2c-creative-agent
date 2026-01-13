@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { ArrowLeft, Download, RotateCcw, Type, Settings, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Bold, Italic, Plus, Minus, Lock, Eye, EyeOff } from "lucide-react";
+import { ArrowLeft, Download, RotateCcw, Type, Settings, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, Bold, Italic, Plus, Minus, Lock, Eye, EyeOff, AlignLeft, AlignCenter, AlignRight } from "lucide-react";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "@/hooks/use-toast";
@@ -23,6 +23,7 @@ interface TextFieldConfig {
   color: string;
   maxWidth?: number;
   visible?: boolean;
+  textAlign?: 'left' | 'center' | 'right';
 }
 
 interface PlainBoardVariant {
@@ -93,6 +94,7 @@ const getPlainBoardTemplate = (color: string, size: string): LayoutTemplate => {
         color: colorConfig.textColor,
         maxWidth: 360,
         visible: true,
+        textAlign: 'left',
       },
       {
         id: 'text2',
@@ -106,6 +108,7 @@ const getPlainBoardTemplate = (color: string, size: string): LayoutTemplate => {
         color: colorConfig.textColor,
         maxWidth: 360,
         visible: true,
+        textAlign: 'left',
       },
     ],
   };
@@ -166,6 +169,7 @@ const defaultLayoutTemplates: LayoutTemplate[] = [
         color: '#FFFFFF',
         maxWidth: 360,
         visible: true,
+        textAlign: 'left',
       },
       {
         id: 'text2',
@@ -179,6 +183,7 @@ const defaultLayoutTemplates: LayoutTemplate[] = [
         color: '#FFFFFF',
         maxWidth: 360,
         visible: true,
+        textAlign: 'left',
       },
     ],
   },
@@ -318,7 +323,22 @@ const MiloECRM: React.FC = () => {
         ctx.font = `${field.fontStyle} ${field.fontWeight} ${field.fontSize * scaleX}px "LG EI Text", sans-serif`;
         ctx.fillStyle = field.color;
         ctx.textBaseline = 'middle';
-        ctx.fillText(text, field.x * scaleX, field.y * scaleY);
+        
+        // Calculate x position based on text alignment
+        let xPos = field.x * scaleX;
+        const fieldWidth = (field.maxWidth || 360) * scaleX;
+        
+        if (field.textAlign === 'center') {
+          ctx.textAlign = 'center';
+          xPos = field.x * scaleX + fieldWidth / 2;
+        } else if (field.textAlign === 'right') {
+          ctx.textAlign = 'right';
+          xPos = field.x * scaleX + fieldWidth;
+        } else {
+          ctx.textAlign = 'left';
+        }
+        
+        ctx.fillText(text, xPos, field.y * scaleY);
       });
 
       const link = document.createElement('a');
@@ -700,9 +720,10 @@ const MiloECRM: React.FC = () => {
                         fontWeight: field.fontWeight,
                         fontStyle: field.fontStyle,
                         color: field.color,
-                        maxWidth: field.maxWidth ? `${field.maxWidth}px` : undefined,
+                        width: field.maxWidth ? `${field.maxWidth}px` : undefined,
                         fontFamily: '"LG EI Text", sans-serif',
                         lineHeight: 1.3,
+                        textAlign: field.textAlign || 'left',
                       }}
                       onClick={() => isAdminMode && setSelectedFieldId(field.id)}
                       onMouseDown={(e) => handleMouseDown(e, field.id)}
@@ -934,8 +955,56 @@ const MiloECRM: React.FC = () => {
                         disabled={field.visible === false}
                       />
                       <div className="flex items-center justify-between text-xs text-muted-foreground">
-                        <span>Font: {field.fontSize}px, {field.fontWeight}, {field.fontStyle}</span>
+                        <span>Font: {field.fontSize}px, {field.fontWeight}</span>
                         <div className="flex items-center gap-2">
+                          {/* Text Alignment Buttons */}
+                          <div className="flex items-center border rounded-md">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                updateFieldProperty(field.id, 'textAlign', 'left');
+                              }}
+                              className={`p-1 transition-colors ${
+                                (field.textAlign || 'left') === 'left' 
+                                  ? 'bg-primary text-primary-foreground' 
+                                  : 'hover:bg-muted'
+                              }`}
+                              title="Align Left"
+                            >
+                              <AlignLeft className="h-3 w-3" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                updateFieldProperty(field.id, 'textAlign', 'center');
+                              }}
+                              className={`p-1 transition-colors ${
+                                field.textAlign === 'center' 
+                                  ? 'bg-primary text-primary-foreground' 
+                                  : 'hover:bg-muted'
+                              }`}
+                              title="Align Center"
+                            >
+                              <AlignCenter className="h-3 w-3" />
+                            </button>
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                updateFieldProperty(field.id, 'textAlign', 'right');
+                              }}
+                              className={`p-1 transition-colors ${
+                                field.textAlign === 'right' 
+                                  ? 'bg-primary text-primary-foreground' 
+                                  : 'hover:bg-muted'
+                              }`}
+                              title="Align Right"
+                            >
+                              <AlignRight className="h-3 w-3" />
+                            </button>
+                          </div>
                           <Select 
                             value={field.fontWeight}
                             onValueChange={(weight) => changeFontWeight(field.id, weight)}
