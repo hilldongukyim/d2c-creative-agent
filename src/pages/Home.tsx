@@ -121,11 +121,11 @@ const Home = () => {
   return <div className="min-h-screen bg-gradient-to-br from-background to-secondary/20 p-6 relative overflow-hidden">
       <Logo />
       
-      {/* Navigation button */}
+      {/* Navigation button - back to cover page */}
       <div className="absolute top-6 right-6 z-20">
         <Button onClick={() => navigate('/')} variant="ghost" size="sm" className="hover:bg-muted/50 transition-colors">
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back
+          Cover
         </Button>
       </div>
       

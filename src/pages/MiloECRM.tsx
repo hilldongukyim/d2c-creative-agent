@@ -390,7 +390,7 @@ const MiloECRM: React.FC = () => {
       setTextValues({});
       setSelectedFieldId(null);
     } else {
-      navigate('/');
+      navigate('/home');
     }
   };
 
