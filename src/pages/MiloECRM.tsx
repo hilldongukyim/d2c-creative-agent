@@ -190,6 +190,7 @@ const defaultLayoutTemplates: LayoutTemplate[] = [
 ];
 
 const STORAGE_KEY = 'milo-layout-templates';
+const TEXT_VALUES_STORAGE_KEY = 'milo-text-values';
 const ADMIN_PASSWORD = '1010';
 
 // Removed fields (kept here to auto-migrate any previously saved templates)
@@ -228,7 +229,17 @@ const normalizeTemplates = (templates: unknown): LayoutTemplate[] => {
 const MiloECRM: React.FC = () => {
   const navigate = useNavigate();
   const [selectedLayout, setSelectedLayout] = useState<LayoutTemplate | null>(null);
-  const [textValues, setTextValues] = useState<TextFieldValue>({});
+  const [textValues, setTextValues] = useState<TextFieldValue>(() => {
+    const saved = localStorage.getItem(TEXT_VALUES_STORAGE_KEY);
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return {};
+      }
+    }
+    return {};
+  });
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isDownloading, setIsDownloading] = useState(false);
   
@@ -264,19 +275,38 @@ const MiloECRM: React.FC = () => {
     const templateToUse = savedTemplate ? normalizeLayoutTemplate(savedTemplate) : normalizeLayoutTemplate(layout);
     
     setSelectedLayout(templateToUse);
+    
+    // Load saved text values, fallback to defaults
+    const savedTextValues = localStorage.getItem(TEXT_VALUES_STORAGE_KEY);
+    let savedValues: TextFieldValue = {};
+    if (savedTextValues) {
+      try {
+        savedValues = JSON.parse(savedTextValues);
+      } catch {
+        savedValues = {};
+      }
+    }
+    
+    // Use saved values if exist, otherwise use defaults from template
     const initialValues: TextFieldValue = {};
     templateToUse.textFields.forEach(field => {
-      initialValues[field.id] = field.defaultValue;
+      // Use saved value if exists, otherwise use template default
+      initialValues[field.id] = savedValues[field.id] !== undefined ? savedValues[field.id] : field.defaultValue;
     });
     setTextValues(initialValues);
     setSelectedFieldId(null);
   };
 
   const handleTextChange = (fieldId: string, value: string) => {
-    setTextValues(prev => ({
-      ...prev,
-      [fieldId]: value,
-    }));
+    setTextValues(prev => {
+      const newValues = {
+        ...prev,
+        [fieldId]: value,
+      };
+      // Save to localStorage
+      localStorage.setItem(TEXT_VALUES_STORAGE_KEY, JSON.stringify(newValues));
+      return newValues;
+    });
   };
 
   const handleReset = () => {
@@ -286,6 +316,8 @@ const MiloECRM: React.FC = () => {
       initialValues[field.id] = field.defaultValue;
     });
     setTextValues(initialValues);
+    // Also update localStorage
+    localStorage.setItem(TEXT_VALUES_STORAGE_KEY, JSON.stringify(initialValues));
   };
 
   const handleDownload = useCallback(async () => {
