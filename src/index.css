@@ -168,6 +168,17 @@ All colors MUST be HSL.
 
   body {
     @apply bg-background text-foreground;
+    font-family: 'LGEIText', ui-sans-serif, system-ui, sans-serif;
+  }
+  
+  /* Ensure all elements inherit LG EI Text font */
+  *, *::before, *::after {
+    font-family: inherit;
+  }
+  
+  /* Dialog and popover font override */
+  [role="dialog"], [data-radix-popper-content-wrapper] {
+    font-family: 'LGEIText', ui-sans-serif, system-ui, sans-serif;
   }
   
   /* Search dim effect for non-matching profiles */
