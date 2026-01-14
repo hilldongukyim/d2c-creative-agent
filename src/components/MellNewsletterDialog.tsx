@@ -25,6 +25,39 @@ interface MellNewsletterDialogProps {
 
 const newsletters: Newsletter[] = [
   {
+    id: "2",
+    date: "2026-01-14",
+    title: "Twin Crew Update | Ben's Evolution: Smarter Scaling✨",
+    category: "Product News",
+    summary: "Ben just got smarter with product-aware scaling for realistic composition.",
+    content: `Hello Team!
+
+Great news on Twin Crew! Our PTO image creator, **Ben**, just got smarter.
+
+---
+
+**🏷️ WHAT'S NEW WITH BEN?**
+
+**Smart Scaling & Realistic Composition**
+
+Now Ben can identify each product's characteristics and arrange items like refrigerators and speakers with significant size differences according to their actual proportions.
+
+• **Before**: Fixed Ratio (1:1 Scaling)
+• **After**: Product-Aware Scaling (Reality-based)
+
+---
+
+**🇯🇵 Special Thanks to Mio Maruyama**
+
+"This update was made possible thanks to Mio's valuable feedback, bringing us the real voice from Japan. Global teamwork is what makes TwinCrew smarter!"
+
+---
+
+"Now, leave the size worries to me! Check out the perfectly improved bundle images right away."
+
+👉 [Start working with Ben](/pto-gallery)`
+  },
+  {
     id: "1",
     date: "2026-01-10",
     title: "🚀 Twin Crew Official Launch & Introducing Ben",
@@ -117,6 +150,45 @@ const MellNewsletterDialog: React.FC<MellNewsletterDialogProps> = ({
 
         <ScrollArea className="flex-1 max-h-[calc(85vh-120px)]">
           <div className="p-6 space-y-4">
+            {/* Pinned Video Section */}
+            <div className="mb-6">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="h-5 w-5 rounded bg-red-500/20 flex items-center justify-center">
+                  <span className="text-xs">📌</span>
+                </div>
+                <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  Pinned • What is Twin Crew?
+                </span>
+              </div>
+              <div className="bg-card border border-border/50 rounded-lg overflow-hidden">
+                <div className="aspect-video">
+                  <iframe
+                    src="https://f.io/jIAPGZlU"
+                    className="w-full h-full"
+                    allow="autoplay; fullscreen"
+                    allowFullScreen
+                    title="Twin Crew Introduction Video"
+                  />
+                </div>
+                <div className="p-3 border-t border-border/30">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-sm font-medium text-foreground">Twin Crew Introduction</h4>
+                      <p className="text-xs text-muted-foreground">Meet your AI crew members</p>
+                    </div>
+                    <a 
+                      href="https://f.io/jIAPGZlU" 
+                      target="_blank" 
+                      rel="noopener noreferrer"
+                      className="text-xs text-primary hover:underline flex items-center gap-1"
+                    >
+                      Open in Frame.io <ExternalLink className="h-3 w-3" />
+                    </a>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Timeline */}
             <div className="relative">
               {/* Timeline line */}
