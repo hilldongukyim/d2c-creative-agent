@@ -223,6 +223,131 @@ function extractProductDimensions(html: string): { width?: string; height?: stri
   return null;
 }
 
+// Extract TV mount type (Stand or Wall-mount) from product info
+function extractTvMountType(html: string, url: string): { mountType: string | null; isTV: boolean } {
+  console.log("=== Checking TV mount type ===");
+  
+  const result: { mountType: string | null; isTV: boolean } = { mountType: null, isTV: false };
+  
+  // Check if this is a TV product
+  const lowerHtml = html.toLowerCase();
+  const lowerUrl = url.toLowerCase();
+  
+  const tvIndicators = [
+    'oled tv', 'qned tv', 'led tv', 'lcd tv', 'uhd tv', '4k tv', '8k tv',
+    'nanocell', 'smart tv', 'television', 'inch tv', '"tv', 'tv-',
+    '/tvs/', '/tv/', 'oled-tv', 'qned-tv', 'ultra-hd-tv'
+  ];
+  
+  const isTV = tvIndicators.some(indicator => lowerHtml.includes(indicator) || lowerUrl.includes(indicator));
+  
+  if (!isTV) {
+    console.log("Product is not a TV, skipping mount type detection");
+    return result;
+  }
+  
+  result.isTV = true;
+  console.log("Product identified as TV, checking mount type...");
+  
+  // Check URL patterns first (most reliable)
+  if (lowerUrl.includes('wall') || lowerUrl.includes('wallmount') || lowerUrl.includes('wall-mount')) {
+    result.mountType = 'wall-mount';
+    console.log("Mount type from URL: wall-mount");
+    return result;
+  }
+  
+  if (lowerUrl.includes('stand') || lowerUrl.includes('with-stand') || lowerUrl.includes('withstand')) {
+    result.mountType = 'stand';
+    console.log("Mount type from URL: stand");
+    return result;
+  }
+  
+  // Check product title/name patterns
+  const titlePatterns = [
+    /<title[^>]*>([^<]+)<\/title>/i,
+    /<h1[^>]*>([^<]+)<\/h1>/i,
+    /<meta[^>]*property="og:title"[^>]*content="([^"]+)"/i,
+    /<meta[^>]*name="product[_-]?name"[^>]*content="([^"]+)"/i
+  ];
+  
+  for (const pattern of titlePatterns) {
+    const match = html.match(pattern);
+    if (match) {
+      const title = match[1].toLowerCase();
+      if (title.includes('wall') || title.includes('wallmount') || title.includes('wall-mount') || title.includes('wall mount')) {
+        result.mountType = 'wall-mount';
+        console.log("Mount type from title: wall-mount");
+        return result;
+      }
+      if (title.includes('stand') || title.includes('with stand') || title.includes('withstand')) {
+        result.mountType = 'stand';
+        console.log("Mount type from title: stand");
+        return result;
+      }
+    }
+  }
+  
+  // Check for stand/mount indicators in spec tables or product description
+  const standPatterns = [
+    /(?:include|with|come)[^<]*stand/i,
+    /stand[^<]*(?:include|attach)/i,
+    /\bstand\s*type\b/i,
+    /(?:floor|table|desk)\s*stand/i,
+    /swivel\s*stand/i,
+    /center\s*stand/i,
+    /wide\s*stand/i
+  ];
+  
+  const wallPatterns = [
+    /wall[- ]?mount(?:ed|ing)?/i,
+    /(?:mount|hang)[^<]*wall/i,
+    /vesa[^<]*mount/i,
+    /wall[- ]?bracket/i,
+    /flush[- ]?mount/i,
+    /slim[- ]?wall/i,
+    /zero[- ]?gap[- ]?wall/i
+  ];
+  
+  // Count pattern matches
+  let standScore = 0;
+  let wallScore = 0;
+  
+  for (const pattern of standPatterns) {
+    if (pattern.test(html)) {
+      standScore++;
+    }
+  }
+  
+  for (const pattern of wallPatterns) {
+    if (pattern.test(html)) {
+      wallScore++;
+    }
+  }
+  
+  console.log(`Stand score: ${standScore}, Wall score: ${wallScore}`);
+  
+  // Check product images for stand visibility indicators
+  const hasStandImages = /stand.*image|image.*stand|gallery.*stand/i.test(html);
+  const hasWallImages = /wall.*mount.*image|flush.*wall/i.test(html);
+  
+  if (hasStandImages) standScore += 2;
+  if (hasWallImages) wallScore += 2;
+  
+  // Determine mount type based on scores
+  if (wallScore > standScore && wallScore >= 2) {
+    result.mountType = 'wall-mount';
+  } else if (standScore > wallScore && standScore >= 1) {
+    result.mountType = 'stand';
+  } else if (standScore === 0 && wallScore === 0) {
+    // Default: most consumer TVs come with stand
+    result.mountType = 'stand';
+    console.log("No explicit mount info found, defaulting to stand (common configuration)");
+  }
+  
+  console.log(`Final mount type determination: ${result.mountType}`);
+  return result;
+}
+
 // Extract product name from HTML
 function extractProductName(html: string, url: string): string {
   const ogTitleMatch = html.match(/<meta[^>]*property="og:title"[^>]*content="([^"]+)"/i) ||
@@ -354,16 +479,19 @@ serve(async (req) => {
     const images = extractCarouselImages(html, url);
     const productName = extractProductName(html, url);
     const productDimensions = extractProductDimensions(html);
+    const tvMountInfo = extractTvMountType(html, url);
     
     console.log("Total images extracted:", images.length);
     console.log("Product name:", productName);
     console.log("Product dimensions:", productDimensions);
+    console.log("TV mount info:", tvMountInfo);
 
     return new Response(JSON.stringify({
       success: true,
       images: images,
       productName: productName,
       productDimensions: productDimensions,
+      tvMountInfo: tvMountInfo,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });

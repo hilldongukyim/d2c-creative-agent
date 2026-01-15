@@ -24,6 +24,7 @@ interface StateSnapshot {
   currentAspectRatio: "16:9" | "1:1" | "9:16" | "custom";
   productName: string;
   productDimensions: { width?: string; height?: string; depth?: string; raw?: string } | null;
+  tvMountInfo: { mountType: string | null; isTV: boolean } | null;
   showInput: boolean;
   inputType: "url" | "select" | "action" | "edit" | null;
 }
@@ -129,6 +130,7 @@ const ZoeLifestyle = () => {
   const [customHeight, setCustomHeight] = useState("");
   const [productName, setProductName] = useState("");
   const [productDimensions, setProductDimensions] = useState<{ width?: string; height?: string; depth?: string; raw?: string } | null>(null);
+  const [tvMountInfo, setTvMountInfo] = useState<{ mountType: string | null; isTV: boolean } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   // QR code dialog state
@@ -176,6 +178,7 @@ const ZoeLifestyle = () => {
     currentAspectRatio,
     productName,
     productDimensions,
+    tvMountInfo,
     showInput,
     inputType,
   });
@@ -198,6 +201,7 @@ const ZoeLifestyle = () => {
       setCurrentAspectRatio(targetMessage.snapshot.currentAspectRatio);
       setProductName(targetMessage.snapshot.productName);
       setProductDimensions(targetMessage.snapshot.productDimensions);
+      setTvMountInfo(targetMessage.snapshot.tvMountInfo);
       setShowInput(targetMessage.snapshot.showInput);
       setInputType(targetMessage.snapshot.inputType);
     }
@@ -278,13 +282,17 @@ const ZoeLifestyle = () => {
       setCarouselImages(data.images);
       setProductName(data.productName || "product");
       setProductDimensions(data.productDimensions || null);
+      setTvMountInfo(data.tvMountInfo || null);
 
       const dimensionInfo = data.productDimensions?.raw ? `\n(Product dimensions: ${data.productDimensions.raw})` : '';
+      const tvMountNote = data.tvMountInfo?.isTV && data.tvMountInfo?.mountType 
+        ? `\n📺 TV Mount Type: ${data.tvMountInfo.mountType === 'stand' ? 'Stand Version' : 'Wall-mount Version'}` 
+        : '';
       
       setTimeout(() => {
         addMessage({ 
           type: "anita", 
-          content: `I found ${data.images.length} product images! 🎉${dimensionInfo}\n\nWhich image would you like me to use for the lifestyle image? Please select one below!` 
+          content: `I found ${data.images.length} product images! 🎉${dimensionInfo}${tvMountNote}\n\nWhich image would you like me to use for the lifestyle image? Please select one below!` 
         });
         
         setTimeout(() => {
@@ -348,7 +356,7 @@ const ZoeLifestyle = () => {
       const country = extractCountryFromUrl(url);
       
       const { data, error } = await supabase.functions.invoke("anita-generate-lifestyle", {
-        body: { imageUrl: selectedImage, aspectRatio: "16:9", country, productDimensions },
+        body: { imageUrl: selectedImage, aspectRatio: "16:9", country, productDimensions, tvMountInfo },
       });
 
       if (error) throw error;
