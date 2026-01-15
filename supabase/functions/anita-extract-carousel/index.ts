@@ -58,25 +58,27 @@ function extractCarouselImages(html: string, baseUrl: string): string[] {
   const addImage = (src: string, source: string) => {
     if (!src) return false;
     
-    // Normalize URL - remove /jcr:content/... suffix if present
-    let cleanSrc = src;
+    // Keep full URL including /jcr:content/ for proper image loading
+    // Only use cleaned version for deduplication
+    let dedupKey = src;
     const jcrIndex = src.indexOf('/jcr:content');
     if (jcrIndex > 0) {
-      cleanSrc = src.substring(0, jcrIndex);
+      dedupKey = src.substring(0, jcrIndex);
     }
     
-    if (seen.has(cleanSrc)) return false;
+    if (seen.has(dedupKey)) return false;
     
     // Filter out non-product images
-    if (cleanSrc.endsWith('.svg')) return false;
-    if (cleanSrc.includes('logo')) return false;
-    if (cleanSrc.includes('qrcode') || cleanSrc.includes('qr-code')) return false;
-    if (cleanSrc.includes('icon')) return false;
-    if (cleanSrc.includes('placeholder')) return false;
-    if (cleanSrc.includes('spinner') || cleanSrc.includes('loading')) return false;
+    if (src.endsWith('.svg')) return false;
+    if (src.includes('logo')) return false;
+    if (src.includes('qrcode') || src.includes('qr-code')) return false;
+    if (src.includes('icon')) return false;
+    if (src.includes('placeholder')) return false;
+    if (src.includes('spinner') || src.includes('loading')) return false;
     
-    seen.add(cleanSrc);
-    const fullUrl = cleanSrc.startsWith('http') ? cleanSrc : new URL(cleanSrc, baseUrl).href;
+    seen.add(dedupKey);
+    // Use original src (with jcr:content) for full quality images
+    const fullUrl = src.startsWith('http') ? src : new URL(src, baseUrl).href;
     images.push(fullUrl);
     console.log(`✓ [${source}] Image ${images.length}:`, fullUrl.substring(0, 100));
     return true;
@@ -175,20 +177,9 @@ function extractCarouselImages(html: string, baseUrl: string): string[] {
     }
   }
 
-  // Remove duplicates that differ only by /jcr:content suffix
-  const uniqueImages: string[] = [];
-  const baseUrls = new Set<string>();
-  
-  for (const img of images) {
-    const imgBase = img.replace(/\/jcr:content.*$/, '');
-    if (!baseUrls.has(imgBase)) {
-      baseUrls.add(imgBase);
-      uniqueImages.push(img);
-    }
-  }
-
-  console.log(`=== Total unique gallery images: ${uniqueImages.length} ===`);
-  return uniqueImages;
+  // Already deduplicated during extraction, just return
+  console.log(`=== Total unique gallery images: ${images.length} ===`);
+  return images;
 }
 
 // Extract product dimensions from Spec section
