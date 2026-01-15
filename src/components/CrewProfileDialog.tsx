@@ -220,6 +220,15 @@ const CrewProfileDialog: React.FC<CrewProfileDialogProps> = ({
             {crewDescription}
           </p>
 
+          {/* Important notice for Noa - Login required */}
+          {crewName.toLowerCase() === "noa" && (
+            <div className="mt-3 p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg">
+              <p className="text-xs text-amber-800 dark:text-amber-200 font-medium">
+                ⚠️ Important: Login is required. After logging in, please refer to the User Guide (PDF) to obtain the necessary permissions before use.
+              </p>
+            </div>
+          )}
+
           {/* CTA Button */}
           {ctaLabel && onCtaClick && !isComingSoon && (
             <Button
