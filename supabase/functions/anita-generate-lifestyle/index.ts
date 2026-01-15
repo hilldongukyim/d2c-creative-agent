@@ -23,9 +23,10 @@ async function generateLifestyleImage(
   lovableApiKey: string, 
   aspectRatio: string = "16:9", 
   country: string | null = null,
-  productDimensions: { width?: string; height?: string; depth?: string; raw?: string } | null = null
+  productDimensions: { width?: string; height?: string; depth?: string; raw?: string } | null = null,
+  tvMountInfo: { mountType: string | null; isTV: boolean } | null = null
 ): Promise<string> {
-  console.log("Generating lifestyle image with Gemini...", country ? `for ${country}` : "", productDimensions ? `with dimensions: ${JSON.stringify(productDimensions)}` : "");
+  console.log("Generating lifestyle image with Gemini...", country ? `for ${country}` : "", productDimensions ? `with dimensions: ${JSON.stringify(productDimensions)}` : "", tvMountInfo ? `TV mount: ${JSON.stringify(tvMountInfo)}` : "");
 
   // Determine dimensions based on aspect ratio
   let width: number, height: number;
@@ -63,7 +64,32 @@ CRITICAL SIZE ACCURACY INSTRUCTIONS:
 - Use reference objects in the scene to establish correct scale perception
 ` : '';
 
-  // Country-specific lifestyle context
+  // TV mount type specific instructions
+  const tvMountContext = (tvMountInfo?.isTV && tvMountInfo?.mountType) ? `
+⚠️ CRITICAL TV PLACEMENT INSTRUCTIONS:
+This is a TV product with ${tvMountInfo.mountType === 'stand' ? 'STAND' : 'WALL-MOUNT'} configuration.
+
+${tvMountInfo.mountType === 'stand' ? `
+**STAND VERSION TV - MANDATORY REQUIREMENTS:**
+- The TV MUST be placed on a TV stand, entertainment center, console table, or media cabinet
+- The TV stand/base MUST be visible and resting on furniture
+- NEVER mount this TV on a wall - it has a stand and must be shown with the stand
+- Show the TV sitting on furniture like: TV console, media cabinet, sideboard, or floating shelf unit
+- The stand/base of the TV should be clearly visible on the furniture surface
+- Typical placement: On a wooden/modern TV unit with the stand feet touching the surface
+` : `
+**WALL-MOUNT VERSION TV - MANDATORY REQUIREMENTS:**
+- The TV MUST be mounted flush against the wall
+- NEVER show this TV on a stand or furniture - it is designed for wall mounting
+- The TV should appear to float on the wall with minimal gap (zero-gap or slim mount)
+- No TV stand or base should be visible
+- Below the TV can be a low console for devices, but the TV itself is ON THE WALL
+- Create a clean, floating appearance typical of wall-mounted displays
+`}
+
+IMPORTANT: Violating these placement rules will result in an incorrect product representation.
+The ${tvMountInfo.mountType === 'stand' ? 'stand-based' : 'wall-mounted'} configuration is a key product feature that must be accurately depicted.
+` : '';
   const countryContext = country ? `
 TARGET MARKET: ${country}
 Create a lifestyle scene that resonates with ${country} consumers:
@@ -91,6 +117,7 @@ For example:
   const prompt = `You are a professional lifestyle photographer and product placement specialist.
 
 TASK: Create a stunning lifestyle marketing image at ${width}x${height} resolution (${aspectRatio} aspect ratio).
+${tvMountContext}
 ${dimensionsContext}
 ${countryContext}
 INSTRUCTIONS:
@@ -186,7 +213,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageUrl, aspectRatio = "16:9", country = null, productDimensions = null } = await req.json();
+    const { imageUrl, aspectRatio = "16:9", country = null, productDimensions = null, tvMountInfo = null } = await req.json();
 
     if (!imageUrl) {
       throw new Error("Image URL is required");
@@ -197,7 +224,7 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY not configured");
     }
 
-    console.log("Starting lifestyle image generation for:", imageUrl, "with aspect ratio:", aspectRatio, "country:", country, "dimensions:", productDimensions);
+    console.log("Starting lifestyle image generation for:", imageUrl, "with aspect ratio:", aspectRatio, "country:", country, "dimensions:", productDimensions, "tvMount:", tvMountInfo);
 
     // Step 1: Download image
     console.log("Step 1: Downloading product image...");
@@ -206,7 +233,7 @@ serve(async (req) => {
 
     // Step 2: Generate lifestyle image with Gemini
     console.log("Step 2: Generating lifestyle image with Gemini...");
-    const lifestyleImageBase64 = await generateLifestyleImage(productImageBase64, LOVABLE_API_KEY, aspectRatio, country, productDimensions);
+    const lifestyleImageBase64 = await generateLifestyleImage(productImageBase64, LOVABLE_API_KEY, aspectRatio, country, productDimensions, tvMountInfo);
     console.log("Lifestyle image generated, length:", lifestyleImageBase64.length);
 
     return new Response(
