@@ -14,6 +14,48 @@ export type Database = {
   }
   public: {
     Tables: {
+      analytics_events: {
+        Row: {
+          created_at: string | null
+          element_id: string | null
+          element_text: string | null
+          element_type: string | null
+          event_type: string
+          id: string
+          metadata: Json | null
+          page_path: string
+          referrer: string | null
+          session_id: string | null
+          user_agent: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          element_id?: string | null
+          element_text?: string | null
+          element_type?: string | null
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          page_path: string
+          referrer?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          element_id?: string | null
+          element_text?: string | null
+          element_type?: string | null
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          page_path?: string
+          referrer?: string | null
+          session_id?: string | null
+          user_agent?: string | null
+        }
+        Relationships: []
+      }
       crew_likes: {
         Row: {
           created_at: string
