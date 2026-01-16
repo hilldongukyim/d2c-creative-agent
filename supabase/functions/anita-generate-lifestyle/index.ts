@@ -118,40 +118,54 @@ For example:
   // Reference image context
   const referenceContext = referenceImageBase64 ? `
 ⚠️ CRITICAL - TWO IMAGES ARE PROVIDED:
-- **IMAGE 1 (PRODUCT IMAGE)**: This is the ACTUAL PRODUCT that MUST appear in the final image. This product is the HERO and MAIN SUBJECT.
-- **IMAGE 2 (REFERENCE IMAGE)**: This is ONLY for STYLE REFERENCE. Do NOT include any objects, furniture, or elements from this image in the output.
+- **IMAGE 1 (PRODUCT IMAGE)**: This is the ACTUAL PRODUCT that MUST appear in the final image. Extract ONLY the product object itself.
+- **IMAGE 2 (REFERENCE IMAGE)**: This is ONLY for STYLE REFERENCE. Extract ONLY the abstract style qualities - NO objects or products from this image should appear in output.
 
-REFERENCE IMAGE - STYLE EXTRACTION ONLY:
-From the reference image, ONLY extract and apply these ABSTRACT QUALITIES:
-1. **Camera Angle/Perspective**: The viewing angle (eye-level, low angle, high angle, etc.)
-2. **Lighting Direction & Quality**: Where light comes from, hard vs soft shadows, warm vs cool tones
-3. **Interior Design Style**: The general aesthetic (modern, minimalist, Scandinavian, industrial, luxurious, etc.)
-4. **Color Mood**: The overall color temperature and palette feeling
-5. **Spatial Depth**: How deep/shallow the room appears
+🚨 MANDATORY: REMOVE ANY PRODUCTS FROM REFERENCE IMAGE
+If the reference image contains any products (TV, appliances, electronics, furniture items being sold), you MUST:
+- IGNORE those products completely
+- DO NOT include them in the output
+- ONLY use the reference for: room style, lighting, camera angle, color mood
+- The ONLY product in the final image should be from IMAGE 1
+
+REFERENCE IMAGE - EXTRACT ONLY THESE ABSTRACT QUALITIES:
+1. **Camera Angle/Perspective**: The viewing angle and composition style
+2. **Lighting**: Light direction, quality (soft/hard), color temperature (warm/cool)
+3. **Interior Design Aesthetic**: Modern, minimalist, Scandinavian, luxurious, etc.
+4. **Color Palette Mood**: Overall color feeling and harmony
+5. **Room Atmosphere**: Cozy, professional, airy, dramatic, etc.
 
 ⛔ ABSOLUTELY DO NOT:
-- Copy or recreate the exact room from the reference image
-- Include any furniture or objects visible in the reference image  
-- Use the reference image as a background or composite base
-- Place the product INTO the reference image scene
+- Include ANY products or appliances from the reference image
+- Copy the exact room layout or furniture placement
+- Use reference image as a background to paste product onto
+- Keep any branded items or specific objects from reference
 
-✅ INSTEAD, YOU MUST:
-- Create a COMPLETELY NEW and ORIGINAL room/environment
-- Design NEW furniture and decorations that match the STYLE (not the actual items)
-- Place the PRODUCT from Image 1 as the central hero in this NEW scene
-- The reference is like a "mood board" - inspire the FEELING, not the CONTENT
+✅ YOU MUST:
+- Create a COMPLETELY NEW room environment from scratch
+- Design NEW furniture that matches the STYLE aesthetic (not same items)
+- Seamlessly integrate the PRODUCT from Image 1 into this new scene
+- Make the product look like it BELONGS in this environment naturally
+- Match lighting on the product to the environment lighting
 ` : '';
 
   const prompt = `You are a professional lifestyle photographer and product placement specialist.
 
 ${referenceImageBase64 ? `
-🔴 CRITICAL INSTRUCTION - READ CAREFULLY:
-You are receiving TWO images:
-1. FIRST IMAGE = THE PRODUCT (must be prominently featured in your output)
-2. SECOND IMAGE = STYLE REFERENCE ONLY (do NOT copy this scene, only learn from its style)
+🔴 ABSOLUTELY CRITICAL - READ THIS FIRST:
+You are receiving TWO images but they serve DIFFERENT purposes:
 
-Your task: Create a BRAND NEW lifestyle scene featuring the PRODUCT from Image 1, 
-while being INSPIRED BY (not copying) the style/mood/angle from Image 2.
+📦 IMAGE 1 = THE PRODUCT TO FEATURE
+- This is the ONLY product that should appear in your output
+- Extract this product and place it naturally in a new scene
+
+🎨 IMAGE 2 = STYLE MOOD BOARD (NOT a scene to copy)
+- Use this ONLY to understand: lighting style, camera angle, interior aesthetic, color mood
+- DO NOT copy this room. DO NOT include any products visible in this image.
+- If there's a TV, appliance, or any product in the reference - REMOVE IT from your output
+
+YOUR OUTPUT: A brand new lifestyle scene where the product from Image 1 is seamlessly placed
+in a newly created environment that captures the STYLE FEELING of Image 2.
 ` : ''}
 
 TASK: Create a stunning lifestyle marketing image at ${width}x${height} resolution (${aspectRatio} aspect ratio).
@@ -160,19 +174,31 @@ ${dimensionsContext}
 ${countryContext}
 ${referenceContext}
 INSTRUCTIONS:
-1. Identify the product from the FIRST image - this is your HERO product that MUST appear in the final output
-${referenceImageBase64 ? '2. From the SECOND (reference) image, extract ONLY: camera angle, lighting style, interior design aesthetic, and color mood' : ''}
-${referenceImageBase64 ? '3. Create a COMPLETELY NEW room/environment that FEELS similar to the reference but is NOT the same room' : ''}
-${referenceImageBase64 ? '4' : '2'}. Place the product naturally in this ${referenceImageBase64 ? 'newly created' : 'appropriate'} environment
+1. From IMAGE 1: Extract the product - this is your HERO that MUST appear in the final output
+${referenceImageBase64 ? '2. From IMAGE 2: Extract ONLY the style elements (lighting, angle, aesthetic, mood) - IGNORE any products in this image' : ''}
+${referenceImageBase64 ? '3. Create a BRAND NEW room/environment inspired by the style (not copied)' : ''}
+${referenceImageBase64 ? '4' : '2'}. Place the product NATURALLY in this environment with SEAMLESS INTEGRATION:
+   - Match the lighting on the product to the environment
+   - Ensure proper shadows and reflections
+   - Product should look like it was photographed IN this scene, not pasted on
+   - Correct perspective and scale relative to surroundings
 ${referenceImageBase64 ? '5' : '3'}. Ensure the product is the focal point and clearly visible
 
+SEAMLESS COMPOSITING REQUIREMENTS:
+- The product must have consistent lighting with the environment
+- Shadows beneath/behind product must match the scene's light direction
+- Product edges should blend naturally (no harsh cutout appearance)
+- Reflections on glossy surfaces should match environment
+- Product scale must be realistic relative to furniture/room size
+
 Scene Requirements:
-- Professional photography quality
-- ${referenceImageBase64 ? 'Camera angle inspired by reference image' : 'Appropriate camera angle for the product type'}
-- ${referenceImageBase64 ? 'Lighting style matching reference mood' : 'Natural, realistic lighting with subtle shadows'}
-- Product should be clearly visible and prominently featured
-- ${referenceImageBase64 ? 'Interior style inspired by (NOT copied from) the reference' : 'Background should complement the product'}
+- Professional photography quality (like a catalog shoot)
+- ${referenceImageBase64 ? 'Camera angle inspired by reference' : 'Appropriate camera angle'}
+- ${referenceImageBase64 ? 'Lighting matching reference mood' : 'Natural, realistic lighting'}
+- Product as the clear hero and focal point
+- ${referenceImageBase64 ? 'NEW environment inspired by (NOT copied from) reference' : 'Complementary background'}
 - Color harmony between product and environment
+${productDimensions ? '- Product scale realistic based on actual dimensions' : ''}
 ${productDimensions ? '- Product scale must be realistic relative to surrounding furniture and space' : ''}
 
 Generate the lifestyle image now featuring the PRODUCT from Image 1 in a NEW scene${referenceImageBase64 ? ' inspired by the STYLE of Image 2' : ''}.`;
