@@ -22,14 +22,6 @@ const ServerBusy = () => {
         <p className="text-base md:text-lg text-muted-foreground font-['LGEIText']">
           The interest in Twin Crew is huge! We are working on it. Please check back soon!
         </p>
-
-        {/* Optional: Return Home Button */}
-        <button 
-          onClick={() => window.location.href = '/'}
-          className="mt-8 px-6 py-3 bg-primary text-primary-foreground rounded-lg font-semibold font-['LGEIText'] hover:opacity-90 transition-opacity"
-        >
-          Return Home
-        </button>
       </div>
     </div>
   );
