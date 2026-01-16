@@ -142,6 +142,12 @@ const ZoeLifestyle = () => {
   const [editPrompt, setEditPrompt] = useState("");
   const [isEditing, setIsEditing] = useState(false);
   
+  // Custom resize state
+  const [showCustomResize, setShowCustomResize] = useState(false);
+  const [customResizeWidth, setCustomResizeWidth] = useState("");
+  const [customResizeHeight, setCustomResizeHeight] = useState("");
+  const [productPosition, setProductPosition] = useState<"center" | "left" | "right" | "top" | "bottom">("center");
+  
   // Feedback dialog state
   const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
 
@@ -562,6 +568,65 @@ const ZoeLifestyle = () => {
     }
   };
 
+  const handleCustomResize = async () => {
+    if (!generatedImage || !customResizeWidth || !customResizeHeight) return;
+    
+    const width = parseInt(customResizeWidth);
+    const height = parseInt(customResizeHeight);
+    
+    if (isNaN(width) || isNaN(height) || width < 100 || height < 100 || width > 4096 || height > 4096) {
+      toast.error("Please enter valid dimensions (100-4096px)");
+      return;
+    }
+    
+    const positionLabels = { center: "Center", left: "Left", right: "Right", top: "Top", bottom: "Bottom" };
+    addMessage({ type: "user", content: `Resize to ${width}x${height}px, product position: ${positionLabels[productPosition]}` });
+    setShowInput(false);
+    setShowCustomResize(false);
+    
+    addMessage({ type: "anita", content: `Resizing to ${width}x${height}px with product on the ${positionLabels[productPosition].toLowerCase()}... 📐` });
+    
+    setIsResizing(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("anita-resize-lifestyle", {
+        body: { 
+          imageBase64: generatedImage.split(',')[1], 
+          customWidth: width, 
+          customHeight: height,
+          productPosition: productPosition
+        },
+      });
+
+      if (error) throw error;
+      if (!data.success || !data.imageBase64) {
+        throw new Error(data.error || "Resize failed");
+      }
+
+      setGeneratedImage(`data:image/png;base64,${data.imageBase64}`);
+      setCurrentAspectRatio("custom");
+      setIsUpscaled(false);
+      setCustomResizeWidth("");
+      setCustomResizeHeight("");
+      setProductPosition("center");
+      
+      addMessage({ type: "anita", content: `Resize complete! ✂️\nCreated ${width}x${height}px image with product positioned on the ${positionLabels[productPosition].toLowerCase()}.\n\nYou can now add text overlays if needed! 🎨` });
+      setShowInput(true);
+      setInputType("edit");
+    } catch (error) {
+      console.error("Error resizing:", error);
+      const errorMessage = error instanceof Error ? error.message : "";
+      if (errorMessage.includes("CREDIT_EXPIRED") || errorMessage.includes("402")) {
+        addMessage({ type: "anita", content: "사용 크레딧이 만료되었습니다. 관리자(donguk.yim@lge.com)에게 문의해주세요. 📧" });
+      } else {
+        addMessage({ type: "anita", content: "An error occurred during resizing. 😢" });
+      }
+      setShowInput(true);
+      setInputType("edit");
+    } finally {
+      setIsResizing(false);
+    }
+  };
+
   const handleEditImage = async () => {
     if (!generatedImage || !editPrompt.trim()) return;
     
@@ -958,7 +1023,7 @@ const ZoeLifestyle = () => {
               </div>
 
               {/* Resize options */}
-              <div className="flex gap-2 justify-center items-center">
+              <div className="flex gap-2 justify-center items-center flex-wrap">
                 <span className="text-xs text-gray-500">Ratio:</span>
                 <Button 
                   size="sm" 
@@ -987,7 +1052,77 @@ const ZoeLifestyle = () => {
                 >
                   <RectangleVertical className="w-3 h-3 mr-1" />9:16
                 </Button>
+                <Button 
+                  size="sm" 
+                  variant={showCustomResize ? "default" : "outline"} 
+                  onClick={() => setShowCustomResize(!showCustomResize)}
+                  disabled={isAnyLoading}
+                  className={showCustomResize ? "bg-orange-500 text-xs h-7" : "text-xs h-7"}
+                >
+                  Custom
+                </Button>
               </div>
+
+              {/* Custom resize panel */}
+              {showCustomResize && (
+                <div className="bg-gray-100 rounded-lg p-3 space-y-3">
+                  <div className="flex gap-2 items-center justify-center">
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs text-gray-500">W:</span>
+                      <Input
+                        type="number"
+                        value={customResizeWidth}
+                        onChange={(e) => setCustomResizeWidth(e.target.value)}
+                        placeholder="1920"
+                        className="w-20 h-7 text-xs bg-white"
+                        min={100}
+                        max={4096}
+                      />
+                      <span className="text-xs text-gray-400">px</span>
+                    </div>
+                    <span className="text-gray-400">×</span>
+                    <div className="flex items-center gap-1">
+                      <span className="text-xs text-gray-500">H:</span>
+                      <Input
+                        type="number"
+                        value={customResizeHeight}
+                        onChange={(e) => setCustomResizeHeight(e.target.value)}
+                        placeholder="1080"
+                        className="w-20 h-7 text-xs bg-white"
+                        min={100}
+                        max={4096}
+                      />
+                      <span className="text-xs text-gray-400">px</span>
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-1">
+                    <span className="text-xs text-gray-500 block text-center">Product Position (for text space):</span>
+                    <div className="flex gap-1 justify-center flex-wrap">
+                      {(["left", "center", "right", "top", "bottom"] as const).map((pos) => (
+                        <Button
+                          key={pos}
+                          size="sm"
+                          variant={productPosition === pos ? "default" : "outline"}
+                          onClick={() => setProductPosition(pos)}
+                          className={`text-xs h-6 px-2 ${productPosition === pos ? "bg-orange-500" : ""}`}
+                        >
+                          {pos.charAt(0).toUpperCase() + pos.slice(1)}
+                        </Button>
+                      ))}
+                    </div>
+                  </div>
+                  
+                  <Button
+                    onClick={handleCustomResize}
+                    disabled={isAnyLoading || !customResizeWidth || !customResizeHeight}
+                    size="sm"
+                    className="w-full bg-orange-500 hover:bg-orange-600"
+                  >
+                    Apply Custom Size
+                  </Button>
+                </div>
+              )}
 
               {/* Start over */}
               <div className="flex justify-center">

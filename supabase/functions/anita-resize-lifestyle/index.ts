@@ -11,7 +11,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageBase64, aspectRatio, customWidth, customHeight } = await req.json();
+    const { imageBase64, aspectRatio, customWidth, customHeight, productPosition: userProductPosition } = await req.json();
 
     if (!imageBase64) {
       throw new Error("Image base64 is required");
@@ -56,11 +56,36 @@ serve(async (req) => {
       }
     }
 
-    // Determine product positioning based on orientation
+    // Determine product positioning - use user-specified position or default based on orientation
     let productPosition: string;
     let textOverlayArea: string;
     
-    if (width > height) {
+    if (userProductPosition && customWidth && customHeight) {
+      // User specified position for custom sizing
+      switch (userProductPosition) {
+        case "left":
+          productPosition = "on the LEFT side of the image";
+          textOverlayArea = "the RIGHT side should have clean space for text overlay";
+          break;
+        case "right":
+          productPosition = "on the RIGHT side of the image";
+          textOverlayArea = "the LEFT side should have clean space for text overlay";
+          break;
+        case "top":
+          productPosition = "at the TOP of the image";
+          textOverlayArea = "the BOTTOM area should have clean space for text overlay";
+          break;
+        case "bottom":
+          productPosition = "at the BOTTOM of the image";
+          textOverlayArea = "the TOP area should have clean space for text overlay";
+          break;
+        case "center":
+        default:
+          productPosition = "in the CENTER of the image";
+          textOverlayArea = "surrounding areas can be used for text overlay as needed";
+          break;
+      }
+    } else if (width > height) {
       // Landscape - product on the right, text area on the left
       productPosition = "on the RIGHT side of the image";
       textOverlayArea = "the LEFT side should have clean space for text overlay";
@@ -143,7 +168,7 @@ OUTPUT REQUIREMENTS:
         throw new Error("Rate limit exceeded. Please try again later.");
       }
       if (response.status === 402) {
-        throw new Error("Payment required. Please add credits to your workspace.");
+        throw new Error("CREDIT_EXPIRED");
       }
       throw new Error(`Lovable AI error: ${response.status}`);
     }
