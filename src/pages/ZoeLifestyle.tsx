@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { ArrowLeft, Loader2, Download, Search, Sparkles, ZoomIn, Square, RectangleVertical, RectangleHorizontal, Film, RefreshCw, Camera, Smartphone, Pencil, Send, MessageCircle, Check, RotateCcw } from "lucide-react";
+import { ArrowLeft, Loader2, Download, Search, Sparkles, ZoomIn, Square, RectangleVertical, RectangleHorizontal, Film, RefreshCw, Camera, Smartphone, Pencil, Send, MessageCircle, Check, RotateCcw, ImagePlus, X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -147,6 +147,11 @@ const ZoeLifestyle = () => {
   const [customResizeWidth, setCustomResizeWidth] = useState("");
   const [customResizeHeight, setCustomResizeHeight] = useState("");
   const [productPosition, setProductPosition] = useState<"center" | "left" | "right" | "top" | "bottom">("center");
+  
+  // Reference image state
+  const [referenceImage, setReferenceImage] = useState<string | null>(null);
+  const [referenceImageName, setReferenceImageName] = useState<string | null>(null);
+  const referenceInputRef = useRef<HTMLInputElement>(null);
   
   // Feedback dialog state
   const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
@@ -345,13 +350,38 @@ const ZoeLifestyle = () => {
     }, 300);
   };
 
+  const handleReferenceImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setReferenceImage(reader.result as string);
+      setReferenceImageName(file.name);
+      addMessage({ type: "user", content: `I uploaded a reference image: ${file.name}` });
+      addMessage({ type: "anita", content: "Got it! 📷 I'll reference this image's interior style, lighting, and camera angle when generating your lifestyle image!" });
+    };
+    reader.readAsDataURL(file);
+    
+    // Reset the input so the same file can be selected again if needed
+    event.target.value = '';
+  };
+
+  const handleRemoveReferenceImage = () => {
+    setReferenceImage(null);
+    setReferenceImageName(null);
+    addMessage({ type: "anita", content: "Reference image removed. I'll create a unique style for your lifestyle image! ✨" });
+  };
+
   const handleGenerateLifestyle = async () => {
-    addMessage({ type: "user", content: "Generate an AI lifestyle image!" });
+    const hasReference = referenceImage ? " (with reference image)" : "";
+    addMessage({ type: "user", content: `Generate an AI lifestyle image!${hasReference}` });
     setShowInput(false);
     setInputType(null);
 
     setTimeout(() => {
-      addMessage({ type: "anita", content: "Got it! AI is working hard on this... 🎨\nIt takes about 30 seconds. Please wait!" });
+      const refNote = referenceImage ? "\nI'll use your reference image for style guidance! 📷" : "";
+      addMessage({ type: "anita", content: `Got it! AI is working hard on this... 🎨${refNote}\nIt takes about 30 seconds. Please wait!` });
     }, 300);
 
     setIsGenerating(true);
@@ -361,8 +391,24 @@ const ZoeLifestyle = () => {
     try {
       const country = extractCountryFromUrl(url);
       
+      // Prepare reference image base64 if exists
+      let referenceImageBase64 = null;
+      if (referenceImage) {
+        const base64Match = referenceImage.match(/^data:image\/[^;]+;base64,(.+)$/);
+        if (base64Match) {
+          referenceImageBase64 = base64Match[1];
+        }
+      }
+      
       const { data, error } = await supabase.functions.invoke("anita-generate-lifestyle", {
-        body: { imageUrl: selectedImage, aspectRatio: "16:9", country, productDimensions, tvMountInfo },
+        body: { 
+          imageUrl: selectedImage, 
+          aspectRatio: "16:9", 
+          country, 
+          productDimensions, 
+          tvMountInfo,
+          referenceImageBase64
+        },
       });
 
       if (error) throw error;
@@ -967,15 +1013,55 @@ const ZoeLifestyle = () => {
 
           {/* Action Selection */}
           {showInput && inputType === "action" && (
-            <div className="flex gap-2 flex-wrap justify-center">
-              <Button onClick={handleGenerateLifestyle} disabled={isAnyLoading} className="bg-purple-500 hover:bg-purple-600">
-                <Sparkles className="w-4 h-4 mr-2" />
-                AI Lifestyle Generation
-              </Button>
-              <Button onClick={handleCameraClick} disabled={isAnyLoading} variant="outline" className="border-teal-300 text-teal-600">
-                <Camera className="w-4 h-4 mr-2" />
-                Use My Photo
-              </Button>
+            <div className="space-y-3">
+              {/* Reference image upload section */}
+              <div className="flex items-center justify-center gap-2">
+                <input
+                  type="file"
+                  ref={referenceInputRef}
+                  onChange={handleReferenceImageUpload}
+                  accept="image/*"
+                  className="hidden"
+                />
+                {referenceImage ? (
+                  <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                    <img src={referenceImage} alt="Reference" className="w-10 h-10 object-cover rounded" />
+                    <div className="text-xs">
+                      <p className="font-medium text-amber-800">Reference: {referenceImageName}</p>
+                      <p className="text-amber-600">Style will be applied</p>
+                    </div>
+                    <button
+                      onClick={handleRemoveReferenceImage}
+                      className="ml-2 p-1 hover:bg-amber-100 rounded-full"
+                    >
+                      <X className="w-4 h-4 text-amber-600" />
+                    </button>
+                  </div>
+                ) : (
+                  <Button
+                    onClick={() => referenceInputRef.current?.click()}
+                    disabled={isAnyLoading}
+                    variant="outline"
+                    size="sm"
+                    className="border-amber-300 text-amber-600 hover:bg-amber-50"
+                  >
+                    <ImagePlus className="w-4 h-4 mr-2" />
+                    Add Reference Image (Optional)
+                  </Button>
+                )}
+              </div>
+              
+              {/* Action buttons */}
+              <div className="flex gap-2 flex-wrap justify-center">
+                <Button onClick={handleGenerateLifestyle} disabled={isAnyLoading} className="bg-purple-500 hover:bg-purple-600">
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  AI Lifestyle Generation
+                </Button>
+                <Button onClick={handleCameraClick} disabled={isAnyLoading} variant="outline" className="border-teal-300 text-teal-600">
+                  <Camera className="w-4 h-4 mr-2" />
+                  Use My Photo
+                </Button>
+              </div>
             </div>
           )}
 

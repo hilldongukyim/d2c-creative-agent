@@ -24,9 +24,10 @@ async function generateLifestyleImage(
   aspectRatio: string = "16:9", 
   country: string | null = null,
   productDimensions: { width?: string; height?: string; depth?: string; raw?: string } | null = null,
-  tvMountInfo: { mountType: string | null; isTV: boolean } | null = null
+  tvMountInfo: { mountType: string | null; isTV: boolean } | null = null,
+  referenceImageBase64: string | null = null
 ): Promise<string> {
-  console.log("Generating lifestyle image with Gemini...", country ? `for ${country}` : "", productDimensions ? `with dimensions: ${JSON.stringify(productDimensions)}` : "", tvMountInfo ? `TV mount: ${JSON.stringify(tvMountInfo)}` : "");
+  console.log("Generating lifestyle image with Gemini...", country ? `for ${country}` : "", productDimensions ? `with dimensions: ${JSON.stringify(productDimensions)}` : "", tvMountInfo ? `TV mount: ${JSON.stringify(tvMountInfo)}` : "", referenceImageBase64 ? "with reference image" : "");
 
   // Determine dimensions based on aspect ratio
   let width: number, height: number;
@@ -114,15 +115,35 @@ For example:
 - Australia: Indoor-outdoor living, bright natural light
 ` : '';
 
+  // Reference image context
+  const referenceContext = referenceImageBase64 ? `
+REFERENCE IMAGE GUIDANCE:
+A reference image has been provided. You MUST analyze and apply the following from the reference:
+1. **Interior Style**: Match the overall interior design aesthetic (modern, minimalist, Scandinavian, industrial, etc.)
+2. **Color Palette**: Use similar color tones and mood as the reference
+3. **Lighting**: Replicate the lighting style (natural light direction, warm/cool tones, shadow depth)
+4. **Camera Angle**: Match the camera perspective and viewing angle
+5. **Atmosphere**: Capture the same mood and ambiance
+6. **Material Textures**: Use similar material finishes (wood types, fabrics, metals)
+7. **Spatial Composition**: Follow similar room layout and depth
+
+IMPORTANT: The reference image is for STYLE GUIDANCE ONLY. 
+- Do NOT copy the exact room or furniture
+- Create a NEW scene inspired by the reference's style
+- The product from the product image must be the hero of the scene
+` : '';
+
   const prompt = `You are a professional lifestyle photographer and product placement specialist.
 
 TASK: Create a stunning lifestyle marketing image at ${width}x${height} resolution (${aspectRatio} aspect ratio).
 ${tvMountContext}
 ${dimensionsContext}
 ${countryContext}
+${referenceContext}
 INSTRUCTIONS:
 1. First, analyze the product in the image - identify what type of product it is (electronics, appliance, furniture, etc.)
-2. Based on the product type, determine the ideal target persona:
+${referenceImageBase64 ? '2. Study the reference image carefully - note the interior style, lighting, camera angle, and mood' : ''}
+${referenceImageBase64 ? '3' : '2'}. Based on the product type${referenceImageBase64 ? ' and reference style' : ''}, determine the ideal target persona:
    - Premium electronics → Modern professional, tech-savvy lifestyle
    - Home appliances → Family-oriented, comfortable modern home
    - Beauty/personal care → Wellness-focused, self-care lifestyle
@@ -130,15 +151,15 @@ INSTRUCTIONS:
    - Audio/Visual equipment → Entertainment lover, music/movie enthusiast
    - TV/Display → Luxurious living room, home theater experience
 
-3. Create a lifestyle scene that:
-   - Matches the identified persona's aspirational environment
+${referenceImageBase64 ? '4' : '3'}. Create a lifestyle scene that:
+   ${referenceImageBase64 ? '- FOLLOWS the interior style, lighting, and camera angle from the reference image' : '- Matches the identified persona\'s aspirational environment'}
    - Places the product naturally as if in actual use or display
-   - Uses appropriate lighting for the product type (warm for home, bright for tech)
+   - Uses appropriate lighting for the product type${referenceImageBase64 ? ' (matching reference style)' : ' (warm for home, bright for tech)'}
    - Includes contextual elements that tell a story about the user's lifestyle
    - Feels like a high-end catalog or magazine advertisement
    ${productDimensions ? '- MAINTAINS ACCURATE PRODUCT SIZE based on the provided dimensions' : ''}
 
-4. Technical requirements:
+${referenceImageBase64 ? '5' : '4'}. Technical requirements:
    - Professional photography quality
    - Natural, realistic lighting with subtle shadows
    - Product should be clearly visible and prominently featured
@@ -147,6 +168,30 @@ INSTRUCTIONS:
    ${productDimensions ? '- Product scale must be realistic relative to surrounding furniture and space' : ''}
 
 Generate the lifestyle image now.`;
+
+  // Build the content array with product image and optionally reference image
+  const contentArray: Array<{ type: string; text?: string; image_url?: { url: string } }> = [
+    {
+      type: "text",
+      text: prompt,
+    },
+    {
+      type: "image_url",
+      image_url: {
+        url: `data:image/png;base64,${productImageBase64}`,
+      },
+    },
+  ];
+
+  // Add reference image if provided
+  if (referenceImageBase64) {
+    contentArray.push({
+      type: "image_url",
+      image_url: {
+        url: `data:image/png;base64,${referenceImageBase64}`,
+      },
+    });
+  }
 
   const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
@@ -159,18 +204,7 @@ Generate the lifestyle image now.`;
       messages: [
         {
           role: "user",
-          content: [
-            {
-              type: "text",
-              text: prompt,
-            },
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:image/png;base64,${productImageBase64}`,
-              },
-            },
-          ],
+          content: contentArray,
         },
       ],
       modalities: ["image", "text"],
@@ -213,7 +247,7 @@ serve(async (req) => {
   }
 
   try {
-    const { imageUrl, aspectRatio = "16:9", country = null, productDimensions = null, tvMountInfo = null } = await req.json();
+    const { imageUrl, aspectRatio = "16:9", country = null, productDimensions = null, tvMountInfo = null, referenceImageBase64 = null } = await req.json();
 
     if (!imageUrl) {
       throw new Error("Image URL is required");
@@ -224,7 +258,7 @@ serve(async (req) => {
       throw new Error("LOVABLE_API_KEY not configured");
     }
 
-    console.log("Starting lifestyle image generation for:", imageUrl, "with aspect ratio:", aspectRatio, "country:", country, "dimensions:", productDimensions, "tvMount:", tvMountInfo);
+    console.log("Starting lifestyle image generation for:", imageUrl, "with aspect ratio:", aspectRatio, "country:", country, "dimensions:", productDimensions, "tvMount:", tvMountInfo, "hasReference:", !!referenceImageBase64);
 
     // Step 1: Download image
     console.log("Step 1: Downloading product image...");
@@ -232,8 +266,8 @@ serve(async (req) => {
     console.log("Image downloaded, length:", productImageBase64.length);
 
     // Step 2: Generate lifestyle image with Gemini
-    console.log("Step 2: Generating lifestyle image with Gemini...");
-    const lifestyleImageBase64 = await generateLifestyleImage(productImageBase64, LOVABLE_API_KEY, aspectRatio, country, productDimensions, tvMountInfo);
+    console.log("Step 2: Generating lifestyle image with Gemini...", referenceImageBase64 ? "with reference image" : "without reference");
+    const lifestyleImageBase64 = await generateLifestyleImage(productImageBase64, LOVABLE_API_KEY, aspectRatio, country, productDimensions, tvMountInfo, referenceImageBase64);
     console.log("Lifestyle image generated, length:", lifestyleImageBase64.length);
 
     return new Response(
