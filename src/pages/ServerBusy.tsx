@@ -15,12 +15,12 @@ const ServerBusy = () => {
 
         {/* Headline */}
         <h1 className="text-2xl md:text-3xl font-bold text-foreground mb-4 font-['LGEIText']">
-          Oops, it's Getting Crowded in Here!
+          Oops, It's Getting Crowded in Here
         </h1>
 
         {/* Body */}
         <p className="text-base md:text-lg text-muted-foreground font-['LGEIText']">
-          The interest in Twin Crew is huge! We are working on it. Please check back soon!
+          Twin Crew is experiencing high demand right now. We're on it—please check back soon.
         </p>
       </div>
     </div>
