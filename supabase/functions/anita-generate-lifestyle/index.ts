@@ -117,23 +117,42 @@ For example:
 
   // Reference image context
   const referenceContext = referenceImageBase64 ? `
-REFERENCE IMAGE GUIDANCE:
-A reference image has been provided. You MUST analyze and apply the following from the reference:
-1. **Interior Style**: Match the overall interior design aesthetic (modern, minimalist, Scandinavian, industrial, etc.)
-2. **Color Palette**: Use similar color tones and mood as the reference
-3. **Lighting**: Replicate the lighting style (natural light direction, warm/cool tones, shadow depth)
-4. **Camera Angle**: Match the camera perspective and viewing angle
-5. **Atmosphere**: Capture the same mood and ambiance
-6. **Material Textures**: Use similar material finishes (wood types, fabrics, metals)
-7. **Spatial Composition**: Follow similar room layout and depth
+⚠️ CRITICAL - TWO IMAGES ARE PROVIDED:
+- **IMAGE 1 (PRODUCT IMAGE)**: This is the ACTUAL PRODUCT that MUST appear in the final image. This product is the HERO and MAIN SUBJECT.
+- **IMAGE 2 (REFERENCE IMAGE)**: This is ONLY for STYLE REFERENCE. Do NOT include any objects, furniture, or elements from this image in the output.
 
-IMPORTANT: The reference image is for STYLE GUIDANCE ONLY. 
-- Do NOT copy the exact room or furniture
-- Create a NEW scene inspired by the reference's style
-- The product from the product image must be the hero of the scene
+REFERENCE IMAGE - STYLE EXTRACTION ONLY:
+From the reference image, ONLY extract and apply these ABSTRACT QUALITIES:
+1. **Camera Angle/Perspective**: The viewing angle (eye-level, low angle, high angle, etc.)
+2. **Lighting Direction & Quality**: Where light comes from, hard vs soft shadows, warm vs cool tones
+3. **Interior Design Style**: The general aesthetic (modern, minimalist, Scandinavian, industrial, luxurious, etc.)
+4. **Color Mood**: The overall color temperature and palette feeling
+5. **Spatial Depth**: How deep/shallow the room appears
+
+⛔ ABSOLUTELY DO NOT:
+- Copy or recreate the exact room from the reference image
+- Include any furniture or objects visible in the reference image  
+- Use the reference image as a background or composite base
+- Place the product INTO the reference image scene
+
+✅ INSTEAD, YOU MUST:
+- Create a COMPLETELY NEW and ORIGINAL room/environment
+- Design NEW furniture and decorations that match the STYLE (not the actual items)
+- Place the PRODUCT from Image 1 as the central hero in this NEW scene
+- The reference is like a "mood board" - inspire the FEELING, not the CONTENT
 ` : '';
 
   const prompt = `You are a professional lifestyle photographer and product placement specialist.
+
+${referenceImageBase64 ? `
+🔴 CRITICAL INSTRUCTION - READ CAREFULLY:
+You are receiving TWO images:
+1. FIRST IMAGE = THE PRODUCT (must be prominently featured in your output)
+2. SECOND IMAGE = STYLE REFERENCE ONLY (do NOT copy this scene, only learn from its style)
+
+Your task: Create a BRAND NEW lifestyle scene featuring the PRODUCT from Image 1, 
+while being INSPIRED BY (not copying) the style/mood/angle from Image 2.
+` : ''}
 
 TASK: Create a stunning lifestyle marketing image at ${width}x${height} resolution (${aspectRatio} aspect ratio).
 ${tvMountContext}
@@ -141,33 +160,22 @@ ${dimensionsContext}
 ${countryContext}
 ${referenceContext}
 INSTRUCTIONS:
-1. First, analyze the product in the image - identify what type of product it is (electronics, appliance, furniture, etc.)
-${referenceImageBase64 ? '2. Study the reference image carefully - note the interior style, lighting, camera angle, and mood' : ''}
-${referenceImageBase64 ? '3' : '2'}. Based on the product type${referenceImageBase64 ? ' and reference style' : ''}, determine the ideal target persona:
-   - Premium electronics → Modern professional, tech-savvy lifestyle
-   - Home appliances → Family-oriented, comfortable modern home
-   - Beauty/personal care → Wellness-focused, self-care lifestyle
-   - Kitchen appliances → Culinary enthusiast, home chef lifestyle
-   - Audio/Visual equipment → Entertainment lover, music/movie enthusiast
-   - TV/Display → Luxurious living room, home theater experience
+1. Identify the product from the FIRST image - this is your HERO product that MUST appear in the final output
+${referenceImageBase64 ? '2. From the SECOND (reference) image, extract ONLY: camera angle, lighting style, interior design aesthetic, and color mood' : ''}
+${referenceImageBase64 ? '3. Create a COMPLETELY NEW room/environment that FEELS similar to the reference but is NOT the same room' : ''}
+${referenceImageBase64 ? '4' : '2'}. Place the product naturally in this ${referenceImageBase64 ? 'newly created' : 'appropriate'} environment
+${referenceImageBase64 ? '5' : '3'}. Ensure the product is the focal point and clearly visible
 
-${referenceImageBase64 ? '4' : '3'}. Create a lifestyle scene that:
-   ${referenceImageBase64 ? '- FOLLOWS the interior style, lighting, and camera angle from the reference image' : '- Matches the identified persona\'s aspirational environment'}
-   - Places the product naturally as if in actual use or display
-   - Uses appropriate lighting for the product type${referenceImageBase64 ? ' (matching reference style)' : ' (warm for home, bright for tech)'}
-   - Includes contextual elements that tell a story about the user's lifestyle
-   - Feels like a high-end catalog or magazine advertisement
-   ${productDimensions ? '- MAINTAINS ACCURATE PRODUCT SIZE based on the provided dimensions' : ''}
+Scene Requirements:
+- Professional photography quality
+- ${referenceImageBase64 ? 'Camera angle inspired by reference image' : 'Appropriate camera angle for the product type'}
+- ${referenceImageBase64 ? 'Lighting style matching reference mood' : 'Natural, realistic lighting with subtle shadows'}
+- Product should be clearly visible and prominently featured
+- ${referenceImageBase64 ? 'Interior style inspired by (NOT copied from) the reference' : 'Background should complement the product'}
+- Color harmony between product and environment
+${productDimensions ? '- Product scale must be realistic relative to surrounding furniture and space' : ''}
 
-${referenceImageBase64 ? '5' : '4'}. Technical requirements:
-   - Professional photography quality
-   - Natural, realistic lighting with subtle shadows
-   - Product should be clearly visible and prominently featured
-   - Background should complement, not distract from the product
-   - Color harmony between product and environment
-   ${productDimensions ? '- Product scale must be realistic relative to surrounding furniture and space' : ''}
-
-Generate the lifestyle image now.`;
+Generate the lifestyle image now featuring the PRODUCT from Image 1 in a NEW scene${referenceImageBase64 ? ' inspired by the STYLE of Image 2' : ''}.`;
 
   // Build the content array with product image and optionally reference image
   const contentArray: Array<{ type: string; text?: string; image_url?: { url: string } }> = [
