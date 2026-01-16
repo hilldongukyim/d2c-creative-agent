@@ -59,35 +59,46 @@ async function generateLifestyleImageWithReference(
     ? `TV MOUNT TYPE: ${tvMountInfo.mountType === "stand" ? "STAND - must be on furniture" : "WALL-MOUNT - must be on wall"}`
     : "";
 
-  const prompt = `You are creating a LIFESTYLE MARKETING IMAGE.
+  const prompt = `You are a world-class lifestyle photographer creating HIGH-END MARKETING IMAGERY.
 
 ⚠️ CRITICAL: You are given TWO images with DIFFERENT purposes:
 
 📦 **FIRST IMAGE = PRODUCT (HERO)**
 - This is the ONLY product that must appear in the final output
-- Extract and feature this product prominently
-- This product is the star of the image
+- Preserve EVERY detail of this product exactly as shown
+- This product is the star - feature it prominently and beautifully
 
 🎨 **SECOND IMAGE = STYLE REFERENCE ONLY**
 - Use this ONLY for: camera angle, lighting mood, interior design style, color palette
 - ⛔ DO NOT copy any objects, furniture, or products from this image
-- ⛔ DO NOT recreate this room - create a NEW environment
+- ⛔ DO NOT recreate this room - create a COMPLETELY NEW environment
 - ⛔ If there's any product/appliance in this reference - IGNORE IT completely
 
 YOUR TASK:
-1. Create a BRAND NEW room/environment inspired by the reference's STYLE (not content)
-2. Place the PRODUCT from the first image naturally in this new scene
-3. Match lighting direction and color mood from the reference
-4. Use similar camera angle/perspective as the reference
-5. The product must look like it was photographed IN this scene (proper shadows, reflections, scale)
+1. Analyze the reference image's STYLE elements: lighting direction, color temperature, camera angle, interior aesthetic
+2. Create a BRAND NEW premium room/environment that captures that same FEELING
+3. Place the PRODUCT from the first image naturally and prominently in this new scene
+4. Apply SEAMLESS compositing:
+   - Match lighting direction and color temperature to the environment
+   - Add realistic contact shadows and ambient occlusion
+   - Ensure proper reflections on glossy surfaces
+   - Maintain correct perspective and scale
+5. The product must look like it was ACTUALLY PHOTOGRAPHED in this scene
 
-OUTPUT: ${width}x${height} pixels, professional catalog-quality photography
+QUALITY REQUIREMENTS:
+- Ultra high resolution, sharp details throughout
+- Professional studio lighting quality
+- Magazine/catalog advertisement standard
+- Photorealistic rendering - no AI artifacts
+- Natural color grading matching the reference mood
+
+OUTPUT: ${width}x${height} pixels
 
 ${countryContext}
 ${dimensionsContext}
 ${tvContext}
 
-Generate the lifestyle image now.`;
+Generate a stunning, photorealistic lifestyle image now.`;
 
   const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
