@@ -16,11 +16,13 @@ import AdminRequestHistory from "../components/AdminRequestHistory";
 import MellNewsletterDialog from "../components/MellNewsletterDialog";
 import FionaAdminDialog from "../components/FionaAdminDialog";
 import CrewProfileDialog from "../components/CrewProfileDialog";
+import { useAnalytics } from "@/hooks/useAnalytics";
 const aliceProfile = "/lovable-uploads/d004c9d6-0491-459c-8639-7730374641aa.png";
 const benProfile = "/lovable-uploads/ben-profile-v2.png";
 
 const CoverPage = () => {
   const navigate = useNavigate();
+  const { trackCrewClick, trackButtonClick, trackFormSubmit } = useAnalytics();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
   const [selectedName, setSelectedName] = useState<string | null>(null);
@@ -138,6 +140,9 @@ const CoverPage = () => {
   const handleProfileClick = (name: string) => {
     const lower = name.toLowerCase();
     
+    // Track crew profile click
+    trackCrewClick(name, { is_coming_soon: crewProfiles[lower]?.isComingSoon ?? true });
+    
     // Special case for Fiona admin (in support section)
     if (lower === "fiona-admin" || (lower === "fiona" && name.includes("Admin"))) {
       setFionaDialogOpen(true);
@@ -167,6 +172,7 @@ const CoverPage = () => {
   };
 
   const handleCrewSubmitSuccess = (data: CrewFormData) => {
+    trackFormSubmit('CrewRequestForm', { crew_name: data.crewName });
     const newRequest: CrewRequest = {
       id: Date.now().toString(),
       ...data,
@@ -180,6 +186,7 @@ const CoverPage = () => {
   };
 
   const handleDevRequestSuccess = (data: DevelopmentRequest) => {
+    trackFormSubmit('DevelopmentRequestForm', { name: data.name });
     setDevelopmentRequests(prev => [...prev, data]);
   };
 
