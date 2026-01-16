@@ -185,7 +185,7 @@ Generate the lifestyle image now.`;
       throw new Error("Rate limit exceeded. Please try again later.");
     }
     if (response.status === 402) {
-      throw new Error("Payment required. Please add credits to your workspace.");
+      throw new Error("CREDIT_EXPIRED");
     }
     throw new Error(`Gemini AI error: ${response.status}`);
   }

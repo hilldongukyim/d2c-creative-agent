@@ -381,7 +381,12 @@ const ZoeLifestyle = () => {
       
     } catch (error) {
       console.error("Error generating lifestyle image:", error);
-      addMessage({ type: "anita", content: "An error occurred while generating the image. 😢\nWould you like to try again?" });
+      const errorMessage = error instanceof Error ? error.message : "";
+      if (errorMessage.includes("CREDIT_EXPIRED") || errorMessage.includes("402")) {
+        addMessage({ type: "anita", content: "사용 크레딧이 만료되었습니다. 관리자(donguk.yim@lge.com)에게 문의해주세요. 📧" });
+      } else {
+        addMessage({ type: "anita", content: "An error occurred while generating the image. 😢\nWould you like to try again?" });
+      }
       setShowInput(true);
       setInputType("action");
     } finally {
@@ -502,7 +507,12 @@ const ZoeLifestyle = () => {
       setInputType("edit");
     } catch (error) {
       console.error("Error upscaling:", error);
-      addMessage({ type: "anita", content: "An error occurred during upscaling. 😢" });
+      const errorMessage = error instanceof Error ? error.message : "";
+      if (errorMessage.includes("CREDIT_EXPIRED") || errorMessage.includes("402")) {
+        addMessage({ type: "anita", content: "사용 크레딧이 만료되었습니다. 관리자(donguk.yim@lge.com)에게 문의해주세요. 📧" });
+      } else {
+        addMessage({ type: "anita", content: "An error occurred during upscaling. 😢" });
+      }
       setShowInput(true);
       setInputType("edit");
     } finally {
@@ -539,7 +549,12 @@ const ZoeLifestyle = () => {
       setInputType("edit");
     } catch (error) {
       console.error("Error resizing:", error);
-      addMessage({ type: "anita", content: "An error occurred during resizing. 😢" });
+      const errorMessage = error instanceof Error ? error.message : "";
+      if (errorMessage.includes("CREDIT_EXPIRED") || errorMessage.includes("402")) {
+        addMessage({ type: "anita", content: "사용 크레딧이 만료되었습니다. 관리자(donguk.yim@lge.com)에게 문의해주세요. 📧" });
+      } else {
+        addMessage({ type: "anita", content: "An error occurred during resizing. 😢" });
+      }
       setShowInput(true);
       setInputType("edit");
     } finally {
@@ -576,7 +591,12 @@ const ZoeLifestyle = () => {
       setInputType("edit");
     } catch (error) {
       console.error("Error editing:", error);
-      addMessage({ type: "anita", content: "An error occurred while editing the image. 😢\nWould you like to try again?" });
+      const errorMessage = error instanceof Error ? error.message : "";
+      if (errorMessage.includes("CREDIT_EXPIRED") || errorMessage.includes("402")) {
+        addMessage({ type: "anita", content: "사용 크레딧이 만료되었습니다. 관리자(donguk.yim@lge.com)에게 문의해주세요. 📧" });
+      } else {
+        addMessage({ type: "anita", content: "An error occurred while editing the image. 😢\nWould you like to try again?" });
+      }
       setShowInput(true);
       setInputType("edit");
     } finally {
@@ -611,7 +631,12 @@ const ZoeLifestyle = () => {
       setInputType("edit");
     } catch (error) {
       console.error("Error generating video:", error);
-      addMessage({ type: "anita", content: "An error occurred during video generation. 😢\nPlease try again later." });
+      const errorMessage = error instanceof Error ? error.message : "";
+      if (errorMessage.includes("CREDIT_EXPIRED") || errorMessage.includes("402")) {
+        addMessage({ type: "anita", content: "사용 크레딧이 만료되었습니다. 관리자(donguk.yim@lge.com)에게 문의해주세요. 📧" });
+      } else {
+        addMessage({ type: "anita", content: "An error occurred during video generation. 😢\nPlease try again later." });
+      }
       setShowInput(true);
       setInputType("edit");
     } finally {
