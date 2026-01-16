@@ -16,6 +16,7 @@ import MaplePDP from "./pages/MaplePDP";
 import ZoeLifestyle from "./pages/ZoeLifestyle";
 import ZoeCamera from "./pages/ZoeCamera";
 import MiloECRM from "./pages/MiloECRM";
+import ServerBusy from "./pages/ServerBusy";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,7 @@ const App = () => (
           <Route path="/zoe-lifestyle" element={<ZoeLifestyle />} />
           <Route path="/zoe-camera/:sessionId" element={<ZoeCamera />} />
           <Route path="/milo-ecrm" element={<MiloECRM />} />
+          <Route path="/server-busy" element={<ServerBusy />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
