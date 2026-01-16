@@ -18,58 +18,91 @@ async function downloadImageAsBase64(imageUrl: string): Promise<string> {
   return base64Encode(new Uint8Array(imageArrayBuffer));
 }
 
-async function removeProductBackgroundWithFotor(productImageUrl: string): Promise<string> {
+async function removeProductBackgroundWithFotor(productImageUrl: string): Promise<string | null> {
   const FOTOR_API_KEY = Deno.env.get("FOTOR_API_KEY");
   if (!FOTOR_API_KEY) {
-    throw new Error("FOTOR_API_KEY is not configured");
+    console.warn("FOTOR_API_KEY is not configured, skipping background removal");
+    return null;
   }
 
-  // Create task
-  const createResp = await fetch("https://api-b.fotor.com/v1/aiart/backgroundremover", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${FOTOR_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({ imageUrl: productImageUrl }),
-  });
-
-  if (!createResp.ok) {
-    console.error("Fotor create task error:", createResp.status, await createResp.text());
-    throw new Error("Failed to create background removal task");
-  }
-
-  const createData = await createResp.json();
-  const taskId = createData.data?.taskId as string | undefined;
-  if (!taskId) throw new Error("No task ID received from Fotor");
-
-  // Poll
-  const maxAttempts = 30;
-  for (let i = 0; i < maxAttempts; i++) {
-    await new Promise((r) => setTimeout(r, 2000));
-
-    const statusResp = await fetch(`https://api-b.fotor.com/v1/aiart/backgroundremover/${taskId}`, {
-      headers: { Authorization: `Bearer ${FOTOR_API_KEY}` },
+  try {
+    console.log("Fotor: Creating background removal task for:", productImageUrl.substring(0, 80));
+    
+    // Create task
+    const createResp = await fetch("https://api-b.fotor.com/v1/aiart/backgroundremover", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${FOTOR_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ imageUrl: productImageUrl }),
     });
 
-    if (!statusResp.ok) continue;
+    const respText = await createResp.text();
+    console.log("Fotor create response status:", createResp.status, "body:", respText.substring(0, 300));
 
-    const statusData = await statusResp.json();
-    const status = statusData.data?.status as string | undefined;
-
-    if (status === "completed" && statusData.data?.resultUrl) {
-      const imgResp = await fetch(statusData.data.resultUrl);
-      if (!imgResp.ok) throw new Error("Failed to download Fotor result");
-      const buf = await imgResp.arrayBuffer();
-      return btoa(String.fromCharCode(...new Uint8Array(buf)));
+    if (!createResp.ok) {
+      console.error("Fotor create task error:", createResp.status);
+      return null; // Return null instead of throwing to allow fallback
     }
 
-    if (status === "failed") {
-      throw new Error("Background removal failed");
+    let createData;
+    try {
+      createData = JSON.parse(respText);
+    } catch {
+      console.error("Failed to parse Fotor response as JSON");
+      return null;
     }
+
+    const taskId = createData.data?.taskId as string | undefined;
+    if (!taskId) {
+      console.error("No task ID in Fotor response:", JSON.stringify(createData).substring(0, 200));
+      return null;
+    }
+
+    console.log("Fotor task created:", taskId);
+
+    // Poll
+    const maxAttempts = 30;
+    for (let i = 0; i < maxAttempts; i++) {
+      await new Promise((r) => setTimeout(r, 2000));
+
+      const statusResp = await fetch(`https://api-b.fotor.com/v1/aiart/backgroundremover/${taskId}`, {
+        headers: { Authorization: `Bearer ${FOTOR_API_KEY}` },
+      });
+
+      if (!statusResp.ok) {
+        console.log("Fotor poll attempt", i + 1, "status:", statusResp.status);
+        continue;
+      }
+
+      const statusData = await statusResp.json();
+      const status = statusData.data?.status as string | undefined;
+      console.log("Fotor task status:", status);
+
+      if (status === "completed" && statusData.data?.resultUrl) {
+        const imgResp = await fetch(statusData.data.resultUrl);
+        if (!imgResp.ok) {
+          console.error("Failed to download Fotor result");
+          return null;
+        }
+        const buf = await imgResp.arrayBuffer();
+        console.log("Background removal completed successfully");
+        return btoa(String.fromCharCode(...new Uint8Array(buf)));
+      }
+
+      if (status === "failed") {
+        console.error("Fotor background removal failed");
+        return null;
+      }
+    }
+
+    console.error("Fotor background removal timed out");
+    return null;
+  } catch (err) {
+    console.error("Fotor background removal error:", err);
+    return null;
   }
-
-  throw new Error("Background removal timed out");
 }
 
 async function generateEmptyBackgroundFromReference(
@@ -437,29 +470,54 @@ serve(async (req) => {
       );
       console.log("Background generated, length:", backgroundBase64.length);
 
-      // 2B) Remove background from product image (transparent product)
+      // 2B) Try to remove background from product image (transparent product)
       const productTransparentBase64 = await removeProductBackgroundWithFotor(imageUrl);
-      console.log("Product background removed, length:", productTransparentBase64.length);
+      
+      if (productTransparentBase64) {
+        console.log("Product background removed, length:", productTransparentBase64.length);
 
-      // 2C) Composite product into generated background
-      const lifestyleImageBase64 = await compositeTransparentProductIntoBackground(
-        LOVABLE_API_KEY,
-        backgroundBase64,
-        productTransparentBase64,
-        productDimensions,
-        tvMountInfo
-      );
-      console.log("Lifestyle image (reference pipeline) generated, length:", lifestyleImageBase64.length);
+        // 2C) Composite product into generated background
+        const lifestyleImageBase64 = await compositeTransparentProductIntoBackground(
+          LOVABLE_API_KEY,
+          backgroundBase64,
+          productTransparentBase64,
+          productDimensions,
+          tvMountInfo
+        );
+        console.log("Lifestyle image (reference pipeline) generated, length:", lifestyleImageBase64.length);
 
-      return new Response(
-        JSON.stringify({
-          success: true,
-          imageBase64: lifestyleImageBase64,
-        }),
-        {
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-        }
-      );
+        return new Response(
+          JSON.stringify({
+            success: true,
+            imageBase64: lifestyleImageBase64,
+          }),
+          {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          }
+        );
+      } else {
+        // Fallback: Fotor failed, use original product image for compositing
+        console.log("Fotor failed, using original product image for compositing...");
+        
+        const lifestyleImageBase64 = await compositeTransparentProductIntoBackground(
+          LOVABLE_API_KEY,
+          backgroundBase64,
+          productImageBase64, // Use original product image
+          productDimensions,
+          tvMountInfo
+        );
+        console.log("Lifestyle image (fallback pipeline) generated, length:", lifestyleImageBase64.length);
+
+        return new Response(
+          JSON.stringify({
+            success: true,
+            imageBase64: lifestyleImageBase64,
+          }),
+          {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          }
+        );
+      }
     }
 
     console.log("Step 2: Generating lifestyle image with Gemini... without reference");
