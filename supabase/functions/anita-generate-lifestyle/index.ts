@@ -18,16 +18,246 @@ async function downloadImageAsBase64(imageUrl: string): Promise<string> {
   return base64Encode(new Uint8Array(imageArrayBuffer));
 }
 
+async function removeProductBackgroundWithFotor(productImageUrl: string): Promise<string> {
+  const FOTOR_API_KEY = Deno.env.get("FOTOR_API_KEY");
+  if (!FOTOR_API_KEY) {
+    throw new Error("FOTOR_API_KEY is not configured");
+  }
+
+  // Create task
+  const createResp = await fetch("https://api-b.fotor.com/v1/aiart/backgroundremover", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${FOTOR_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ imageUrl: productImageUrl }),
+  });
+
+  if (!createResp.ok) {
+    console.error("Fotor create task error:", createResp.status, await createResp.text());
+    throw new Error("Failed to create background removal task");
+  }
+
+  const createData = await createResp.json();
+  const taskId = createData.data?.taskId as string | undefined;
+  if (!taskId) throw new Error("No task ID received from Fotor");
+
+  // Poll
+  const maxAttempts = 30;
+  for (let i = 0; i < maxAttempts; i++) {
+    await new Promise((r) => setTimeout(r, 2000));
+
+    const statusResp = await fetch(`https://api-b.fotor.com/v1/aiart/backgroundremover/${taskId}`, {
+      headers: { Authorization: `Bearer ${FOTOR_API_KEY}` },
+    });
+
+    if (!statusResp.ok) continue;
+
+    const statusData = await statusResp.json();
+    const status = statusData.data?.status as string | undefined;
+
+    if (status === "completed" && statusData.data?.resultUrl) {
+      const imgResp = await fetch(statusData.data.resultUrl);
+      if (!imgResp.ok) throw new Error("Failed to download Fotor result");
+      const buf = await imgResp.arrayBuffer();
+      return btoa(String.fromCharCode(...new Uint8Array(buf)));
+    }
+
+    if (status === "failed") {
+      throw new Error("Background removal failed");
+    }
+  }
+
+  throw new Error("Background removal timed out");
+}
+
+async function generateEmptyBackgroundFromReference(
+  lovableApiKey: string,
+  referenceImageBase64: string,
+  aspectRatio: string,
+  country: string | null,
+  tvMountInfo: { mountType: string | null; isTV: boolean } | null
+): Promise<string> {
+  // Determine dimensions
+  let width: number, height: number;
+  switch (aspectRatio) {
+    case "1:1":
+      width = 1080;
+      height = 1080;
+      break;
+    case "9:16":
+      width = 1080;
+      height = 1920;
+      break;
+    case "16:9":
+    default:
+      width = 1920;
+      height = 1080;
+      break;
+  }
+
+  const countryContext = country
+    ? `TARGET MARKET: ${country}\nMake the interior style feel authentic for ${country}.`
+    : "";
+
+  const tvContext = tvMountInfo?.isTV
+    ? "IMPORTANT: The final scene will later include a product; avoid placing any TVs or display-like rectangles on the wall."
+    : "";
+
+  const prompt = `You are generating a CLEAN, EMPTY lifestyle BACKGROUND (no product) for later compositing.
+
+GOAL:
+- Create a BRAND NEW room scene inspired by the REFERENCE image's style, lighting, and camera angle.
+- The output MUST NOT contain any products, appliances, TVs, screens, or branded objects.
+- Do NOT recreate the exact reference room; create a new interior with similar mood only.
+
+STYLE TO COPY (ABSTRACT ONLY):
+- Camera angle/perspective
+- Lighting direction/quality and color temperature
+- Interior design aesthetic
+- Overall color mood
+
+OUTPUT REQUIREMENTS:
+- Resolution exactly ${width}x${height}
+- Leave generous EMPTY SPACE in the scene (walls/surfaces) for placing a product later
+- Photorealistic, catalog-grade interior photography
+
+${countryContext}
+${tvContext}`;
+
+  const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${lovableApiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "google/gemini-2.5-flash-image-preview",
+      messages: [
+        {
+          role: "user",
+          content: [
+            { type: "text", text: prompt },
+            {
+              type: "image_url",
+              image_url: { url: `data:image/png;base64,${referenceImageBase64}` },
+            },
+          ],
+        },
+      ],
+      modalities: ["image", "text"],
+    }),
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    console.error("Gemini background error:", response.status, errorText);
+    if (response.status === 429) throw new Error("Rate limit exceeded. Please try again later.");
+    if (response.status === 402) throw new Error("CREDIT_EXPIRED");
+    throw new Error(`Gemini AI error: ${response.status}`);
+  }
+
+  const result = await response.json();
+  const imageUrl = result.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+  if (!imageUrl) throw new Error("No background image generated");
+
+  const base64Match = imageUrl.match(/^data:image\/[^;]+;base64,(.+)$/);
+  if (!base64Match) throw new Error("Invalid background image format");
+  return base64Match[1];
+}
+
+async function compositeTransparentProductIntoBackground(
+  lovableApiKey: string,
+  backgroundBase64: string,
+  productTransparentBase64: string,
+  productDimensions: { width?: string; height?: string; depth?: string; raw?: string } | null,
+  tvMountInfo: { mountType: string | null; isTV: boolean } | null
+): Promise<string> {
+  const sizeContext = productDimensions?.raw
+    ? `\nREAL PRODUCT SIZE: ${productDimensions.raw}\nKeep scale realistic.`
+    : "";
+
+  const tvRules = (tvMountInfo?.isTV && tvMountInfo?.mountType)
+    ? `\nTV PLACEMENT RULES:\n- Mount type: ${tvMountInfo.mountType}\n- Enforce correct depiction (stand vs wall-mount).`
+    : "";
+
+  const prompt = `You are given two images:
+1) Background interior scene (FIRST image)
+2) A product with transparent background (SECOND image)
+
+TASK:
+Composite the product naturally into the background.
+
+STRICT RULES:
+- The background scene MUST remain the same (do not replace it with any reference image).
+- Place the product at a realistic scale and correct perspective.
+- Match lighting direction, shadow softness, and color temperature.
+- Add physically plausible contact shadows (and reflections if needed).
+- The product must look photographed in the scene, not pasted.
+- Do NOT introduce extra products or duplicates.
+${sizeContext}
+${tvRules}`;
+
+  const resp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${lovableApiKey}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "google/gemini-2.5-flash-image-preview",
+      messages: [
+        {
+          role: "user",
+          content: [
+            { type: "text", text: prompt },
+            {
+              type: "image_url",
+              image_url: { url: `data:image/png;base64,${backgroundBase64}` },
+            },
+            {
+              type: "image_url",
+              image_url: { url: `data:image/png;base64,${productTransparentBase64}` },
+            },
+          ],
+        },
+      ],
+      modalities: ["image", "text"],
+    }),
+  });
+
+  if (!resp.ok) {
+    const errorText = await resp.text();
+    console.error("Gemini composite error:", resp.status, errorText);
+    if (resp.status === 429) throw new Error("Rate limit exceeded. Please try again later.");
+    if (resp.status === 402) throw new Error("CREDIT_EXPIRED");
+    throw new Error(`Gemini AI error: ${resp.status}`);
+  }
+
+  const result = await resp.json();
+  const imageUrl = result.choices?.[0]?.message?.images?.[0]?.image_url?.url;
+  if (!imageUrl) throw new Error("No composite image generated");
+
+  const base64Match = imageUrl.match(/^data:image\/[^;]+;base64,(.+)$/);
+  if (!base64Match) throw new Error("Invalid composite image format");
+  return base64Match[1];
+}
+
 async function generateLifestyleImage(
-  productImageBase64: string, 
-  lovableApiKey: string, 
-  aspectRatio: string = "16:9", 
+  productImageBase64: string,
+  lovableApiKey: string,
+  aspectRatio: string = "16:9",
   country: string | null = null,
   productDimensions: { width?: string; height?: string; depth?: string; raw?: string } | null = null,
-  tvMountInfo: { mountType: string | null; isTV: boolean } | null = null,
-  referenceImageBase64: string | null = null
+  tvMountInfo: { mountType: string | null; isTV: boolean } | null = null
 ): Promise<string> {
-  console.log("Generating lifestyle image with Gemini...", country ? `for ${country}` : "", productDimensions ? `with dimensions: ${JSON.stringify(productDimensions)}` : "", tvMountInfo ? `TV mount: ${JSON.stringify(tvMountInfo)}` : "", referenceImageBase64 ? "with reference image" : "");
+  console.log(
+    "Generating lifestyle image with Gemini...",
+    country ? `for ${country}` : "",
+    productDimensions ? `with dimensions: ${JSON.stringify(productDimensions)}` : "",
+    tvMountInfo ? `TV mount: ${JSON.stringify(tvMountInfo)}` : ""
+  );
 
   // Determine dimensions based on aspect ratio
   let width: number, height: number;
@@ -48,12 +278,13 @@ async function generateLifestyleImage(
   }
 
   // Product dimensions context for accurate sizing
-  const dimensionsContext = productDimensions ? `
+  const dimensionsContext = productDimensions
+    ? `
 PRODUCT PHYSICAL DIMENSIONS:
-${productDimensions.raw ? `- Overall size: ${productDimensions.raw}` : ''}
-${productDimensions.width ? `- Width: ${productDimensions.width}` : ''}
-${productDimensions.height ? `- Height: ${productDimensions.height}` : ''}
-${productDimensions.depth ? `- Depth: ${productDimensions.depth}` : ''}
+${productDimensions.raw ? `- Overall size: ${productDimensions.raw}` : ""}
+${productDimensions.width ? `- Width: ${productDimensions.width}` : ""}
+${productDimensions.height ? `- Height: ${productDimensions.height}` : ""}
+${productDimensions.depth ? `- Depth: ${productDimensions.depth}` : ""}
 
 CRITICAL SIZE ACCURACY INSTRUCTIONS:
 - Use these exact dimensions to determine the product's real-world scale
@@ -63,14 +294,16 @@ CRITICAL SIZE ACCURACY INSTRUCTIONS:
 - Compare product dimensions to standard furniture sizes (sofa ~85cm height, dining table ~75cm height, door ~200cm height)
 - The product should look naturally sized - not too large or too small for the space
 - Use reference objects in the scene to establish correct scale perception
-` : '';
+`
+    : "";
 
   // TV mount type specific instructions
-  const tvMountContext = (tvMountInfo?.isTV && tvMountInfo?.mountType) ? `
+  const tvMountContext = tvMountInfo?.isTV && tvMountInfo?.mountType
+    ? `
 ⚠️ CRITICAL TV PLACEMENT INSTRUCTIONS:
-This is a TV product with ${tvMountInfo.mountType === 'stand' ? 'STAND' : 'WALL-MOUNT'} configuration.
+This is a TV product with ${tvMountInfo.mountType === "stand" ? "STAND" : "WALL-MOUNT"} configuration.
 
-${tvMountInfo.mountType === 'stand' ? `
+${tvMountInfo.mountType === "stand" ? `
 **STAND VERSION TV - MANDATORY REQUIREMENTS:**
 - The TV MUST be placed on a TV stand, entertainment center, console table, or media cabinet
 - The TV stand/base MUST be visible and resting on furniture
@@ -89,9 +322,12 @@ ${tvMountInfo.mountType === 'stand' ? `
 `}
 
 IMPORTANT: Violating these placement rules will result in an incorrect product representation.
-The ${tvMountInfo.mountType === 'stand' ? 'stand-based' : 'wall-mounted'} configuration is a key product feature that must be accurately depicted.
-` : '';
-  const countryContext = country ? `
+The ${tvMountInfo.mountType === "stand" ? "stand-based" : "wall-mounted"} configuration is a key product feature that must be accurately depicted.
+`
+    : "";
+
+  const countryContext = country
+    ? `
 TARGET MARKET: ${country}
 Create a lifestyle scene that resonates with ${country} consumers:
 - Use interior design styles, furniture, and decor typical of ${country} homes
@@ -99,133 +335,22 @@ Create a lifestyle scene that resonates with ${country} consumers:
 - Consider typical home layouts and living spaces in ${country}
 - Include elements that feel authentic and aspirational for ${country} market
 - If applicable, consider climate and lifestyle patterns typical of ${country}
-
-For example:
-- South Korea: Modern minimalist apartments, ondol floor heating, compact but stylish spaces
-- Japan: Clean, organized spaces with natural materials, zen-like simplicity
-- United States: Spacious open-concept homes, casual comfortable lifestyle
-- Germany: Functional, efficient design with quality craftsmanship
-- United Kingdom: Mix of traditional and modern, cozy home atmosphere
-- France: Elegant, sophisticated interiors with classic touches
-- Italy: Warm Mediterranean aesthetics, stylish and artistic
-- Brazil: Vibrant colors, tropical elements, warm family-oriented spaces
-- India: Rich colors and textures, blend of traditional and modern
-- China: Balance of contemporary and traditional Chinese elements
-- Middle East (UAE, Saudi Arabia): Luxurious, opulent interiors
-- Australia: Indoor-outdoor living, bright natural light
-` : '';
-
-  // Reference image context
-  const referenceContext = referenceImageBase64 ? `
-⚠️ CRITICAL - TWO IMAGES ARE PROVIDED:
-- **IMAGE 1 (PRODUCT IMAGE)**: This is the ACTUAL PRODUCT that MUST appear in the final image. Extract ONLY the product object itself.
-- **IMAGE 2 (REFERENCE IMAGE)**: This is ONLY for STYLE REFERENCE. Extract ONLY the abstract style qualities - NO objects or products from this image should appear in output.
-
-🚨 MANDATORY: REMOVE ANY PRODUCTS FROM REFERENCE IMAGE
-If the reference image contains any products (TV, appliances, electronics, furniture items being sold), you MUST:
-- IGNORE those products completely
-- DO NOT include them in the output
-- ONLY use the reference for: room style, lighting, camera angle, color mood
-- The ONLY product in the final image should be from IMAGE 1
-
-REFERENCE IMAGE - EXTRACT ONLY THESE ABSTRACT QUALITIES:
-1. **Camera Angle/Perspective**: The viewing angle and composition style
-2. **Lighting**: Light direction, quality (soft/hard), color temperature (warm/cool)
-3. **Interior Design Aesthetic**: Modern, minimalist, Scandinavian, luxurious, etc.
-4. **Color Palette Mood**: Overall color feeling and harmony
-5. **Room Atmosphere**: Cozy, professional, airy, dramatic, etc.
-
-⛔ ABSOLUTELY DO NOT:
-- Include ANY products or appliances from the reference image
-- Copy the exact room layout or furniture placement
-- Use reference image as a background to paste product onto
-- Keep any branded items or specific objects from reference
-
-✅ YOU MUST:
-- Create a COMPLETELY NEW room environment from scratch
-- Design NEW furniture that matches the STYLE aesthetic (not same items)
-- Seamlessly integrate the PRODUCT from Image 1 into this new scene
-- Make the product look like it BELONGS in this environment naturally
-- Match lighting on the product to the environment lighting
-` : '';
+`
+    : "";
 
   const prompt = `You are a professional lifestyle photographer and product placement specialist.
-
-${referenceImageBase64 ? `
-🔴 ABSOLUTELY CRITICAL - READ THIS FIRST:
-You are receiving TWO images but they serve DIFFERENT purposes:
-
-📦 IMAGE 1 = THE PRODUCT TO FEATURE
-- This is the ONLY product that should appear in your output
-- Extract this product and place it naturally in a new scene
-
-🎨 IMAGE 2 = STYLE MOOD BOARD (NOT a scene to copy)
-- Use this ONLY to understand: lighting style, camera angle, interior aesthetic, color mood
-- DO NOT copy this room. DO NOT include any products visible in this image.
-- If there's a TV, appliance, or any product in the reference - REMOVE IT from your output
-
-YOUR OUTPUT: A brand new lifestyle scene where the product from Image 1 is seamlessly placed
-in a newly created environment that captures the STYLE FEELING of Image 2.
-` : ''}
 
 TASK: Create a stunning lifestyle marketing image at ${width}x${height} resolution (${aspectRatio} aspect ratio).
 ${tvMountContext}
 ${dimensionsContext}
 ${countryContext}
-${referenceContext}
+
 INSTRUCTIONS:
-1. From IMAGE 1: Extract the product - this is your HERO that MUST appear in the final output
-${referenceImageBase64 ? '2. From IMAGE 2: Extract ONLY the style elements (lighting, angle, aesthetic, mood) - IGNORE any products in this image' : ''}
-${referenceImageBase64 ? '3. Create a BRAND NEW room/environment inspired by the style (not copied)' : ''}
-${referenceImageBase64 ? '4' : '2'}. Place the product NATURALLY in this environment with SEAMLESS INTEGRATION:
-   - Match the lighting on the product to the environment
-   - Ensure proper shadows and reflections
-   - Product should look like it was photographed IN this scene, not pasted on
-   - Correct perspective and scale relative to surroundings
-${referenceImageBase64 ? '5' : '3'}. Ensure the product is the focal point and clearly visible
+1. Analyze the product in the image.
+2. Create a BRAND NEW lifestyle scene where this product looks naturally photographed.
+3. Keep the product as the hero, with realistic lighting, shadows, and scale.
 
-SEAMLESS COMPOSITING REQUIREMENTS:
-- The product must have consistent lighting with the environment
-- Shadows beneath/behind product must match the scene's light direction
-- Product edges should blend naturally (no harsh cutout appearance)
-- Reflections on glossy surfaces should match environment
-- Product scale must be realistic relative to furniture/room size
-
-Scene Requirements:
-- Professional photography quality (like a catalog shoot)
-- ${referenceImageBase64 ? 'Camera angle inspired by reference' : 'Appropriate camera angle'}
-- ${referenceImageBase64 ? 'Lighting matching reference mood' : 'Natural, realistic lighting'}
-- Product as the clear hero and focal point
-- ${referenceImageBase64 ? 'NEW environment inspired by (NOT copied from) reference' : 'Complementary background'}
-- Color harmony between product and environment
-${productDimensions ? '- Product scale realistic based on actual dimensions' : ''}
-${productDimensions ? '- Product scale must be realistic relative to surrounding furniture and space' : ''}
-
-Generate the lifestyle image now featuring the PRODUCT from Image 1 in a NEW scene${referenceImageBase64 ? ' inspired by the STYLE of Image 2' : ''}.`;
-
-  // Build the content array with product image and optionally reference image
-  const contentArray: Array<{ type: string; text?: string; image_url?: { url: string } }> = [
-    {
-      type: "text",
-      text: prompt,
-    },
-    {
-      type: "image_url",
-      image_url: {
-        url: `data:image/png;base64,${productImageBase64}`,
-      },
-    },
-  ];
-
-  // Add reference image if provided
-  if (referenceImageBase64) {
-    contentArray.push({
-      type: "image_url",
-      image_url: {
-        url: `data:image/png;base64,${referenceImageBase64}`,
-      },
-    });
-  }
+Generate the lifestyle image now.`;
 
   const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
     method: "POST",
@@ -238,7 +363,15 @@ Generate the lifestyle image now featuring the PRODUCT from Image 1 in a NEW sce
       messages: [
         {
           role: "user",
-          content: contentArray,
+          content: [
+            { type: "text", text: prompt },
+            {
+              type: "image_url",
+              image_url: {
+                url: `data:image/png;base64,${productImageBase64}`,
+              },
+            },
+          ],
         },
       ],
       modalities: ["image", "text"],
@@ -248,13 +381,9 @@ Generate the lifestyle image now featuring the PRODUCT from Image 1 in a NEW sce
   if (!response.ok) {
     const errorText = await response.text();
     console.error("Gemini AI error:", response.status, errorText);
-    
-    if (response.status === 429) {
-      throw new Error("Rate limit exceeded. Please try again later.");
-    }
-    if (response.status === 402) {
-      throw new Error("CREDIT_EXPIRED");
-    }
+
+    if (response.status === 429) throw new Error("Rate limit exceeded. Please try again later.");
+    if (response.status === 402) throw new Error("CREDIT_EXPIRED");
     throw new Error(`Gemini AI error: ${response.status}`);
   }
 
@@ -262,15 +391,10 @@ Generate the lifestyle image now featuring the PRODUCT from Image 1 in a NEW sce
   console.log("Gemini AI response received");
 
   const imageUrl = result.choices?.[0]?.message?.images?.[0]?.image_url?.url;
-  if (!imageUrl) {
-    throw new Error("No image generated from Gemini AI");
-  }
+  if (!imageUrl) throw new Error("No image generated from Gemini AI");
 
-  // Extract base64 from data URL
   const base64Match = imageUrl.match(/^data:image\/[^;]+;base64,(.+)$/);
-  if (!base64Match) {
-    throw new Error("Invalid image format from Gemini AI");
-  }
+  if (!base64Match) throw new Error("Invalid image format from Gemini AI");
 
   return base64Match[1];
 }
@@ -299,9 +423,47 @@ serve(async (req) => {
     const productImageBase64 = await downloadImageAsBase64(imageUrl);
     console.log("Image downloaded, length:", productImageBase64.length);
 
-    // Step 2: Generate lifestyle image with Gemini
-    console.log("Step 2: Generating lifestyle image with Gemini...", referenceImageBase64 ? "with reference image" : "without reference");
-    const lifestyleImageBase64 = await generateLifestyleImage(productImageBase64, LOVABLE_API_KEY, aspectRatio, country, productDimensions, tvMountInfo, referenceImageBase64);
+    // Step 2: Generate lifestyle image
+    if (referenceImageBase64) {
+      console.log("Step 2: Reference mode ON - generating background + compositing product...");
+
+      // 2A) Generate empty background from reference (style only)
+      const backgroundBase64 = await generateEmptyBackgroundFromReference(
+        LOVABLE_API_KEY,
+        referenceImageBase64,
+        aspectRatio,
+        country,
+        tvMountInfo
+      );
+      console.log("Background generated, length:", backgroundBase64.length);
+
+      // 2B) Remove background from product image (transparent product)
+      const productTransparentBase64 = await removeProductBackgroundWithFotor(imageUrl);
+      console.log("Product background removed, length:", productTransparentBase64.length);
+
+      // 2C) Composite product into generated background
+      const lifestyleImageBase64 = await compositeTransparentProductIntoBackground(
+        LOVABLE_API_KEY,
+        backgroundBase64,
+        productTransparentBase64,
+        productDimensions,
+        tvMountInfo
+      );
+      console.log("Lifestyle image (reference pipeline) generated, length:", lifestyleImageBase64.length);
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          imageBase64: lifestyleImageBase64,
+        }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    console.log("Step 2: Generating lifestyle image with Gemini... without reference");
+    const lifestyleImageBase64 = await generateLifestyleImage(productImageBase64, LOVABLE_API_KEY, aspectRatio, country, productDimensions, tvMountInfo);
     console.log("Lifestyle image generated, length:", lifestyleImageBase64.length);
 
     return new Response(
