@@ -756,10 +756,75 @@ const ZoeLifestyle = () => {
   };
 
   const handleRegenerate = async () => {
-    addMessage({ type: "user", content: "Generate a different style!" });
+    const hasRef = referenceImage ? " (with reference style)" : "";
+    addMessage({ type: "user", content: `Generate a different style!${hasRef}` });
     setShowInput(false);
     
-    await handleGenerateLifestyle();
+    setTimeout(() => {
+      const refNote = referenceImage ? "\nUsing your reference image for style guidance! 📷" : "";
+      addMessage({ type: "anita", content: `Creating a fresh new style... 🎨${refNote}\nPlease wait about 30 seconds!` });
+    }, 300);
+    
+    setIsGenerating(true);
+    setIsUpscaled(false);
+    setGeneratedVideoUrl(null);
+    
+    try {
+      const country = extractCountryFromUrl(url);
+      
+      // Prepare reference image base64 if exists
+      let referenceImageBase64 = null;
+      if (referenceImage) {
+        const base64Match = referenceImage.match(/^data:image\/[^;]+;base64,(.+)$/);
+        if (base64Match) {
+          referenceImageBase64 = base64Match[1];
+        }
+      }
+      
+      const { data, error } = await supabase.functions.invoke("anita-generate-lifestyle", {
+        body: { 
+          imageUrl: selectedImage, 
+          aspectRatio: "16:9", 
+          country, 
+          productDimensions, 
+          tvMountInfo,
+          referenceImageBase64
+        },
+      });
+
+      if (error) throw error;
+      if (!data.success || !data.imageBase64) {
+        throw new Error(data.error || "Failed to generate lifestyle image");
+      }
+
+      setGeneratedImage(`data:image/png;base64,${data.imageBase64}`);
+      setCurrentAspectRatio("16:9");
+      
+      setTimeout(() => {
+        addMessage({ 
+          type: "anita", 
+          content: "Here's a fresh new style! ✨\nHow does this one look?" 
+        });
+        
+        setTimeout(() => {
+          setShowInput(true);
+          setInputType("edit");
+        }, 1500);
+      }, 500);
+      
+    } catch (error) {
+      console.error("Error regenerating lifestyle image:", error);
+      const errorMessage = error instanceof Error ? error.message : "";
+      if (errorMessage.includes("CREDIT_EXPIRED") || errorMessage.includes("402")) {
+        addMessage({ type: "anita", content: "사용 크레딧이 만료되었습니다. 관리자(donguk.yim@lge.com)에게 문의해주세요. 📧" });
+      } else {
+        addMessage({ type: "anita", content: "An error occurred while regenerating. 😢\nWould you like to try again?" });
+      }
+      setShowInput(true);
+      setInputType("edit");
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const handleDownload = () => {
