@@ -11,7 +11,7 @@ import CrewRequestForm, { CrewFormData } from "../components/CrewRequestForm";
 import KaiBackgroundRemovalPopup from "../components/KaiBackgroundRemovalPopup";
 import CrewRequestNotification, { CrewRequest } from "../components/CrewRequestNotification";
 import SupportSection from "../components/SupportSection";
-import DevelopmentRequestForm, { DevelopmentRequest } from "../components/DevelopmentRequestForm";
+import MochiRequestDialog, { MochiRequest } from "../components/MochiRequestDialog";
 import AdminRequestHistory from "../components/AdminRequestHistory";
 import MellNewsletterDialog from "../components/MellNewsletterDialog";
 import FionaAdminDialog from "../components/FionaAdminDialog";
@@ -34,7 +34,7 @@ const CoverPage = () => {
   const [submittedRequests, setSubmittedRequests] = useState<CrewRequest[]>([]);
   const [devRequestFormOpen, setDevRequestFormOpen] = useState(false);
   const [adminHistoryOpen, setAdminHistoryOpen] = useState(false);
-  const [developmentRequests, setDevelopmentRequests] = useState<DevelopmentRequest[]>([]);
+  const [mochiRequests, setMochiRequests] = useState<MochiRequest[]>([]);
   const [mellDialogOpen, setMellDialogOpen] = useState(false);
   const [fionaDialogOpen, setFionaDialogOpen] = useState(false);
   const [crewProfileDialogOpen, setCrewProfileDialogOpen] = useState(false);
@@ -185,13 +185,13 @@ const CoverPage = () => {
     setSubmittedRequests(prev => prev.filter(req => req.id !== id));
   };
 
-  const handleDevRequestSuccess = (data: DevelopmentRequest) => {
-    trackFormSubmit('DevelopmentRequestForm', { name: data.name });
-    setDevelopmentRequests(prev => [...prev, data]);
+  const handleMochiRequestSuccess = (data: MochiRequest) => {
+    trackFormSubmit('MochiRequestForm', { name: data.name, category: data.category });
+    setMochiRequests(prev => [...prev, data]);
   };
 
-  const handleDeleteDevRequest = (id: string) => {
-    setDevelopmentRequests(prev => prev.filter(req => req.id !== id));
+  const handleDeleteMochiRequest = (id: string) => {
+    setMochiRequests(prev => prev.filter(req => req.id !== id));
   };
 
   return (
@@ -320,19 +320,19 @@ const CoverPage = () => {
         {/* Kai Background Removal Popup */}
         <KaiBackgroundRemovalPopup open={kaiPopupOpen} onOpenChange={setKaiPopupOpen} />
 
-        {/* Development Request Form - Mochi */}
-        <DevelopmentRequestForm
+        {/* Mochi Request Dialog */}
+        <MochiRequestDialog
           open={devRequestFormOpen}
           onOpenChange={setDevRequestFormOpen}
-          onSubmitSuccess={handleDevRequestSuccess}
+          onSubmitSuccess={handleMochiRequestSuccess}
         />
 
         {/* Admin Request History */}
         <AdminRequestHistory
           open={adminHistoryOpen}
           onOpenChange={setAdminHistoryOpen}
-          requests={developmentRequests}
-          onDeleteRequest={handleDeleteDevRequest}
+          requests={mochiRequests}
+          onDeleteRequest={handleDeleteMochiRequest}
         />
 
         {/* Mell Newsletter Dialog */}
@@ -346,7 +346,7 @@ const CoverPage = () => {
           open={fionaDialogOpen}
           onOpenChange={setFionaDialogOpen}
           crewRequests={submittedRequests}
-          developmentRequests={developmentRequests}
+          developmentRequests={mochiRequests}
         />
 
         {/* Crew Profile Dialog */}

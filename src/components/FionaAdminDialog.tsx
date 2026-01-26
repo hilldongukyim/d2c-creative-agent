@@ -9,7 +9,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Lock, UserPlus, MessageSquare, Heart, Calendar, Users, MapPin, Mail, TrendingUp, Trash2, RotateCcw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
-import { DevelopmentRequest } from "./DevelopmentRequestForm";
+import { MochiRequest } from "./MochiRequestDialog";
 import { CrewRequest } from "./CrewRequestNotification";
 import { toast } from "@/hooks/use-toast";
 
@@ -25,7 +25,7 @@ interface FionaAdminDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   crewRequests: CrewRequest[];
-  developmentRequests: DevelopmentRequest[];
+  developmentRequests: MochiRequest[];
 }
 
 interface CrewLikeStat {
@@ -295,9 +295,11 @@ const FionaAdminDialog: React.FC<FionaAdminDialogProps> = ({
                               </div>
                             ) : (
                               <div>
-                                <p className="font-medium">{(activity.data as DevelopmentRequest).name}</p>
+                                <p className="font-medium">{(activity.data as MochiRequest).name}</p>
                                 <p className="text-sm text-muted-foreground line-clamp-2">
-                                  {(activity.data as DevelopmentRequest).painPoint}
+                                  {(activity.data as MochiRequest).category === "development" 
+                                    ? (activity.data as MochiRequest).painPoint 
+                                    : (activity.data as MochiRequest).content}
                                 </p>
                               </div>
                             )}
@@ -339,24 +341,33 @@ const FionaAdminDialog: React.FC<FionaAdminDialogProps> = ({
                       )}
                     </div>
 
-                    {/* Mochi Development Requests */}
+                    {/* Mochi Requests */}
                     <div>
                       <h4 className="font-semibold flex items-center gap-2 mb-3">
                         <MessageSquare className="h-4 w-4" />
-                        Mochi Development Requests ({developmentRequests.length})
+                        Mochi Requests ({developmentRequests.length})
                       </h4>
                       {developmentRequests.length === 0 ? (
-                        <p className="text-sm text-muted-foreground">No development requests.</p>
+                        <p className="text-sm text-muted-foreground">No requests.</p>
                       ) : (
                         <div className="space-y-2">
                           {developmentRequests.map((req) => (
                             <div key={req.id} className="bg-muted/50 rounded-lg p-3">
                               <div className="flex items-center gap-2 mb-1">
                                 <span className="font-medium">{req.name}</span>
-                                <Badge variant="secondary">{req.team}</Badge>
-                                <Badge variant="outline">{req.region}</Badge>
+                                <Badge variant={req.category === "development" ? "default" : "secondary"}>
+                                  {req.category === "development" ? "Development" : "Inquiry"}
+                                </Badge>
+                                {req.category === "inquiry" && req.targetAgent && (
+                                  <Badge variant="outline" className="capitalize">{req.targetAgent}</Badge>
+                                )}
+                                {req.category === "development" && req.team && (
+                                  <Badge variant="outline">{req.team}</Badge>
+                                )}
                               </div>
-                              <p className="text-sm text-muted-foreground line-clamp-2">{req.painPoint}</p>
+                              <p className="text-sm text-muted-foreground line-clamp-2">
+                                {req.category === "development" ? req.painPoint : req.content}
+                              </p>
                               <div className="flex items-center gap-2 mt-2 text-xs text-muted-foreground">
                                 <Mail className="h-3 w-3" />
                                 {req.email}

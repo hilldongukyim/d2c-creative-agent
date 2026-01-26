@@ -5,14 +5,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Badge } from "@/components/ui/badge";
-import { Lock, Trash2, Mail, MapPin, Users, Calendar, MessageSquare, Lightbulb } from "lucide-react";
-import { DevelopmentRequest } from "./DevelopmentRequestForm";
+import { Lock, Trash2, Mail, MapPin, Users, Calendar, MessageSquare, Lightbulb, ImageIcon, User } from "lucide-react";
+import { MochiRequest } from "./MochiRequestDialog";
 import { format } from "date-fns";
 
 interface AdminRequestHistoryProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  requests: DevelopmentRequest[];
+  requests: MochiRequest[];
   onDeleteRequest: (id: string) => void;
 }
 
@@ -27,7 +27,7 @@ const AdminRequestHistory: React.FC<AdminRequestHistoryProps> = ({
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-  const [selectedRequest, setSelectedRequest] = useState<DevelopmentRequest | null>(null);
+  const [selectedRequest, setSelectedRequest] = useState<MochiRequest | null>(null);
 
   const handlePasswordSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -98,6 +98,12 @@ const AdminRequestHistory: React.FC<AdminRequestHistoryProps> = ({
             </DialogHeader>
             <ScrollArea className="max-h-[60vh] pr-4">
               <div className="space-y-4 mt-4">
+                <div className="flex items-center gap-2">
+                  <Badge variant={selectedRequest.category === "development" ? "default" : "secondary"}>
+                    {selectedRequest.category === "development" ? "Development Request" : "Issue / Inquiry"}
+                  </Badge>
+                </div>
+
                 <div className="grid grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <div className="text-xs text-muted-foreground flex items-center gap-1">
@@ -105,23 +111,6 @@ const AdminRequestHistory: React.FC<AdminRequestHistoryProps> = ({
                       Name
                     </div>
                     <div className="font-medium">{selectedRequest.name}</div>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Users className="h-3 w-3" />
-                      Team
-                    </div>
-                    <div className="font-medium">{selectedRequest.team}</div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-1">
-                    <div className="text-xs text-muted-foreground flex items-center gap-1">
-                      <MapPin className="h-3 w-3" />
-                      Region
-                    </div>
-                    <div className="font-medium">{selectedRequest.region}</div>
                   </div>
                   <div className="space-y-1">
                     <div className="text-xs text-muted-foreground flex items-center gap-1">
@@ -137,26 +126,88 @@ const AdminRequestHistory: React.FC<AdminRequestHistoryProps> = ({
                   </div>
                 </div>
 
-                <div className="space-y-1">
-                  <div className="text-xs text-muted-foreground flex items-center gap-1">
-                    <MessageSquare className="h-3 w-3" />
-                    Pain Point
-                  </div>
-                  <div className="bg-muted/50 p-3 rounded-md text-sm">
-                    {selectedRequest.painPoint}
-                  </div>
-                </div>
+                {selectedRequest.category === "development" && (
+                  <>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-1">
+                        <div className="text-xs text-muted-foreground flex items-center gap-1">
+                          <Users className="h-3 w-3" />
+                          Team
+                        </div>
+                        <div className="font-medium">{selectedRequest.team}</div>
+                      </div>
+                      <div className="space-y-1">
+                        <div className="text-xs text-muted-foreground flex items-center gap-1">
+                          <MapPin className="h-3 w-3" />
+                          Region
+                        </div>
+                        <div className="font-medium">{selectedRequest.region}</div>
+                      </div>
+                    </div>
 
-                {selectedRequest.improvementIdea && (
-                  <div className="space-y-1">
-                    <div className="text-xs text-muted-foreground flex items-center gap-1">
-                      <Lightbulb className="h-3 w-3" />
-                      Improvement Idea
+                    <div className="space-y-1">
+                      <div className="text-xs text-muted-foreground flex items-center gap-1">
+                        <MessageSquare className="h-3 w-3" />
+                        Pain Point
+                      </div>
+                      <div className="bg-muted/50 p-3 rounded-md text-sm">
+                        {selectedRequest.painPoint}
+                      </div>
                     </div>
-                    <div className="bg-muted/50 p-3 rounded-md text-sm">
-                      {selectedRequest.improvementIdea}
+
+                    {selectedRequest.improvementIdea && (
+                      <div className="space-y-1">
+                        <div className="text-xs text-muted-foreground flex items-center gap-1">
+                          <Lightbulb className="h-3 w-3" />
+                          Improvement Idea
+                        </div>
+                        <div className="bg-muted/50 p-3 rounded-md text-sm">
+                          {selectedRequest.improvementIdea}
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+
+                {selectedRequest.category === "inquiry" && (
+                  <>
+                    <div className="space-y-1">
+                      <div className="text-xs text-muted-foreground flex items-center gap-1">
+                        <User className="h-3 w-3" />
+                        Related Crew Member
+                      </div>
+                      <div className="font-medium capitalize">{selectedRequest.targetAgent}</div>
                     </div>
-                  </div>
+
+                    <div className="space-y-1">
+                      <div className="text-xs text-muted-foreground flex items-center gap-1">
+                        <MessageSquare className="h-3 w-3" />
+                        Description
+                      </div>
+                      <div className="bg-muted/50 p-3 rounded-md text-sm">
+                        {selectedRequest.content}
+                      </div>
+                    </div>
+
+                    {selectedRequest.attachedImages && selectedRequest.attachedImages.length > 0 && (
+                      <div className="space-y-1">
+                        <div className="text-xs text-muted-foreground flex items-center gap-1">
+                          <ImageIcon className="h-3 w-3" />
+                          Attached Images ({selectedRequest.attachedImages.length})
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                          {selectedRequest.attachedImages.map((img, idx) => (
+                            <img 
+                              key={idx}
+                              src={img} 
+                              alt={`Attachment ${idx + 1}`} 
+                              className="w-20 h-20 object-cover rounded-md border border-border"
+                            />
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </ScrollArea>
@@ -180,7 +231,7 @@ const AdminRequestHistory: React.FC<AdminRequestHistoryProps> = ({
         ) : (
           <>
             <DialogHeader>
-              <DialogTitle>Development Request History</DialogTitle>
+              <DialogTitle>Mochi Request History</DialogTitle>
               <DialogDescription>
                 {requests.length === 0 
                   ? "No requests have been submitted yet."
@@ -201,15 +252,25 @@ const AdminRequestHistory: React.FC<AdminRequestHistoryProps> = ({
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2 mb-1">
                             <span className="font-medium">{request.name}</span>
-                            <Badge variant="secondary" className="text-xs">
-                              {request.team}
+                            <Badge 
+                              variant={request.category === "development" ? "default" : "secondary"} 
+                              className="text-xs"
+                            >
+                              {request.category === "development" ? "Development" : "Inquiry"}
                             </Badge>
-                            <Badge variant="outline" className="text-xs">
-                              {request.region}
-                            </Badge>
+                            {request.category === "inquiry" && request.targetAgent && (
+                              <Badge variant="outline" className="text-xs capitalize">
+                                {request.targetAgent}
+                              </Badge>
+                            )}
+                            {request.category === "development" && request.team && (
+                              <Badge variant="outline" className="text-xs">
+                                {request.team}
+                              </Badge>
+                            )}
                           </div>
                           <p className="text-sm text-muted-foreground line-clamp-2">
-                            {request.painPoint}
+                            {request.category === "development" ? request.painPoint : request.content}
                           </p>
                           <div className="flex items-center gap-1 mt-2 text-xs text-muted-foreground">
                             <Calendar className="h-3 w-3" />
@@ -235,7 +296,7 @@ const AdminRequestHistory: React.FC<AdminRequestHistoryProps> = ({
             ) : (
               <div className="py-12 text-center text-muted-foreground">
                 <MessageSquare className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p>No development requests yet.</p>
+                <p>No requests yet.</p>
               </div>
             )}
             <div className="flex justify-end pt-4 border-t">
