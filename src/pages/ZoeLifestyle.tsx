@@ -155,6 +155,9 @@ const ZoeLifestyle = () => {
   
   // Feedback dialog state
   const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
+  
+  // Image history state
+  const [imageHistory, setImageHistory] = useState<Array<{ image: string; timestamp: Date; label: string }>>([]);
 
   // Initialize chat with greeting
   useEffect(() => {
@@ -416,8 +419,12 @@ const ZoeLifestyle = () => {
         throw new Error(data.error || "Failed to generate lifestyle image");
       }
 
-      setGeneratedImage(`data:image/png;base64,${data.imageBase64}`);
+      const newImage = `data:image/png;base64,${data.imageBase64}`;
+      setGeneratedImage(newImage);
       setCurrentAspectRatio("16:9");
+      
+      // Add to history
+      setImageHistory(prev => [...prev, { image: newImage, timestamp: new Date(), label: "Original" }]);
       
       setTimeout(() => {
         addMessage({ 
@@ -486,8 +493,12 @@ const ZoeLifestyle = () => {
           throw new Error(data.error || "Composite failed");
         }
 
-        setGeneratedImage(`data:image/png;base64,${data.imageBase64}`);
+        const newImage = `data:image/png;base64,${data.imageBase64}`;
+        setGeneratedImage(newImage);
         setCurrentAspectRatio("custom");
+        
+        // Add to history
+        setImageHistory(prev => [...prev, { image: newImage, timestamp: new Date(), label: "Composite" }]);
         
         addMessage({ type: "anita", content: "Composite complete! 🎉\nThe product fits naturally into your photo. What do you think?" });
         setShowInput(true);
@@ -515,10 +526,14 @@ const ZoeLifestyle = () => {
         const { compositeBase64 } = payload.payload;
         
         if (compositeBase64) {
-          setGeneratedImage(`data:image/png;base64,${compositeBase64}`);
+          const newImage = `data:image/png;base64,${compositeBase64}`;
+          setGeneratedImage(newImage);
           setCurrentAspectRatio("custom");
           setShowQRDialog(false);
           setIsWaitingForMobile(false);
+          
+          // Add to history
+          setImageHistory(prev => [...prev, { image: newImage, timestamp: new Date(), label: "Mobile" }]);
           
           addMessage({ type: "anita", content: "Composite complete with the photo from your mobile! 📱✨" });
           setShowInput(true);
@@ -551,8 +566,12 @@ const ZoeLifestyle = () => {
         throw new Error(data.error || "Upscale failed");
       }
 
-      setGeneratedImage(`data:image/png;base64,${data.imageBase64}`);
+      const newImage = `data:image/png;base64,${data.imageBase64}`;
+      setGeneratedImage(newImage);
       setIsUpscaled(true);
+      
+      // Add to history
+      setImageHistory(prev => [...prev, { image: newImage, timestamp: new Date(), label: "4K" }]);
       
       addMessage({ type: "anita", content: "4K upscale complete! 🎉\nYou can now download the ultra-high resolution image." });
       setShowInput(true);
@@ -592,9 +611,13 @@ const ZoeLifestyle = () => {
         throw new Error(data.error || "Resize failed");
       }
 
-      setGeneratedImage(`data:image/png;base64,${data.imageBase64}`);
+      const newImage = `data:image/png;base64,${data.imageBase64}`;
+      setGeneratedImage(newImage);
       setCurrentAspectRatio(ratio);
       setIsUpscaled(false);
+      
+      // Add to history
+      setImageHistory(prev => [...prev, { image: newImage, timestamp: new Date(), label: ratio }]);
       
       addMessage({ type: "anita", content: "Resize complete! ✂️\nCreated the image with the new aspect ratio." });
       setShowInput(true);
@@ -648,9 +671,13 @@ const ZoeLifestyle = () => {
         throw new Error(data.error || "Resize failed");
       }
 
-      setGeneratedImage(`data:image/png;base64,${data.imageBase64}`);
+      const newImage = `data:image/png;base64,${data.imageBase64}`;
+      setGeneratedImage(newImage);
       setCurrentAspectRatio("custom");
       setIsUpscaled(false);
+      
+      // Add to history
+      setImageHistory(prev => [...prev, { image: newImage, timestamp: new Date(), label: `${width}x${height}` }]);
       setCustomResizeWidth("");
       setCustomResizeHeight("");
       setProductPosition("center");
@@ -694,8 +721,12 @@ const ZoeLifestyle = () => {
         throw new Error(data.error || "Edit failed");
       }
 
-      setGeneratedImage(`data:image/png;base64,${data.imageBase64}`);
+      const newImage = `data:image/png;base64,${data.imageBase64}`;
+      setGeneratedImage(newImage);
       setIsUpscaled(false);
+      
+      // Add to history
+      setImageHistory(prev => [...prev, { image: newImage, timestamp: new Date(), label: "Edited" }]);
       
       addMessage({ type: "anita", content: "Edit complete! 🎨\nI've made the changes you requested. How does it look?" });
       setShowInput(true);
@@ -797,8 +828,12 @@ const ZoeLifestyle = () => {
         throw new Error(data.error || "Failed to generate lifestyle image");
       }
 
-      setGeneratedImage(`data:image/png;base64,${data.imageBase64}`);
+      const newImage = `data:image/png;base64,${data.imageBase64}`;
+      setGeneratedImage(newImage);
       setCurrentAspectRatio("16:9");
+      
+      // Add to history
+      setImageHistory(prev => [...prev, { image: newImage, timestamp: new Date(), label: "Regenerated" }]);
       
       setTimeout(() => {
         addMessage({ 
@@ -932,8 +967,34 @@ const ZoeLifestyle = () => {
           </div>
         </div>
 
+        {/* Image History - Horizontal scrollable thumbnails */}
+        {imageHistory.length > 0 && (
+          <div className="px-4 py-2 border-b border-gray-100 bg-gray-50/50">
+            <div className="flex gap-2 overflow-x-auto pb-1 scrollbar-thin">
+              {imageHistory.map((item, idx) => (
+                <button
+                  key={idx}
+                  onClick={() => setGeneratedImage(item.image)}
+                  className={`flex-shrink-0 relative group transition-all ${
+                    generatedImage === item.image ? "ring-2 ring-purple-500" : "opacity-70 hover:opacity-100"
+                  }`}
+                >
+                  <img
+                    src={item.image}
+                    alt={`History ${idx + 1}`}
+                    className="w-12 h-12 object-cover rounded-lg"
+                  />
+                  <span className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[8px] text-center py-0.5 rounded-b-lg truncate">
+                    {item.label}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
         {/* Chat Area */}
-        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4" style={{ minHeight: "300px" }}>
+        <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4" style={{ minHeight: "200px" }}>
           {messages.map((msg, index) => (
             <div key={msg.id} className="group relative">
               {msg.type === "anita" ? (
@@ -972,48 +1033,48 @@ const ZoeLifestyle = () => {
             </div>
           )}
 
-          {/* Generated Image Preview */}
+          {/* Generated Image Preview - Compact size */}
           {generatedImage && !isGenerating && (
             <div className="flex gap-3 items-start">
               <img
                 src="/lovable-uploads/anita-profile.png"
                 alt="Anita"
-                className="w-10 h-10 rounded-full border-2 border-white shadow-md flex-shrink-0"
+                className="w-8 h-8 rounded-full border-2 border-white shadow-md flex-shrink-0"
               />
-              <div className="bg-gray-100 rounded-2xl rounded-tl-sm p-2 shadow-sm max-w-[90%]">
+              <div className="bg-gray-100 rounded-2xl rounded-tl-sm p-2 shadow-sm max-w-[70%]">
                 <img
                   src={generatedImage}
                   alt="Generated"
-                  className="rounded-lg max-w-full h-auto"
+                  className="rounded-lg max-w-full max-h-48 object-contain"
                 />
                 {isUpscaled && (
-                  <span className="inline-block mt-2 text-xs bg-purple-100 text-purple-600 px-2 py-1 rounded-full">4K</span>
+                  <span className="inline-block mt-1 text-[10px] bg-purple-100 text-purple-600 px-1.5 py-0.5 rounded-full">4K</span>
                 )}
               </div>
             </div>
           )}
 
-          {/* Generated Video Preview */}
+          {/* Generated Video Preview - Compact size */}
           {generatedVideoUrl && !isGeneratingVideo && (
             <div className="flex gap-3 items-start">
               <img
                 src="/lovable-uploads/anita-profile.png"
                 alt="Anita"
-                className="w-10 h-10 rounded-full border-2 border-white shadow-md flex-shrink-0"
+                className="w-8 h-8 rounded-full border-2 border-white shadow-md flex-shrink-0"
               />
-              <div className="bg-gray-100 rounded-2xl rounded-tl-sm p-2 shadow-sm max-w-[90%]">
+              <div className="bg-gray-100 rounded-2xl rounded-tl-sm p-2 shadow-sm max-w-[70%]">
                 <video
                   src={generatedVideoUrl}
                   controls
-                  className="rounded-lg max-w-full h-auto"
+                  className="rounded-lg max-w-full max-h-40"
                 />
                 <Button
                   onClick={handleDownloadVideo}
                   size="sm"
-                  className="mt-2 bg-indigo-500 hover:bg-indigo-600"
+                  className="mt-1.5 text-xs h-7 bg-indigo-500 hover:bg-indigo-600"
                 >
                   <Download className="w-3 h-3 mr-1" />
-                  Download Video
+                  Download
                 </Button>
               </div>
             </div>
