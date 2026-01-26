@@ -149,11 +149,66 @@ function isFirstGalleryImage(src: string): boolean {
   return firstImagePatterns.some(pattern => pattern.test(src));
 }
 
-// Extract all gallery images and return the first one
-function extractFirstCarouselImage(html: string): string | null {
-  const allGalleryImages: string[] = [];
+// Extract product identifier from URL (e.g., "27gx704a-b" from the URL path)
+function extractProductIdFromUrl(url: string): string | null {
+  try {
+    const urlObj = new URL(url);
+    const pathParts = urlObj.pathname.split('/').filter(p => p);
+    // Get the last non-empty part of the path (usually the product slug)
+    const productSlug = pathParts[pathParts.length - 1];
+    console.log("Product slug from URL:", productSlug);
+    return productSlug || null;
+  } catch {
+    return null;
+  }
+}
+
+// Extract multiple product ID patterns for matching
+function getProductIdPatterns(productSlug: string | null): string[] {
+  if (!productSlug) return [];
   
-  // Collect all gallery images from the HTML
+  const patterns: string[] = [];
+  
+  // Add original slug
+  patterns.push(productSlug);
+  
+  // Extract alphanumeric parts (remove hyphens)
+  const alphanumeric = productSlug.replace(/-/g, '');
+  if (alphanumeric !== productSlug) {
+    patterns.push(alphanumeric);
+  }
+  
+  // Extract core model number (e.g., "27gx704a" from "27gx704a-b")
+  const coreModel = productSlug.split('-')[0];
+  if (coreModel && coreModel !== productSlug) {
+    patterns.push(coreModel);
+  }
+  
+  // Extract just the letter-number combination (e.g., "gx704a")
+  const modelCode = coreModel.match(/[a-z]+\d+[a-z]*/i);
+  if (modelCode) {
+    patterns.push(modelCode[0]);
+  }
+  
+  console.log("Product ID patterns:", patterns);
+  return patterns;
+}
+
+// Check if image URL matches any product pattern
+function matchesProductId(imageSrc: string, patterns: string[]): boolean {
+  const lowerSrc = imageSrc.toLowerCase();
+  return patterns.some(pattern => lowerSrc.includes(pattern.toLowerCase()));
+}
+
+// Extract all gallery images and return the first one
+function extractFirstCarouselImage(html: string, pageUrl: string): string | null {
+  const productId = extractProductIdFromUrl(pageUrl);
+  const productPatterns = getProductIdPatterns(productId);
+  
+  const allGalleryImages: string[] = [];
+  const productMatchingImages: string[] = [];
+  
+  // Collect all gallery images from HTML
   const imgRegex = /<img[^>]*src="([^"]+)"[^>]*>/gi;
   let match;
   
@@ -173,20 +228,40 @@ function extractFirstCarouselImage(html: string): string | null {
     }
     
     // Only collect gallery images
-    if (src.includes('/gallery/') || src.includes('large0') || src.includes('2010x')) {
+    // Collect images matching gallery patterns OR high-resolution product images
+    const isGalleryImage = (
+      src.includes('/gallery/') || 
+      src.includes('large0') || 
+      src.includes('2010x') ||
+      src.includes('1334') ||
+      src.includes('/images/') ||
+      /\d{3,4}x\d{3,4}/i.test(src) || // Any image with resolution like 1600x1062
+      /-\d{2,4}\.(?:jpg|jpeg|png|webp)/i.test(src) // Images ending with numbers like -01.jpg
+    );
+    
+    if (isGalleryImage) {
       allGalleryImages.push(src);
+      
+      // Check if image path matches the product ID
+      if (matchesProductId(src, productPatterns)) {
+        productMatchingImages.push(src);
+      }
     }
   }
   
-  console.log(`Found ${allGalleryImages.length} gallery images`);
+  console.log(`Found ${allGalleryImages.length} total gallery images`);
+  console.log(`Found ${productMatchingImages.length} product-matching gallery images`);
   
-  if (allGalleryImages.length === 0) {
+  // Prefer product-matching images
+  const imagesToSearch = productMatchingImages.length > 0 ? productMatchingImages : allGalleryImages;
+  
+  if (imagesToSearch.length === 0) {
     console.log("No gallery images found");
     return null;
   }
   
   // First priority: Find explicit first image (01, large01, etc.)
-  for (const src of allGalleryImages) {
+  for (const src of imagesToSearch) {
     if (isFirstGalleryImage(src)) {
       console.log("Found first gallery image by pattern:", src);
       return src;
@@ -195,7 +270,7 @@ function extractFirstCarouselImage(html: string): string | null {
   
   // Second priority: Sort and get the first one numerically
   // Extract number from filename and sort
-  const sortedImages = [...allGalleryImages].sort((a, b) => {
+  const sortedImages = [...imagesToSearch].sort((a, b) => {
     // Extract numbers from the image paths
     const numA = a.match(/(\d+)[_\-\.](?:2010|1334|large|jpg|jpeg|png|webp)/i);
     const numB = b.match(/(\d+)[_\-\.](?:2010|1334|large|jpg|jpeg|png|webp)/i);
@@ -286,7 +361,7 @@ serve(async (req) => {
     const html = data.data?.rawHtml || "";
     console.log("HTML length:", html.length);
     
-    let imageUrl = extractFirstCarouselImage(html);
+    let imageUrl = extractFirstCarouselImage(html, url);
     
     // Convert to high-quality URL if found
     if (imageUrl) {
