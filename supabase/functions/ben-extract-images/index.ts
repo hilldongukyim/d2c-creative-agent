@@ -106,33 +106,133 @@ function detectProductCategory(url: string): SizeCategory {
   return 'M'; // Default to medium if no match
 }
 
-// CSS selector to match: #swiper-wrapper-* > div.cmp-carousel__item.swiper-slide.swiper-slide-active > div > div > div > img
+// Convert thumbnail URL to high-quality original URL
+function convertToHighQualityUrl(imageUrl: string, baseUrl: string): string {
+  let url = imageUrl;
+  
+  // Handle relative URLs
+  if (url.startsWith('/')) {
+    try {
+      const base = new URL(baseUrl);
+      url = `${base.protocol}//${base.hostname}${url}`;
+    } catch {
+      // Keep original if parsing fails
+    }
+  }
+  
+  // Remove thumbnail renditions path and query params to get original high-res image
+  // Pattern: /jcr:content/renditions/thum-1600x1062.jpeg?w=800 -> remove it
+  if (url.includes('/jcr:content/renditions/')) {
+    url = url.replace(/\/jcr:content\/renditions\/[^?]+/, '');
+  }
+  
+  // Remove size query parameters
+  url = url.replace(/\?w=\d+/, '');
+  url = url.replace(/&w=\d+/, '');
+  
+  console.log("Converted to high-quality URL:", url);
+  return url;
+}
+
+// Extract first carousel image with multiple strategies
 function extractFirstCarouselImage(html: string): string | null {
-  // Priority 1: Look for swiper-slide-active (first/current slide)
-  const activeSlideRegex = /<div[^>]*class="[^"]*swiper-slide-active[^"]*"[^>]*>[\s\S]*?<img[^>]*src="([^"]+)"[^>]*>/i;
+  const foundImages: string[] = [];
+  
+  // Strategy 1: Look for images in swiper-wrapper with specific gallery patterns
+  // Target: #swiper-wrapper-* containing gallery images
+  const swiperWrapperRegex = /<div[^>]*id="swiper-wrapper-[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<\/div>\s*<\/div>/gi;
+  let swiperMatch;
+  while ((swiperMatch = swiperWrapperRegex.exec(html)) !== null) {
+    const wrapperContent = swiperMatch[1];
+    // Look for high-res gallery images inside
+    const imgRegex = /<img[^>]*src="([^"]+)"[^>]*>/gi;
+    let imgMatch;
+    while ((imgMatch = imgRegex.exec(wrapperContent)) !== null) {
+      const src = imgMatch[1];
+      if (src && !src.includes('logo') && !src.endsWith('.svg') && !src.includes('icon')) {
+        // Prefer gallery images with recognizable patterns
+        if (src.includes('/gallery/') || src.includes('large') || src.includes('2010x')) {
+          console.log("Found gallery image in swiper-wrapper:", src);
+          return src;
+        }
+        foundImages.push(src);
+      }
+    }
+  }
+  
+  // Strategy 2: Look for cmp-carousel__item with gallery class
+  const carouselGalleryRegex = /<div[^>]*class="[^"]*c-carousel__gallery[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<div[^>]*class="[^"]*c-carousel__pagination/i;
+  const galleryMatch = carouselGalleryRegex.exec(html);
+  if (galleryMatch) {
+    const galleryContent = galleryMatch[1];
+    const imgRegex = /<img[^>]*src="([^"]+)"[^>]*>/gi;
+    let imgMatch;
+    while ((imgMatch = imgRegex.exec(galleryContent)) !== null) {
+      const src = imgMatch[1];
+      if (src && !src.includes('logo') && !src.endsWith('.svg') && !src.includes('icon')) {
+        console.log("Found image in c-carousel__gallery:", src);
+        return src;
+      }
+    }
+  }
+  
+  // Strategy 3: Look for swiper-slide-active (current visible slide)
+  const activeSlideRegex = /<div[^>]*class="[^"]*swiper-slide-active[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<\/div>/i;
   const activeMatch = activeSlideRegex.exec(html);
-  if (activeMatch && activeMatch[1] && !activeMatch[1].includes('logo') && !activeMatch[1].endsWith('.svg')) {
-    console.log("Found active slide image:", activeMatch[1]);
-    return activeMatch[1];
+  if (activeMatch) {
+    const slideContent = activeMatch[1];
+    const imgRegex = /<img[^>]*src="([^"]+)"[^>]*>/i;
+    const imgMatch = imgRegex.exec(slideContent);
+    if (imgMatch && imgMatch[1] && !imgMatch[1].includes('logo') && !imgMatch[1].endsWith('.svg')) {
+      console.log("Found active slide image:", imgMatch[1]);
+      return imgMatch[1];
+    }
   }
   
-  // Priority 2: Look for first cmp-carousel__item with img
-  const carouselItemRegex = /<div[^>]*class="[^"]*cmp-carousel__item[^"]*"[^>]*>[\s\S]*?<img[^>]*src="([^"]+)"[^>]*>/i;
+  // Strategy 4: Look for first cmp-carousel__item with img
+  const carouselItemRegex = /<div[^>]*class="[^"]*cmp-carousel__item[^"]*"[^>]*>([\s\S]*?)<\/div>\s*<\/div>/i;
   const carouselMatch = carouselItemRegex.exec(html);
-  if (carouselMatch && carouselMatch[1] && !carouselMatch[1].includes('logo') && !carouselMatch[1].endsWith('.svg')) {
-    console.log("Found carousel item image:", carouselMatch[1]);
-    return carouselMatch[1];
+  if (carouselMatch) {
+    const itemContent = carouselMatch[1];
+    const imgRegex = /<img[^>]*src="([^"]+)"[^>]*>/i;
+    const imgMatch = imgRegex.exec(itemContent);
+    if (imgMatch && imgMatch[1] && !imgMatch[1].includes('logo') && !imgMatch[1].endsWith('.svg')) {
+      console.log("Found carousel item image:", imgMatch[1]);
+      return imgMatch[1];
+    }
   }
   
-  // Priority 3: Look for first swiper-slide with img
-  const swiperSlideRegex = /<div[^>]*class="[^"]*swiper-slide[^"]*"[^>]*>[\s\S]*?<img[^>]*src="([^"]+)"[^>]*>/i;
-  const swiperMatch = swiperSlideRegex.exec(html);
-  if (swiperMatch && swiperMatch[1] && !swiperMatch[1].includes('logo') && !swiperMatch[1].endsWith('.svg')) {
-    console.log("Found swiper slide image:", swiperMatch[1]);
-    return swiperMatch[1];
+  // Strategy 5: Look for data-src attribute (lazy-loaded images)
+  const dataSrcRegex = /<img[^>]*class="[^"]*swiper[^"]*"[^>]*data-src="([^"]+)"[^>]*>/i;
+  const dataSrcMatch = dataSrcRegex.exec(html);
+  if (dataSrcMatch && dataSrcMatch[1] && !dataSrcMatch[1].includes('logo')) {
+    console.log("Found lazy-loaded image:", dataSrcMatch[1]);
+    return dataSrcMatch[1];
   }
   
-  console.log("No carousel image found");
+  // Strategy 6: Look for images with gallery in the path
+  const galleryImgRegex = /<img[^>]*src="([^"]*\/gallery\/[^"]+)"[^>]*>/i;
+  const galleryImgMatch = galleryImgRegex.exec(html);
+  if (galleryImgMatch && galleryImgMatch[1]) {
+    console.log("Found gallery path image:", galleryImgMatch[1]);
+    return galleryImgMatch[1];
+  }
+  
+  // Strategy 7: Look for large product images (2010x1334, large01, etc.)
+  const largeImgRegex = /<img[^>]*src="([^"]*(?:large\d+|2010x\d+|1334)[^"]*\.(?:jpg|jpeg|png|webp)[^"]*)"[^>]*>/i;
+  const largeImgMatch = largeImgRegex.exec(html);
+  if (largeImgMatch && largeImgMatch[1]) {
+    console.log("Found large image:", largeImgMatch[1]);
+    return largeImgMatch[1];
+  }
+  
+  // Return first found image if any
+  if (foundImages.length > 0) {
+    console.log("Returning first collected image:", foundImages[0]);
+    return foundImages[0];
+  }
+  
+  console.log("No carousel image found with any strategy");
   return null;
 }
 
@@ -186,7 +286,7 @@ serve(async (req) => {
       body: JSON.stringify({
         url: url,
         formats: ["rawHtml"],
-        waitFor: 3000,
+        waitFor: 5000, // Increased wait time for dynamic content
       }),
     });
 
@@ -212,13 +312,18 @@ serve(async (req) => {
     const html = data.data?.rawHtml || "";
     console.log("HTML length:", html.length);
     
-    const firstImage = extractFirstCarouselImage(html);
+    let imageUrl = extractFirstCarouselImage(html);
     
-    console.log("First carousel image URL:", firstImage);
+    // Convert to high-quality URL if found
+    if (imageUrl) {
+      imageUrl = convertToHighQualityUrl(imageUrl, url);
+    }
+    
+    console.log("Final image URL:", imageUrl);
 
     return new Response(JSON.stringify({ 
       success: true, 
-      imageUrl: firstImage,
+      imageUrl: imageUrl,
       sizeCategory: sizeCategory,
     }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
