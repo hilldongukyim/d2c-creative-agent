@@ -135,83 +135,103 @@ function convertToHighQualityUrl(imageUrl: string, baseUrl: string): string {
 }
 
 // Extract the first carousel/gallery image from HTML
-function extractFirstCarouselImage(html: string): string | null {
+function extractFirstCarouselImage(html: string, baseUrl: string): string | null {
   console.log("Starting carousel image extraction with multiple strategies...");
   
-  // Strategy 1: Find first image with data-swiper-slide-index="0" (MOST RELIABLE)
-  const slideZeroRegex = /data-swiper-slide-index="0"[^>]*>([\s\S]{1,5000}?)<img[^>]*src="([^"]+)"/i;
-  const slideZeroMatch = slideZeroRegex.exec(html);
-  if (slideZeroMatch && slideZeroMatch[2]) {
-    const src = slideZeroMatch[2];
-    if (!src.includes('logo') && !src.endsWith('.svg')) {
-      console.log("✓ Found image with data-swiper-slide-index='0':", src);
-      return src;
+  // Collect all potential gallery images with their strategies
+  const candidates: Array<{ src: string; strategy: string; priority: number }> = [];
+  
+  // Helper to check if image is valid product image
+  const isValidProductImage = (src: string): boolean => {
+    const invalid = ['logo', 'icon', 'badge', 'star', 'rating', 'banner', 'award', '.svg', 'sprite'];
+    const srcLower = src.toLowerCase();
+    if (invalid.some(term => srcLower.includes(term))) return false;
+    
+    // Must be reasonable image format
+    if (!srcLower.match(/\.(jpg|jpeg|png|webp)/)) return false;
+    
+    // Prefer images with gallery/product indicators
+    const positive = ['gallery', 'product', 'large', 'zoom', 'detail'];
+    const hasPositive = positive.some(term => srcLower.includes(term));
+    
+    return true;
+  };
+  
+  // Strategy 1: Find image with data-swiper-slide-index="0" (Priority: 10)
+  const slideZeroRegex = /data-swiper-slide-index="0"[^>]*>([\s\S]{1,8000}?)<img[^>]*src="([^"]+)"/ig;
+  let match;
+  while ((match = slideZeroRegex.exec(html)) !== null) {
+    const src = match[2];
+    if (isValidProductImage(src)) {
+      candidates.push({ src, strategy: 'swiper-index-0', priority: 10 });
     }
   }
   
-  // Strategy 2: Look for images with '01' or '001' pattern in filename (first image convention)
-  const pattern01Regex = /<img[^>]*src="([^"]*(?:\/01[_\-\.]|\/001[_\-\.]|large01|gallery[\/\-]01|newgallery\/01_)[^"]*)"[^>]*>/i;
-  const pattern01Match = pattern01Regex.exec(html);
-  if (pattern01Match && pattern01Match[1]) {
-    const src = pattern01Match[1];
-    if (!src.includes('logo') && !src.endsWith('.svg')) {
-      console.log("✓ Found '01' pattern image:", src);
-      return src;
+  // Strategy 2: Filename patterns like 01_, 001_, large01 (Priority: 9)
+  const pattern01Regex = /<img[^>]*src="([^"]*(?:[\/\-_]0*1[_\-\.]|large0*1|gallery[\/\-]0*1|zoom[\/\-]0*1)[^"]*)"[^>]*>/ig;
+  while ((match = pattern01Regex.exec(html)) !== null) {
+    const src = match[1];
+    if (isValidProductImage(src)) {
+      // Higher priority for exact "01" vs "10" or "101"
+      const isExact01 = src.match(/[\/\-_]0*1[_\-\.]/);
+      candidates.push({ src, strategy: '01-pattern', priority: isExact01 ? 9 : 7 });
     }
   }
   
-  // Strategy 3: Find swiper-slide with specific first-slide class
-  const firstSlideRegex = /<div[^>]*class="[^"]*swiper-slide[^"]*"[^>]*data-swiper-slide-index="0"[^>]*>([\s\S]{1,3000}?)<img[^>]*src="([^"]+)"/i;
-  const firstSlideMatch = firstSlideRegex.exec(html);
-  if (firstSlideMatch && firstSlideMatch[2]) {
-    const src = firstSlideMatch[2];
-    if (!src.includes('logo') && !src.endsWith('.svg')) {
-      console.log("✓ Found first swiper-slide (index=0) image:", src);
-      return src;
+  // Strategy 3: First swiper-slide in swiper-wrapper (Priority: 8)
+  const swiperWrapperIndex = html.search(/<div[^>]*(?:id|class)="[^"]*swiper-wrapper[^"]*"/i);
+  if (swiperWrapperIndex !== -1) {
+    const swiperSection = html.substring(swiperWrapperIndex, swiperWrapperIndex + 10000);
+    const firstSlideRegex = /<div[^>]*class="[^"]*swiper-slide[^"]*"[^>]*>([\s\S]{1,5000}?)<img[^>]*src="([^"]+)"/i;
+    match = firstSlideRegex.exec(swiperSection);
+    if (match && isValidProductImage(match[2])) {
+      candidates.push({ src: match[2], strategy: 'first-swiper-slide', priority: 8 });
     }
   }
   
-  // Strategy 4: Find FIRST cmp-carousel__item (not just any)
+  // Strategy 4: First cmp-carousel__item (Priority: 7)
   const carouselItemIndex = html.search(/<div[^>]*class="[^"]*cmp-carousel__item[^"]*"/i);
   if (carouselItemIndex !== -1) {
     const carouselSection = html.substring(carouselItemIndex, carouselItemIndex + 5000);
     const firstImgMatch = carouselSection.match(/<img[^>]*src="([^"]+)"/i);
-    if (firstImgMatch && firstImgMatch[1]) {
-      const src = firstImgMatch[1];
-      if (!src.includes('logo') && !src.endsWith('.svg')) {
-        console.log("✓ Found first cmp-carousel__item image:", src);
-        return src;
-      }
+    if (firstImgMatch && isValidProductImage(firstImgMatch[1])) {
+      candidates.push({ src: firstImgMatch[1], strategy: 'first-carousel-item', priority: 7 });
     }
   }
   
-  // Strategy 5: Find swiper-slide-active (current visible slide)
-  const activeSlideRegex = /<div[^>]*class="[^"]*swiper-slide-active[^"]*"[^>]*>([\s\S]{1,3000}?)<img[^>]*src="([^"]+)"/i;
-  const activeMatch = activeSlideRegex.exec(html);
-  if (activeMatch && activeMatch[2]) {
-    const src = activeMatch[2];
-    if (!src.includes('logo') && !src.endsWith('.svg')) {
-      console.log("✓ Found swiper-slide-active image:", src);
-      return src;
-    }
+  // Strategy 5: swiper-slide-active (Priority: 6)
+  const activeSlideRegex = /<div[^>]*class="[^"]*swiper-slide-active[^"]*"[^>]*>([\s\S]{1,5000}?)<img[^>]*src="([^"]+)"/i;
+  match = activeSlideRegex.exec(html);
+  if (match && isValidProductImage(match[2])) {
+    candidates.push({ src: match[2], strategy: 'swiper-slide-active', priority: 6 });
   }
   
-  // Strategy 6: Find first /gallery/ image
-  const galleryImgIndex = html.search(/<img[^>]*src="[^"]*\/gallery\//i);
-  if (galleryImgIndex !== -1) {
-    const gallerySection = html.substring(galleryImgIndex, galleryImgIndex + 500);
-    const imgMatch = gallerySection.match(/<img[^>]*src="([^"]+)"/i);
-    if (imgMatch && imgMatch[1]) {
-      const src = imgMatch[1];
-      if (!src.includes('logo') && !src.endsWith('.svg')) {
-        console.log("✓ Found first /gallery/ image:", src);
-        return src;
-      }
-    }
+  // Strategy 6: First /gallery/ image (Priority: 5)
+  const galleryImgRegex = /<img[^>]*src="([^"]*\/gallery\/[^"]+)"[^>]*>/i;
+  match = galleryImgRegex.exec(html);
+  if (match && isValidProductImage(match[1])) {
+    candidates.push({ src: match[1], strategy: 'gallery-path', priority: 5 });
   }
   
-  console.log("✗ No carousel image found with any strategy");
-  return null;
+  // No candidates found
+  if (candidates.length === 0) {
+    console.log("✗ No valid carousel image found with any strategy");
+    return null;
+  }
+  
+  // Sort by priority (highest first), then by strategy reliability
+  candidates.sort((a, b) => b.priority - a.priority);
+  
+  // Log all candidates
+  console.log(`Found ${candidates.length} image candidates:`);
+  candidates.slice(0, 5).forEach((c, i) => {
+    console.log(`  ${i + 1}. [Priority ${c.priority}] ${c.strategy}: ${c.src.substring(0, 100)}...`);
+  });
+  
+  // Return highest priority candidate
+  const selected = candidates[0];
+  console.log(`✓ Selected image (${selected.strategy}): ${selected.src}`);
+  return selected.src;
 }
 
 serve(async (req) => {
@@ -290,7 +310,7 @@ serve(async (req) => {
     const html = data.data?.rawHtml || "";
     console.log("HTML length:", html.length);
     
-    let imageUrl = extractFirstCarouselImage(html);
+    let imageUrl = extractFirstCarouselImage(html, url);
     
     // Convert to high-quality URL if found
     if (imageUrl) {
