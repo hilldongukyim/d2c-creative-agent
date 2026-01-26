@@ -1225,7 +1225,7 @@ const ZoeLifestyle = () => {
                         value={customResizeWidth}
                         onChange={(e) => setCustomResizeWidth(e.target.value)}
                         placeholder="1920"
-                        className="w-20 h-7 text-xs bg-white"
+                        className="w-20 h-7 text-xs bg-white placeholder:text-gray-300"
                         min={100}
                         max={4096}
                       />
@@ -1239,7 +1239,7 @@ const ZoeLifestyle = () => {
                         value={customResizeHeight}
                         onChange={(e) => setCustomResizeHeight(e.target.value)}
                         placeholder="1080"
-                        className="w-20 h-7 text-xs bg-white"
+                        className="w-20 h-7 text-xs bg-white placeholder:text-gray-300"
                         min={100}
                         max={4096}
                       />
