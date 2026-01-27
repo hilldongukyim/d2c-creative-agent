@@ -34,11 +34,10 @@ interface MochiRequestDialogProps {
   onSubmitSuccess?: (data: MochiRequest) => void;
 }
 
-// All available crew members
+// Only active crew members (not Coming Soon)
 const crewMembers = [
-  "Vee", "Fiona", "Yumi", "Ben", "Pip", "Mateo", "Theo", "Kai", "Maple", 
-  "Noa", "Luna", "Clara", "Candy", "Anita", "Zoe", "Milo", "Ava", "Levi",
-  "Haruto", "Harvey", "Carmen", "Dan", "Juno", "Kofi", "Rosa", "Tango", "Mell"
+  "Yumi", "Ben", "Mateo", "Kai", "Maple", "Noa", "Luna", "Clara", 
+  "Candy", "Anita", "Zoe", "Milo", "Ava", "Levi"
 ];
 
 const MochiRequestDialog: React.FC<MochiRequestDialogProps> = ({
