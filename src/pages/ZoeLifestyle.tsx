@@ -156,6 +156,9 @@ const ZoeLifestyle = () => {
   // Feedback dialog state
   const [showFeedbackDialog, setShowFeedbackDialog] = useState(false);
   
+  // Image preview dialog state
+  const [showImagePreview, setShowImagePreview] = useState(false);
+  
   // Image history state
   const [imageHistory, setImageHistory] = useState<Array<{ image: string; timestamp: Date; label: string }>>([]);
 
@@ -1045,7 +1048,9 @@ const ZoeLifestyle = () => {
                 <img
                   src={generatedImage}
                   alt="Generated"
-                  className="rounded-lg max-w-full max-h-48 object-contain"
+                  className="rounded-lg max-w-full max-h-48 object-contain cursor-pointer hover:opacity-90 transition-opacity"
+                  onClick={() => setShowImagePreview(true)}
+                  title="Click to enlarge"
                 />
                 {isUpscaled && (
                   <span className="inline-block mt-1 text-[10px] bg-purple-100 text-purple-600 px-1.5 py-0.5 rounded-full">4K</span>
@@ -1392,6 +1397,24 @@ const ZoeLifestyle = () => {
         crewName="Anita"
         productUrls={[url].filter(Boolean)}
       />
+
+      {/* Image Preview Dialog */}
+      <Dialog open={showImagePreview} onOpenChange={setShowImagePreview}>
+        <DialogContent className="max-w-[90vw] max-h-[90vh] p-2 bg-black/95 border-none">
+          <DialogHeader className="sr-only">
+            <DialogTitle>Generated Image Preview</DialogTitle>
+          </DialogHeader>
+          {generatedImage && (
+            <div className="flex items-center justify-center w-full h-full">
+              <img
+                src={generatedImage}
+                alt="Generated Preview"
+                className="max-w-full max-h-[85vh] object-contain rounded-lg"
+              />
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
