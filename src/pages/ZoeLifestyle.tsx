@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { ArrowLeft, Loader2, Download, Search, Sparkles, ZoomIn, Square, RectangleVertical, RectangleHorizontal, Film, RefreshCw, Camera, Smartphone, Pencil, Send, MessageCircle, Check, RotateCcw, ImagePlus, X } from "lucide-react";
+import { ArrowLeft, Loader2, Download, Search, Sparkles, Square, RectangleVertical, RectangleHorizontal, Film, RefreshCw, Camera, Smartphone, Pencil, Send, MessageCircle, Check, RotateCcw, ImagePlus, X } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,7 +20,7 @@ interface StateSnapshot {
   selectedImage: string | null;
   generatedImage: string | null;
   generatedVideoUrl: string | null;
-  isUpscaled: boolean;
+  
   currentAspectRatio: "16:9" | "1:1" | "9:16" | "custom";
   productName: string;
   productDimensions: { width?: string; height?: string; depth?: string; raw?: string } | null;
@@ -116,7 +116,7 @@ const ZoeLifestyle = () => {
   const [url, setUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [isUpscaling, setIsUpscaling] = useState(false);
+  
   const [isResizing, setIsResizing] = useState(false);
   const [isGeneratingVideo, setIsGeneratingVideo] = useState(false);
   const [isCompositing, setIsCompositing] = useState(false);
@@ -124,7 +124,7 @@ const ZoeLifestyle = () => {
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [generatedImage, setGeneratedImage] = useState<string | null>(null);
   const [generatedVideoUrl, setGeneratedVideoUrl] = useState<string | null>(null);
-  const [isUpscaled, setIsUpscaled] = useState(false);
+  
   const [currentAspectRatio, setCurrentAspectRatio] = useState<"16:9" | "1:1" | "9:16" | "custom">("16:9");
   const [customWidth, setCustomWidth] = useState("");
   const [customHeight, setCustomHeight] = useState("");
@@ -191,7 +191,7 @@ const ZoeLifestyle = () => {
     selectedImage,
     generatedImage,
     generatedVideoUrl,
-    isUpscaled,
+    
     currentAspectRatio,
     productName,
     productDimensions,
@@ -214,7 +214,7 @@ const ZoeLifestyle = () => {
       setSelectedImage(targetMessage.snapshot.selectedImage);
       setGeneratedImage(targetMessage.snapshot.generatedImage);
       setGeneratedVideoUrl(targetMessage.snapshot.generatedVideoUrl);
-      setIsUpscaled(targetMessage.snapshot.isUpscaled);
+      
       setCurrentAspectRatio(targetMessage.snapshot.currentAspectRatio);
       setProductName(targetMessage.snapshot.productName);
       setProductDimensions(targetMessage.snapshot.productDimensions);
@@ -391,7 +391,6 @@ const ZoeLifestyle = () => {
     }, 300);
 
     setIsGenerating(true);
-    setIsUpscaled(false);
     setGeneratedVideoUrl(null);
     
     try {
@@ -550,49 +549,6 @@ const ZoeLifestyle = () => {
     };
   }, [sessionId, showQRDialog]);
 
-  const handleUpscale = async () => {
-    if (!generatedImage) return;
-    
-    addMessage({ type: "user", content: "Upscale to 4K!" });
-    setShowInput(false);
-    
-    addMessage({ type: "anita", content: "Upscaling to 4K high resolution... 🔍\nThis takes about 30 seconds!" });
-    
-    setIsUpscaling(true);
-    try {
-      const { data, error } = await supabase.functions.invoke("anita-upscale", {
-        body: { imageBase64: generatedImage },
-      });
-
-      if (error) throw error;
-      if (!data.success || !data.imageBase64) {
-        throw new Error(data.error || "Upscale failed");
-      }
-
-      const newImage = `data:image/png;base64,${data.imageBase64}`;
-      setGeneratedImage(newImage);
-      setIsUpscaled(true);
-      
-      // Add to history
-      setImageHistory(prev => [...prev, { image: newImage, timestamp: new Date(), label: "4K" }]);
-      
-      addMessage({ type: "anita", content: "4K upscale complete! 🎉\nYou can now download the ultra-high resolution image." });
-      setShowInput(true);
-      setInputType("edit");
-    } catch (error) {
-      console.error("Error upscaling:", error);
-      const errorMessage = error instanceof Error ? error.message : "";
-      if (errorMessage.includes("CREDIT_EXPIRED") || errorMessage.includes("402")) {
-        addMessage({ type: "anita", content: "사용 크레딧이 만료되었습니다. 관리자(donguk.yim@lge.com)에게 문의해주세요. 📧" });
-      } else {
-        addMessage({ type: "anita", content: "An error occurred during upscaling. 😢" });
-      }
-      setShowInput(true);
-      setInputType("edit");
-    } finally {
-      setIsUpscaling(false);
-    }
-  };
 
   const handleResize = async (ratio: "16:9" | "1:1" | "9:16") => {
     if (!generatedImage || currentAspectRatio === ratio) return;
@@ -617,7 +573,6 @@ const ZoeLifestyle = () => {
       const newImage = `data:image/png;base64,${data.imageBase64}`;
       setGeneratedImage(newImage);
       setCurrentAspectRatio(ratio);
-      setIsUpscaled(false);
       
       // Add to history
       setImageHistory(prev => [...prev, { image: newImage, timestamp: new Date(), label: ratio }]);
@@ -677,7 +632,6 @@ const ZoeLifestyle = () => {
       const newImage = `data:image/png;base64,${data.imageBase64}`;
       setGeneratedImage(newImage);
       setCurrentAspectRatio("custom");
-      setIsUpscaled(false);
       
       // Add to history
       setImageHistory(prev => [...prev, { image: newImage, timestamp: new Date(), label: `${width}x${height}` }]);
@@ -726,7 +680,6 @@ const ZoeLifestyle = () => {
 
       const newImage = `data:image/png;base64,${data.imageBase64}`;
       setGeneratedImage(newImage);
-      setIsUpscaled(false);
       
       // Add to history
       setImageHistory(prev => [...prev, { image: newImage, timestamp: new Date(), label: "Edited" }]);
@@ -800,7 +753,6 @@ const ZoeLifestyle = () => {
     }, 300);
     
     setIsGenerating(true);
-    setIsUpscaled(false);
     setGeneratedVideoUrl(null);
     
     try {
@@ -870,7 +822,7 @@ const ZoeLifestyle = () => {
     
     const link = document.createElement("a");
     const dateStr = new Date().toISOString().slice(2, 10).replace(/-/g, "");
-    const sizeStr = isUpscaled ? "3840x2160" : (currentAspectRatio === "1:1" ? "1080x1080" : currentAspectRatio === "9:16" ? "1080x1920" : "1920x1080");
+    const sizeStr = currentAspectRatio === "1:1" ? "1080x1080" : currentAspectRatio === "9:16" ? "1080x1920" : "1920x1080";
     const safeName = productName.replace(/[^a-zA-Z0-9]/g, "_").slice(0, 20);
     
     link.download = `Anita_${safeName}_${dateStr}_${sizeStr}.png`;
@@ -903,7 +855,7 @@ const ZoeLifestyle = () => {
     setSelectedImage(null);
     setGeneratedImage(null);
     setGeneratedVideoUrl(null);
-    setIsUpscaled(false);
+    
     setMessages([]);
     setShowInput(false);
     setInputType(null);
@@ -926,7 +878,7 @@ const ZoeLifestyle = () => {
     return `${baseUrl}/zoe-camera/${sessionId}`;
   };
 
-  const isAnyLoading = isLoading || isGenerating || isUpscaling || isResizing || isEditing || isCompositing || isGeneratingVideo;
+  const isAnyLoading = isLoading || isGenerating || isResizing || isEditing || isCompositing || isGeneratingVideo;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-[#E8D5E0] via-[#F0E6E8] to-[#E8D5E0] flex flex-col items-center justify-center p-4">
@@ -1052,9 +1004,6 @@ const ZoeLifestyle = () => {
                   onClick={() => setShowImagePreview(true)}
                   title="Click to enlarge"
                 />
-                {isUpscaled && (
-                  <span className="inline-block mt-1 text-[10px] bg-purple-100 text-purple-600 px-1.5 py-0.5 rounded-full">4K</span>
-                )}
               </div>
             </div>
           )}
@@ -1223,12 +1172,6 @@ const ZoeLifestyle = () => {
                   <Download className="w-3 h-3 mr-1" />
                   Download
                 </Button>
-                {!isUpscaled && (
-                  <Button onClick={handleUpscale} disabled={isAnyLoading} size="sm" variant="outline">
-                    <ZoomIn className="w-3 h-3 mr-1" />
-                    4K Upscale
-                  </Button>
-                )}
                 <Button onClick={handleRegenerate} disabled={isAnyLoading} size="sm" variant="outline">
                   <RefreshCw className="w-3 h-3 mr-1" />
                   Regenerate
