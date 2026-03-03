@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
 import { type OutputSize, type SizeCategory, type LayoutDirection, type PositionOverride } from "@/lib/compositeTemplates";
-import { createCompositeImage } from "@/lib/imageProcessing";
+import { generateCompositeCanvas, type CompositeProduct } from "@/lib/imageProcessing";
 import { downloadSingleImage, getDateString } from "@/lib/zipGenerator";
 
 interface LayoutCanvasProps {
@@ -22,8 +22,16 @@ const LayoutCanvas = ({ outputSize, images, sizeCategories, direction = 'horizon
     const key = ++renderKey.current;
     setDataUrl(null);
 
-    createCompositeImage(outputSize, images, sizeCategories, direction, overrides).then((url) => {
+    const products: CompositeProduct[] = images.map((dataUrl, i) => ({
+      dataUrl,
+      sizeCategory: sizeCategories[i] || 'M',
+    }));
+
+    generateCompositeCanvas(
+      outputSize.width, outputSize.height, products, direction, overrides
+    ).then((canvas) => {
       if (renderKey.current === key) {
+        const url = canvas.toDataURL('image/png');
         setDataUrl(url);
         onGenerated(outputSize.id, url);
       }

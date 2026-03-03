@@ -1,4 +1,4 @@
-import { layoutProducts, type SizeCategory, type OutputSize, type LayoutDirection, type PositionOverride } from './compositeTemplates';
+import { layoutProducts, getScaleRatio, type SizeCategory, type LayoutDirection, type PositionOverride } from './compositeTemplates';
 
 export function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -47,45 +47,97 @@ export async function cropTransparentPixels(imageSrc: string): Promise<string> {
   return cropped.toDataURL('image/png');
 }
 
-export async function createCompositeImage(
-  outputSize: OutputSize,
-  images: string[],
-  sizeCategories: SizeCategory[],
+// Calculate scaled product dimensions based on size category
+export function scaleProductImage(
+  imgWidth: number,
+  imgHeight: number,
+  sizeCategory: SizeCategory,
+  canvasWidth: number,
+  canvasHeight: number,
+  maxW: number, // fraction
+  maxH: number, // fraction
+  allCategories: SizeCategory[]
+): { width: number; height: number } {
+  const categoryScale = getScaleRatio(sizeCategory, allCategories);
+  const availW = canvasWidth * maxW * categoryScale;
+  const availH = canvasHeight * maxH * categoryScale;
+
+  const ratio = imgWidth / imgHeight;
+  let w = availW;
+  let h = w / ratio;
+  if (h > availH) {
+    h = availH;
+    w = h * ratio;
+  }
+  return { width: w, height: h };
+}
+
+export interface CompositeProduct {
+  dataUrl: string;
+  sizeCategory: SizeCategory;
+  customScale?: number; // multiplier, default 1.0
+}
+
+// Generate composite canvas — returns HTMLCanvasElement
+export async function generateCompositeCanvas(
+  canvasWidth: number,
+  canvasHeight: number,
+  products: CompositeProduct[],
   direction: LayoutDirection = 'horizontal',
   overrides?: PositionOverride[]
-): Promise<string> {
-  const { width, height } = outputSize;
+): Promise<HTMLCanvasElement> {
   const canvas = document.createElement('canvas');
-  canvas.width = width;
-  canvas.height = height;
+  canvas.width = canvasWidth;
+  canvas.height = canvasHeight;
   const ctx = canvas.getContext('2d')!;
 
   // White background
   ctx.fillStyle = '#FFFFFF';
-  ctx.fillRect(0, 0, width, height);
+  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
 
-  const placements = layoutProducts(width, height, images.length, sizeCategories, direction, overrides);
-  const loadedImages = await Promise.all(images.map(loadImage));
+  const isPortrait = canvasHeight > canvasWidth;
+  const allCategories = products.map((p) => p.sizeCategory);
+  const template = layoutProducts(products.length, allCategories, direction, isPortrait);
+  const loadedImages = await Promise.all(products.map((p) => loadImage(p.dataUrl)));
 
   for (let i = 0; i < loadedImages.length; i++) {
     const img = loadedImages[i];
-    const p = placements[i];
-    if (!p) continue;
+    const pos = template.positions[i];
+    if (!pos) continue;
 
-    const scaledMaxW = p.maxWidth * p.scale;
-    const scaledMaxH = p.maxHeight * p.scale;
+    const product = products[i];
+    const customScale = product.customScale ?? 1.0;
 
-    const ratio = img.width / img.height;
-    let drawW = scaledMaxW;
-    let drawH = drawW / ratio;
-    if (drawH > scaledMaxH) {
-      drawH = scaledMaxH;
-      drawW = drawH * ratio;
+    // Apply position override if present
+    let fx = pos.x;
+    let fy = pos.y;
+    let overrideScale = 1.0;
+    if (overrides?.[i]) {
+      fx += overrides[i].dx;
+      fy += overrides[i].dy;
+      overrideScale = overrides[i].scale;
     }
 
-    // Center within placement cell
-    const drawX = p.x + (p.maxWidth - drawW) / 2;
-    const drawY = p.y + (p.maxHeight - drawH) / 2;
+    // Convert fractions to pixels
+    const cellX = fx * canvasWidth;
+    const cellY = fy * canvasHeight;
+    const cellW = pos.maxW * canvasWidth;
+    const cellH = pos.maxH * canvasHeight;
+
+    // Scale product image
+    const scaled = scaleProductImage(
+      img.width, img.height,
+      product.sizeCategory,
+      canvasWidth, canvasHeight,
+      pos.maxW, pos.maxH,
+      allCategories
+    );
+    const drawW = scaled.width * customScale * overrideScale;
+    const drawH = scaled.height * customScale * overrideScale;
+
+    // Center within cell
+    const drawX = cellX + (cellW - drawW) / 2;
+    const drawY = cellY + (cellH - drawH) / 2;
 
     // Shadow for diagonal back product
     if (direction === 'diagonal' && i === 0) {
@@ -101,5 +153,5 @@ export async function createCompositeImage(
     }
   }
 
-  return canvas.toDataURL('image/png');
+  return canvas;
 }
