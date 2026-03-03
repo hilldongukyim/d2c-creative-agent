@@ -62,13 +62,11 @@ export function detectLayoutType(urls: string[]): LayoutDirection {
   const hasSoundbar = lower.some((u) => soundbarKeywords.some((k) => u.includes(k)));
   if (hasTv && hasSoundbar) return 'vertical';
 
-  const monitorUrls = lower.filter((u) => u.includes('monitor'));
-  if (monitorUrls.length >= 2) {
-    const models = monitorUrls.map((u) => {
-      const match = u.match(/\/([a-z0-9]+-?[a-z0-9]+)\/?/i);
-      return match ? match[1] : '';
-    });
-    if (models[0] && models.every((m) => m === models[0])) return 'diagonal';
+  // Diagonal only when exactly 2 products, both are monitors, AND same URL
+  if (lower.length === 2) {
+    const allMonitors = lower.every((u) => u.includes('monitor'));
+    const sameUrl = lower[0] === lower[1];
+    if (allMonitors && sameUrl) return 'diagonal';
   }
 
   return 'horizontal';
