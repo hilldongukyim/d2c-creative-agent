@@ -83,23 +83,45 @@ function extractProductName(html: string): string {
   return 'Unknown Product';
 }
 
+// Extract model number from URL for relevance filtering
+function extractModelFromUrl(url: string): string | null {
+  const lower = url.toLowerCase();
+  // LG model patterns: e.g. OLED65C4PSA, 65QNED80T6A, WM6700HBA, SP7Y, USC9S60
+  const modelMatch = lower.match(/\/([a-z]{1,5}\d{2,}[a-z0-9]*)[\/.\-?]/i)
+    || lower.match(/[-/]([a-z]{1,4}\d{2}[a-z0-9]{2,})/i);
+  if (modelMatch) return modelMatch[1].toLowerCase();
+  // Try last path segment
+  const pathSegments = new URL(url).pathname.split('/').filter(Boolean);
+  const last = pathSegments[pathSegments.length - 1]?.toLowerCase();
+  if (last && /\d/.test(last) && last.length > 3) return last.replace(/\.html?$/, '');
+  return null;
+}
+
 function extractAllCarouselImages(html: string, baseUrl: string): Array<{ url: string; index: number; priority: number }> {
+  const model = extractModelFromUrl(baseUrl);
+  console.log(`Detected model from URL: ${model || 'none'}`);
+
   const isValidProductImage = (src: string): boolean => {
     const invalid = ['logo', 'icon', 'badge', 'star', 'rating', 'banner', 'award', '.svg', 'sprite',
       'lifestyle', 'campaign', 'promo', 'hero', 'kv', 'key-visual', 'ambient', 'scene',
       'background', 'bg-', 'environment', 'room', 'interior', 'feature', 'usp',
       'infographic', 'info-', 'dimension', 'spec', 'energy-label', 'energy_label',
-      'accessory', 'accessories', 'installation', 'how-to', 'howto'];
+      'accessory', 'accessories', 'installation', 'how-to', 'howto',
+      'related', 'recommend', 'cross-sell', 'also-like', 'compare'];
     const srcLower = src.toLowerCase();
     if (invalid.some(term => srcLower.includes(term))) return false;
     if (!srcLower.match(/\.(jpg|jpeg|png|webp)/)) return false;
     return true;
   };
 
-  // Score image URL: higher = more likely a front-facing white-bg product shot
+  // Score image URL: higher = more likely the correct product's front-facing shot
   const scoreFrontProduct = (src: string): number => {
     const lower = src.toLowerCase();
     let score = 0;
+
+    // Model match: huge bonus — this image belongs to the same product
+    if (model && lower.includes(model)) score += 50;
+
     // Front-facing indicators in filename
     if (/[\/\-_](front|f)[\/\-_.\d]/i.test(lower)) score += 30;
     if (/[\/\-_]01[\/\-_.\s]|[\/\-_]01\.(jpg|png|webp)/i.test(lower)) score += 25;
@@ -107,11 +129,15 @@ function extractAllCarouselImages(html: string, baseUrl: string): Array<{ url: s
     if (/[\/\-_]0*1[_\-\.]/i.test(lower)) score += 20;
     // Gallery path = good sign
     if (lower.includes('/gallery/')) score += 15;
-    // Medium/DMS image paths (LG's CDN product shots are usually white-bg)
+    // Medium/DMS image paths
     if (lower.includes('/images/') && !lower.includes('/feature')) score += 10;
     // Penalize lifestyle/angle indicators
     if (/angle|side|back|top|bottom|tilt|close/i.test(lower)) score -= 10;
     if (/[\/\-_](d|l|m)\d+[\/\-_]/i.test(lower) && !/[\/\-_](d|l|m)01/i.test(lower)) score -= 5;
+
+    // Penalize if image URL contains a DIFFERENT model number (likely from recommended section)
+    if (model && !lower.includes(model)) score -= 20;
+
     return score;
   };
 
@@ -126,39 +152,65 @@ function extractAllCarouselImages(html: string, baseUrl: string): Array<{ url: s
     }
   };
 
-  // Strategy 1: All swiper slides
+  // ── Scope to main product gallery section ──
+  // Try to find the primary gallery container first (top-of-page product gallery)
+  const galleryContainerPatterns = [
+    /class="[^"]*(?:pdp-gallery|product-gallery|visual-header|gallery-wrap|C0010)[^"]*"[\s\S]*?(?=class="[^"]*(?:recommend|cross-sell|also-like|recently-view|C0009|C0013|C0061|footer)[^"]*"|$)/i,
+    /class="[^"]*(?:swiper|cmp-carousel)[^"]*"[\s\S]{0,50000}?<\/section>/i,
+  ];
+
+  let galleryHtml: string | null = null;
+  for (const pattern of galleryContainerPatterns) {
+    const containerMatch = html.match(pattern);
+    if (containerMatch && containerMatch[0].length > 200) {
+      galleryHtml = containerMatch[0];
+      console.log(`Found gallery container (${galleryHtml.length} chars)`);
+      break;
+    }
+  }
+
+  // If no specific gallery found, use upper portion of HTML (product gallery is typically in top 40%)
+  if (!galleryHtml) {
+    const cutoff = Math.min(html.length, Math.floor(html.length * 0.4));
+    galleryHtml = html.substring(0, cutoff);
+    console.log(`Using top 40% of HTML (${galleryHtml.length} chars)`);
+  }
+
+  // Strategy 1: Swiper slides within gallery scope
   const swiperSlideRegex = /class="[^"]*swiper-slide[^"]*"[^>]*>[\s\S]{0,3000}?<img[^>]*src="([^"]+)"/gi;
   let match;
-  while ((match = swiperSlideRegex.exec(html)) !== null) {
+  while ((match = swiperSlideRegex.exec(galleryHtml)) !== null) {
     addImage(match[1]);
   }
 
-  // Strategy 2: cmp-carousel__item images
+  // Strategy 2: cmp-carousel__item images within gallery scope
   const carouselItemRegex = /class="[^"]*cmp-carousel__item[^"]*"[^>]*>[\s\S]{0,3000}?<img[^>]*src="([^"]+)"/gi;
-  while ((match = carouselItemRegex.exec(html)) !== null) {
+  while ((match = carouselItemRegex.exec(galleryHtml)) !== null) {
     addImage(match[1]);
   }
 
-  // Strategy 3: Gallery path images
+  // Strategy 3: Gallery path images (full HTML — these paths are product-specific)
   const galleryRegex = /<img[^>]*src="([^"]*\/gallery\/[^"]+)"[^>]*>/gi;
   while ((match = galleryRegex.exec(html)) !== null) {
     addImage(match[1]);
   }
 
-  // Strategy 4: Filename 01 patterns (fallback if we have few results)
+  // Strategy 4: Filename 01 patterns (fallback, scoped to gallery)
   if (results.length < 3) {
     const pattern01Regex = /<img[^>]*src="([^"]*(?:[\/\-_]0*1[_\-\.]|large0*1|gallery[\/\-]0*1)[^"]*)"[^>]*>/gi;
-    while ((match = pattern01Regex.exec(html)) !== null) {
+    while ((match = pattern01Regex.exec(galleryHtml)) !== null) {
       addImage(match[1]);
     }
   }
 
-  // Sort by priority descending (front-facing first)
+  // Sort by priority descending (front-facing, model-matched first)
   results.sort((a, b) => b.priority - a.priority);
-  // Re-index after sort
   results.forEach((r, i) => { r.index = i; });
 
-  console.log(`Found ${results.length} unique gallery images (sorted by front-facing priority)`);
+  console.log(`Found ${results.length} unique gallery images (sorted by relevance)`);
+  if (results.length > 0) {
+    console.log(`Top image: ${results[0].url} (score: ${results[0].priority})`);
+  }
   return results;
 }
 
