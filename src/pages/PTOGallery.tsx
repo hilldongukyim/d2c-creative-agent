@@ -18,11 +18,11 @@ const benProfile = "/lovable-uploads/ben-profile-v2.png";
 interface ProductData {
   url: string;
   images: { url: string; index: number }[];
-  selectedIndex: number;
   sizeCategory: SizeCategory;
   productName: string;
   isLoading: boolean;
   error: string | null;
+  confirmed: boolean;
 }
 
 type Step = 'welcome' | 'urls' | 'select' | 'bgremoval' | 'composite' | 'confirm' | 'download';
@@ -88,8 +88,8 @@ const PTOGallery = () => {
     }
 
     const initialProducts: ProductData[] = filledUrls.map((url) => ({
-      url, images: [], selectedIndex: 0, sizeCategory: 'M' as SizeCategory,
-      productName: url, isLoading: true, error: null,
+      url, images: [], sizeCategory: 'M' as SizeCategory,
+      productName: url, isLoading: true, error: null, confirmed: false,
     }));
     setProducts(initialProducts);
     setStep('select');
@@ -125,7 +125,7 @@ const PTOGallery = () => {
     setBgStatus('Removing backgrounds...');
     setStep('bgremoval');
 
-    const selectedImageUrls = products.map((p) => p.images[p.selectedIndex]?.url).filter(Boolean);
+    const selectedImageUrls = products.map((p) => p.images[0]?.url).filter(Boolean);
     const statuses: ProductStatus[] = selectedImageUrls.map(() => 'pending');
     setProductStatuses([...statuses]);
     setBgCurrentIdx(0);
@@ -226,13 +226,47 @@ const PTOGallery = () => {
 
   const handleDownloadAgain = () => handleGenerateAndDownload();
 
-  const handleSelectImage = useCallback((productIdx: number, imageIdx: number) => {
+  const handleConfirmProduct = useCallback((productIdx: number) => {
     setProducts((prev) => {
       const updated = [...prev];
-      updated[productIdx] = { ...updated[productIdx], selectedIndex: imageIdx };
+      updated[productIdx] = { ...updated[productIdx], confirmed: true };
       return updated;
     });
   }, []);
+
+  const handleRetryProduct = useCallback(async (productIdx: number) => {
+    setProducts((prev) => {
+      const updated = [...prev];
+      updated[productIdx] = { ...updated[productIdx], isLoading: true, error: null, images: [], confirmed: false };
+      return updated;
+    });
+    const url = products[productIdx].url;
+    try {
+      const { data, error } = await supabase.functions.invoke('ben-extract-images', { body: { url } });
+      if (error || !data?.success) {
+        setProducts((prev) => {
+          const updated = [...prev];
+          updated[productIdx] = { ...updated[productIdx], isLoading: false, error: data?.error || 'Extraction failed' };
+          return updated;
+        });
+        return;
+      }
+      setProducts((prev) => {
+        const updated = [...prev];
+        updated[productIdx] = {
+          ...updated[productIdx], isLoading: false,
+          images: data.images || [], sizeCategory: data.sizeCategory || 'M', productName: data.productName || url,
+        };
+        return updated;
+      });
+    } catch {
+      setProducts((prev) => {
+        const updated = [...prev];
+        updated[productIdx] = { ...updated[productIdx], isLoading: false, error: 'Network error' };
+        return updated;
+      });
+    }
+  }, [products]);
 
   const handleReset = () => {
     setStep('urls');
@@ -253,6 +287,7 @@ const PTOGallery = () => {
 
   const allExtracted = products.length > 0 && products.every((p) => !p.isLoading);
   const hasValidImages = products.some((p) => p.images.length > 0);
+  const allConfirmed = allExtracted && hasValidImages && products.every((p) => p.confirmed || p.error || p.images.length === 0);
 
   return (
     <div
@@ -330,11 +365,11 @@ const PTOGallery = () => {
               </>
             )}
 
-            {/* Step: Image Selection */}
+            {/* Step: Image Confirmation */}
             {step === 'select' && (
               <div className="space-y-3 animate-fade-in">
                 <div className="bg-secondary rounded-lg p-3 max-w-[85%]">
-                  <p className="text-sm">Select the image you want to use for each product.</p>
+                  <p className="text-sm">I found the product images! Please confirm each one is correct, or click "Wrong image" to retry.</p>
                 </div>
 
                 <div className={`grid gap-3 ${products.length <= 2 ? 'grid-cols-2' : products.length <= 4 ? 'grid-cols-2' : 'grid-cols-3'}`}>
@@ -342,12 +377,13 @@ const PTOGallery = () => {
                     <ProductImageSelector
                       key={idx}
                       images={product.images}
-                      selectedIndex={product.selectedIndex}
-                      onSelect={(imgIdx) => handleSelectImage(idx, imgIdx)}
                       productName={product.productName}
                       sizeCategory={product.sizeCategory}
                       isLoading={product.isLoading}
                       error={product.error}
+                      confirmed={product.confirmed}
+                      onConfirm={() => handleConfirmProduct(idx)}
+                      onRetry={() => handleRetryProduct(idx)}
                     />
                   ))}
                 </div>
@@ -356,7 +392,7 @@ const PTOGallery = () => {
                   <Button variant="outline" size="sm" onClick={() => setStep('urls')}>
                     <ArrowLeft className="h-3 w-3 mr-1" />Back
                   </Button>
-                  <Button size="sm" className="flex-1" onClick={handleProceedToBgRemoval} disabled={!allExtracted || !hasValidImages}>
+                  <Button size="sm" className="flex-1" onClick={handleProceedToBgRemoval} disabled={!allConfirmed}>
                     <ArrowRight className="h-3 w-3 mr-1" />Remove Backgrounds
                   </Button>
                 </div>

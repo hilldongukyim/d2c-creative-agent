@@ -1,4 +1,5 @@
-import { Loader2 } from "lucide-react";
+import { Loader2, RefreshCw, Check } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface ProductImage {
   url: string;
@@ -7,12 +8,13 @@ interface ProductImage {
 
 interface ProductImageSelectorProps {
   images: ProductImage[];
-  selectedIndex: number;
-  onSelect: (index: number) => void;
   productName: string;
   sizeCategory: string;
   isLoading: boolean;
   error: string | null;
+  confirmed: boolean;
+  onConfirm: () => void;
+  onRetry: () => void;
 }
 
 const BADGE_STYLES: Record<string, string> = {
@@ -23,19 +25,20 @@ const BADGE_STYLES: Record<string, string> = {
 
 const ProductImageSelector = ({
   images,
-  selectedIndex,
-  onSelect,
   productName,
   sizeCategory,
   isLoading,
   error,
+  confirmed,
+  onConfirm,
+  onRetry,
 }: ProductImageSelectorProps) => {
   if (isLoading) {
     return (
       <div className="rounded-lg border border-border bg-card p-4">
         <div className="flex items-center gap-2 mb-3">
           <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-          <span className="text-sm text-muted-foreground">Extracting images...</span>
+          <span className="text-sm text-muted-foreground">Extracting image...</span>
         </div>
         <p className="text-xs text-muted-foreground truncate">{productName}</p>
       </div>
@@ -45,9 +48,12 @@ const ProductImageSelector = ({
   if (error) {
     return (
       <div className="rounded-lg border border-destructive/50 bg-destructive/5 p-4">
-        <p className="text-sm text-destructive font-medium">Failed to extract images</p>
+        <p className="text-sm text-destructive font-medium">Failed to extract image</p>
         <p className="text-xs text-muted-foreground mt-1 truncate">{productName}</p>
         <p className="text-xs text-destructive/70 mt-1">{error}</p>
+        <Button variant="outline" size="sm" onClick={onRetry} className="mt-2 text-xs w-full">
+          <RefreshCw className="h-3 w-3 mr-1" />Retry
+        </Button>
       </div>
     );
   }
@@ -57,12 +63,17 @@ const ProductImageSelector = ({
       <div className="rounded-lg border border-border bg-card p-4">
         <p className="text-sm text-muted-foreground">No images found</p>
         <p className="text-xs text-muted-foreground mt-1 truncate">{productName}</p>
+        <Button variant="outline" size="sm" onClick={onRetry} className="mt-2 text-xs w-full">
+          <RefreshCw className="h-3 w-3 mr-1" />Retry
+        </Button>
       </div>
     );
   }
 
+  const firstImage = images[0];
+
   return (
-    <div className="rounded-lg border border-border bg-card p-4">
+    <div className={`rounded-lg border bg-card p-4 transition-all ${confirmed ? 'border-green-500/50' : 'border-border'}`}>
       <div className="flex items-center justify-between mb-3">
         <p className="text-sm font-medium truncate flex-1 mr-2">{productName}</p>
         <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${BADGE_STYLES[sizeCategory] || 'bg-muted text-muted-foreground'}`}>
@@ -70,37 +81,37 @@ const ProductImageSelector = ({
         </span>
       </div>
 
-      {/* Selected image preview */}
+      {/* Image preview */}
       <div className="aspect-square bg-muted rounded-lg overflow-hidden flex items-center justify-center border border-border mb-3">
         <img
-          src={images[selectedIndex]?.url}
-          alt="Selected product"
+          src={firstImage.url}
+          alt="Product"
           className="max-w-full max-h-full object-contain"
         />
       </div>
 
-      {/* Thumbnail row - horizontal scroll */}
-      {images.length > 1 && (
-        <div className="flex gap-1.5 overflow-x-auto pb-1">
-          {images.map((img, idx) => (
-            <button
-              key={idx}
-              onClick={() => onSelect(idx)}
-              className={`w-[60px] h-[60px] shrink-0 rounded border-2 overflow-hidden transition-all ${
-                idx === selectedIndex
-                  ? 'border-primary ring-1 ring-primary'
-                  : 'border-border hover:border-muted-foreground'
-              }`}
-            >
-              <img
-                src={img.url}
-                alt={`Option ${idx + 1}`}
-                className="w-full h-full object-contain bg-muted"
-              />
-            </button>
-          ))}
-        </div>
-      )}
+      {/* Confirm / Retry buttons */}
+      <div className="flex gap-2">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onRetry}
+          className="text-xs flex-1"
+        >
+          <RefreshCw className="h-3 w-3 mr-1" />Wrong image
+        </Button>
+        <Button
+          variant={confirmed ? "secondary" : "default"}
+          size="sm"
+          onClick={onConfirm}
+          disabled={confirmed}
+          className="text-xs flex-1"
+        >
+          {confirmed ? <><Check className="h-3 w-3 mr-1" />Confirmed</> : <>
+            <Check className="h-3 w-3 mr-1" />Confirm
+          </>}
+        </Button>
+      </div>
     </div>
   );
 };
