@@ -78,7 +78,16 @@ export interface CompositeProduct {
   customScale?: number; // multiplier, default 1.0
 }
 
-// Generate composite canvas — returns HTMLCanvasElement
+// Determine internal render scale for small outputs to avoid pixelation
+function getInternalScale(w: number, h: number): number {
+  const minDim = Math.min(w, h);
+  if (minDim <= 200) return 4;
+  if (minDim <= 400) return 3;
+  if (minDim <= 800) return 2;
+  return 1;
+}
+
+// Generate composite canvas — returns HTMLCanvasElement at target dimensions
 export async function generateCompositeCanvas(
   canvasWidth: number,
   canvasHeight: number,
@@ -86,14 +95,20 @@ export async function generateCompositeCanvas(
   direction: LayoutDirection = 'horizontal',
   overrides?: PositionOverride[]
 ): Promise<HTMLCanvasElement> {
-  const canvas = document.createElement('canvas');
-  canvas.width = canvasWidth;
-  canvas.height = canvasHeight;
-  const ctx = canvas.getContext('2d')!;
+  const scale = getInternalScale(canvasWidth, canvasHeight);
+  const rW = canvasWidth * scale;
+  const rH = canvasHeight * scale;
+
+  const hires = document.createElement('canvas');
+  hires.width = rW;
+  hires.height = rH;
+  const ctx = hires.getContext('2d')!;
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = 'high';
 
   // White background
   ctx.fillStyle = '#FFFFFF';
-  ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+  ctx.fillRect(0, 0, rW, rH);
 
   const isPortrait = canvasHeight > canvasWidth;
   const allCategories = products.map((p) => p.sizeCategory);
@@ -108,7 +123,6 @@ export async function generateCompositeCanvas(
     const product = products[i];
     const customScale = product.customScale ?? 1.0;
 
-    // Apply position override if present
     let fx = pos.x;
     let fy = pos.y;
     let overrideScale = 1.0;
@@ -118,34 +132,30 @@ export async function generateCompositeCanvas(
       overrideScale = overrides[i].scale;
     }
 
-    // Convert fractions to pixels
-    const cellX = fx * canvasWidth;
-    const cellY = fy * canvasHeight;
-    const cellW = pos.maxW * canvasWidth;
-    const cellH = pos.maxH * canvasHeight;
+    const cellX = fx * rW;
+    const cellY = fy * rH;
+    const cellW = pos.maxW * rW;
+    const cellH = pos.maxH * rH;
 
-    // Scale product image
     const scaled = scaleProductImage(
       img.width, img.height,
       product.sizeCategory,
-      canvasWidth, canvasHeight,
+      rW, rH,
       pos.maxW, pos.maxH,
       allCategories
     );
     const drawW = scaled.width * customScale * overrideScale;
     const drawH = scaled.height * customScale * overrideScale;
 
-    // Center within cell
     const drawX = cellX + (cellW - drawW) / 2;
     const drawY = cellY + (cellH - drawH) / 2;
 
-    // Shadow for diagonal back product
     if (direction === 'diagonal' && i === 0) {
       ctx.save();
       ctx.shadowColor = 'rgba(0,0,0,0.15)';
-      ctx.shadowBlur = 20;
-      ctx.shadowOffsetX = 8;
-      ctx.shadowOffsetY = 8;
+      ctx.shadowBlur = 20 * scale;
+      ctx.shadowOffsetX = 8 * scale;
+      ctx.shadowOffsetY = 8 * scale;
       ctx.drawImage(img, drawX, drawY, drawW, drawH);
       ctx.restore();
     } else {
@@ -153,5 +163,15 @@ export async function generateCompositeCanvas(
     }
   }
 
-  return canvas;
+  // Downscale to target dimensions if we rendered at higher resolution
+  if (scale === 1) return hires;
+
+  const output = document.createElement('canvas');
+  output.width = canvasWidth;
+  output.height = canvasHeight;
+  const outCtx = output.getContext('2d')!;
+  outCtx.imageSmoothingEnabled = true;
+  outCtx.imageSmoothingQuality = 'high';
+  outCtx.drawImage(hires, 0, 0, canvasWidth, canvasHeight);
+  return output;
 }
