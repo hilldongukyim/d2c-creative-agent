@@ -6,7 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { OUTPUT_SIZES, type SizeCategory, type LayoutDirection, type PositionOverride } from "@/lib/compositeTemplates";
-import { cropTransparentPixels, createCompositeImage } from "@/lib/imageProcessing";
+import { cropTransparentPixels, generateCompositeCanvas, type CompositeProduct } from "@/lib/imageProcessing";
 import { downloadAsZip } from "@/lib/zipGenerator";
 import ProductImageSelector from "@/components/ProductImageSelector";
 import BackgroundRemovalPreview, { type ProductStatus } from "@/components/BackgroundRemovalPreview";
@@ -199,9 +199,14 @@ const PTOGallery = () => {
       // Use cached if available, otherwise regenerate
       let dataUrl = confirmedGeneratedMap[size.id];
       if (!dataUrl) {
-        dataUrl = await createCompositeImage(
-          size, bgRemovedImages, products.map((p) => p.sizeCategory), dir, ovr
+        const compositeProducts: CompositeProduct[] = bgRemovedImages.map((du, idx) => ({
+          dataUrl: du,
+          sizeCategory: products[idx]?.sizeCategory || 'M',
+        }));
+        const canvas = await generateCompositeCanvas(
+          size.width, size.height, compositeProducts, dir, ovr
         );
+        dataUrl = canvas.toDataURL('image/png');
       }
 
       const folder = size.category === 'gallery' ? 'Gallery_PBP' : 'Basic';
