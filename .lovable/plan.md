@@ -1,160 +1,112 @@
 
-# Background Removal 실행 실패 문제 분석 및 해결 계획
 
-## 문제 원인 분석
+# Ben (PTO Gallery Creator) — Complete Rebuild Plan
 
-Edge function 로그를 확인한 결과, **Remove.bg API 크레딧 부족**이 문제의 근본 원인입니다:
+## Summary
+Complete rebuild of Ben's PTO Gallery page to support 2-6 product URLs, per-product image selection from gallery, background removal, composite layout generation across 9 output sizes, and ZIP download. All legacy code (n8n webhook, completion overlay, 2-image-only flow, "+" symbol) will be removed.
 
-### 에러 상세 정보
-```
-Remove.bg API error: 402
-{"errors":[{"title":"Insufficient credits","code":"insufficient_credits"}]}
-```
+## Files to Delete
+- `src/components/ConfirmationWithScreenshots.tsx` — replaced entirely by new components
 
-- **HTTP 402**: Payment Required (결제 필요)
-- **insufficient_credits**: Remove.bg 계정의 크레딧이 소진됨
+## Files to Create
 
-### 영향 받는 기능
-현재 Remove.bg API를 사용하는 두 가지 기능이 있습니다:
+### 1. `src/lib/compositeTemplates.ts`
+Layout template definitions for all 9 output sizes. Each template defines canvas dimensions and a `layoutProducts(count, images, sizeCategories)` function that returns draw coordinates. Templates handle 2-6 products with size-category-aware scaling (L/M/S ratios). No "+" symbol in any layout — products are arranged with even spacing on white backgrounds.
 
-1. **Ben의 이미지 합성 서비스** (`ben-process-images`)
-   - 두 제품 이미지의 배경 제거 후 합성
-   - PTO Gallery에서 사용
+### 2. `src/lib/imageProcessing.ts`
+Utility functions extracted from ConfirmationWithScreenshots:
+- `cropTransparentPixels(imageSrc)` — bounding box crop (alpha > 20)
+- `loadImage(src)` — cross-origin image loader
+- `createCompositeImage(template, images, sizeCategories)` — canvas renderer using template definitions
 
-2. **Kai의 배경 제거 서비스** (`fotor-background-removal`)
-   - 사용자 업로드 이미지의 배경 제거
-   - 단독 background removal 기능
+### 3. `src/lib/zipGenerator.ts`
+- Uses JSZip (new dependency) + file-saver (new dependency)
+- Takes array of `{dataUrl, filename}`, packages into ZIP, triggers download
+- Filename convention: `PTO_{date}_{sizeId}.png` (e.g., `PTO_250303_G-A.png`)
 
-## 해결 방안
+### 4. `src/components/ProductImageSelector.tsx`
+- Receives `images[]` array from extract API + product URL
+- Displays image grid with selectable thumbnails
+- Shows selected image with blue border highlight
+- Props: `images`, `selectedIndex`, `onSelect`, `productName`, `sizeCategory`
 
-### 방안 1: Remove.bg 크레딧 충전 (즉시 해결)
-가장 빠른 해결책은 Remove.bg 계정에 크레딧을 추가하는 것입니다:
+### 5. `src/components/BackgroundRemovalPreview.tsx`
+- Shows all products (2-6) with checkerboard background after BG removal
+- Grid layout: 2-3 columns depending on product count
+- "Confirm & Generate" button to proceed to composite step
 
-**작업 단계:**
-1. [Remove.bg Dashboard](https://www.remove.bg/dashboard#api)에 로그인
-2. API 사용량 및 잔여 크레딧 확인
-3. 크레딧 구매 (가격표: https://www.remove.bg/pricing/api)
-   - 40 크레딧: $9.00
-   - 200 크레딧: $39.00
-   - 1,000 크레딧: $179.00
+### 6. `src/components/CompositeLayoutEditor.tsx`
+- Displays all 9 output sizes in a scrollable grid
+- Each size rendered by `LayoutCanvas` component
+- "Download All as ZIP" button at top
+- Individual download buttons per size
 
-**예상 소요 시간:** 즉시 (결제 완료 후 바로 사용 가능)
+### 7. `src/components/LayoutCanvas.tsx`
+- Renders a single composite canvas for one output size
+- Uses template from `compositeTemplates.ts`
+- Displays size label and dimensions
 
-### 방안 2: Fotor API로 전환 (대안 API 사용)
-현재 Fotor API 키가 secrets에 이미 설정되어 있으므로, Remove.bg 대신 Fotor Background Remover API로 전환할 수 있습니다.
+### 8. `src/pages/PTOGallery.tsx` (complete rewrite)
+Step-based UI flow:
+1. **Step 1 — URL Input**: 2-6 URL input fields with add/remove buttons. Validate `https://www.lg.com/` prefix.
+2. **Step 2 — Image Selection**: For each product, show gallery images from `ben-extract-images` and let user pick one. All extractions run in parallel.
+3. **Step 3 — Background Removal**: Call `ben-process-images` with selected images. Show preview with checkerboard.
+4. **Step 4 — Composite Output**: Generate all 9 sizes, display in grid, offer ZIP download.
 
-**장점:**
-- 이미 API 키 설정 완료
-- Remove.bg와 유사한 품질
-- 별도의 크레딧 구매 불필요 (Fotor 크레딧 상황에 따라)
+Chat-style UI preserved with Ben's profile. Back navigation between steps. Feedback dialog retained.
 
-**작업 내용:**
-1. `ben-process-images/index.ts` 수정
-   - Remove.bg API 호출 로직을 Fotor API로 변경
-   - API 엔드포인트: `https://api-b.fotor.com/v1/aiart/backgroundremover`
-   - Bearer Token 인증 방식 적용
+## Edge Functions to Modify
 
-2. `fotor-background-removal/index.ts` 유지
-   - 이미 Fotor API를 호출하도록 설정되어 있지만 실제로는 Remove.bg를 호출 중
-   - 함수명과 실제 구현을 일치시키도록 수정
+### `supabase/functions/ben-extract-images/index.ts`
+Key change: return ALL gallery images instead of just the top-priority one.
+- Modify `extractFirstCarouselImage` → `extractAllCarouselImages` returning deduplicated array of `{url, priority, strategy}`
+- All images get `convertToHighQualityUrl` applied
+- Also extract `productName` from HTML `<title>` or `<h1>`
+- Response: `{ success, images: [{url, index}], sizeCategory, productName }`
 
-**예상 소요 시간:** 30분 (코드 수정 + 테스트)
+### `supabase/functions/ben-process-images/index.ts`
+Key change: accept array of 2-6 image URLs instead of exactly 2.
+- Request body: `{ imageUrls: string[] }` (array of 2-6 URLs)
+- Process sequentially with 1-second delay between calls for rate limiting
+- Response: `{ success, processedImages: [{originalUrl, base64, index}] }`
+- Keep SSRF protection and fallback logic
 
-**기술적 상세:**
-```typescript
-// Fotor API 호출 구조
-const response = await fetch('https://api-b.fotor.com/v1/aiart/backgroundremover', {
-  method: 'POST',
-  headers: {
-    'Authorization': `Bearer ${FOTOR_API_KEY}`,
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({
-    image_base64: imageBase64,
-    format: 'png'
-  }),
-});
-```
+## New Dependencies
+- `jszip` — ZIP file generation
+- `file-saver` — cross-browser file download
 
-### 방안 3: 하이브리드 접근 (장기 안정성)
-두 API를 모두 유지하고 fallback 로직을 구현:
+## Output Size Specifications (No "+" Symbol)
 
-**구현 방식:**
-1. 기본: Remove.bg 사용 (더 빠른 처리 속도)
-2. Fallback: Remove.bg 실패 시 자동으로 Fotor API 호출
-3. 에러 핸들링: 두 API 모두 실패 시 사용자에게 명확한 에러 메시지 표시
+### Gallery Images (PBP)
+| ID | Size | Use |
+|----|------|-----|
+| G-A | 2010x1334 | Default |
+| G-B | 1100x730 | Gallery image (all) |
+| G-C | 1600x1062 | Gallery zoom (Desktop) |
+| G-D | 1044x1334 | Gallery zoom (Mobile) |
+| G-E | 350x350 | Gallery thumbnail |
 
-**예상 소요 시간:** 1시간 (fallback 로직 구현 + 테스트)
+### Basic Images
+| ID | Size | Use |
+|----|------|-----|
+| B-A | 450x450 | Default |
+| B-B | 450x450 | Basic Large |
+| B-C | 350x350 | Basic Medium |
+| B-D | 165x165 | Basic Small |
 
-## 권장 해결 순서
+Layout logic per product count:
+- **2 products**: horizontal side-by-side (landscape canvases) or vertical stack (portrait canvases like G-D), products centered in each half
+- **3 products**: largest product on left half, two smaller stacked on right half
+- **4 products**: 2x2 grid
+- **5 products**: top row 3, bottom row 2 centered
+- **6 products**: 3x2 grid
 
-### 즉시 조치 (5분)
-1. Remove.bg 대시보드에서 현재 크레딧 잔량 확인
-2. 크레딧이 0인지 확인
+Size-category scaling (L/M/S) ratios applied as before to maintain relative product proportions.
 
-### 단기 해결 (선택 1 또는 2)
-- **Option A**: Remove.bg 크레딧 충전 → 즉시 사용 가능
-- **Option B**: Fotor API로 코드 수정 → 30분 소요
+## Legacy Code Removal
+- Remove n8n webhook URL and all references in PTOGallery.tsx
+- Remove `handleSubmit()` GET call logic
+- Remove completion overlay (video + "Perfect! I just started working!" message)
+- Remove `ConfirmationWithScreenshots` component entirely
+- Remove "+" symbol drawing from all composite logic
 
-### 장기 안정성 (선택사항)
-- 방안 3 (하이브리드) 구현으로 향후 유사한 문제 방지
-
-## 기술 세부사항
-
-### 현재 아키텍처
-```
-사용자 → Frontend
-         ↓
-    Edge Function (ben-process-images / fotor-background-removal)
-         ↓
-    Remove.bg API (402 Error - Insufficient Credits)
-         ↓
-    실패 반환
-```
-
-### 수정 후 아키텍처 (방안 2 선택 시)
-```
-사용자 → Frontend
-         ↓
-    Edge Function
-         ↓
-    Fotor API (Bearer Token 인증)
-         ↓
-    성공적인 배경 제거 결과 반환
-```
-
-### 수정 후 아키텍처 (방안 3 선택 시)
-```
-사용자 → Frontend
-         ↓
-    Edge Function
-         ↓
-    Remove.bg API (Primary)
-         ↓
-    성공? → 반환
-    실패? ↓
-    Fotor API (Fallback)
-         ↓
-    성공 → 반환
-    실패 → 에러 메시지
-```
-
-## 예상 비용
-
-### Remove.bg API (방안 1)
-- 40 크레딧: $9.00 (이미지 40개 처리 가능)
-- 200 크레딧: $39.00 (이미지 200개 처리 가능)
-
-### Fotor API (방안 2)
-- 현재 설정된 API 키의 크레딧 상황에 따라 다름
-- Fotor 대시보드에서 확인 필요
-
-## 다음 단계
-
-어떤 해결 방안을 선택하시겠습니까?
-
-1. **즉시 해결**: Remove.bg 크레딧 충전
-2. **코드 수정**: Fotor API로 전환
-3. **안정적 운영**: 하이브리드 접근 (두 API 모두 사용)
-
-선택하신 방안에 따라 즉시 구현을 진행하겠습니다.
