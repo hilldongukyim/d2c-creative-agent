@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Download } from "lucide-react";
-import { type OutputSize, type SizeCategory } from "@/lib/compositeTemplates";
+import { type OutputSize, type SizeCategory, type LayoutDirection, type PositionOverride } from "@/lib/compositeTemplates";
 import { createCompositeImage } from "@/lib/imageProcessing";
 import { downloadSingleImage, getDateString } from "@/lib/zipGenerator";
 
@@ -9,22 +9,26 @@ interface LayoutCanvasProps {
   outputSize: OutputSize;
   images: string[];
   sizeCategories: SizeCategory[];
+  direction?: LayoutDirection;
+  overrides?: PositionOverride[];
   onGenerated: (id: string, dataUrl: string) => void;
 }
 
-const LayoutCanvas = ({ outputSize, images, sizeCategories, onGenerated }: LayoutCanvasProps) => {
+const LayoutCanvas = ({ outputSize, images, sizeCategories, direction = 'horizontal', overrides, onGenerated }: LayoutCanvasProps) => {
   const [dataUrl, setDataUrl] = useState<string | null>(null);
-  const generated = useRef(false);
+  const renderKey = useRef(0);
 
   useEffect(() => {
-    if (generated.current) return;
-    generated.current = true;
+    const key = ++renderKey.current;
+    setDataUrl(null);
 
-    createCompositeImage(outputSize, images, sizeCategories).then((url) => {
-      setDataUrl(url);
-      onGenerated(outputSize.id, url);
+    createCompositeImage(outputSize, images, sizeCategories, direction, overrides).then((url) => {
+      if (renderKey.current === key) {
+        setDataUrl(url);
+        onGenerated(outputSize.id, url);
+      }
     });
-  }, [outputSize, images, sizeCategories, onGenerated]);
+  }, [outputSize, images, sizeCategories, direction, overrides, onGenerated]);
 
   return (
     <div className="rounded-lg border border-border bg-card p-3">

@@ -1,4 +1,4 @@
-import { layoutProducts, type SizeCategory, type OutputSize } from './compositeTemplates';
+import { layoutProducts, type SizeCategory, type OutputSize, type LayoutDirection, type PositionOverride } from './compositeTemplates';
 
 export function loadImage(src: string): Promise<HTMLImageElement> {
   return new Promise((resolve, reject) => {
@@ -50,7 +50,9 @@ export async function cropTransparentPixels(imageSrc: string): Promise<string> {
 export async function createCompositeImage(
   outputSize: OutputSize,
   images: string[],
-  sizeCategories: SizeCategory[]
+  sizeCategories: SizeCategory[],
+  direction: LayoutDirection = 'horizontal',
+  overrides?: PositionOverride[]
 ): Promise<string> {
   const { width, height } = outputSize;
   const canvas = document.createElement('canvas');
@@ -62,7 +64,7 @@ export async function createCompositeImage(
   ctx.fillStyle = '#FFFFFF';
   ctx.fillRect(0, 0, width, height);
 
-  const placements = layoutProducts(width, height, images.length, sizeCategories);
+  const placements = layoutProducts(width, height, images.length, sizeCategories, direction, overrides);
   const loadedImages = await Promise.all(images.map(loadImage));
 
   for (let i = 0; i < loadedImages.length; i++) {
@@ -85,7 +87,18 @@ export async function createCompositeImage(
     const drawX = p.x + (p.maxWidth - drawW) / 2;
     const drawY = p.y + (p.maxHeight - drawH) / 2;
 
-    ctx.drawImage(img, drawX, drawY, drawW, drawH);
+    // Shadow for diagonal back product
+    if (direction === 'diagonal' && i === 0) {
+      ctx.save();
+      ctx.shadowColor = 'rgba(0,0,0,0.15)';
+      ctx.shadowBlur = 20;
+      ctx.shadowOffsetX = 8;
+      ctx.shadowOffsetY = 8;
+      ctx.drawImage(img, drawX, drawY, drawW, drawH);
+      ctx.restore();
+    } else {
+      ctx.drawImage(img, drawX, drawY, drawW, drawH);
+    }
   }
 
   return canvas.toDataURL('image/png');
