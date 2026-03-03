@@ -1,175 +1,191 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowLeft, Send, Undo2, Check } from "lucide-react";
+import { ArrowLeft, Plus, Trash2, Send, Loader2, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useState, useEffect, useRef } from "react";
-import ConfirmationWithScreenshots from "@/components/ConfirmationWithScreenshots";
+import { useState, useEffect, useRef, useCallback } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { type SizeCategory } from "@/lib/compositeTemplates";
+import { cropTransparentPixels } from "@/lib/imageProcessing";
+import ProductImageSelector from "@/components/ProductImageSelector";
+import BackgroundRemovalPreview from "@/components/BackgroundRemovalPreview";
+import CompositeLayoutEditor from "@/components/CompositeLayoutEditor";
+
 const benProfile = "/lovable-uploads/ben-profile-v2.png";
 
-interface FormData {
-  mainProductUrl: string;
-  secondProductUrl: string;
-  mainEnergyLabel?: string;
-  secondEnergyLabel?: string;
+interface ProductData {
+  url: string;
+  images: { url: string; index: number }[];
+  selectedIndex: number;
+  sizeCategory: SizeCategory;
+  productName: string;
+  isLoading: boolean;
+  error: string | null;
 }
 
-interface ConversationItem {
-  type: string;
-  content: string;
-  field?: string;
-  exampleUrl?: string;
-  showUrl?: boolean;
-}
+type Step = 'urls' | 'select' | 'bgremoval' | 'composite';
 
 const PTOGallery = () => {
   const navigate = useNavigate();
-  const [currentStep, setCurrentStep] = useState(0);
-  const [formData, setFormData] = useState<FormData>({
-    mainProductUrl: '',
-    secondProductUrl: ''
-  });
-  const [mainUrlInput, setMainUrlInput] = useState('');
-  const [secondUrlInput, setSecondUrlInput] = useState('');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submissionStatus, setSubmissionStatus] = useState<'success' | 'failure' | null>(null);
-  const [showVideo, setShowVideo] = useState(false);
-  const [urlValidationError, setUrlValidationError] = useState<string | null>(null);
-  const webhookUrl = 'https://dev.eaip.lge.com/n8n/webhook/0d1d1ae9-c63d-4402-b7a5-124a886eb108';
-  const conversationRef = useRef<HTMLDivElement>(null);
+  const [step, setStep] = useState<Step>('urls');
+  const [urls, setUrls] = useState<string[]>(['', '']);
+  const [urlError, setUrlError] = useState<string | null>(null);
+  const [products, setProducts] = useState<ProductData[]>([]);
+  const [bgRemovedImages, setBgRemovedImages] = useState<string[]>([]);
+  const [bgProcessing, setBgProcessing] = useState(false);
+  const [bgStatus, setBgStatus] = useState('');
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-
-  const conversations: ConversationItem[] = [
-    {
-      type: 'ben-message',
-      content: "Hello! I'm Ben 🐕 I'll help you create a PTO gallery. Let me ask you a few questions to build the perfect gallery for you! 😊"
-    },
-    {
-      type: 'ben-dual-url',
-      content: "Please paste the PDP URLs for both products.\n\n• Main product (left side of gallery)\n• Second product (right side of gallery)",
-      field: 'dualUrls',
-      exampleUrl: "https://www.lg.com/es/tv-y-barras-de-sonido/oled-evo/oled83c5elb-esb/"
-    },
-    {
-      type: 'ben-confirmation',
-      content: "Let me confirm your information before we proceed:"
-    },
-    {
-      type: 'ben-completion',
-      content: "Perfect! I'll start working on your gallery right away! 🐕💻"
-    }
-  ];
-
-  
-  // Auto-scroll effect
   useEffect(() => {
-    if (conversationRef.current) {
-      conversationRef.current.scrollTop = conversationRef.current.scrollHeight;
-    }
-  }, [currentStep, urlValidationError]);
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
+  }, [step]);
 
-  // Auto-proceed for Ben's messages
-  useEffect(() => {
-    const currentConversation = conversations[currentStep];
-    if (currentConversation && 
-        currentConversation.type === 'ben-message' && 
-        currentStep < conversations.length - 1) {
-      const timer = setTimeout(() => {
-        setCurrentStep(prev => prev + 1);
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
-  }, [currentStep, conversations.length]);
-
-  const handleNext = () => {
-    if (currentStep < conversations.length - 1) {
-      setCurrentStep(prev => prev + 1);
-    }
+  // URL management
+  const addUrl = () => {
+    if (urls.length < 6) setUrls([...urls, '']);
   };
 
-  const handleGoBack = () => {
-    if (currentStep > 0) {
-      setCurrentStep(prev => prev - 1);
-    }
+  const removeUrl = (idx: number) => {
+    if (urls.length > 2) setUrls(urls.filter((_, i) => i !== idx));
   };
 
-  const handleInputSubmit = () => {
-    const currentConversation = conversations[currentStep];
-    if (currentConversation.field === 'dualUrls') {
-      // Validate both URLs
-      if (!mainUrlInput?.startsWith('https://www.lg.com/')) {
-        setUrlValidationError('Main product URL must start with "https://www.lg.com/"');
-        return;
-      }
-      if (!secondUrlInput?.startsWith('https://www.lg.com/')) {
-        setUrlValidationError('Second product URL must start with "https://www.lg.com/"');
-        return;
-      }
-      
-      setUrlValidationError(null);
-      setFormData(prev => ({
-        ...prev,
-        mainProductUrl: mainUrlInput,
-        secondProductUrl: secondUrlInput
-      }));
-      setTimeout(handleNext, 300);
-    }
+  const updateUrl = (idx: number, value: string) => {
+    const newUrls = [...urls];
+    newUrls[idx] = value;
+    setUrls(newUrls);
   };
 
-
-  const handleSubmit = async () => {
-    if (!webhookUrl || isSubmitting) {
+  // Step 1 → Step 2
+  const handleSubmitUrls = async () => {
+    setUrlError(null);
+    const filledUrls = urls.filter((u) => u.trim());
+    if (filledUrls.length < 2) {
+      setUrlError('At least 2 product URLs are required.');
       return;
     }
-
-    setIsSubmitting(true);
-    
-    try {
-      // GET 방식으로 URL 파라미터 구성
-      const params = new URLSearchParams({
-        productAUrl: formData.mainProductUrl,
-        productBUrl: formData.secondProductUrl,
-      });
-      const getUrl = `${webhookUrl}?${params.toString()}`;
-
-      const response = await fetch(getUrl, {
-        method: "GET",
-      });
-
-      if (response.ok) {
-        setTimeout(() => {
-          setSubmissionStatus('success');
-          setIsSubmitting(false);
-          // 2초 후 비디오 표시
-          setTimeout(() => {
-            setShowVideo(true);
-          }, 2000);
-        }, 2000);
-      } else {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    for (let i = 0; i < filledUrls.length; i++) {
+      if (!filledUrls[i].startsWith('https://www.lg.com/')) {
+        setUrlError(`URL #${i + 1} must start with "https://www.lg.com/"`);
+        return;
       }
-    } catch (error) {
-      console.error("Error sending to n8n webhook:", error);
-      setSubmissionStatus('failure');
-      setIsSubmitting(false);
+    }
+
+    // Initialize products and extract images in parallel
+    const initialProducts: ProductData[] = filledUrls.map((url) => ({
+      url,
+      images: [],
+      selectedIndex: 0,
+      sizeCategory: 'M' as SizeCategory,
+      productName: url,
+      isLoading: true,
+      error: null,
+    }));
+    setProducts(initialProducts);
+    setStep('select');
+
+    // Extract in parallel
+    const promises = filledUrls.map(async (url, idx) => {
+      try {
+        const { data, error } = await supabase.functions.invoke('ben-extract-images', {
+          body: { url },
+        });
+        if (error || !data?.success) {
+          return { idx, error: data?.error || 'Extraction failed' };
+        }
+        return {
+          idx,
+          images: data.images || [],
+          sizeCategory: data.sizeCategory || 'M',
+          productName: data.productName || url,
+        };
+      } catch {
+        return { idx, error: 'Network error' };
+      }
+    });
+
+    const results = await Promise.all(promises);
+    setProducts((prev) => {
+      const updated = [...prev];
+      for (const r of results) {
+        if ('error' in r && r.error) {
+          updated[r.idx] = { ...updated[r.idx], isLoading: false, error: r.error as string };
+        } else {
+          updated[r.idx] = {
+            ...updated[r.idx],
+            isLoading: false,
+            images: (r as any).images,
+            sizeCategory: (r as any).sizeCategory,
+            productName: (r as any).productName,
+          };
+        }
+      }
+      return updated;
+    });
+  };
+
+  // Step 2 → Step 3
+  const handleProceedToBgRemoval = async () => {
+    setBgProcessing(true);
+    setBgStatus('Removing backgrounds...');
+    setStep('bgremoval');
+
+    const selectedImageUrls = products.map((p) => p.images[p.selectedIndex]?.url).filter(Boolean);
+
+    try {
+      const { data, error } = await supabase.functions.invoke('ben-process-images', {
+        body: { imageUrls: selectedImageUrls },
+      });
+
+      if (error || !data?.success) {
+        console.error('BG removal error:', error || data?.error);
+        setBgStatus('Background removal failed. Using original images...');
+        // Fallback: crop originals
+        const cropped = await Promise.all(selectedImageUrls.map((url) => cropTransparentPixels(url)));
+        setBgRemovedImages(cropped);
+        setBgProcessing(false);
+        return;
+      }
+
+      setBgStatus('Cropping transparent pixels...');
+      const cropped = await Promise.all(
+        data.processedImages.map((img: { base64: string }) => cropTransparentPixels(img.base64))
+      );
+      setBgRemovedImages(cropped);
+      setBgProcessing(false);
+    } catch (err) {
+      console.error('Error:', err);
+      setBgStatus('Error occurred.');
+      setBgProcessing(false);
     }
   };
 
-  const handleReset = () => {
-    setCurrentStep(0);
-    setFormData({ mainProductUrl: '', secondProductUrl: '' });
-    setMainUrlInput('');
-    setSecondUrlInput('');
-    setSubmissionStatus(null);
-    setShowVideo(false);
-    setUrlValidationError(null);
+  // Step 3 → Step 4
+  const handleGenerateComposites = () => {
+    setStep('composite');
   };
 
-  const currentConversation = conversations[currentStep];
-  const isDualUrlInput = currentConversation?.type === 'ben-dual-url';
-  const isConfirmation = currentConversation?.type === 'ben-confirmation';
+  const handleSelectImage = useCallback((productIdx: number, imageIdx: number) => {
+    setProducts((prev) => {
+      const updated = [...prev];
+      updated[productIdx] = { ...updated[productIdx], selectedIndex: imageIdx };
+      return updated;
+    });
+  }, []);
+
+  const handleReset = () => {
+    setStep('urls');
+    setUrls(['', '']);
+    setProducts([]);
+    setBgRemovedImages([]);
+    setBgProcessing(false);
+    setBgStatus('');
+    setUrlError(null);
+  };
+
+  const allExtracted = products.length > 0 && products.every((p) => !p.isLoading);
+  const hasValidImages = products.some((p) => p.images.length > 0);
 
   return (
-    <div 
+    <div
       className="min-h-screen p-6 relative overflow-hidden"
       style={{
         backgroundImage: 'url(/lovable-uploads/486a0909-b1cd-4891-9d37-db02a935a89f.png)',
@@ -178,213 +194,154 @@ const PTOGallery = () => {
         backgroundRepeat: 'no-repeat',
       }}
     >
-      {/* Completion overlay */}
-      {showVideo && (
-        <div className="absolute inset-0 bg-black/60 z-50 flex flex-col items-center justify-center">
-          {/* Circular video in center */}
-          <div className="w-44 h-44 rounded-full overflow-hidden border-2 border-white shadow-xl mb-8">
-            <video
-              src="/completion-video.mp4"
-              autoPlay
-              loop
-              muted
-              className="w-full h-full object-cover"
-            />
-          </div>
-          
-          <div className="text-center text-white space-y-4 p-8">
-            <h1 className="text-4xl font-bold mb-4">Perfect! I just started working!</h1>
-            <p className="text-xl mb-2">You will receive it soon.</p>
-            <p className="text-xl mb-8">You can close this window now.</p>
-            <p className="text-lg mb-8">
-              If you don't receive the email within 10 minutes,<br/>
-              please contact <span className="font-bold">donguk.yim@lge.com</span>. He will assist you.
-            </p>
-            
-            {/* CTA Button to go back home */}
-            <Button 
-              variant="outline"
-              className="text-white border-white hover:bg-white hover:text-black px-6 py-2 text-base transition-all duration-300"
-              onClick={() => navigate("/")}
-            >
-              Back to Home
-            </Button>
-          </div>
+      <div className="max-w-2xl mx-auto">
+        <div className="mb-6">
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/")}
+            className="mb-4 text-muted-foreground hover:text-foreground"
+          >
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to Home
+          </Button>
         </div>
-      )}
 
-      {/* Chat container - hidden when video is shown */}
-      {!showVideo && (
-        <div className="max-w-2xl mx-auto">
-          <div className="mb-6">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate("/")}
-              className="mb-4 text-gray-400 hover:text-gray-300"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Home
-            </Button>
+        <div className="bg-card rounded-xl shadow-lg p-6 h-[700px] flex flex-col relative z-10">
+          {/* Ben's Profile */}
+          <div className="flex items-center gap-4 mb-6 pb-4 border-b border-border">
+            <div className="w-16 h-16 rounded-full overflow-hidden border-2 border-primary/30">
+              <img src={benProfile} alt="Ben" className="w-full h-full object-cover" />
+            </div>
+            <div>
+              <h3 className="font-semibold text-lg">Ben</h3>
+              <p className="text-sm text-muted-foreground">PTO Gallery Creator</p>
+            </div>
           </div>
 
-          <div className="bg-card rounded-xl shadow-lg p-6 h-[600px] flex flex-col relative z-10">
-            {/* Ben's Profile */}
-            <div className="flex items-center gap-4 mb-6 pb-4 border-b border-border">
-              <div className="w-20 h-20 rounded-full overflow-hidden border-2 border-blue-400/50">
-                <img 
-                  src={benProfile} 
-                  alt="Ben" 
-                  className="w-full h-full object-cover" 
-                />
-              </div>
-              <div>
-                <h3 className="font-semibold text-lg">Ben</h3>
-                <p className="text-sm text-muted-foreground">PTO Gallery Creator</p>
-              </div>
+          {/* Content */}
+          <div ref={scrollRef} className="flex-1 overflow-y-auto space-y-4 pr-2" style={{ scrollBehavior: 'smooth' }}>
+            {/* Ben's greeting */}
+            <div className="bg-secondary rounded-lg p-3 max-w-[85%]">
+              <p className="text-sm">Hello! I'm Ben 🐕 I'll help you create PTO gallery images. Paste 2-6 LG product PDP URLs and I'll do the rest! 😊</p>
             </div>
 
-            {/* Conversation Flow */}
-            <div ref={conversationRef} className="flex-1 overflow-y-auto space-y-6 pr-2" style={{ scrollBehavior: 'smooth' }}>
-              {conversations.slice(0, currentStep + 1).map((conv, index) => (
-                <div 
-                  key={index}
-                  className={`transition-all duration-500 ${
-                    index === currentStep ? 'animate-fade-in' : ''
-                  }`}
-                >
-                  {/* Ben's Message */}
-                  <div className="flex gap-3 mb-4 items-start">
-                    <div className="bg-blue-50 dark:bg-blue-950/30 rounded-lg p-3 max-w-[80%]">
-                      <p className="text-sm whitespace-pre-line">{conv.content}</p>
-                      {conv.exampleUrl && (
-                        <div className="mt-2 text-xs text-muted-foreground opacity-70 font-mono bg-muted/30 px-2 py-1 rounded">
-                          For example: {conv.exampleUrl}
-                        </div>
-                      )}
-                      {conv.showUrl && conv.field && formData[conv.field as keyof FormData] && typeof formData[conv.field as keyof FormData] === 'string' && (
-                        <div className="mt-2 p-2 bg-background rounded text-xs text-muted-foreground">
-                          URL: {formData[conv.field as keyof FormData] as string}
-                        </div>
-                      )}
-                    </div>
-                    {/* Go Back Button */}
-                    {index > 0 && index === currentStep && (
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={handleGoBack}
-                        className="text-gray-600 hover:text-gray-800 hover:bg-gray-100 border-gray-300 px-3 py-1.5 text-xs font-medium shadow-sm hover:shadow-md transition-all duration-200 cursor-pointer"
-                      >
-                        <Undo2 className="h-3 w-3 mr-1" />
-                        Edit
-                      </Button>
-                    )}
-                  </div>
-
-                  {/* Show confirmation summary with screenshots */}
-                  {index === currentStep && conv.type === 'ben-confirmation' && (
-                    <ConfirmationWithScreenshots 
-                      formData={formData}
-                      setFormData={setFormData}
-                      onGoBack={handleGoBack}
-                      onSubmit={handleSubmit}
-                      onReset={handleReset}
-                    />
-                  )}
-
-                  {/* User Response Display */}
-                  {index < currentStep && conv.field && formData[conv.field as keyof FormData] && typeof formData[conv.field as keyof FormData] === 'string' && (
-                    <div className="flex justify-end mb-2">
-                      <div className="bg-primary text-primary-foreground rounded-lg p-3 max-w-[80%]">
-                        <p className="text-sm">{formData[conv.field as keyof FormData] as string}</p>
-                      </div>
-                    </div>
-                  )}
+            {/* Step 1: URL Input */}
+            {step === 'urls' && (
+              <div className="space-y-3 animate-fade-in">
+                <div className="bg-secondary rounded-lg p-3 max-w-[85%]">
+                  <p className="text-sm">Please paste the PDP URLs for your products (2-6 URLs).</p>
+                  <p className="text-xs text-muted-foreground mt-1 font-mono">e.g. https://www.lg.com/es/tv-y-barras-de-sonido/oled-evo/...</p>
                 </div>
-              ))}
 
-              {/* Ben Working Animation */}
-              {isSubmitting && (
-                <div className="text-center space-y-4 animate-fade-in">
-                  <div className="w-40 h-40 mx-auto relative">
-                    {/* Circular Chat Background */}
-                    <div className="w-full h-full bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-950/50 dark:to-purple-950/50 rounded-full flex items-center justify-center animate-pulse border-4 border-blue-200 dark:border-blue-800/50">
-                      {/* Ben's Image */}
-                      <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white dark:border-gray-800 shadow-lg animate-[bounce_2s_ease-in-out_infinite]">
-                        <img 
-                          src={benProfile} 
-                          alt="Ben working" 
-                          className="w-full h-full object-cover" 
-                        />
-                      </div>
-                      {/* Working Indicator */}
-                      <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full animate-ping"></div>
-                      <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-                        <span className="text-white text-xs">💻</span>
-                      </div>
-                    </div>
-                  </div>
-                  <p className="text-lg font-medium text-primary">I'm working on your request...</p>
-                  <p className="text-sm text-muted-foreground">This should only take a moment!</p>
-                </div>
-              )}
-
-              {/* Success Animation */}
-              {submissionStatus === 'success' && !showVideo && (
-                <div className="text-center space-y-4 animate-fade-in">
-                  <div className="w-24 h-24 mx-auto">
-                    <div className="w-full h-full bg-green-100 dark:bg-green-950/30 rounded-full flex items-center justify-center border-4 border-green-200 dark:border-green-800/50">
-                      <Check className="w-12 h-12 text-green-600 dark:text-green-400" />
-                    </div>
-                  </div>
-                  <p className="text-lg font-medium text-green-600 dark:text-green-400">Success!</p>
-                  <p className="text-sm text-muted-foreground">Your request has been submitted successfully.</p>
-                </div>
-              )}
-
-            </div>
-
-            {/* URL Validation Error */}
-            {urlValidationError && (
-              <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-800/50 rounded-lg">
-                <p className="text-sm text-red-700 dark:text-red-400">{urlValidationError}</p>
-              </div>
-            )}
-
-            {/* Input Area - Dual URL Input */}
-            {isDualUrlInput && !isSubmitting && !submissionStatus && (
-              <div className="mt-4 space-y-3">
                 <div className="space-y-2">
-                  <label className="text-xs text-muted-foreground">Main Product URL (Left)</label>
-                  <Input
-                    value={mainUrlInput}
-                    onChange={(e) => setMainUrlInput(e.target.value)}
-                    placeholder="https://www.lg.com/..."
-                    className="w-full"
-                  />
+                  {urls.map((url, idx) => (
+                    <div key={idx} className="flex gap-2 items-center">
+                      <span className="text-xs text-muted-foreground w-5 shrink-0">{idx + 1}.</span>
+                      <Input
+                        value={url}
+                        onChange={(e) => updateUrl(idx, e.target.value)}
+                        placeholder="https://www.lg.com/..."
+                        className="flex-1"
+                      />
+                      {urls.length > 2 && (
+                        <Button variant="ghost" size="icon" onClick={() => removeUrl(idx)} className="shrink-0 h-8 w-8">
+                          <Trash2 className="h-3 w-3" />
+                        </Button>
+                      )}
+                    </div>
+                  ))}
                 </div>
-                <div className="space-y-2">
-                  <label className="text-xs text-muted-foreground">Second Product URL (Right)</label>
-                  <Input
-                    value={secondUrlInput}
-                    onChange={(e) => setSecondUrlInput(e.target.value)}
-                    placeholder="https://www.lg.com/..."
-                    className="w-full"
-                  />
-                </div>
-                <Button 
-                  onClick={handleInputSubmit}
-                  disabled={!mainUrlInput.trim() || !secondUrlInput.trim()}
+
+                {urls.length < 6 && (
+                  <Button variant="outline" size="sm" onClick={addUrl} className="text-xs">
+                    <Plus className="h-3 w-3 mr-1" />
+                    Add URL ({urls.length}/6)
+                  </Button>
+                )}
+
+                {urlError && (
+                  <p className="text-xs text-destructive">{urlError}</p>
+                )}
+
+                <Button
+                  onClick={handleSubmitUrls}
+                  disabled={urls.filter((u) => u.trim()).length < 2}
                   className="w-full"
                 >
                   <Send className="h-4 w-4 mr-2" />
-                  Submit
+                  Extract Images
                 </Button>
+              </div>
+            )}
+
+            {/* Step 2: Image Selection */}
+            {step === 'select' && (
+              <div className="space-y-3 animate-fade-in">
+                <div className="bg-secondary rounded-lg p-3 max-w-[85%]">
+                  <p className="text-sm">Select the image you want to use for each product. Click a thumbnail to change your selection.</p>
+                </div>
+
+                <div className={`grid gap-3 ${products.length <= 2 ? 'grid-cols-2' : products.length <= 4 ? 'grid-cols-2' : 'grid-cols-3'}`}>
+                  {products.map((product, idx) => (
+                    <ProductImageSelector
+                      key={idx}
+                      images={product.images}
+                      selectedIndex={product.selectedIndex}
+                      onSelect={(imgIdx) => handleSelectImage(idx, imgIdx)}
+                      productName={product.productName}
+                      sizeCategory={product.sizeCategory}
+                      isLoading={product.isLoading}
+                      error={product.error}
+                    />
+                  ))}
+                </div>
+
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={() => setStep('urls')}>
+                    <ArrowLeft className="h-3 w-3 mr-1" />
+                    Back
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="flex-1"
+                    onClick={handleProceedToBgRemoval}
+                    disabled={!allExtracted || !hasValidImages}
+                  >
+                    <ArrowRight className="h-3 w-3 mr-1" />
+                    Remove Backgrounds
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {/* Step 3: BG Removal Preview */}
+            {step === 'bgremoval' && (
+              <div className="animate-fade-in">
+                <BackgroundRemovalPreview
+                  images={bgRemovedImages}
+                  productNames={products.map((p) => p.productName)}
+                  isProcessing={bgProcessing}
+                  processingStatus={bgStatus}
+                  onConfirm={handleGenerateComposites}
+                  onBack={() => setStep('select')}
+                />
+              </div>
+            )}
+
+            {/* Step 4: Composite Output */}
+            {step === 'composite' && bgRemovedImages.length > 0 && (
+              <div className="animate-fade-in">
+                <CompositeLayoutEditor
+                  images={bgRemovedImages}
+                  sizeCategories={products.map((p) => p.sizeCategory)}
+                  productUrls={products.map((p) => p.url)}
+                  onReset={handleReset}
+                />
               </div>
             )}
           </div>
         </div>
-      )}
+      </div>
     </div>
   );
 };
