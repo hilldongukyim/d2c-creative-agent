@@ -83,23 +83,46 @@ function extractProductName(html: string): string {
   return 'Unknown Product';
 }
 
-function extractAllCarouselImages(html: string, baseUrl: string): Array<{ url: string; index: number }> {
+function extractAllCarouselImages(html: string, baseUrl: string): Array<{ url: string; index: number; priority: number }> {
   const isValidProductImage = (src: string): boolean => {
-    const invalid = ['logo', 'icon', 'badge', 'star', 'rating', 'banner', 'award', '.svg', 'sprite'];
+    const invalid = ['logo', 'icon', 'badge', 'star', 'rating', 'banner', 'award', '.svg', 'sprite',
+      'lifestyle', 'campaign', 'promo', 'hero', 'kv', 'key-visual', 'ambient', 'scene',
+      'background', 'bg-', 'environment', 'room', 'interior', 'feature', 'usp',
+      'infographic', 'info-', 'dimension', 'spec', 'energy-label', 'energy_label',
+      'accessory', 'accessories', 'installation', 'how-to', 'howto'];
     const srcLower = src.toLowerCase();
     if (invalid.some(term => srcLower.includes(term))) return false;
     if (!srcLower.match(/\.(jpg|jpeg|png|webp)/)) return false;
     return true;
   };
 
+  // Score image URL: higher = more likely a front-facing white-bg product shot
+  const scoreFrontProduct = (src: string): number => {
+    const lower = src.toLowerCase();
+    let score = 0;
+    // Front-facing indicators in filename
+    if (/[\/\-_](front|f)[\/\-_.\d]/i.test(lower)) score += 30;
+    if (/[\/\-_]01[\/\-_.\s]|[\/\-_]01\.(jpg|png|webp)/i.test(lower)) score += 25;
+    if (/large01|large_01|large-01/i.test(lower)) score += 25;
+    if (/[\/\-_]0*1[_\-\.]/i.test(lower)) score += 20;
+    // Gallery path = good sign
+    if (lower.includes('/gallery/')) score += 15;
+    // Medium/DMS image paths (LG's CDN product shots are usually white-bg)
+    if (lower.includes('/images/') && !lower.includes('/feature')) score += 10;
+    // Penalize lifestyle/angle indicators
+    if (/angle|side|back|top|bottom|tilt|close/i.test(lower)) score -= 10;
+    if (/[\/\-_](d|l|m)\d+[\/\-_]/i.test(lower) && !/[\/\-_](d|l|m)01/i.test(lower)) score -= 5;
+    return score;
+  };
+
   const seen = new Set<string>();
-  const results: Array<{ url: string; index: number }> = [];
+  const results: Array<{ url: string; index: number; priority: number }> = [];
 
   const addImage = (src: string) => {
     const highQuality = convertToHighQualityUrl(src, baseUrl);
     if (!seen.has(highQuality) && isValidProductImage(highQuality)) {
       seen.add(highQuality);
-      results.push({ url: highQuality, index: results.length });
+      results.push({ url: highQuality, index: results.length, priority: scoreFrontProduct(highQuality) });
     }
   };
 
@@ -130,7 +153,12 @@ function extractAllCarouselImages(html: string, baseUrl: string): Array<{ url: s
     }
   }
 
-  console.log(`Found ${results.length} unique gallery images`);
+  // Sort by priority descending (front-facing first)
+  results.sort((a, b) => b.priority - a.priority);
+  // Re-index after sort
+  results.forEach((r, i) => { r.index = i; });
+
+  console.log(`Found ${results.length} unique gallery images (sorted by front-facing priority)`);
   return results;
 }
 

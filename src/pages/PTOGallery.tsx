@@ -9,7 +9,7 @@ import { OUTPUT_SIZES, type SizeCategory, type LayoutDirection, type PositionOve
 import { cropTransparentPixels, generateCompositeCanvas, type CompositeProduct } from "@/lib/imageProcessing";
 import { downloadAsZip } from "@/lib/zipGenerator";
 import ProductImageSelector from "@/components/ProductImageSelector";
-import BackgroundRemovalPreview, { type ProductStatus } from "@/components/BackgroundRemovalPreview";
+import { type ProductStatus } from "@/components/BackgroundRemovalPreview";
 import CompositeLayoutEditor from "@/components/CompositeLayoutEditor";
 import BenFeedbackDialog from "@/components/BenFeedbackDialog";
 
@@ -119,7 +119,7 @@ const PTOGallery = () => {
     });
   };
 
-  // Step: select → bgremoval
+  // Step: select → bgremoval → auto-advance to composite
   const handleProceedToBgRemoval = async () => {
     setBgProcessing(true);
     setBgStatus('Removing backgrounds...');
@@ -131,8 +131,6 @@ const PTOGallery = () => {
     setBgCurrentIdx(0);
 
     try {
-      // Update statuses as we go
-      statuses.forEach((_, i) => { statuses[i] = 'pending'; });
       statuses[0] = 'processing';
       setProductStatuses([...statuses]);
 
@@ -147,6 +145,8 @@ const PTOGallery = () => {
         const cropped = await Promise.all(selectedImageUrls.map((url) => cropTransparentPixels(url)));
         setBgRemovedImages(cropped);
         setBgProcessing(false);
+        // Auto-advance to composite even on fallback
+        setStep('composite');
         return;
       }
 
@@ -160,6 +160,8 @@ const PTOGallery = () => {
       );
       setBgRemovedImages(cropped);
       setBgProcessing(false);
+      // Auto-advance directly to composite layout editor
+      setStep('composite');
     } catch (err) {
       console.error('Error:', err);
       setBgStatus('Error occurred.');
@@ -361,20 +363,37 @@ const PTOGallery = () => {
               </div>
             )}
 
-            {/* Step: BG Removal */}
+            {/* Step: BG Removal (processing only — auto-advances to composite) */}
             {step === 'bgremoval' && (
               <div className="animate-fade-in">
-                <BackgroundRemovalPreview
-                  images={bgRemovedImages}
-                  productNames={products.map((p) => p.productName)}
-                  isProcessing={bgProcessing}
-                  processingStatus={bgStatus}
-                  productStatuses={productStatuses}
-                  currentIndex={bgCurrentIdx}
-                  totalCount={products.length}
-                  onConfirm={handleGenerateComposites}
-                  onBack={() => setStep('select')}
-                />
+                <div className="rounded-lg bg-card border border-border p-6">
+                  <Loader2 className="h-10 w-10 animate-spin text-primary mx-auto mb-4" />
+                  <p className="text-sm font-medium text-center">{bgStatus || 'Processing...'}</p>
+                  {products.length > 0 && (
+                    <div className="mt-3 space-y-1">
+                      <Progress value={(bgCurrentIdx / products.length) * 100} className="h-2" />
+                      <p className="text-xs text-muted-foreground text-center">
+                        Processing product {bgCurrentIdx} of {products.length}...
+                      </p>
+                    </div>
+                  )}
+                  {productStatuses.length > 0 && (
+                    <div className="mt-3 space-y-1">
+                      {products.map((p, idx) => (
+                        <div key={idx} className="flex items-center gap-2">
+                          {productStatuses[idx] === 'done' ? (
+                            <CheckCircle2 className="h-3 w-3 text-green-500" />
+                          ) : productStatuses[idx] === 'processing' ? (
+                            <Loader2 className="h-3 w-3 animate-spin text-primary" />
+                          ) : (
+                            <div className="h-3 w-3 rounded-full border border-muted-foreground" />
+                          )}
+                          <span className="text-xs text-muted-foreground truncate">{p.productName}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
               </div>
             )}
 
