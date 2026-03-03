@@ -39,6 +39,14 @@ const PRODUCT_SIZE_MAP: Record<string, SizeCategory> = {
 
 function detectProductCategory(url: string): SizeCategory {
   const lower = url.toLowerCase();
+  
+  // SoundSuite special cases: check before generic soundbar match
+  if (lower.includes('soundsuite') || lower.includes('sound-suite') || lower.includes('sound_suite')) {
+    if (lower.includes('m5') || lower.includes('m7')) return 'S';
+    if (lower.includes('w7')) return 'M';
+    // Other SoundSuite models fall through to generic map (→ L via 'soundbar')
+  }
+  
   for (const [keyword, size] of Object.entries(PRODUCT_SIZE_MAP)) {
     if (lower.includes(keyword)) return size;
   }
