@@ -81,10 +81,48 @@ export interface CompositeProduct {
 // Determine internal render scale for small outputs to avoid pixelation
 function getInternalScale(w: number, h: number): number {
   const minDim = Math.min(w, h);
-  if (minDim <= 200) return 4;
-  if (minDim <= 400) return 3;
+  if (minDim <= 200) return 8;
+  if (minDim <= 400) return 4;
   if (minDim <= 800) return 2;
   return 1;
+}
+
+// Progressive downscale: halve dimensions step by step for better quality
+function progressiveDownscale(
+  source: HTMLCanvasElement,
+  targetW: number,
+  targetH: number
+): HTMLCanvasElement {
+  let current = source;
+  let cw = current.width;
+  let ch = current.height;
+
+  // Step down by half each iteration until within 2x of target
+  while (cw / 2 >= targetW && ch / 2 >= targetH) {
+    const half = document.createElement('canvas');
+    half.width = Math.round(cw / 2);
+    half.height = Math.round(ch / 2);
+    const hCtx = half.getContext('2d')!;
+    hCtx.imageSmoothingEnabled = true;
+    hCtx.imageSmoothingQuality = 'high';
+    hCtx.drawImage(current, 0, 0, half.width, half.height);
+    current = half;
+    cw = half.width;
+    ch = half.height;
+  }
+
+  // Final step to exact target size
+  if (cw !== targetW || ch !== targetH) {
+    const final = document.createElement('canvas');
+    final.width = targetW;
+    final.height = targetH;
+    const fCtx = final.getContext('2d')!;
+    fCtx.imageSmoothingEnabled = true;
+    fCtx.imageSmoothingQuality = 'high';
+    fCtx.drawImage(current, 0, 0, targetW, targetH);
+    return final;
+  }
+  return current;
 }
 
 // Generate composite canvas — returns HTMLCanvasElement at target dimensions
@@ -163,15 +201,8 @@ export async function generateCompositeCanvas(
     }
   }
 
-  // Downscale to target dimensions if we rendered at higher resolution
+  // Downscale to target dimensions using progressive method
   if (scale === 1) return hires;
 
-  const output = document.createElement('canvas');
-  output.width = canvasWidth;
-  output.height = canvasHeight;
-  const outCtx = output.getContext('2d')!;
-  outCtx.imageSmoothingEnabled = true;
-  outCtx.imageSmoothingQuality = 'high';
-  outCtx.drawImage(hires, 0, 0, canvasWidth, canvasHeight);
-  return output;
+  return progressiveDownscale(hires, canvasWidth, canvasHeight);
 }
