@@ -3,7 +3,7 @@ import { saveAs } from 'file-saver';
 
 interface ZipEntry {
   dataUrl: string;
-  filename: string;
+  filename: string; // supports paths like "Gallery_PBP/G-A_2010x1334.png"
 }
 
 function dataUrlToBlob(dataUrl: string): Blob {
@@ -23,14 +23,18 @@ export function getDateString(): string {
   return `${yy}${mm}${dd}`;
 }
 
-export async function downloadAsZip(entries: ZipEntry[]): Promise<void> {
+export async function downloadAsZip(entries: ZipEntry[], zipName?: string): Promise<void> {
   const zip = new JSZip();
+  const date = getDateString();
+  const rootFolder = `PTO_Gallery_${date}`;
+
   for (const entry of entries) {
     const blob = dataUrlToBlob(entry.dataUrl);
-    zip.file(entry.filename, blob);
+    zip.file(`${rootFolder}/${entry.filename}`, blob);
   }
+
   const content = await zip.generateAsync({ type: 'blob' });
-  saveAs(content, `PTO_${getDateString()}.zip`);
+  saveAs(content, zipName || `${rootFolder}.zip`);
 }
 
 export function downloadSingleImage(dataUrl: string, filename: string): void {

@@ -15,6 +15,12 @@ interface ProductImageSelectorProps {
   error: string | null;
 }
 
+const BADGE_STYLES: Record<string, string> = {
+  L: 'bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300',
+  M: 'bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300',
+  S: 'bg-orange-100 text-orange-700 dark:bg-orange-900 dark:text-orange-300',
+};
+
 const ProductImageSelector = ({
   images,
   selectedIndex,
@@ -59,8 +65,8 @@ const ProductImageSelector = ({
     <div className="rounded-lg border border-border bg-card p-4">
       <div className="flex items-center justify-between mb-3">
         <p className="text-sm font-medium truncate flex-1 mr-2">{productName}</p>
-        <span className="text-xs px-2 py-0.5 rounded-full bg-muted text-muted-foreground shrink-0">
-          Size: {sizeCategory}
+        <span className={`text-xs px-2 py-0.5 rounded-full font-medium shrink-0 ${BADGE_STYLES[sizeCategory] || 'bg-muted text-muted-foreground'}`}>
+          {sizeCategory}
         </span>
       </div>
 
@@ -73,14 +79,14 @@ const ProductImageSelector = ({
         />
       </div>
 
-      {/* Thumbnail grid */}
+      {/* Thumbnail row - horizontal scroll */}
       {images.length > 1 && (
-        <div className="grid grid-cols-4 gap-1.5">
+        <div className="flex gap-1.5 overflow-x-auto pb-1">
           {images.map((img, idx) => (
             <button
               key={idx}
               onClick={() => onSelect(idx)}
-              className={`aspect-square rounded border-2 overflow-hidden transition-all ${
+              className={`w-[60px] h-[60px] shrink-0 rounded border-2 overflow-hidden transition-all ${
                 idx === selectedIndex
                   ? 'border-primary ring-1 ring-primary'
                   : 'border-border hover:border-muted-foreground'
