@@ -83,23 +83,53 @@ function extractProductName(html: string): string {
   return 'Unknown Product';
 }
 
-// Extract model number from URL for relevance filtering
-function extractModelFromUrl(url: string): string | null {
-  const lower = url.toLowerCase();
-  // LG model patterns: e.g. OLED65C4PSA, 65QNED80T6A, WM6700HBA, SP7Y, USC9S60
-  const modelMatch = lower.match(/\/([a-z]{1,5}\d{2,}[a-z0-9]*)[\/.\-?]/i)
-    || lower.match(/[-/]([a-z]{1,4}\d{2}[a-z0-9]{2,})/i);
-  if (modelMatch) return modelMatch[1].toLowerCase();
-  // Try last path segment
-  const pathSegments = new URL(url).pathname.split('/').filter(Boolean);
-  const last = pathSegments[pathSegments.length - 1]?.toLowerCase();
-  if (last && /\d/.test(last) && last.length > 3) return last.replace(/\.html?$/, '');
-  return null;
+function escapeRegExp(value: string): string {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function extractModelTokens(url: string, html: string): string[] {
+  const tokens = new Set<string>();
+  const stopwords = new Set([
+    'lg', 'com', 'www', 'shop', 'products', 'product', 'appliances', 'appliance', 'electronics',
+    'washing', 'machine', 'laundry', 'tv', 'oled', 'soundbar', 'monitor', 'home', 'kitchen',
+    'gallery', 'images', 'image', 'drain', 'hose', 'and', 'the'
+  ]);
+
+  // URL path 기반 모델 토큰
+  try {
+    const pathname = new URL(url).pathname.toLowerCase();
+    const segments = pathname.split('/').filter(Boolean).map((s) => s.replace(/\.html?$/, ''));
+
+    for (const seg of segments) {
+      if (seg.length >= 5 && /\d/.test(seg) && !stopwords.has(seg)) {
+        tokens.add(seg);
+      }
+      for (const part of seg.split('-')) {
+        if (part.length >= 5 && /\d/.test(part) && !stopwords.has(part)) {
+          tokens.add(part);
+        }
+      }
+    }
+  } catch {
+    // ignore
+  }
+
+  // title/h1 기반 모델 토큰
+  const productName = extractProductName(html).toLowerCase();
+  const modelCandidates = productName.match(/\b[a-z0-9-]{5,}\b/gi) || [];
+  for (const candidate of modelCandidates) {
+    const cleaned = candidate.replace(/[^a-z0-9-]/g, '');
+    if (cleaned.length >= 5 && /\d/.test(cleaned) && !stopwords.has(cleaned)) {
+      tokens.add(cleaned);
+    }
+  }
+
+  return Array.from(tokens);
 }
 
 function extractAllCarouselImages(html: string, baseUrl: string): Array<{ url: string; index: number; priority: number }> {
-  const model = extractModelFromUrl(baseUrl);
-  console.log(`Detected model from URL: ${model || 'none'}`);
+  const modelTokens = extractModelTokens(baseUrl, html);
+  console.log(`Detected model tokens: ${modelTokens.join(', ') || 'none'}`);
 
   const isValidProductImage = (src: string): boolean => {
     const invalid = ['logo', 'icon', 'badge', 'star', 'rating', 'banner', 'award', '.svg', 'sprite',
@@ -107,107 +137,132 @@ function extractAllCarouselImages(html: string, baseUrl: string): Array<{ url: s
       'background', 'bg-', 'environment', 'room', 'interior', 'feature', 'usp',
       'infographic', 'info-', 'dimension', 'spec', 'energy-label', 'energy_label',
       'accessory', 'accessories', 'installation', 'how-to', 'howto',
-      'related', 'recommend', 'cross-sell', 'also-like', 'compare'];
+      'related', 'recommend', 'cross-sell', 'also-like', 'recently-viewed', 'you-may-like', 'similar'];
     const srcLower = src.toLowerCase();
     if (invalid.some(term => srcLower.includes(term))) return false;
     if (!srcLower.match(/\.(jpg|jpeg|png|webp)/)) return false;
     return true;
   };
 
-  // Score image URL: higher = more likely the correct product's front-facing shot
+  const hasModelMatch = (src: string): boolean => {
+    if (modelTokens.length === 0) return false;
+    const lower = src.toLowerCase();
+    return modelTokens.some((token) => lower.includes(token));
+  };
+
   const scoreFrontProduct = (src: string): number => {
     const lower = src.toLowerCase();
     let score = 0;
 
-    // Model match: huge bonus — this image belongs to the same product
-    if (model && lower.includes(model)) score += 50;
+    if (hasModelMatch(lower)) score += 70;
+    else if (modelTokens.length > 0) score -= 35;
 
-    // Front-facing indicators in filename
     if (/[\/\-_](front|f)[\/\-_.\d]/i.test(lower)) score += 30;
     if (/[\/\-_]01[\/\-_.\s]|[\/\-_]01\.(jpg|png|webp)/i.test(lower)) score += 25;
     if (/large01|large_01|large-01/i.test(lower)) score += 25;
     if (/[\/\-_]0*1[_\-\.]/i.test(lower)) score += 20;
-    // Gallery path = good sign
+
     if (lower.includes('/gallery/')) score += 15;
-    // Medium/DMS image paths
     if (lower.includes('/images/') && !lower.includes('/feature')) score += 10;
-    // Penalize lifestyle/angle indicators
+
     if (/angle|side|back|top|bottom|tilt|close/i.test(lower)) score -= 10;
     if (/[\/\-_](d|l|m)\d+[\/\-_]/i.test(lower) && !/[\/\-_](d|l|m)01/i.test(lower)) score -= 5;
-
-    // Penalize if image URL contains a DIFFERENT model number (likely from recommended section)
-    if (model && !lower.includes(model)) score -= 20;
 
     return score;
   };
 
   const seen = new Set<string>();
-  const results: Array<{ url: string; index: number; priority: number }> = [];
+  const rawResults: Array<{ url: string; index: number; priority: number; modelMatched: boolean }> = [];
 
   const addImage = (src: string) => {
     const highQuality = convertToHighQualityUrl(src, baseUrl);
     if (!seen.has(highQuality) && isValidProductImage(highQuality)) {
       seen.add(highQuality);
-      results.push({ url: highQuality, index: results.length, priority: scoreFrontProduct(highQuality) });
+      rawResults.push({
+        url: highQuality,
+        index: rawResults.length,
+        priority: scoreFrontProduct(highQuality),
+        modelMatched: hasModelMatch(highQuality),
+      });
     }
   };
 
-  // ── Scope to main product gallery section ──
-  // Try to find the primary gallery container first (top-of-page product gallery)
-  const galleryContainerPatterns = [
-    /class="[^"]*(?:pdp-gallery|product-gallery|visual-header|gallery-wrap|C0010)[^"]*"[\s\S]*?(?=class="[^"]*(?:recommend|cross-sell|also-like|recently-view|C0009|C0013|C0061|footer)[^"]*"|$)/i,
-    /class="[^"]*(?:swiper|cmp-carousel)[^"]*"[\s\S]{0,50000}?<\/section>/i,
-  ];
-
-  let galleryHtml: string | null = null;
-  for (const pattern of galleryContainerPatterns) {
-    const containerMatch = html.match(pattern);
-    if (containerMatch && containerMatch[0].length > 200) {
-      galleryHtml = containerMatch[0];
-      console.log(`Found gallery container (${galleryHtml.length} chars)`);
-      break;
-    }
+  // 메인 갤러리 근처만 스코핑
+  const lowerHtml = html.toLowerCase();
+  const galleryAnchors = ['pdp-gallery', 'product-gallery', 'visual-header', 'cmp-carousel', 'swiper-wrapper', 'gallery'];
+  let anchorPos = -1;
+  for (const anchor of galleryAnchors) {
+    const pos = lowerHtml.indexOf(anchor);
+    if (pos !== -1 && (anchorPos === -1 || pos < anchorPos)) anchorPos = pos;
   }
 
-  // If no specific gallery found, use upper portion of HTML (product gallery is typically in top 40%)
-  if (!galleryHtml) {
-    const cutoff = Math.min(html.length, Math.floor(html.length * 0.4));
-    galleryHtml = html.substring(0, cutoff);
-    console.log(`Using top 40% of HTML (${galleryHtml.length} chars)`);
+  let scopedHtml = html;
+  if (anchorPos !== -1) {
+    const start = Math.max(0, anchorPos - 20000);
+    const end = Math.min(html.length, anchorPos + 220000);
+    scopedHtml = html.slice(start, end);
+    console.log(`Using anchor-scoped HTML (${scopedHtml.length} chars)`);
+  } else {
+    const cutoff = Math.min(html.length, Math.floor(html.length * 0.2));
+    scopedHtml = html.substring(0, cutoff);
+    console.log(`Using top 20% fallback HTML (${scopedHtml.length} chars)`);
   }
 
-  // Strategy 1: Swiper slides within gallery scope
   const swiperSlideRegex = /class="[^"]*swiper-slide[^"]*"[^>]*>[\s\S]{0,3000}?<img[^>]*src="([^"]+)"/gi;
   let match;
-  while ((match = swiperSlideRegex.exec(galleryHtml)) !== null) {
+  while ((match = swiperSlideRegex.exec(scopedHtml)) !== null) {
     addImage(match[1]);
   }
 
-  // Strategy 2: cmp-carousel__item images within gallery scope
   const carouselItemRegex = /class="[^"]*cmp-carousel__item[^"]*"[^>]*>[\s\S]{0,3000}?<img[^>]*src="([^"]+)"/gi;
-  while ((match = carouselItemRegex.exec(galleryHtml)) !== null) {
+  while ((match = carouselItemRegex.exec(scopedHtml)) !== null) {
     addImage(match[1]);
   }
 
-  // Strategy 3: Gallery path images (full HTML — these paths are product-specific)
   const galleryRegex = /<img[^>]*src="([^"]*\/gallery\/[^"]+)"[^>]*>/gi;
   while ((match = galleryRegex.exec(html)) !== null) {
     addImage(match[1]);
   }
 
-  // Strategy 4: Filename 01 patterns (fallback, scoped to gallery)
-  if (results.length < 3) {
+  if (rawResults.length < 3) {
     const pattern01Regex = /<img[^>]*src="([^"]*(?:[\/\-_]0*1[_\-\.]|large0*1|gallery[\/\-]0*1)[^"]*)"[^>]*>/gi;
-    while ((match = pattern01Regex.exec(galleryHtml)) !== null) {
+    while ((match = pattern01Regex.exec(scopedHtml)) !== null) {
       addImage(match[1]);
     }
   }
 
-  // Sort by priority descending (front-facing, model-matched first)
-  results.sort((a, b) => b.priority - a.priority);
-  results.forEach((r, i) => { r.index = i; });
+  // 모델 토큰이 있으면, 모델 매칭된 이미지만 사용 (타 제품 섞임 방지)
+  let filtered = rawResults;
+  let modelMatched = rawResults.filter((r) => r.modelMatched);
 
-  console.log(`Found ${results.length} unique gallery images (sorted by relevance)`);
+  if (modelTokens.length > 0) {
+    if (modelMatched.length === 0) {
+      // Rescue pass: raw HTML에서 모델 토큰이 들어간 이미지 URL 직접 탐색
+      for (const token of modelTokens) {
+        const tokenRegex = new RegExp(`(?:https?:)?\\/\\/[^"'\\s<>]*${escapeRegExp(token)}[^"'\\s<>]*\\.(?:jpg|jpeg|png|webp)`, 'gi');
+        let tokenMatch;
+        while ((tokenMatch = tokenRegex.exec(html)) !== null) {
+          addImage(tokenMatch[0].replace(/\\u002F/g, '/'));
+        }
+      }
+      modelMatched = rawResults.filter((r) => r.modelMatched);
+    }
+
+    if (modelMatched.length > 0) {
+      filtered = modelMatched;
+      console.log(`Model-matched filter applied: ${filtered.length}/${rawResults.length}`);
+    } else {
+      console.log(`No model-matched image found. Discarding non-matching candidates to avoid wrong product output.`);
+      filtered = [];
+    }
+  }
+
+  filtered.sort((a, b) => b.priority - a.priority);
+  filtered.forEach((r, i) => { r.index = i; });
+
+  const results = filtered.map(({ url, index, priority }) => ({ url, index, priority }));
+
+  console.log(`Found ${results.length} unique gallery images (sorted by strict relevance)`);
   if (results.length > 0) {
     console.log(`Top image: ${results[0].url} (score: ${results[0].priority})`);
   }
