@@ -81,9 +81,9 @@ export interface CompositeProduct {
 // Determine internal render scale for small outputs to avoid pixelation
 function getInternalScale(w: number, h: number): number {
   const minDim = Math.min(w, h);
-  if (minDim <= 200) return 8;
-  if (minDim <= 400) return 4;
-  if (minDim <= 800) return 2;
+  // Keep internal scale modest to avoid excessive downscale blur
+  if (minDim <= 200) return 3;
+  if (minDim <= 400) return 2;
   return 1;
 }
 
