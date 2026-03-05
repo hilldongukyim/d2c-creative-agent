@@ -34,14 +34,8 @@ const WorkflowDashboard = () => {
   const { toast } = useToast();
   const [currentUserRole, setCurrentUserRole] = useState<UserRole>("requestor");
   const [showRequestForm, setShowRequestForm] = useState(false);
-  const [showWebhookSettings, setShowWebhookSettings] = useState(false);
   const [imageComments, setImageComments] = useState<ImageComment[]>([]);
   const [requestorFeedback, setRequestorFeedback] = useState("");
-  const [webhooks, setWebhooks] = useState<Record<string, string>>({
-    "creation": "",
-    "review": "",
-    "get-outputs": ""
-  });
   
   const [workflows, setWorkflows] = useState<WorkflowStep[]>([
     {
