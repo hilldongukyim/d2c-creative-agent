@@ -18,7 +18,6 @@ interface WorkflowStep {
   title: string;
   description: string;
   status: WorkflowStatus;
-  n8nUrl?: string;
   requiredRole?: UserRole;
   enabledAfter?: string;
 }
