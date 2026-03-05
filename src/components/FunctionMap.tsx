@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from "react";
-import { ExternalLink } from "lucide-react";
 
 type ProfileMap = {
   yumi: string;
