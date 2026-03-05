@@ -11,9 +11,6 @@ type ProfileItem = {
   imageSrc: string;
   status: "active" | "onboarding" | "inactive";
   isNew?: boolean;
-  externalUrl?: string;
-  description?: string;
-  tags?: string[];
 };
 
 type Team = {
