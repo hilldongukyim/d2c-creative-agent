@@ -85,11 +85,11 @@ const crewProfiles: Record<string, {
     personality: "Organized and supportive, excels at managing digital assets."
   },
   "rex": {
-    description: "글로벌 AI 커머스·마케팅 최신 소식 자동 수집 및 Daily/Weekly/Monthly 리포트 생성",
+    description: "Automatically collects global AI commerce & marketing news and generates Daily/Weekly/Monthly reports.",
     personality: "AI Trend, Daily Feed, Auto Report"
   },
   "vera": {
-    description: "글로벌 16개국 VOC·프로모션 동향·중국 브랜드 모니터링 및 핵심 인사이트 도출",
+    description: "Monitors VOC, promotions, and Chinese brand trends across 16 countries, delivering key market insights.",
     personality: "16-Country, VOC Sensing, China Watch"
   },
 };
@@ -113,14 +113,14 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
             name: "Rex", role: "AI Commerce & Marketing Intelligence Reporter",
             imageSrc: "/lovable-uploads/crew-image-28.png", status: "active", isNew: true,
             externalUrl: "https://suno7608.github.io/ai-trend-hub/",
-            description: "글로벌 AI 커머스·마케팅 최신 소식 자동 수집 및 Daily/Weekly/Monthly 리포트 생성",
+            description: "Automatically collects global AI commerce & marketing news and generates Daily/Weekly/Monthly reports.",
             tags: ["AI Trend", "Daily Feed", "Auto Report"],
           },
           {
             name: "Vera", role: "Global D2C Market Intelligence Analyst",
             imageSrc: "/lovable-uploads/crew-image-29.png", status: "active", isNew: true,
             externalUrl: "https://suno7608.github.io/d2c-intel/",
-            description: "글로벌 16개국 VOC·프로모션 동향·중국 브랜드 모니터링 및 핵심 인사이트 도출",
+            description: "Monitors VOC, promotions, and Chinese brand trends across 16 countries, delivering key market insights.",
             tags: ["16-Country", "VOC Sensing", "China Watch"],
           },
         ],
@@ -259,7 +259,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       {/* External link indicator */}
       {item.externalUrl && (
         <div className="flex items-center gap-0.5 mt-1 text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-          <span>바로가기</span>
+          <span>Go to</span>
           <ExternalLink className="h-2.5 w-2.5" />
         </div>
       )}

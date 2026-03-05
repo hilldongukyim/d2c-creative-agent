@@ -32,7 +32,7 @@ const FloatingSupportWidget: React.FC<FloatingSupportWidgetProps> = ({
       id: "mochi",
       name: "Mochi",
       role: "Request Handler",
-      subtitle: "업무 요청을 접수하고 적합한 크루에게 연결해드려요",
+      subtitle: "Receives work requests and connects you with the right crew member",
       image: "/lovable-uploads/mochi-profile.png",
       icon: MessageSquare,
       status: "active" as const,
@@ -43,7 +43,7 @@ const FloatingSupportWidget: React.FC<FloatingSupportWidgetProps> = ({
       id: "mell",
       name: "Mell",
       role: "Newsletter Manager",
-      subtitle: "뉴스레터 구독 및 발송 관련 문의를 도와드려요",
+      subtitle: "Handles newsletter subscriptions and distribution inquiries",
       image: "/lovable-uploads/mell-profile.png",
       icon: Mail,
       status: "active" as const,
@@ -54,7 +54,7 @@ const FloatingSupportWidget: React.FC<FloatingSupportWidgetProps> = ({
       id: "fiona",
       name: "Fiona",
       role: "Admin Dashboard",
-      subtitle: "관리자 전용",
+      subtitle: "Admin Only",
       image: "/lovable-uploads/fiona-admin-profile.png",
       icon: Lock,
       status: "locked" as const,
@@ -75,7 +75,7 @@ const FloatingSupportWidget: React.FC<FloatingSupportWidgetProps> = ({
       >
         <div className="p-4 border-b border-border bg-muted/30">
           <h3 className="text-sm font-semibold text-foreground">Support Team</h3>
-          <p className="text-xs text-muted-foreground mt-0.5">도움이 필요하신가요?</p>
+          <p className="text-xs text-muted-foreground mt-0.5">Need help?</p>
         </div>
 
         <div className="p-3 space-y-2">

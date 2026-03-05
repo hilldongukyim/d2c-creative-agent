@@ -59,7 +59,7 @@ const CoverPage = () => {
   }, []);
 
   useEffect(() => {
-    const title = "Meet our AI Agents — 내부 업무를 돕는 지능형 팀";
+    const title = "Meet our AI Agents — Your Intelligent Work Partners";
     const desc = "Intelligent AI agents that accelerate internal work through clear structure and collaboration, delivering faster, more accurate results.";
     document.title = title;
     let meta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
@@ -135,8 +135,8 @@ const CoverPage = () => {
     "mochi": { description: "Mochi receives and manages development requests from the team. Submit your feature requests and track their progress.", role: "Development Request Manager", image: "/lovable-uploads/mochi-profile.png", isComingSoon: false, ctaLabel: "Submit Request", ctaAction: () => setDevRequestFormOpen(true) },
     "mell": { description: "Mell manages newsletter subscriptions and communication preferences for the team.", role: "Newsletter Manager", image: "/lovable-uploads/mell-profile.png", isComingSoon: false, ctaLabel: "Subscribe", ctaAction: () => setMellDialogOpen(true) },
     "fiona-admin": { description: "Fiona is the admin dashboard manager. Access crew requests, development requests, and crew popularity analytics.", role: "Admin Dashboard", image: "/lovable-uploads/fiona-admin-profile.png", isComingSoon: false, ctaLabel: "Access Dashboard", ctaAction: () => setFionaDialogOpen(true) },
-    "rex": { description: "글로벌 AI 커머스·마케팅 최신 소식 자동 수집 및 Daily/Weekly/Monthly 리포트 생성", role: "AI Commerce & Marketing Intelligence Reporter", image: "/lovable-uploads/crew-image-28.png", isComingSoon: false, ctaLabel: "Open Report", ctaAction: () => window.open("https://suno7608.github.io/ai-trend-hub/", "_blank") },
-    "vera": { description: "글로벌 16개국 VOC·프로모션 동향·중국 브랜드 모니터링 및 핵심 인사이트 도출", role: "Global D2C Market Intelligence Analyst", image: "/lovable-uploads/crew-image-29.png", isComingSoon: false, ctaLabel: "Open Intel", ctaAction: () => window.open("https://suno7608.github.io/d2c-intel/", "_blank") },
+    "rex": { description: "Automatically collects global AI commerce & marketing news and generates Daily/Weekly/Monthly reports.", role: "AI Commerce & Marketing Intelligence Reporter", image: "/lovable-uploads/crew-image-28.png", isComingSoon: false, ctaLabel: "Open Report", ctaAction: () => window.open("https://suno7608.github.io/ai-trend-hub/", "_blank") },
+    "vera": { description: "Monitors VOC, promotions, and Chinese brand trends across 16 countries, delivering key market insights.", role: "Global D2C Market Intelligence Analyst", image: "/lovable-uploads/crew-image-29.png", isComingSoon: false, ctaLabel: "Open Intel", ctaAction: () => window.open("https://suno7608.github.io/d2c-intel/", "_blank") },
   };
 
   const handleProfileClick = (name: string) => {
