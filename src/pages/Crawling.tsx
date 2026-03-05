@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import * as XLSX from 'xlsx';
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 const Crawling = () => {
  const navigate = useNavigate();
@@ -70,14 +71,13 @@ const Crawling = () => {
       // JSON으로 변환
       const jsonData = XLSX.utils.sheet_to_json(worksheet);
       
-      // 웹훅으로 데이터 전송 (GET 방식)
-      const webhookUrl = 'https://dev.eaip.lge.com/n8n/webhook/lovable_api';
-      const params = new URLSearchParams({
-        email: email,
-        data: JSON.stringify(jsonData)
+      // Edge Function으로 데이터 전송
+      const { data: responseData, error: fnError } = await supabase.functions.invoke('mateo-crawl', {
+        body: { email, data: jsonData },
       });
-      
-      const response = await fetch(`${webhookUrl}?${params}`);
+
+      if (fnError) throw fnError;
+      const response = { ok: responseData?.success };
       
       if (response.ok) {
         toast({
