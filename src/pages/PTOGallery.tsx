@@ -311,6 +311,7 @@ const PTOGallery = () => {
   const handleReset = () => {
     setStep('urls');
     setUrls(['', '']);
+    setUrlQtys([1, 1]);
     setProducts([]);
     setBgRemovedImages([]);
     setBgProcessing(false);
