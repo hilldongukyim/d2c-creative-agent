@@ -68,12 +68,28 @@ const PTOGallery = () => {
   }, [step]);
 
   // URL management
-  const addUrl = () => { if (urls.length < 6) setUrls([...urls, '']); };
-  const removeUrl = (idx: number) => { if (urls.length > 2) setUrls(urls.filter((_, i) => i !== idx)); };
+  const totalProducts = urlQtys.reduce((sum, q) => sum + q, 0);
+  const addUrl = () => { if (urls.length < 6) { setUrls([...urls, '']); setUrlQtys([...urlQtys, 1]); } };
+  const removeUrl = (idx: number) => {
+    if (urls.length > 2) {
+      setUrls(urls.filter((_, i) => i !== idx));
+      setUrlQtys(urlQtys.filter((_, i) => i !== idx));
+    }
+  };
   const updateUrl = (idx: number, value: string) => {
     const newUrls = [...urls];
     newUrls[idx] = value;
     setUrls(newUrls);
+  };
+  const updateQty = (idx: number, delta: number) => {
+    setUrlQtys((prev) => {
+      const next = [...prev];
+      const newVal = next[idx] + delta;
+      const otherTotal = prev.reduce((s, q, i) => i === idx ? s : s + q, 0);
+      if (newVal < 1 || otherTotal + newVal > 6) return prev;
+      next[idx] = newVal;
+      return next;
+    });
   };
 
   // Step: urls → select
