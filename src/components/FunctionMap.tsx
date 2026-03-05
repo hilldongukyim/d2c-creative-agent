@@ -300,8 +300,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                 <div className="flex justify-center mb-3">
                   <div className="flex flex-col items-center">
                     <div
-                      className="h-10 w-10 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-md"
-                      style={{ backgroundColor: division.accent }}
+                      className="h-10 w-10 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-md bg-muted-foreground"
                     >
                       {division.badgeLetter}
                     </div>
