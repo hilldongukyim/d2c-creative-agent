@@ -82,7 +82,6 @@ const WorkflowDashboard = () => {
       status: "pending",
       requiredRole: "admin",
       enabledAfter: "get-outputs",
-      n8nUrl: ""
     }
   ]);
 
