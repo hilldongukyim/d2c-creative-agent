@@ -40,9 +40,18 @@ const LayoutPositionEditor = ({
     }
   }, [open, overrides, images.length]);
 
-  const previewScale = Math.min(500 / outputSize.width, 400 / outputSize.height, 1);
-  const pW = outputSize.width * previewScale;
-  const pH = outputSize.height * previewScale;
+  // Fit preview canvas to dialog while preserving the output's exact aspect ratio
+  const maxCanvasW = 520;
+  const maxCanvasH = 500;
+  const aspect = outputSize.width / outputSize.height;
+  let pW: number, pH: number;
+  if (aspect >= maxCanvasW / maxCanvasH) {
+    pW = maxCanvasW;
+    pH = maxCanvasW / aspect;
+  } else {
+    pH = maxCanvasH;
+    pW = maxCanvasH * aspect;
+  }
 
   const handlePointerDown = useCallback((idx: number, e: React.PointerEvent) => {
     e.preventDefault();
