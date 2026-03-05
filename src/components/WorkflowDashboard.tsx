@@ -465,12 +465,6 @@ const WorkflowDashboard = () => {
           onComplete={handleRequestCheckComplete}
         />
         
-        <WebhookSettings
-          open={showWebhookSettings}
-          onOpenChange={setShowWebhookSettings}
-          webhooks={webhooks}
-          onWebhookUpdate={handleWebhookUpdate}
-        />
       </div>
     </div>
   );
