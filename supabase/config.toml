@@ -62,3 +62,6 @@ verify_jwt = false
 
 [functions.yumi-generate-lifestyle]
 verify_jwt = false
+
+[functions.mateo-crawl]
+verify_jwt = false
