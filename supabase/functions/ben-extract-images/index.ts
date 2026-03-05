@@ -174,14 +174,14 @@ function extractAllCarouselImages(html: string, baseUrl: string): Array<{ url: s
   const seen = new Set<string>();
   const rawResults: Array<{ url: string; index: number; priority: number; modelMatched: boolean }> = [];
 
-  const addImage = (src: string) => {
+  const addImage = (src: string, priorityBoost = 0) => {
     const highQuality = convertToHighQualityUrl(src, baseUrl);
     if (!seen.has(highQuality) && isValidProductImage(highQuality)) {
       seen.add(highQuality);
       rawResults.push({
         url: highQuality,
         index: rawResults.length,
-        priority: scoreFrontProduct(highQuality),
+        priority: scoreFrontProduct(highQuality) + priorityBoost,
         modelMatched: hasModelMatch(highQuality),
       });
     }
@@ -208,24 +208,37 @@ function extractAllCarouselImages(html: string, baseUrl: string): Array<{ url: s
     console.log(`Using top 20% fallback HTML (${scopedHtml.length} chars)`);
   }
 
-  const swiperSlideRegex = /class="[^"]*swiper-slide[^"]*"[^>]*>[\s\S]{0,3000}?<img[^>]*src="([^"]+)"/gi;
+  // Priority 1: 사용자가 지정한 active 슬라이드 패턴을 최우선으로 추출
+  // 예: #swiper-wrapper-xxx > div.cmp-carousel__item.swiper-slide...swiper-slide-active ... > img
+  const activeSlideRegex = /<div[^>]*id=["']swiper-wrapper-[^"']+["'][^>]*>[\s\S]{0,12000}?<div[^>]*class=["'][^"']*cmp-carousel__item[^"']*swiper-slide[^"']*swiper-slide-active[^"']*["'][^>]*>[\s\S]{0,4000}?<img[^>]*src=["']([^"']+)["']/gi;
   let match;
+  while ((match = activeSlideRegex.exec(scopedHtml)) !== null) {
+    addImage(match[1], 1000);
+  }
+
+  // wrapper id 기반 보조 패턴 (class 순서가 바뀌어도 대응)
+  const activeSlideLooseRegex = /<div[^>]*id=["']swiper-wrapper-[^"']+["'][^>]*>[\s\S]{0,12000}?<div[^>]*class=["'][^"']*swiper-slide-active[^"']*["'][^>]*>[\s\S]{0,4000}?<img[^>]*src=["']([^"']+)["']/gi;
+  while ((match = activeSlideLooseRegex.exec(scopedHtml)) !== null) {
+    addImage(match[1], 900);
+  }
+
+  const swiperSlideRegex = /class=["'][^"']*swiper-slide[^"']*["'][^>]*>[\s\S]{0,3000}?<img[^>]*src=["']([^"']+)["']/gi;
   while ((match = swiperSlideRegex.exec(scopedHtml)) !== null) {
     addImage(match[1]);
   }
 
-  const carouselItemRegex = /class="[^"]*cmp-carousel__item[^"]*"[^>]*>[\s\S]{0,3000}?<img[^>]*src="([^"]+)"/gi;
+  const carouselItemRegex = /class=["'][^"']*cmp-carousel__item[^"']*["'][^>]*>[\s\S]{0,3000}?<img[^>]*src=["']([^"']+)["']/gi;
   while ((match = carouselItemRegex.exec(scopedHtml)) !== null) {
     addImage(match[1]);
   }
 
-  const galleryRegex = /<img[^>]*src="([^"]*\/gallery\/[^"]+)"[^>]*>/gi;
+  const galleryRegex = /<img[^>]*src=["']([^"']*\/gallery\/[^"']+)["'][^>]*>/gi;
   while ((match = galleryRegex.exec(html)) !== null) {
     addImage(match[1]);
   }
 
   if (rawResults.length < 3) {
-    const pattern01Regex = /<img[^>]*src="([^"]*(?:[\/\-_]0*1[_\-\.]|large0*1|gallery[\/\-]0*1)[^"]*)"[^>]*>/gi;
+    const pattern01Regex = /<img[^>]*src=["']([^"']*(?:[\/\-_]0*1[_\-\.]|large0*1|gallery[\/\-]0*1)[^"']*)["'][^>]*>/gi;
     while ((match = pattern01Regex.exec(scopedHtml)) !== null) {
       addImage(match[1]);
     }
