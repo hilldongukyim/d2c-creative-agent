@@ -285,14 +285,6 @@ const CoverPage = () => {
               profiles={{ yumi: aliceProfile, ben: benProfile }} 
               onProfileClick={handleProfileClick} 
               highlightName={searchTerm || highlightName || undefined}
-              supportSection={
-                <SupportSection 
-                  onMochiRequestClick={() => setDevRequestFormOpen(true)}
-                  onMochiHistoryClick={() => setAdminHistoryOpen(true)}
-                  onMellClick={() => setMellDialogOpen(true)}
-                  onFionaClick={() => setFionaDialogOpen(true)}
-                />
-              }
             />
           </section>
         </div>
