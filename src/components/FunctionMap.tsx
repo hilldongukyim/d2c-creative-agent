@@ -144,11 +144,11 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       }],
     },
     {
-      name: "Platform & Operations",
-      badgeLetter: "O",
+      name: "Platform & Infrastructure",
+      badgeLetter: "I",
       accent: "#6B6B6B",
       teams: [{
-        title: "Platform Operations Team",
+        title: "Platform Infrastructure Team",
         items: [
           { name: "Noa", role: "Product Information Manager", imageSrc: "/lovable-uploads/noa-profile.png", status: "active" },
         ],
