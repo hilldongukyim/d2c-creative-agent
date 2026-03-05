@@ -74,6 +74,36 @@ export type Database = {
         }
         Relationships: []
       }
+      crew_requests: {
+        Row: {
+          created_at: string
+          crew_name: string
+          department: string | null
+          description: string | null
+          email: string | null
+          id: string
+          requester_name: string | null
+        }
+        Insert: {
+          created_at?: string
+          crew_name: string
+          department?: string | null
+          description?: string | null
+          email?: string | null
+          id?: string
+          requester_name?: string | null
+        }
+        Update: {
+          created_at?: string
+          crew_name?: string
+          department?: string | null
+          description?: string | null
+          email?: string | null
+          id?: string
+          requester_name?: string | null
+        }
+        Relationships: []
+      }
       crew_reviews: {
         Row: {
           created_at: string

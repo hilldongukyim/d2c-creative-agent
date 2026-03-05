@@ -55,27 +55,18 @@ const CrewRequestForm = ({ open, onOpenChange, onSubmitSuccess }: CrewRequestFor
     setIsSubmitting(true);
 
     try {
-      const webhookUrl = "https://dev.eaip.lge.com/n8n/webhook/19da7f3f-019d-4618-a367-683c9e5c32b8";
-      const params = new URLSearchParams({
-        crewName: formData.crewName,
-        role: formData.role,
-        division: formData.division,
-        team: formData.team,
-        skills: formData.skills,
+      // Save to database
+      const { error: dbError } = await supabase.from('crew_requests' as any).insert({
+        crew_name: formData.crewName,
+        requester_name: formData.requestedBy,
+        email: '',
+        department: formData.division,
         description: formData.description,
-        agentUrl: formData.agentUrl,
-        comment: formData.comment,
-        requestedBy: formData.requestedBy,
-        selectedImage: formData.selectedImage
       });
 
-      // Send GET request with no-cors mode to bypass CORS restrictions
-      fetch(`${webhookUrl}?${params.toString()}`, {
-        method: 'GET',
-        mode: 'no-cors'
-      }).catch(() => {
-        // Ignore errors - the request is still sent to the webhook
-      });
+      if (dbError) {
+        console.error('Database insert error:', dbError);
+      }
 
       // Send email notification
       const { data: emailData, error: emailError } = await supabase.functions.invoke('send-crew-request-email', {
