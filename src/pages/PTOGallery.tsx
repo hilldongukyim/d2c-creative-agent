@@ -95,40 +95,63 @@ const PTOGallery = () => {
   // Step: urls → select
   const handleSubmitUrls = async () => {
     setUrlError(null);
-    const filledUrls = urls.filter((u) => u.trim());
-    if (filledUrls.length < 2) { setUrlError('At least 2 product URLs are required.'); return; }
-    for (let i = 0; i < filledUrls.length; i++) {
-      if (!filledUrls[i].startsWith('https://www.lg.com/')) {
+    const filledEntries: { url: string; qty: number }[] = [];
+    for (let i = 0; i < urls.length; i++) {
+      if (urls[i].trim()) filledEntries.push({ url: urls[i].trim(), qty: urlQtys[i] });
+    }
+    const expandedTotal = filledEntries.reduce((s, e) => s + e.qty, 0);
+    if (expandedTotal < 2) { setUrlError('At least 2 products are required.'); return; }
+    if (expandedTotal > 6) { setUrlError('Maximum 6 products allowed.'); return; }
+    for (let i = 0; i < filledEntries.length; i++) {
+      if (!filledEntries[i].url.startsWith('https://www.lg.com/')) {
         setUrlError(`URL #${i + 1} must start with "https://www.lg.com/"`);
         return;
       }
     }
 
-    const initialProducts: ProductData[] = filledUrls.map((url) => ({
-      url, images: [], sizeCategory: 'M' as SizeCategory,
-      productName: url, isLoading: true, error: null, confirmed: false,
-    }));
-    setProducts(initialProducts);
+    // Expand: each unique URL is extracted once, then duplicated by qty
+    const uniqueUrls = [...new Set(filledEntries.map((e) => e.url))];
+    // Build qty map
+    const qtyMap: Record<string, number> = {};
+    filledEntries.forEach((e) => { qtyMap[e.url] = (qtyMap[e.url] || 0) + e.qty; });
+
+    // Create expanded product list
+    const expandedProducts: ProductData[] = [];
+    filledEntries.forEach((entry) => {
+      for (let q = 0; q < entry.qty; q++) {
+        expandedProducts.push({
+          url: entry.url, images: [], sizeCategory: 'M' as SizeCategory,
+          productName: entry.url, isLoading: true, error: null, confirmed: false,
+        });
+      }
+    });
+    setProducts(expandedProducts);
     setStep('select');
 
-    const promises = filledUrls.map(async (url, idx) => {
-      try {
-        const { data, error } = await supabase.functions.invoke('ben-extract-images', { body: { url } });
-        if (error || !data?.success) return { idx, error: data?.error || 'Extraction failed' };
-        return { idx, images: data.images || [], sizeCategory: data.sizeCategory || 'M', productName: data.productName || url };
-      } catch { return { idx, error: 'Network error' }; }
-    });
+    // Extract each unique URL once
+    const extractionResults = await Promise.all(
+      uniqueUrls.map(async (url) => {
+        try {
+          const { data, error } = await supabase.functions.invoke('ben-extract-images', { body: { url } });
+          if (error || !data?.success) return { url, error: data?.error || 'Extraction failed' };
+          return { url, images: data.images || [], sizeCategory: data.sizeCategory || 'M', productName: data.productName || url };
+        } catch { return { url, error: 'Network error' }; }
+      })
+    );
 
-    const results = await Promise.all(promises);
+    const resultMap: Record<string, any> = {};
+    extractionResults.forEach((r) => { resultMap[r.url] = r; });
+
     setProducts((prev) => {
       const updated = [...prev];
-      for (const r of results) {
-        if ('error' in r && r.error) {
-          updated[r.idx] = { ...updated[r.idx], isLoading: false, error: r.error as string };
+      for (let i = 0; i < updated.length; i++) {
+        const r = resultMap[updated[i].url];
+        if (r?.error) {
+          updated[i] = { ...updated[i], isLoading: false, error: r.error };
         } else {
-          updated[r.idx] = {
-            ...updated[r.idx], isLoading: false,
-            images: (r as any).images, sizeCategory: (r as any).sizeCategory, productName: (r as any).productName,
+          updated[i] = {
+            ...updated[i], isLoading: false,
+            images: r.images, sizeCategory: r.sizeCategory, productName: r.productName,
           };
         }
       }
