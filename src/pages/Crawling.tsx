@@ -7,6 +7,7 @@ import { useEffect, useState } from "react";
 import * as XLSX from 'xlsx';
 import { useToast } from "@/hooks/use-toast";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 const Crawling = () => {
  const navigate = useNavigate();
