@@ -248,13 +248,6 @@ const WorkflowDashboard = () => {
               View All Tasks Overview
             </Button>
             
-            <Button 
-              onClick={() => setShowWebhookSettings(true)}
-              variant="outline"
-            >
-              <Settings className="h-4 w-4 mr-2" />
-              Webhook Settings
-            </Button>
           </div>
           
           {/* Progress Bar */}
