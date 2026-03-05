@@ -91,7 +91,7 @@ export function layoutProducts(
 function layoutHorizontal(
   count: number,
   sizeCategories: SizeCategory[],
-  isPortrait: boolean
+  _isPortrait: boolean
 ): LayoutTemplate {
   const margin = 0.05;
   const gap = 0.03;
@@ -100,34 +100,17 @@ function layoutHorizontal(
   const positions: LayoutTemplate['positions'] = [];
 
   if (count === 2) {
-    if (isPortrait) {
-      const cellH = (usableH - gap) / 2;
-      for (let i = 0; i < 2; i++) {
-        positions.push({ x: margin, y: margin + i * (cellH + gap), maxW: usableW, maxH: cellH });
-      }
-    } else {
-      const cellW = (usableW - gap) / 2;
-      for (let i = 0; i < 2; i++) {
-        positions.push({ x: margin + i * (cellW + gap), y: margin, maxW: cellW, maxH: usableH });
-      }
+    const cellW = (usableW - gap) / 2;
+    for (let i = 0; i < 2; i++) {
+      positions.push({ x: margin + i * (cellW + gap), y: margin, maxW: cellW, maxH: usableH });
     }
   } else if (count === 3) {
-    if (isPortrait) {
-      const topH = usableH * 0.55;
-      const botH = usableH * 0.45 - gap;
-      const cellW = (usableW - gap) / 2;
-      positions.push({ x: margin, y: margin, maxW: usableW, maxH: topH });
-      for (let i = 0; i < 2; i++) {
-        positions.push({ x: margin + i * (cellW + gap), y: margin + topH + gap, maxW: cellW, maxH: botH });
-      }
-    } else {
-      const leftW = usableW * 0.55;
-      const rightW = usableW * 0.45 - gap;
-      const cellH = (usableH - gap) / 2;
-      positions.push({ x: margin, y: margin, maxW: leftW, maxH: usableH });
-      for (let i = 0; i < 2; i++) {
-        positions.push({ x: margin + leftW + gap, y: margin + i * (cellH + gap), maxW: rightW, maxH: cellH });
-      }
+    const leftW = usableW * 0.55;
+    const rightW = usableW * 0.45 - gap;
+    const cellH = (usableH - gap) / 2;
+    positions.push({ x: margin, y: margin, maxW: leftW, maxH: usableH });
+    for (let i = 0; i < 2; i++) {
+      positions.push({ x: margin + leftW + gap, y: margin + i * (cellH + gap), maxW: rightW, maxH: cellH });
     }
   } else if (count === 4) {
     const cellW = (usableW - gap) / 2;
