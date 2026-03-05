@@ -10,7 +10,7 @@ import ContactOrder from "../components/ContactOrder";
 import CrewRequestForm, { CrewFormData } from "../components/CrewRequestForm";
 import KaiBackgroundRemovalPopup from "../components/KaiBackgroundRemovalPopup";
 import CrewRequestNotification, { CrewRequest } from "../components/CrewRequestNotification";
-import SupportSection from "../components/SupportSection";
+import FloatingSupportWidget from "../components/FloatingSupportWidget";
 import MochiRequestDialog, { MochiRequest } from "../components/MochiRequestDialog";
 import AdminRequestHistory from "../components/AdminRequestHistory";
 import MellNewsletterDialog from "../components/MellNewsletterDialog";
