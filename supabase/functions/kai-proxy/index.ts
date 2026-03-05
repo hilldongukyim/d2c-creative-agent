@@ -1,14 +1,12 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { encode as base64Encode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const N8N_WEBHOOK_URL = "https://dev.eaip.lge.com/n8n/webhook/9634011e-6e81-418b-b1e1-55f6653a159d";
-
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
@@ -16,38 +14,40 @@ serve(async (req) => {
   try {
     const { email, image, fileName, fileType } = await req.json();
 
-    console.log("=== Kai Proxy Request ===");
+    console.log("=== Kai Proxy - Background Removal ===");
     console.log("Email:", email);
     console.log("File Name:", fileName);
-    console.log("File Type:", fileType);
     console.log("Image Base64 Length:", image?.length || 0);
 
-    // Forward to n8n webhook
-    const response = await fetch(N8N_WEBHOOK_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        email,
-        image,
-        fileName,
-        fileType,
-      }),
+    const REMOVE_BG_API_KEY = Deno.env.get('REMOVE_BG_API_KEY');
+    if (!REMOVE_BG_API_KEY) {
+      throw new Error('REMOVE_BG_API_KEY not configured');
+    }
+
+    const formData = new FormData();
+    formData.append('image_file_b64', image);
+    formData.append('size', 'auto');
+
+    const response = await fetch('https://api.remove.bg/v1.0/removebg', {
+      method: 'POST',
+      headers: { 'X-Api-Key': REMOVE_BG_API_KEY },
+      body: formData,
     });
 
-    console.log("n8n Response Status:", response.status);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Remove.bg API error: ${response.status} - ${errorText}`);
+    }
 
-    const responseText = await response.text();
-    console.log("n8n Response:", responseText);
+    const resultBuffer = await response.arrayBuffer();
+    const resultBase64 = base64Encode(new Uint8Array(resultBuffer));
 
-    return new Response(JSON.stringify({ success: true, response: responseText }), {
-      status: response.status,
+    return new Response(JSON.stringify({ success: true, imageBase64: resultBase64 }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error('Error in kai-proxy function:', error);
-    return new Response(JSON.stringify({ error: error.message }), {
+    console.error('Error in kai-proxy:', error.message);
+    return new Response(JSON.stringify({ success: false, error: error.message }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });

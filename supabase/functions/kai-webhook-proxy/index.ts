@@ -1,56 +1,62 @@
-import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { encode as base64Encode } from "https://deno.land/std@0.168.0/encoding/base64.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-const N8N_WEBHOOK_URL = "https://dev.eaip.lge.com/n8n/webhook/9634011e-6e81-418b-b1e1-55f6653a159d";
-
 serve(async (req) => {
-  // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
     const { email, imageUrl, fileName } = await req.json();
-    
-    console.log("=== Kai Webhook Proxy ===");
+
+    console.log("=== Kai Webhook Proxy - Background Removal ===");
     console.log("Email:", email);
     console.log("Image URL:", imageUrl);
     console.log("File Name:", fileName);
 
-    // Forward request to n8n webhook (server-to-server, no CORS)
-    const response = await fetch(N8N_WEBHOOK_URL, {
+    const REMOVE_BG_API_KEY = Deno.env.get('REMOVE_BG_API_KEY');
+    if (!REMOVE_BG_API_KEY) {
+      throw new Error('REMOVE_BG_API_KEY not configured');
+    }
+
+    // If imageUrl provided, use URL-based removal
+    const formData = new FormData();
+    if (imageUrl) {
+      formData.append('image_url', imageUrl);
+    }
+    formData.append('size', 'auto');
+
+    const response = await fetch('https://api.remove.bg/v1.0/removebg', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        email,
-        imageUrl,
-        fileName,
-      }),
+      headers: { 'X-Api-Key': REMOVE_BG_API_KEY },
+      body: formData,
     });
 
-    console.log("n8n response status:", response.status);
-    const responseText = await response.text();
-    console.log("n8n response:", responseText);
+    if (!response.ok) {
+      const errorText = await response.text();
+      throw new Error(`Remove.bg API error: ${response.status} - ${errorText}`);
+    }
 
-    return new Response(JSON.stringify({ 
-      success: true, 
+    const resultBuffer = await response.arrayBuffer();
+    const resultBase64 = base64Encode(new Uint8Array(resultBuffer));
+
+    return new Response(JSON.stringify({
+      success: true,
+      imageBase64: resultBase64,
       status: response.status,
-      message: responseText 
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
     });
   } catch (error) {
-    console.error('Error in kai-webhook-proxy:', error);
-    return new Response(JSON.stringify({ 
-      success: false, 
-      error: error.message 
+    console.error('Error in kai-webhook-proxy:', error.message);
+    return new Response(JSON.stringify({
+      success: false,
+      error: error.message,
     }), {
       status: 500,
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
