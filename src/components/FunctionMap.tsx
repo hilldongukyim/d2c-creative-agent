@@ -85,11 +85,11 @@ const crewProfiles: Record<string, {
     personality: "Organized and supportive, excels at managing digital assets."
   },
   "rex": {
-    description: "글로벌 AI 커머스·마케팅 최신 소식 자동 수집 및 Daily/Weekly/Monthly 리포트 생성",
+    description: "Automatically collects global AI commerce & marketing news and generates Daily/Weekly/Monthly reports.",
     personality: "AI Trend, Daily Feed, Auto Report"
   },
   "vera": {
-    description: "글로벌 16개국 VOC·프로모션 동향·중국 브랜드 모니터링 및 핵심 인사이트 도출",
+    description: "Monitors VOC, promotions, and Chinese brand trends across 16 countries, delivering key market insights.",
     personality: "16-Country, VOC Sensing, China Watch"
   },
 };
