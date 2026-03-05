@@ -150,7 +150,8 @@ function extractAllCarouselImages(html: string, baseUrl: string): Array<{ url: s
       'background', 'bg-', 'environment', 'room', 'interior', 'feature', 'usp',
       'infographic', 'info-', 'dimension', 'spec', 'energy-label', 'energy_label',
       'accessory', 'accessories', 'installation', 'how-to', 'howto',
-      'related', 'recommend', 'cross-sell', 'also-like', 'recently-viewed', 'you-may-like', 'similar'];
+      'related', 'recommend', 'cross-sell', 'also-like', 'recently-viewed', 'you-may-like', 'similar',
+      '180x180', '350x350', '450x450', 'thum-'];
     const srcLower = src.toLowerCase();
     if (invalid.some(term => srcLower.includes(term))) return false;
     if (!srcLower.match(/\.(jpg|jpeg|png|webp)/)) return false;
