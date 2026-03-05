@@ -113,7 +113,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
             name: "Rex", role: "AI Commerce & Marketing Intelligence Reporter",
             imageSrc: "/lovable-uploads/crew-image-28.png", status: "active", isNew: true,
             externalUrl: "https://suno7608.github.io/ai-trend-hub/",
-            description: "글로벌 AI 커머스·마케팅 최신 소식 자동 수집 및 Daily/Weekly/Monthly 리포트 생성",
+            description: "Automatically collects global AI commerce & marketing news and generates Daily/Weekly/Monthly reports.",
             tags: ["AI Trend", "Daily Feed", "Auto Report"],
           },
           {
