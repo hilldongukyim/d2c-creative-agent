@@ -112,16 +112,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
           {
             name: "Rex", role: "AI Commerce & Marketing Intelligence Reporter",
             imageSrc: "/lovable-uploads/crew-image-28.png", status: "active", isNew: true,
-            externalUrl: "https://suno7608.github.io/ai-trend-hub/",
-            description: "Automatically collects global AI commerce & marketing news and generates Daily/Weekly/Monthly reports.",
-            tags: ["AI Trend", "Daily Feed", "Auto Report"],
           },
           {
             name: "Vera", role: "Global D2C Market Intelligence Analyst",
             imageSrc: "/lovable-uploads/crew-image-29.png", status: "active", isNew: true,
-            externalUrl: "https://suno7608.github.io/d2c-intel/",
-            description: "Monitors VOC, promotions, and Chinese brand trends across 16 countries, delivering key market insights.",
-            tags: ["16-Country", "VOC Sensing", "China Watch"],
           },
         ],
       }],
