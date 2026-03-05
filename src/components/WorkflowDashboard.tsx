@@ -44,7 +44,6 @@ const WorkflowDashboard = () => {
       description: "Submit the request form with project details",
       status: "pending",
       requiredRole: "requestor",
-      n8nUrl: ""
     },
     {
       id: "creation",
