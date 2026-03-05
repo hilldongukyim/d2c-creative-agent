@@ -51,7 +51,6 @@ const WorkflowDashboard = () => {
       description: "Automatically generate content based on the request",
       status: "pending",
       enabledAfter: "request",
-      n8nUrl: ""
     },
     {
       id: "admin-review",
