@@ -59,7 +59,6 @@ const WorkflowDashboard = () => {
       status: "pending",
       requiredRole: "admin",
       enabledAfter: "creation",
-      n8nUrl: ""
     },
     {
       id: "requestor-review",
