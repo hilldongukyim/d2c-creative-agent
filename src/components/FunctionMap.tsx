@@ -111,7 +111,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
           },
           {
             name: "Vera", role: "Global D2C Market Intelligence Analyst",
-            imageSrc: "/lovable-uploads/crew-image-29.png", status: "active", isNew: true,
+            imageSrc: "/lovable-uploads/vera-profile.png", status: "active", isNew: true,
           },
         ],
       }],
