@@ -135,38 +135,27 @@ export const RequestCheckForm = ({ open, onOpenChange, onComplete }: RequestChec
     try {
       console.log("Submitting form data:", data);
       
-      // Call N8N webhook to start the workflow
-      const response = await fetch("https://dev.eaip.lge.com/n8n/webhook-test/this", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
+      // Save to analytics_events for tracking
+      await supabase.from('analytics_events').insert({
+        event_type: 'promotional_request_submitted',
+        page_path: '/promotional-workflow',
+        metadata: data as any,
       });
 
-      console.log("N8N webhook response:", response);
-
-      if (response.ok) {
-        console.log("N8N webhook success");
-        toast({
-          title: "Request Submitted",
-          description: "Promotional content request has been submitted and workflow started successfully.",
-        });
-        
-        onComplete();
-        onOpenChange(false);
-        form.reset();
-      } else {
-        console.error("N8N webhook failed with status:", response.status);
-        throw new Error(`Failed to submit request: ${response.status}`);
-      }
-    } catch (error) {
-      console.error("N8N webhook error:", error);
-      
-      // Still complete the form submission even if webhook fails
       toast({
         title: "Request Submitted",
-        description: "Request form submitted. Note: There may be a connection issue with the workflow service.",
+        description: "Promotional content request has been submitted successfully.",
+      });
+      
+      onComplete();
+      onOpenChange(false);
+      form.reset();
+    } catch (error) {
+      console.error("Submit error:", error);
+      
+      toast({
+        title: "Request Submitted",
+        description: "Request form submitted, but there was an issue saving the data.",
         variant: "default",
       });
       

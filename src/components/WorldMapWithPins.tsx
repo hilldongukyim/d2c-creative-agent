@@ -87,27 +87,15 @@ const WorldMapWithPins = () => {
     if (!selectedCountry) return;
     setIsProcessing(true);
 
-    // Use different webhook URL based on country
-    let webhookUrl = 'https://dev.eaip.lge.com/n8n/webhook/f00e8ecc-d96d-43b8-95cd-13d95fc7dd44';
-    
-    if (selectedCountry.name === 'Thailand') {
-      webhookUrl = 'https://dev.eaip.lge.com/n8n/webhook/48fc6796-3dcd-458a-9652-4b246d9c7cfe';
-    } else if (selectedCountry.name === 'Egypt') {
-      webhookUrl = 'https://dev.eaip.lge.com/n8n/webhook/f58e7420-82ad-4a71-a986-98e64ec0b17e';
-    }
-    
-    // Add country information as query parameters
-    const params = new URLSearchParams({
-      country: selectedCountry.name,
-      countryKo: selectedCountry.nameKo,
-      timestamp: new Date().toISOString()
-    });
-    
     try {
-      // n8n workflow trigger using GET method
-      await fetch(`${webhookUrl}?${params.toString()}`, {
-        method: 'GET',
-        mode: 'no-cors'
+      // Log country selection to analytics
+      await supabase.from('analytics_events').insert({
+        event_type: 'country_qa_triggered',
+        page_path: '/pto-gallery',
+        metadata: {
+          country: selectedCountry.name,
+          countryKo: selectedCountry.nameKo,
+        },
       });
       toast({
         title: 'Promotional Banner QA Started',
