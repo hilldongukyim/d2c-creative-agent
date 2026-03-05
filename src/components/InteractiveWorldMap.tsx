@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { countryCoordinates, getAllCountryNames, CountryData } from '@/data/countryCoordinates';
+import { supabase } from '@/integrations/supabase/client';
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
