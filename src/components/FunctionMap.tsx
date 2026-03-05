@@ -240,32 +240,11 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     <section ref={containerRef} aria-label="Agent functions map" className="space-y-6">
       <div className="bg-[hsl(var(--function-map-bg))] rounded-xl p-4">
         {/* Organizational Chart */}
-        <div className="space-y-8">
-          {/* D2C Header - Root Node */}
-          <div className="text-center mb-4">
-            <div className="inline-block px-6 py-3 rounded-xl bg-card shadow-sm border">
-              <div className="text-lg font-semibold text-foreground">D2C Overseas Sales & Marketing Group</div>
-            </div>
-            {/* Vertical connector from root */}
-            <div className="flex justify-center">
-              <div className="w-0.5 h-6 bg-border" />
-            </div>
-          </div>
-
-          {/* Horizontal connector line across divisions */}
-          <div className="hidden lg:block relative mx-16">
-            <div className="absolute left-0 right-0 top-0 h-0.5 bg-border" />
-          </div>
-
+        <div className="space-y-6">
           {/* Division Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 relative">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {divisions.map((division) => (
               <div key={division.name} className="text-center">
-                {/* Vertical connector to division */}
-                <div className="hidden lg:flex justify-center -mt-6 mb-2">
-                  <div className="w-0.5 h-6 bg-border" />
-                </div>
-
                 {/* Division Badge + Name */}
                 <div className="flex justify-center mb-3">
                   <div className="flex flex-col items-center">
@@ -299,6 +278,16 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
               </div>
             ))}
           </div>
+        </div>
+
+        {/* Footer */}
+        <div className="mt-8 pt-4 border-t border-border/30 text-center">
+          <p className="text-xs text-muted-foreground">
+            © 2025 D2C Overseas Sales & Marketing Group. All rights reserved.
+          </p>
+          <p className="text-[11px] text-muted-foreground/60 mt-1">
+            Last updated: March 5, 2026
+          </p>
         </div>
       </div>
     </section>
