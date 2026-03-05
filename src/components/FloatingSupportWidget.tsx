@@ -54,7 +54,7 @@ const FloatingSupportWidget: React.FC<FloatingSupportWidgetProps> = ({
       id: "fiona",
       name: "Fiona",
       role: "Admin Dashboard",
-      subtitle: "관리자 전용",
+      subtitle: "Admin Only",
       image: "/lovable-uploads/fiona-admin-profile.png",
       icon: Lock,
       status: "locked" as const,
