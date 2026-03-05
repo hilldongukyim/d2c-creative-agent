@@ -120,7 +120,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
             name: "Vera", role: "Global D2C Market Intelligence Analyst",
             imageSrc: "/lovable-uploads/crew-image-29.png", status: "active", isNew: true,
             externalUrl: "https://suno7608.github.io/d2c-intel/",
-            description: "글로벌 16개국 VOC·프로모션 동향·중국 브랜드 모니터링 및 핵심 인사이트 도출",
+            description: "Monitors VOC, promotions, and Chinese brand trends across 16 countries, delivering key market insights.",
             tags: ["16-Country", "VOC Sensing", "China Watch"],
           },
         ],
