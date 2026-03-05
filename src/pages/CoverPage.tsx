@@ -59,7 +59,7 @@ const CoverPage = () => {
   }, []);
 
   useEffect(() => {
-    const title = "Meet our AI Agents — 내부 업무를 돕는 지능형 팀";
+    const title = "Meet our AI Agents — Your Intelligent Work Partners";
     const desc = "Intelligent AI agents that accelerate internal work through clear structure and collaboration, delivering faster, more accurate results.";
     document.title = title;
     let meta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
