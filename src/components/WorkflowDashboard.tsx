@@ -114,7 +114,7 @@ const WorkflowDashboard = () => {
     }
   };
 
-  const handleWorkflowClick = (workflowId: string, n8nUrl?: string) => {
+  const handleWorkflowClick = (workflowId: string) => {
     if (workflowId === "request") {
       setShowRequestForm(true);
       return;
