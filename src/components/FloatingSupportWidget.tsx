@@ -43,7 +43,7 @@ const FloatingSupportWidget: React.FC<FloatingSupportWidgetProps> = ({
       id: "mell",
       name: "Mell",
       role: "Newsletter Manager",
-      subtitle: "뉴스레터 구독 및 발송 관련 문의를 도와드려요",
+      subtitle: "Handles newsletter subscriptions and distribution inquiries",
       image: "/lovable-uploads/mell-profile.png",
       icon: Mail,
       status: "active" as const,
