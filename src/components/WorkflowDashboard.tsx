@@ -85,28 +85,8 @@ const WorkflowDashboard = () => {
     }
   ]);
 
-  // Webhook listener simulation (in a real app, this would be handled by your backend)
-  useEffect(() => {
-    const handleWebhookMessage = (event: MessageEvent) => {
-      if (event.data.type === 'webhook_received' && event.data.workflowId) {
-        setWorkflows(prev => 
-          prev.map(workflow => 
-            workflow.id === event.data.workflowId 
-              ? { ...workflow, status: "completed" }
-              : workflow
-          )
-        );
-        
-        toast({
-          title: "Workflow Completed",
-          description: `${workflows.find(w => w.id === event.data.workflowId)?.title} has been completed automatically.`,
-        });
-      }
-    };
 
-    window.addEventListener('message', handleWebhookMessage);
-    return () => window.removeEventListener('message', handleWebhookMessage);
-  }, [workflows, toast]);
+
 
   const getStatusColor = (status: WorkflowStatus) => {
     switch (status) {
