@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { useToast } from '@/hooks/use-toast';
 import { countryCoordinates, getAllCountryNames, CountryData } from '@/data/countryCoordinates';
+import { supabase } from '@/integrations/supabase/client';
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json";
 
@@ -98,19 +99,15 @@ const InteractiveWorldMap = () => {
     if (!selectedCountry) return;
     setIsProcessing(true);
 
-    const webhookUrl = selectedCountry.webhookUrl || 
-      'https://dev.eaip.lge.com/n8n/webhook/f00e8ecc-d96d-43b8-95cd-13d95fc7dd44';
-    
-    const params = new URLSearchParams({
-      country: selectedCountry.name,
-      countryKo: selectedCountry.nameKo,
-      timestamp: new Date().toISOString()
-    });
-    
     try {
-      await fetch(`${webhookUrl}?${params.toString()}`, {
-        method: 'GET',
-        mode: 'no-cors'
+      // Log country selection to analytics
+      await supabase.from('analytics_events').insert({
+        event_type: 'country_qa_triggered',
+        page_path: '/pto-gallery',
+        metadata: {
+          country: selectedCountry.name,
+          countryKo: selectedCountry.nameKo,
+        },
       });
       
       toast({
