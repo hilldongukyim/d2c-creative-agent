@@ -318,8 +318,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                 {/* Teams */}
                 {division.teams.map((team) => (
                   <div key={team.title} className="bg-card rounded-xl px-2 py-3 shadow-sm">
-                    {/* Division accent bar */}
-                    <div className="h-1 rounded-full mx-4 mb-3" style={{ backgroundColor: division.accent }} />
                     <h4 className="text-sm font-semibold text-muted-foreground mb-3 text-center">
                       {team.title}
                     </h4>
