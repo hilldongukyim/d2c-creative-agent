@@ -32,7 +32,7 @@ const FloatingSupportWidget: React.FC<FloatingSupportWidgetProps> = ({
       id: "mochi",
       name: "Mochi",
       role: "Request Handler",
-      subtitle: "업무 요청을 접수하고 적합한 크루에게 연결해드려요",
+      subtitle: "Receives work requests and connects you with the right crew member",
       image: "/lovable-uploads/mochi-profile.png",
       icon: MessageSquare,
       status: "active" as const,
