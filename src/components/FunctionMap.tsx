@@ -236,7 +236,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         {/* Organizational Chart */}
         <div className="space-y-6">
           {/* Division Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {divisions.map((division) => (
               <div key={division.name} className="text-center">
                 {/* Division Badge + Name */}
