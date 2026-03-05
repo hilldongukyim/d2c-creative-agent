@@ -201,11 +201,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
   };
 
   const handleCardClick = (item: ProfileItem) => {
-    if (item.externalUrl) {
-      window.open(item.externalUrl, "_blank");
-    } else {
-      onProfileClick?.(item.name);
-    }
+    onProfileClick?.(item.name);
   };
 
   const renderAgentCard = (item: ProfileItem, teamTitle: string) => (
