@@ -198,6 +198,12 @@ const CoverPage = () => {
 
   return (
     <div className="h-screen overflow-y-auto snap-y snap-mandatory">
+      {/* Floating Support Widget */}
+      <FloatingSupportWidget
+        onMochiClick={() => setDevRequestFormOpen(true)}
+        onMellClick={() => setMellDialogOpen(true)}
+        onFionaClick={() => setFionaDialogOpen(true)}
+      />
       {/* Notification Bell */}
       <CrewRequestNotification 
         requests={submittedRequests} 
