@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, Plus, Trash2, Send, Loader2, ArrowRight, Download, CheckCircle2, MessageCircle } from "lucide-react";
+import { ArrowLeft, Plus, Minus, Trash2, Send, Loader2, ArrowRight, Download, CheckCircle2, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -31,6 +31,7 @@ const PTOGallery = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>('welcome');
   const [urls, setUrls] = useState<string[]>(['', '']);
+  const [urlQtys, setUrlQtys] = useState<number[]>([1, 1]);
   const [urlError, setUrlError] = useState<string | null>(null);
   const [products, setProducts] = useState<ProductData[]>([]);
   const [bgRemovedImages, setBgRemovedImages] = useState<string[]>([]);
@@ -67,51 +68,90 @@ const PTOGallery = () => {
   }, [step]);
 
   // URL management
-  const addUrl = () => { if (urls.length < 6) setUrls([...urls, '']); };
-  const removeUrl = (idx: number) => { if (urls.length > 2) setUrls(urls.filter((_, i) => i !== idx)); };
+  const totalProducts = urlQtys.reduce((sum, q) => sum + q, 0);
+  const addUrl = () => { if (urls.length < 6) { setUrls([...urls, '']); setUrlQtys([...urlQtys, 1]); } };
+  const removeUrl = (idx: number) => {
+    if (urls.length > 2) {
+      setUrls(urls.filter((_, i) => i !== idx));
+      setUrlQtys(urlQtys.filter((_, i) => i !== idx));
+    }
+  };
   const updateUrl = (idx: number, value: string) => {
     const newUrls = [...urls];
     newUrls[idx] = value;
     setUrls(newUrls);
   };
+  const updateQty = (idx: number, delta: number) => {
+    setUrlQtys((prev) => {
+      const next = [...prev];
+      const newVal = next[idx] + delta;
+      const otherTotal = prev.reduce((s, q, i) => i === idx ? s : s + q, 0);
+      if (newVal < 1 || otherTotal + newVal > 6) return prev;
+      next[idx] = newVal;
+      return next;
+    });
+  };
 
   // Step: urls → select
   const handleSubmitUrls = async () => {
     setUrlError(null);
-    const filledUrls = urls.filter((u) => u.trim());
-    if (filledUrls.length < 2) { setUrlError('At least 2 product URLs are required.'); return; }
-    for (let i = 0; i < filledUrls.length; i++) {
-      if (!filledUrls[i].startsWith('https://www.lg.com/')) {
+    const filledEntries: { url: string; qty: number }[] = [];
+    for (let i = 0; i < urls.length; i++) {
+      if (urls[i].trim()) filledEntries.push({ url: urls[i].trim(), qty: urlQtys[i] });
+    }
+    const expandedTotal = filledEntries.reduce((s, e) => s + e.qty, 0);
+    if (expandedTotal < 2) { setUrlError('At least 2 products are required.'); return; }
+    if (expandedTotal > 6) { setUrlError('Maximum 6 products allowed.'); return; }
+    for (let i = 0; i < filledEntries.length; i++) {
+      if (!filledEntries[i].url.startsWith('https://www.lg.com/')) {
         setUrlError(`URL #${i + 1} must start with "https://www.lg.com/"`);
         return;
       }
     }
 
-    const initialProducts: ProductData[] = filledUrls.map((url) => ({
-      url, images: [], sizeCategory: 'M' as SizeCategory,
-      productName: url, isLoading: true, error: null, confirmed: false,
-    }));
-    setProducts(initialProducts);
+    // Expand: each unique URL is extracted once, then duplicated by qty
+    const uniqueUrls = [...new Set(filledEntries.map((e) => e.url))];
+    // Build qty map
+    const qtyMap: Record<string, number> = {};
+    filledEntries.forEach((e) => { qtyMap[e.url] = (qtyMap[e.url] || 0) + e.qty; });
+
+    // Create expanded product list
+    const expandedProducts: ProductData[] = [];
+    filledEntries.forEach((entry) => {
+      for (let q = 0; q < entry.qty; q++) {
+        expandedProducts.push({
+          url: entry.url, images: [], sizeCategory: 'M' as SizeCategory,
+          productName: entry.url, isLoading: true, error: null, confirmed: false,
+        });
+      }
+    });
+    setProducts(expandedProducts);
     setStep('select');
 
-    const promises = filledUrls.map(async (url, idx) => {
-      try {
-        const { data, error } = await supabase.functions.invoke('ben-extract-images', { body: { url } });
-        if (error || !data?.success) return { idx, error: data?.error || 'Extraction failed' };
-        return { idx, images: data.images || [], sizeCategory: data.sizeCategory || 'M', productName: data.productName || url };
-      } catch { return { idx, error: 'Network error' }; }
-    });
+    // Extract each unique URL once
+    const extractionResults = await Promise.all(
+      uniqueUrls.map(async (url) => {
+        try {
+          const { data, error } = await supabase.functions.invoke('ben-extract-images', { body: { url } });
+          if (error || !data?.success) return { url, error: data?.error || 'Extraction failed' };
+          return { url, images: data.images || [], sizeCategory: data.sizeCategory || 'M', productName: data.productName || url };
+        } catch { return { url, error: 'Network error' }; }
+      })
+    );
 
-    const results = await Promise.all(promises);
+    const resultMap: Record<string, any> = {};
+    extractionResults.forEach((r) => { resultMap[r.url] = r; });
+
     setProducts((prev) => {
       const updated = [...prev];
-      for (const r of results) {
-        if ('error' in r && r.error) {
-          updated[r.idx] = { ...updated[r.idx], isLoading: false, error: r.error as string };
+      for (let i = 0; i < updated.length; i++) {
+        const r = resultMap[updated[i].url];
+        if (r?.error) {
+          updated[i] = { ...updated[i], isLoading: false, error: r.error };
         } else {
-          updated[r.idx] = {
-            ...updated[r.idx], isLoading: false,
-            images: (r as any).images, sizeCategory: (r as any).sizeCategory, productName: (r as any).productName,
+          updated[i] = {
+            ...updated[i], isLoading: false,
+            images: r.images, sizeCategory: r.sizeCategory, productName: r.productName,
           };
         }
       }
@@ -271,6 +311,7 @@ const PTOGallery = () => {
   const handleReset = () => {
     setStep('urls');
     setUrls(['', '']);
+    setUrlQtys([1, 1]);
     setProducts([]);
     setBgRemovedImages([]);
     setBgProcessing(false);
@@ -337,28 +378,59 @@ const PTOGallery = () => {
                   <div className="space-y-3 animate-fade-in">
                     <div className="space-y-2">
                       {urls.map((url, idx) => (
-                        <div key={idx} className="flex gap-2 items-center">
-                          <span className="text-xs text-muted-foreground w-5 shrink-0">{idx + 1}.</span>
-                          <Input value={url} onChange={(e) => updateUrl(idx, e.target.value)} placeholder="https://www.lg.com/..." className="flex-1" />
-                          {urls.length > 2 && (
-                            <Button variant="ghost" size="icon" onClick={() => removeUrl(idx)} className="shrink-0 h-8 w-8">
-                              <Trash2 className="h-3 w-3" />
+                        <div key={idx} className="space-y-1">
+                          <div className="flex gap-2 items-center">
+                            <span className="text-xs text-muted-foreground w-5 shrink-0">{idx + 1}.</span>
+                            <Input value={url} onChange={(e) => updateUrl(idx, e.target.value)} placeholder="https://www.lg.com/..." className="flex-1" />
+                            {urls.length > 2 && (
+                              <Button variant="ghost" size="icon" onClick={() => removeUrl(idx)} className="shrink-0 h-8 w-8">
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            )}
+                          </div>
+                          {/* Quantity controls */}
+                          <div className="flex items-center gap-2 ml-7">
+                            <span className="text-[10px] text-muted-foreground">Qty:</span>
+                            <Button
+                              variant="outline" size="icon"
+                              className="h-5 w-5 shrink-0"
+                              onClick={() => updateQty(idx, -1)}
+                              disabled={urlQtys[idx] <= 1}
+                            >
+                              <Minus className="h-2.5 w-2.5" />
                             </Button>
-                          )}
+                            <span className="text-xs font-medium w-4 text-center">{urlQtys[idx]}</span>
+                            <Button
+                              variant="outline" size="icon"
+                              className="h-5 w-5 shrink-0"
+                              onClick={() => updateQty(idx, 1)}
+                              disabled={totalProducts >= 6}
+                            >
+                              <Plus className="h-2.5 w-2.5" />
+                            </Button>
+                            {urlQtys[idx] > 1 && (
+                              <span className="text-[10px] text-muted-foreground">
+                                Same product ×{urlQtys[idx]}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       ))}
                     </div>
 
-                    {urls.length < 6 && (
-                      <Button variant="outline" size="sm" onClick={addUrl} className="text-xs">
-                        <Plus className="h-3 w-3 mr-1" />Add URL ({urls.length}/6)
-                      </Button>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {urls.length < 6 && totalProducts < 6 && (
+                        <Button variant="outline" size="sm" onClick={addUrl} className="text-xs">
+                          <Plus className="h-3 w-3 mr-1" />Add URL
+                        </Button>
+                      )}
+                      <span className="text-[10px] text-muted-foreground">Total: {totalProducts}/6 products</span>
+                    </div>
 
                     {urlError && <p className="text-xs text-destructive">{urlError}</p>}
 
-                    <Button onClick={handleSubmitUrls} disabled={urls.filter((u) => u.trim()).length < 2} className="w-full">
-                      <Send className="h-4 w-4 mr-2" />Extract Images
+                    <Button onClick={handleSubmitUrls} disabled={totalProducts < 2 || urls.every((u) => !u.trim())} className="w-full">
+                      <Send className="h-4 w-4 mr-2" />Extract Images ({totalProducts} products)
                     </Button>
                   </div>
                 )}
