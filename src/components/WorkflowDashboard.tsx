@@ -4,12 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle, Clock, ExternalLink, AlertCircle, Play, BarChart3, Settings, User, Shield, MessageSquare, ArrowLeft } from "lucide-react";
+import { CheckCircle, Clock, ExternalLink, AlertCircle, Play, BarChart3, User, Shield, MessageSquare, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { RequestCheckForm } from "./RequestCheckForm";
 import { KangarooAnimation } from "./KangarooAnimation";
-import { WebhookSettings } from "./WebhookSettings";
 
 type WorkflowStatus = "pending" | "running" | "completed" | "error";
 type UserRole = "requestor" | "admin";
@@ -19,7 +18,6 @@ interface WorkflowStep {
   title: string;
   description: string;
   status: WorkflowStatus;
-  n8nUrl?: string;
   requiredRole?: UserRole;
   enabledAfter?: string;
 }
@@ -36,14 +34,8 @@ const WorkflowDashboard = () => {
   const { toast } = useToast();
   const [currentUserRole, setCurrentUserRole] = useState<UserRole>("requestor");
   const [showRequestForm, setShowRequestForm] = useState(false);
-  const [showWebhookSettings, setShowWebhookSettings] = useState(false);
   const [imageComments, setImageComments] = useState<ImageComment[]>([]);
   const [requestorFeedback, setRequestorFeedback] = useState("");
-  const [webhooks, setWebhooks] = useState<Record<string, string>>({
-    "creation": "",
-    "review": "",
-    "get-outputs": ""
-  });
   
   const [workflows, setWorkflows] = useState<WorkflowStep[]>([
     {
@@ -52,7 +44,6 @@ const WorkflowDashboard = () => {
       description: "Submit the request form with project details",
       status: "pending",
       requiredRole: "requestor",
-      n8nUrl: ""
     },
     {
       id: "creation",
@@ -60,7 +51,6 @@ const WorkflowDashboard = () => {
       description: "Automatically generate content based on the request",
       status: "pending",
       enabledAfter: "request",
-      n8nUrl: ""
     },
     {
       id: "admin-review",
@@ -69,7 +59,6 @@ const WorkflowDashboard = () => {
       status: "pending",
       requiredRole: "admin",
       enabledAfter: "creation",
-      n8nUrl: ""
     },
     {
       id: "requestor-review",
@@ -78,7 +67,6 @@ const WorkflowDashboard = () => {
       status: "pending",
       requiredRole: "requestor",
       enabledAfter: "admin-review",
-      n8nUrl: ""
     },
     {
       id: "get-outputs",
@@ -86,7 +74,6 @@ const WorkflowDashboard = () => {
       description: "Download all finalized files",
       status: "pending",
       enabledAfter: "requestor-review",
-      n8nUrl: ""
     },
     {
       id: "done",
@@ -95,32 +82,11 @@ const WorkflowDashboard = () => {
       status: "pending",
       requiredRole: "admin",
       enabledAfter: "get-outputs",
-      n8nUrl: ""
     }
   ]);
 
-  // Webhook listener simulation (in a real app, this would be handled by your backend)
-  useEffect(() => {
-    const handleWebhookMessage = (event: MessageEvent) => {
-      if (event.data.type === 'webhook_received' && event.data.workflowId) {
-        setWorkflows(prev => 
-          prev.map(workflow => 
-            workflow.id === event.data.workflowId 
-              ? { ...workflow, status: "completed" }
-              : workflow
-          )
-        );
-        
-        toast({
-          title: "Workflow Completed",
-          description: `${workflows.find(w => w.id === event.data.workflowId)?.title} has been completed automatically.`,
-        });
-      }
-    };
 
-    window.addEventListener('message', handleWebhookMessage);
-    return () => window.removeEventListener('message', handleWebhookMessage);
-  }, [workflows, toast]);
+
 
   const getStatusColor = (status: WorkflowStatus) => {
     switch (status) {
@@ -148,7 +114,7 @@ const WorkflowDashboard = () => {
     }
   };
 
-  const handleWorkflowClick = (workflowId: string, n8nUrl?: string) => {
+  const handleWorkflowClick = (workflowId: string) => {
     if (workflowId === "request") {
       setShowRequestForm(true);
       return;
@@ -231,20 +197,8 @@ const WorkflowDashboard = () => {
     setImageComments(prev => [...prev, newComment]);
   };
 
-  const handleWebhookUpdate = (workflowId: string, url: string) => {
-    setWebhooks(prev => ({
-      ...prev,
-      [workflowId]: url
-    }));
-    
-    setWorkflows(prev => 
-      prev.map(workflow => 
-        workflow.id === workflowId 
-          ? { ...workflow, n8nUrl: url }
-          : workflow
-      )
-    );
-  };
+
+
 
   const currentStep = workflows.findIndex(w => w.status === "pending" || w.status === "running");
   const completedSteps = workflows.filter(w => w.status === "completed").length;
@@ -294,13 +248,6 @@ const WorkflowDashboard = () => {
               View All Tasks Overview
             </Button>
             
-            <Button 
-              onClick={() => setShowWebhookSettings(true)}
-              variant="outline"
-            >
-              <Settings className="h-4 w-4 mr-2" />
-              Webhook Settings
-            </Button>
           </div>
           
           {/* Progress Bar */}
@@ -518,12 +465,6 @@ const WorkflowDashboard = () => {
           onComplete={handleRequestCheckComplete}
         />
         
-        <WebhookSettings
-          open={showWebhookSettings}
-          onOpenChange={setShowWebhookSettings}
-          webhooks={webhooks}
-          onWebhookUpdate={handleWebhookUpdate}
-        />
       </div>
     </div>
   );
