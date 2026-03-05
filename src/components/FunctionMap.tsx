@@ -129,6 +129,11 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
           { name: "Yumi", role: "El-Form Designer", imageSrc: profiles.yumi, status: "inactive" },
           { name: "Milo", role: "eCRM Designer", imageSrc: "/lovable-uploads/milo-profile.png", status: "inactive" },
         ],
+      }, {
+        title: "Content Foundation & Data Team",
+        items: [
+          { name: "Noa", role: "Product Information Manager", imageSrc: "/lovable-uploads/noa-profile.png", status: "active" },
+        ],
       }],
     },
     {
@@ -140,17 +145,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         items: [
           { name: "Clara", role: "Personalized Content Consultant", imageSrc: "/lovable-uploads/a4614e4b-7d0d-429f-8b4c-ddc8b85ee3ad.png", status: "inactive" },
           { name: "Luna", role: "Personalized Marketing Expert", imageSrc: "/lovable-uploads/luna-profile.png", status: "inactive" },
-        ],
-      }],
-    },
-    {
-      name: "Platform & Infrastructure",
-      badgeLetter: "I",
-      accent: "#6B6B6B",
-      teams: [{
-        title: "Platform Infrastructure Team",
-        items: [
-          { name: "Noa", role: "Product Information Manager", imageSrc: "/lovable-uploads/noa-profile.png", status: "active" },
         ],
       }],
     },
@@ -242,7 +236,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         {/* Organizational Chart */}
         <div className="space-y-6">
           {/* Division Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {divisions.map((division) => (
               <div key={division.name} className="text-center">
                 {/* Division Badge + Name */}
