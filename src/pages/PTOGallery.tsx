@@ -378,28 +378,59 @@ const PTOGallery = () => {
                   <div className="space-y-3 animate-fade-in">
                     <div className="space-y-2">
                       {urls.map((url, idx) => (
-                        <div key={idx} className="flex gap-2 items-center">
-                          <span className="text-xs text-muted-foreground w-5 shrink-0">{idx + 1}.</span>
-                          <Input value={url} onChange={(e) => updateUrl(idx, e.target.value)} placeholder="https://www.lg.com/..." className="flex-1" />
-                          {urls.length > 2 && (
-                            <Button variant="ghost" size="icon" onClick={() => removeUrl(idx)} className="shrink-0 h-8 w-8">
-                              <Trash2 className="h-3 w-3" />
+                        <div key={idx} className="space-y-1">
+                          <div className="flex gap-2 items-center">
+                            <span className="text-xs text-muted-foreground w-5 shrink-0">{idx + 1}.</span>
+                            <Input value={url} onChange={(e) => updateUrl(idx, e.target.value)} placeholder="https://www.lg.com/..." className="flex-1" />
+                            {urls.length > 2 && (
+                              <Button variant="ghost" size="icon" onClick={() => removeUrl(idx)} className="shrink-0 h-8 w-8">
+                                <Trash2 className="h-3 w-3" />
+                              </Button>
+                            )}
+                          </div>
+                          {/* Quantity controls */}
+                          <div className="flex items-center gap-2 ml-7">
+                            <span className="text-[10px] text-muted-foreground">Qty:</span>
+                            <Button
+                              variant="outline" size="icon"
+                              className="h-5 w-5 shrink-0"
+                              onClick={() => updateQty(idx, -1)}
+                              disabled={urlQtys[idx] <= 1}
+                            >
+                              <Minus className="h-2.5 w-2.5" />
                             </Button>
-                          )}
+                            <span className="text-xs font-medium w-4 text-center">{urlQtys[idx]}</span>
+                            <Button
+                              variant="outline" size="icon"
+                              className="h-5 w-5 shrink-0"
+                              onClick={() => updateQty(idx, 1)}
+                              disabled={totalProducts >= 6}
+                            >
+                              <Plus className="h-2.5 w-2.5" />
+                            </Button>
+                            {urlQtys[idx] > 1 && (
+                              <span className="text-[10px] text-muted-foreground">
+                                Same product ×{urlQtys[idx]}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       ))}
                     </div>
 
-                    {urls.length < 6 && (
-                      <Button variant="outline" size="sm" onClick={addUrl} className="text-xs">
-                        <Plus className="h-3 w-3 mr-1" />Add URL ({urls.length}/6)
-                      </Button>
-                    )}
+                    <div className="flex items-center gap-2">
+                      {urls.length < 6 && totalProducts < 6 && (
+                        <Button variant="outline" size="sm" onClick={addUrl} className="text-xs">
+                          <Plus className="h-3 w-3 mr-1" />Add URL
+                        </Button>
+                      )}
+                      <span className="text-[10px] text-muted-foreground">Total: {totalProducts}/6 products</span>
+                    </div>
 
                     {urlError && <p className="text-xs text-destructive">{urlError}</p>}
 
-                    <Button onClick={handleSubmitUrls} disabled={urls.filter((u) => u.trim()).length < 2} className="w-full">
-                      <Send className="h-4 w-4 mr-2" />Extract Images
+                    <Button onClick={handleSubmitUrls} disabled={totalProducts < 2 || urls.every((u) => !u.trim())} className="w-full">
+                      <Send className="h-4 w-4 mr-2" />Extract Images ({totalProducts} products)
                     </Button>
                   </div>
                 )}
