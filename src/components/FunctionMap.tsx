@@ -105,12 +105,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     {
       name: "Market Intelligence",
       badgeLetter: "M",
-      accent: "#1d4ed8",
+      accent: "#6B6B6B",
       teams: [{
         title: "Global Market Sensing Team",
         items: [
-          { name: "Maple", role: "Content Crawler", imageSrc: "/lovable-uploads/maple-profile.png", status: "onboarding" },
-          { name: "Mateo", role: "Web Crawler", imageSrc: "/lovable-uploads/mateo-profile.png", status: "active" },
           {
             name: "Rex", role: "AI Commerce & Marketing Intelligence Reporter",
             imageSrc: "/lovable-uploads/crew-image-28.png", status: "active", isNew: true,
@@ -131,39 +129,38 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     {
       name: "Content & Creative",
       badgeLetter: "C",
-      accent: "#A50034",
+      accent: "#6B6B6B",
       teams: [{
         title: "Creative Production Team",
         items: [
           { name: "Ben", role: "PTO Image Creator", imageSrc: profiles.ben, status: "active" },
           { name: "Kai", role: "Background Remover", imageSrc: "/lovable-uploads/84e535ab-1fa5-418e-93aa-73fa3b361219.png", status: "active" },
           { name: "Anita", role: "Lifestyle Artist", imageSrc: "/lovable-uploads/anita-profile.png", status: "active" },
-          { name: "Yumi", role: "El-Form Designer", imageSrc: profiles.yumi, status: "onboarding" },
-          { name: "Milo", role: "eCRM Designer", imageSrc: "/lovable-uploads/milo-profile.png", status: "onboarding" },
+          { name: "Yumi", role: "El-Form Designer", imageSrc: profiles.yumi, status: "inactive" },
+          { name: "Milo", role: "eCRM Designer", imageSrc: "/lovable-uploads/milo-profile.png", status: "inactive" },
         ],
       }],
     },
     {
       name: "Personalization & CX",
       badgeLetter: "P",
-      accent: "#0d9488",
+      accent: "#6B6B6B",
       teams: [{
         title: "Customer Experience Team",
         items: [
-          { name: "Clara", role: "Personalized Content Consultant", imageSrc: "/lovable-uploads/a4614e4b-7d0d-429f-8b4c-ddc8b85ee3ad.png", status: "active" },
-          { name: "Luna", role: "Personalized Marketing Expert", imageSrc: "/lovable-uploads/luna-profile.png", status: "active" },
+          { name: "Clara", role: "Personalized Content Consultant", imageSrc: "/lovable-uploads/a4614e4b-7d0d-429f-8b4c-ddc8b85ee3ad.png", status: "inactive" },
+          { name: "Luna", role: "Personalized Marketing Expert", imageSrc: "/lovable-uploads/luna-profile.png", status: "inactive" },
         ],
       }],
     },
     {
       name: "Platform & Operations",
       badgeLetter: "O",
-      accent: "#475569",
+      accent: "#6B6B6B",
       teams: [{
         title: "Platform Operations Team",
         items: [
-          { name: "Noa", role: "Product Information Manager", imageSrc: "/lovable-uploads/noa-profile.png", status: "onboarding" },
-          { name: "Candy", role: "DAM Tutor", imageSrc: "/lovable-uploads/candy-profile.png", status: "active" },
+          { name: "Noa", role: "Product Information Manager", imageSrc: "/lovable-uploads/noa-profile.png", status: "active" },
         ],
       }],
     },
@@ -303,8 +300,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                 <div className="flex justify-center mb-3">
                   <div className="flex flex-col items-center">
                     <div
-                      className="h-10 w-10 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-md"
-                      style={{ backgroundColor: division.accent }}
+                      className="h-10 w-10 rounded-full flex items-center justify-center text-white text-sm font-bold shadow-md bg-muted-foreground"
                     >
                       {division.badgeLetter}
                     </div>
@@ -322,8 +318,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                 {/* Teams */}
                 {division.teams.map((team) => (
                   <div key={team.title} className="bg-card rounded-xl px-2 py-3 shadow-sm">
-                    {/* Division accent bar */}
-                    <div className="h-1 rounded-full mx-4 mb-3" style={{ backgroundColor: division.accent }} />
                     <h4 className="text-sm font-semibold text-muted-foreground mb-3 text-center">
                       {team.title}
                     </h4>
