@@ -197,20 +197,8 @@ const WorkflowDashboard = () => {
     setImageComments(prev => [...prev, newComment]);
   };
 
-  const handleWebhookUpdate = (workflowId: string, url: string) => {
-    setWebhooks(prev => ({
-      ...prev,
-      [workflowId]: url
-    }));
-    
-    setWorkflows(prev => 
-      prev.map(workflow => 
-        workflow.id === workflowId 
-          ? { ...workflow, n8nUrl: url }
-          : workflow
-      )
-    );
-  };
+
+
 
   const currentStep = workflows.findIndex(w => w.status === "pending" || w.status === "running");
   const completedSteps = workflows.filter(w => w.status === "completed").length;
