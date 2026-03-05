@@ -75,7 +75,7 @@ const FloatingSupportWidget: React.FC<FloatingSupportWidgetProps> = ({
       >
         <div className="p-4 border-b border-border bg-muted/30">
           <h3 className="text-sm font-semibold text-foreground">Support Team</h3>
-          <p className="text-xs text-muted-foreground mt-0.5">도움이 필요하신가요?</p>
+          <p className="text-xs text-muted-foreground mt-0.5">Need help?</p>
         </div>
 
         <div className="p-3 space-y-2">

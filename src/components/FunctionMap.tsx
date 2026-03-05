@@ -259,7 +259,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       {/* External link indicator */}
       {item.externalUrl && (
         <div className="flex items-center gap-0.5 mt-1 text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-          <span>바로가기</span>
+          <span>Go to</span>
           <ExternalLink className="h-2.5 w-2.5" />
         </div>
       )}
