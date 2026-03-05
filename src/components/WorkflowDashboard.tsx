@@ -4,12 +4,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle, Clock, ExternalLink, AlertCircle, Play, BarChart3, Settings, User, Shield, MessageSquare, ArrowLeft } from "lucide-react";
+import { CheckCircle, Clock, ExternalLink, AlertCircle, Play, BarChart3, User, Shield, MessageSquare, ArrowLeft } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { RequestCheckForm } from "./RequestCheckForm";
 import { KangarooAnimation } from "./KangarooAnimation";
-import { WebhookSettings } from "./WebhookSettings";
 
 type WorkflowStatus = "pending" | "running" | "completed" | "error";
 type UserRole = "requestor" | "admin";
