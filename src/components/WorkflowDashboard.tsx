@@ -74,7 +74,6 @@ const WorkflowDashboard = () => {
       description: "Download all finalized files",
       status: "pending",
       enabledAfter: "requestor-review",
-      n8nUrl: ""
     },
     {
       id: "done",
