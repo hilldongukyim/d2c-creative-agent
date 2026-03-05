@@ -31,6 +31,7 @@ const PTOGallery = () => {
   const navigate = useNavigate();
   const [step, setStep] = useState<Step>('welcome');
   const [urls, setUrls] = useState<string[]>(['', '']);
+  const [urlQtys, setUrlQtys] = useState<number[]>([1, 1]);
   const [urlError, setUrlError] = useState<string | null>(null);
   const [products, setProducts] = useState<ProductData[]>([]);
   const [bgRemovedImages, setBgRemovedImages] = useState<string[]>([]);
