@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, Plus, Trash2, Send, Loader2, ArrowRight, Download, CheckCircle2, MessageCircle } from "lucide-react";
+import { ArrowLeft, Plus, Minus, Trash2, Send, Loader2, ArrowRight, Download, CheckCircle2, MessageCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
