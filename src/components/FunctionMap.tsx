@@ -237,22 +237,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         <div className="text-xs text-muted-foreground leading-tight">{item.role}</div>
       </div>
 
-      {/* Tags for new agents */}
-      {item.tags && (
-        <div className="flex flex-wrap gap-1 mt-1 justify-center">
-          {item.tags.map(tag => (
-            <span key={tag} className="text-[9px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">{tag}</span>
-          ))}
-        </div>
-      )}
-
-      {/* External link indicator */}
-      {item.externalUrl && (
-        <div className="flex items-center gap-0.5 mt-1 text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-          <span>Go to</span>
-          <ExternalLink className="h-2.5 w-2.5" />
-        </div>
-      )}
     </div>
   );
 
