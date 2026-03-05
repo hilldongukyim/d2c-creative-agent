@@ -92,7 +92,8 @@ function extractModelTokens(url: string, html: string): string[] {
   const stopwords = new Set([
     'lg', 'com', 'www', 'shop', 'products', 'product', 'appliances', 'appliance', 'electronics',
     'washing', 'machine', 'laundry', 'tv', 'oled', 'soundbar', 'monitor', 'home', 'kitchen',
-    'gallery', 'images', 'image', 'drain', 'hose', 'and', 'the'
+    'gallery', 'images', 'image', 'drain', 'hose', 'and', 'the', 'uk', 'us', 'de', 'fr', 'it',
+    'es', 'au', 'ca', 'in', 'kr', 'jp', 'br', 'mx', 'content', 'dam', 'channel', 'wcms'
   ]);
 
   // URL path 기반 모델 토큰
@@ -101,11 +102,19 @@ function extractModelTokens(url: string, html: string): string[] {
     const segments = pathname.split('/').filter(Boolean).map((s) => s.replace(/\.html?$/, ''));
 
     for (const seg of segments) {
+      // 긴 토큰 (5자+, 숫자 포함)
       if (seg.length >= 5 && /\d/.test(seg) && !stopwords.has(seg)) {
+        tokens.add(seg);
+      }
+      // 짧은 모델 번호 (2-4자, 알파벳+숫자 조합, e.g. m7, w7, c9)
+      if (seg.length >= 2 && seg.length <= 4 && /^[a-z]\d+$/i.test(seg) && !stopwords.has(seg)) {
         tokens.add(seg);
       }
       for (const part of seg.split('-')) {
         if (part.length >= 5 && /\d/.test(part) && !stopwords.has(part)) {
+          tokens.add(part);
+        }
+        if (part.length >= 2 && part.length <= 4 && /^[a-z]\d+$/i.test(part) && !stopwords.has(part)) {
           tokens.add(part);
         }
       }
@@ -116,10 +125,14 @@ function extractModelTokens(url: string, html: string): string[] {
 
   // title/h1 기반 모델 토큰
   const productName = extractProductName(html).toLowerCase();
-  const modelCandidates = productName.match(/\b[a-z0-9-]{5,}\b/gi) || [];
+  const modelCandidates = productName.match(/\b[a-z0-9-]{2,}\b/gi) || [];
   for (const candidate of modelCandidates) {
     const cleaned = candidate.replace(/[^a-z0-9-]/g, '');
     if (cleaned.length >= 5 && /\d/.test(cleaned) && !stopwords.has(cleaned)) {
+      tokens.add(cleaned);
+    }
+    // 짧은 모델명 (M7, W7 등)
+    if (cleaned.length >= 2 && cleaned.length <= 4 && /^[a-z]\d+$/i.test(cleaned) && !stopwords.has(cleaned)) {
       tokens.add(cleaned);
     }
   }
