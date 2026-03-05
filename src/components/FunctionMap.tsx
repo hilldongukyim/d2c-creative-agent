@@ -283,7 +283,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         {/* Footer */}
         <div className="mt-8 pt-4 border-t border-border/30 text-center">
           <p className="text-xs text-muted-foreground">
-            © 2025 D2C Overseas Sales & Marketing Group. All rights reserved.
+            © 2026 D2C Overseas Sales & Marketing Group. All rights reserved.
           </p>
           <p className="text-[11px] text-muted-foreground/60 mt-1">
             Last updated: March 5, 2026
