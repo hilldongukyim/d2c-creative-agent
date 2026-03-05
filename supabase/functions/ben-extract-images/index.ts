@@ -150,7 +150,8 @@ function extractAllCarouselImages(html: string, baseUrl: string): Array<{ url: s
       'background', 'bg-', 'environment', 'room', 'interior', 'feature', 'usp',
       'infographic', 'info-', 'dimension', 'spec', 'energy-label', 'energy_label',
       'accessory', 'accessories', 'installation', 'how-to', 'howto',
-      'related', 'recommend', 'cross-sell', 'also-like', 'recently-viewed', 'you-may-like', 'similar'];
+      'related', 'recommend', 'cross-sell', 'also-like', 'recently-viewed', 'you-may-like', 'similar',
+      '180x180', '350x350', '450x450', 'thum-'];
     const srcLower = src.toLowerCase();
     if (invalid.some(term => srcLower.includes(term))) return false;
     if (!srcLower.match(/\.(jpg|jpeg|png|webp)/)) return false;
@@ -168,7 +169,6 @@ function extractAllCarouselImages(html: string, baseUrl: string): Array<{ url: s
     let score = 0;
 
     if (hasModelMatch(lower)) score += 70;
-    else if (modelTokens.length > 0) score -= 35;
 
     if (/[\/\-_](front|f)[\/\-_.\d]/i.test(lower)) score += 30;
     if (/[\/\-_]01[\/\-_.\s]|[\/\-_]01\.(jpg|png|webp)/i.test(lower)) score += 25;
@@ -184,11 +184,41 @@ function extractAllCarouselImages(html: string, baseUrl: string): Array<{ url: s
     return score;
   };
 
-  const seen = new Set<string>();
-  const rawResults: Array<{ url: string; index: number; priority: number; modelMatched: boolean }> = [];
+  const normalizeSrc = (src: string): string => src.replace(/\\u002F/g, '/').trim();
 
-  const addImage = (src: string, priorityBoost = 0) => {
-    const highQuality = convertToHighQualityUrl(src, baseUrl);
+  // 최상단 갤러리(wrapper)만 우선 스코핑
+  const lowerHtml = html.toLowerCase();
+  let scopedHtml = html;
+  const wrapperMatch = lowerHtml.match(/<div[^>]*id=["']swiper-wrapper-[^"']+["'][^>]*>/i);
+  if (wrapperMatch && typeof wrapperMatch.index === 'number') {
+    const start = Math.max(0, wrapperMatch.index - 8000);
+    const end = Math.min(html.length, wrapperMatch.index + 140000);
+    scopedHtml = html.slice(start, end);
+    console.log(`Using swiper-wrapper scoped HTML (${scopedHtml.length} chars)`);
+  } else {
+    const anchorPos = Math.max(
+      lowerHtml.indexOf('pdp-gallery'),
+      lowerHtml.indexOf('product-gallery'),
+      lowerHtml.indexOf('cmp-carousel')
+    );
+    if (anchorPos !== -1) {
+      const start = Math.max(0, anchorPos - 12000);
+      const end = Math.min(html.length, anchorPos + 180000);
+      scopedHtml = html.slice(start, end);
+      console.log(`Using gallery-anchor scoped HTML (${scopedHtml.length} chars)`);
+    } else {
+      const cutoff = Math.min(html.length, Math.floor(html.length * 0.15));
+      scopedHtml = html.substring(0, cutoff);
+      console.log(`Using top 15% fallback HTML (${scopedHtml.length} chars)`);
+    }
+  }
+
+  const seen = new Set<string>();
+  const rawResults: Array<{ url: string; index: number; priority: number; modelMatched: boolean; source: 'active' | 'first-item' | 'carousel' | 'gallery' | 'pattern' | 'rescue' }> = [];
+
+  const addImage = (src: string, priorityBoost = 0, source: 'active' | 'first-item' | 'carousel' | 'gallery' | 'pattern' | 'rescue' = 'carousel') => {
+    const normalized = normalizeSrc(src);
+    const highQuality = convertToHighQualityUrl(normalized, baseUrl);
     if (!seen.has(highQuality) && isValidProductImage(highQuality)) {
       seen.add(highQuality);
       rawResults.push({
@@ -196,90 +226,77 @@ function extractAllCarouselImages(html: string, baseUrl: string): Array<{ url: s
         index: rawResults.length,
         priority: scoreFrontProduct(highQuality) + priorityBoost,
         modelMatched: hasModelMatch(highQuality),
+        source,
       });
     }
   };
 
-  // 메인 갤러리 근처만 스코핑
-  const lowerHtml = html.toLowerCase();
-  const galleryAnchors = ['pdp-gallery', 'product-gallery', 'visual-header', 'cmp-carousel', 'swiper-wrapper', 'gallery'];
-  let anchorPos = -1;
-  for (const anchor of galleryAnchors) {
-    const pos = lowerHtml.indexOf(anchor);
-    if (pos !== -1 && (anchorPos === -1 || pos < anchorPos)) anchorPos = pos;
-  }
-
-  let scopedHtml = html;
-  if (anchorPos !== -1) {
-    const start = Math.max(0, anchorPos - 20000);
-    const end = Math.min(html.length, anchorPos + 220000);
-    scopedHtml = html.slice(start, end);
-    console.log(`Using anchor-scoped HTML (${scopedHtml.length} chars)`);
-  } else {
-    const cutoff = Math.min(html.length, Math.floor(html.length * 0.2));
-    scopedHtml = html.substring(0, cutoff);
-    console.log(`Using top 20% fallback HTML (${scopedHtml.length} chars)`);
-  }
-
-  // Priority 1: 사용자가 지정한 active 슬라이드 패턴을 최우선으로 추출
-  // 예: #swiper-wrapper-xxx > div.cmp-carousel__item.swiper-slide...swiper-slide-active ... > img
-  const activeSlideRegex = /<div[^>]*id=["']swiper-wrapper-[^"']+["'][^>]*>[\s\S]{0,12000}?<div[^>]*class=["'][^"']*cmp-carousel__item[^"']*swiper-slide[^"']*swiper-slide-active[^"']*["'][^>]*>[\s\S]{0,4000}?<img[^>]*src=["']([^"']+)["']/gi;
   let match;
+
+  // 1) 최우선: active 슬라이드 이미지
+  const activeSlideRegex = /<div[^>]*class=["'][^"']*swiper-slide-active[^"']*["'][^>]*>[\s\S]{0,4500}?<img[^>]*(?:src|data-src)=["']([^"']+)["']/gi;
   while ((match = activeSlideRegex.exec(scopedHtml)) !== null) {
-    addImage(match[1], 1000);
+    addImage(match[1], 1200, 'active');
   }
 
-  // wrapper id 기반 보조 패턴 (class 순서가 바뀌어도 대응)
-  const activeSlideLooseRegex = /<div[^>]*id=["']swiper-wrapper-[^"']+["'][^>]*>[\s\S]{0,12000}?<div[^>]*class=["'][^"']*swiper-slide-active[^"']*["'][^>]*>[\s\S]{0,4000}?<img[^>]*src=["']([^"']+)["']/gi;
-  while ((match = activeSlideLooseRegex.exec(scopedHtml)) !== null) {
-    addImage(match[1], 900);
+  // 2) 보조: wrapper 내 첫 carousel item 이미지(첫번째 제품 이미지)
+  const firstItemRegex = /<div[^>]*id=["']swiper-wrapper-[^"']+["'][^>]*>[\s\S]{0,12000}?<div[^>]*class=["'][^"']*cmp-carousel__item[^"']*["'][^>]*>[\s\S]{0,4500}?<img[^>]*(?:src|data-src)=["']([^"']+)["']/i;
+  const firstItemMatch = scopedHtml.match(firstItemRegex);
+  if (firstItemMatch?.[1]) {
+    addImage(firstItemMatch[1], 1000, 'first-item');
   }
 
-  const swiperSlideRegex = /class=["'][^"']*swiper-slide[^"']*["'][^>]*>[\s\S]{0,3000}?<img[^>]*src=["']([^"']+)["']/gi;
+  // 3) 일반 carousel 추출
+  const swiperSlideRegex = /class=["'][^"']*swiper-slide[^"']*["'][^>]*>[\s\S]{0,3000}?<img[^>]*(?:src|data-src)=["']([^"']+)["']/gi;
   while ((match = swiperSlideRegex.exec(scopedHtml)) !== null) {
-    addImage(match[1]);
+    addImage(match[1], 0, 'carousel');
   }
 
-  const carouselItemRegex = /class=["'][^"']*cmp-carousel__item[^"']*["'][^>]*>[\s\S]{0,3000}?<img[^>]*src=["']([^"']+)["']/gi;
+  const carouselItemRegex = /class=["'][^"']*cmp-carousel__item[^"']*["'][^>]*>[\s\S]{0,3000}?<img[^>]*(?:src|data-src)=["']([^"']+)["']/gi;
   while ((match = carouselItemRegex.exec(scopedHtml)) !== null) {
-    addImage(match[1]);
+    addImage(match[1], 0, 'carousel');
   }
 
-  const galleryRegex = /<img[^>]*src=["']([^"']*\/gallery\/[^"']+)["'][^>]*>/gi;
-  while ((match = galleryRegex.exec(html)) !== null) {
-    addImage(match[1]);
+  // 4) gallery path 보조
+  const galleryRegex = /<img[^>]*(?:src|data-src)=["']([^"']*\/gallery\/[^"']+)["'][^>]*>/gi;
+  while ((match = galleryRegex.exec(scopedHtml)) !== null) {
+    addImage(match[1], 0, 'gallery');
   }
 
+  // 5) 01 패턴 보조
   if (rawResults.length < 3) {
-    const pattern01Regex = /<img[^>]*src=["']([^"']*(?:[\/\-_]0*1[_\-\.]|large0*1|gallery[\/\-]0*1)[^"']*)["'][^>]*>/gi;
+    const pattern01Regex = /<img[^>]*(?:src|data-src)=["']([^"']*(?:[\/\-_]0*1[_\-\.]|large0*1|gallery[\/\-]0*1)[^"']*)["'][^>]*>/gi;
     while ((match = pattern01Regex.exec(scopedHtml)) !== null) {
-      addImage(match[1]);
+      addImage(match[1], 10, 'pattern');
     }
   }
 
-  // 모델 토큰이 있으면, 모델 매칭된 이미지만 사용 (타 제품 섞임 방지)
+  // 모델 토큰 매칭 우선, 실패 시에도 active/first-item 폴백으로 빈 결과 방지
   let filtered = rawResults;
-  let modelMatched = rawResults.filter((r) => r.modelMatched);
-
   if (modelTokens.length > 0) {
-    if (modelMatched.length === 0) {
-      // Rescue pass: raw HTML에서 모델 토큰이 들어간 이미지 URL 직접 탐색
-      for (const token of modelTokens) {
-        const tokenRegex = new RegExp(`(?:https?:)?\\/\\/[^"'\\s<>]*${escapeRegExp(token)}[^"'\\s<>]*\\.(?:jpg|jpeg|png|webp)`, 'gi');
-        let tokenMatch;
-        while ((tokenMatch = tokenRegex.exec(html)) !== null) {
-          addImage(tokenMatch[0].replace(/\\u002F/g, '/'));
-        }
-      }
-      modelMatched = rawResults.filter((r) => r.modelMatched);
-    }
-
+    const modelMatched = rawResults.filter((r) => r.modelMatched);
     if (modelMatched.length > 0) {
       filtered = modelMatched;
       console.log(`Model-matched filter applied: ${filtered.length}/${rawResults.length}`);
     } else {
-      console.log(`No model-matched image found. Discarding non-matching candidates to avoid wrong product output.`);
-      filtered = [];
+      // Rescue pass: 전체 HTML에서 모델 토큰 포함 URL 추가 탐색
+      for (const token of modelTokens) {
+        const tokenRegex = new RegExp(`(?:https?:)?\\/\\/[^"'\\s<>]*${escapeRegExp(token)}[^"'\\s<>]*\\.(?:jpg|jpeg|png|webp)`, 'gi');
+        let tokenMatch;
+        while ((tokenMatch = tokenRegex.exec(html)) !== null) {
+          addImage(tokenMatch[0], 0, 'rescue');
+        }
+      }
+
+      const rescuedModelMatched = rawResults.filter((r) => r.modelMatched);
+      if (rescuedModelMatched.length > 0) {
+        filtered = rescuedModelMatched;
+        console.log(`Model rescue filter applied: ${filtered.length}/${rawResults.length}`);
+      } else {
+        const topGalleryFallback = rawResults.filter((r) => r.source === 'active' || r.source === 'first-item' || r.source === 'carousel');
+        filtered = topGalleryFallback;
+        console.log(`No model-matched image. Falling back to top gallery candidates: ${filtered.length}`);
+      }
     }
   }
 
@@ -294,6 +311,7 @@ function extractAllCarouselImages(html: string, baseUrl: string): Array<{ url: s
   }
   return results;
 }
+
 
 serve(async (req) => {
   if (req.method === "OPTIONS") {
