@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from "react";
-import { ExternalLink } from "lucide-react";
 
 type ProfileMap = {
   yumi: string;
@@ -12,9 +11,6 @@ type ProfileItem = {
   imageSrc: string;
   status: "active" | "onboarding" | "inactive";
   isNew?: boolean;
-  externalUrl?: string;
-  description?: string;
-  tags?: string[];
 };
 
 type Team = {
@@ -112,16 +108,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
           {
             name: "Rex", role: "AI Commerce & Marketing Intelligence Reporter",
             imageSrc: "/lovable-uploads/crew-image-28.png", status: "active", isNew: true,
-            externalUrl: "https://suno7608.github.io/ai-trend-hub/",
-            description: "Automatically collects global AI commerce & marketing news and generates Daily/Weekly/Monthly reports.",
-            tags: ["AI Trend", "Daily Feed", "Auto Report"],
           },
           {
             name: "Vera", role: "Global D2C Market Intelligence Analyst",
             imageSrc: "/lovable-uploads/crew-image-29.png", status: "active", isNew: true,
-            externalUrl: "https://suno7608.github.io/d2c-intel/",
-            description: "Monitors VOC, promotions, and Chinese brand trends across 16 countries, delivering key market insights.",
-            tags: ["16-Country", "VOC Sensing", "China Watch"],
           },
         ],
       }],
@@ -207,11 +197,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
   };
 
   const handleCardClick = (item: ProfileItem) => {
-    if (item.externalUrl) {
-      window.open(item.externalUrl, "_blank");
-    } else {
-      onProfileClick?.(item.name);
-    }
+    onProfileClick?.(item.name);
   };
 
   const renderAgentCard = (item: ProfileItem, teamTitle: string) => (
@@ -247,22 +233,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         <div className="text-xs text-muted-foreground leading-tight">{item.role}</div>
       </div>
 
-      {/* Tags for new agents */}
-      {item.tags && (
-        <div className="flex flex-wrap gap-1 mt-1 justify-center">
-          {item.tags.map(tag => (
-            <span key={tag} className="text-[9px] px-1.5 py-0.5 rounded-full bg-muted text-muted-foreground">{tag}</span>
-          ))}
-        </div>
-      )}
-
-      {/* External link indicator */}
-      {item.externalUrl && (
-        <div className="flex items-center gap-0.5 mt-1 text-[10px] text-primary opacity-0 group-hover:opacity-100 transition-opacity">
-          <span>Go to</span>
-          <ExternalLink className="h-2.5 w-2.5" />
-        </div>
-      )}
     </div>
   );
 
