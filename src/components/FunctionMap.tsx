@@ -259,6 +259,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                 </div>
 
                 {/* Teams */}
+                <div className="space-y-3">
                 {division.teams.map((team) => (
                   <div key={team.title} className="bg-card rounded-xl px-2 py-3 shadow-sm">
                     <h4 className="text-sm font-semibold text-muted-foreground mb-3 text-center">
