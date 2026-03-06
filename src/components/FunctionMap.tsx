@@ -259,16 +259,18 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
                 </div>
 
                 {/* Teams */}
-                {division.teams.map((team) => (
-                  <div key={team.title} className="bg-card rounded-xl px-2 py-3 shadow-sm">
-                    <h4 className="text-sm font-semibold text-muted-foreground mb-3 text-center">
-                      {team.title}
-                    </h4>
-                    <div className="grid grid-cols-2 gap-2 justify-items-center">
-                      {team.items.map((item) => renderAgentCard(item, team.title))}
+                <div className="space-y-3">
+                  {division.teams.map((team) => (
+                    <div key={team.title} className="bg-card rounded-xl px-2 py-3 shadow-sm">
+                      <h4 className="text-sm font-semibold text-muted-foreground mb-3 text-center">
+                        {team.title}
+                      </h4>
+                      <div className="grid grid-cols-2 gap-2 justify-items-center">
+                        {team.items.map((item) => renderAgentCard(item, team.title))}
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
             ))}
           </div>
