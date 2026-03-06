@@ -130,7 +130,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
           { name: "Milo", role: "eCRM Designer", imageSrc: "/lovable-uploads/milo-profile.png", status: "inactive" },
         ],
       }, {
-        title: "Content Foundation & Data Team",
+        title: "Content Infrastructure & Data Team",
         items: [
           { name: "Noa", role: "Product Information Manager", imageSrc: "/lovable-uploads/noa-profile.png", status: "active" },
         ],
