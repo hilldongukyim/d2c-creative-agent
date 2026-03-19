@@ -8,7 +8,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescript
 import FunctionMap from "../components/FunctionMap";
 import ContactOrder from "../components/ContactOrder";
 import CrewRequestForm, { CrewFormData } from "../components/CrewRequestForm";
-import KaiBackgroundRemovalPopup from "../components/KaiBackgroundRemovalPopup";
+
 import CrewRequestNotification, { CrewRequest } from "../components/CrewRequestNotification";
 import FloatingSupportWidget from "../components/FloatingSupportWidget";
 import MochiRequestDialog, { MochiRequest } from "../components/MochiRequestDialog";
