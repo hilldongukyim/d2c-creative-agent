@@ -317,8 +317,6 @@ const CoverPage = () => {
           onSubmitSuccess={handleCrewSubmitSuccess}
         />
 
-        {/* Kai Background Removal Popup */}
-        <KaiBackgroundRemovalPopup open={kaiPopupOpen} onOpenChange={setKaiPopupOpen} />
 
         {/* Mochi Request Dialog */}
         <MochiRequestDialog
