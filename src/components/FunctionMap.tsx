@@ -44,10 +44,6 @@ const crewProfiles: Record<string, {
     description: "Ben creates dotcom PTO model gallery images with consistent quality.",
     personality: "Very interested in dotcom gallery image domain and continuously learning."
   },
-  "kai": {
-    description: "Kai is a background removal specialist responsible for image editing.",
-    personality: "Highly focused and perfectionist, enjoys detailed work."
-  },
   "maple": {
     description: "Maple crawls live content from LG.COM.",
     personality: "Meticulous and patient, excels at systematic data collection."
