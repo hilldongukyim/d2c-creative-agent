@@ -8,7 +8,7 @@ import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescript
 import FunctionMap from "../components/FunctionMap";
 import ContactOrder from "../components/ContactOrder";
 import CrewRequestForm, { CrewFormData } from "../components/CrewRequestForm";
-import KaiBackgroundRemovalPopup from "../components/KaiBackgroundRemovalPopup";
+
 import CrewRequestNotification, { CrewRequest } from "../components/CrewRequestNotification";
 import FloatingSupportWidget from "../components/FloatingSupportWidget";
 import MochiRequestDialog, { MochiRequest } from "../components/MochiRequestDialog";
@@ -29,7 +29,7 @@ const CoverPage = () => {
   const [highlightName, setHighlightName] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [crewFormOpen, setCrewFormOpen] = useState(false);
-  const [kaiPopupOpen, setKaiPopupOpen] = useState(false);
+  
   const [isCrewVisible, setIsCrewVisible] = useState(false);
   const [submittedRequests, setSubmittedRequests] = useState<CrewRequest[]>([]);
   const [devRequestFormOpen, setDevRequestFormOpen] = useState(false);
@@ -113,7 +113,7 @@ const CoverPage = () => {
     "pip": { description: "Pip is a Content QA specialist who reviews whether content is created according to Content Creation Guidelines and Brand Guidelines.", role: "Content QA", image: "/lovable-uploads/76efa2dd-a233-469b-8c78-0957e563f8a4.png", isComingSoon: true },
     "mateo": { description: "Mateo avoids repetitive manual tasks. Upload an Excel template to perform crawling based on models and retailers.", role: "Crawler", image: "/lovable-uploads/mateo-profile.png", isComingSoon: false, ctaLabel: "Work with Mateo", ctaAction: () => navigate("/crawling") },
     "theo": { description: "Theo is the Content Operation manager who supports subsidiary/BU representatives with NPI product registration requests.", role: "NPI Operation Manager", image: "/lovable-uploads/theo-profile.png", isComingSoon: true },
-    "kai": { description: "Kai is a background removal specialist responsible for image editing and post-processing.", role: "Background Remover", image: "/lovable-uploads/84e535ab-1fa5-418e-93aa-73fa3b361219.png", detailImage: "/lovable-uploads/kai-detail-image.png", isComingSoon: false, ctaLabel: "Work with Kai", ctaAction: () => setKaiPopupOpen(true) },
+    
     "maple": { description: "Maple crawls live content from LG.COM. Currently, only homepage hero banners can be viewed.", role: "Content Crawler", image: "/lovable-uploads/maple-profile.png", detailImage: "/lovable-uploads/maple-detail-image.png", isComingSoon: false, ctaLabel: "Work with Maple", ctaAction: () => navigate("/maple-pdp") },
     "noa": { description: "Noa helps with practical work based on product information from PIM (Product Information Management).", role: "Product Information Manager", image: "/lovable-uploads/noa-profile.png", detailImage: "/lovable-uploads/noa-detail-image.png", isComingSoon: false, ctaLabel: "Work with Noa", ctaAction: () => window.open("https://aiagent.pimds.aws.lge.com/", "_blank") },
     "luna": { description: "Creates audiences and offers in Adobe Target using natural language input.", role: "Personalized Marketing Expert", image: "/lovable-uploads/luna-profile.png", isComingSoon: false, ctaLabel: "Work with Luna", ctaAction: () => window.open("https://luna-marketing.lovable.app", "_blank") },
@@ -317,8 +317,6 @@ const CoverPage = () => {
           onSubmitSuccess={handleCrewSubmitSuccess}
         />
 
-        {/* Kai Background Removal Popup */}
-        <KaiBackgroundRemovalPopup open={kaiPopupOpen} onOpenChange={setKaiPopupOpen} />
 
         {/* Mochi Request Dialog */}
         <MochiRequestDialog
