@@ -29,7 +29,7 @@ const CoverPage = () => {
   const [highlightName, setHighlightName] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [crewFormOpen, setCrewFormOpen] = useState(false);
-  const [kaiPopupOpen, setKaiPopupOpen] = useState(false);
+  
   const [isCrewVisible, setIsCrewVisible] = useState(false);
   const [submittedRequests, setSubmittedRequests] = useState<CrewRequest[]>([]);
   const [devRequestFormOpen, setDevRequestFormOpen] = useState(false);
