@@ -36,7 +36,7 @@ interface MochiRequestDialogProps {
 
 // Only active crew members (not Coming Soon)
 const crewMembers = [
-  "Yumi", "Ben", "Mateo", "Maple", "Noa", "Luna", "Clara", 
+  "Yumi", "Ben", "Mateo", "Maple", "Noa", "Luna", 
   "Candy", "Anita", "Zoe", "Milo", "Ava", "Levi"
 ];
 
