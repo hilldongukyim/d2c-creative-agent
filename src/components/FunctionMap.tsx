@@ -64,10 +64,6 @@ const crewProfiles: Record<string, {
     description: "Milo creates email content based on pre-designed layouts.",
     personality: "Detail-oriented and creative, excels at crafting email content."
   },
-  "clara": {
-    description: "Creates personalized images by crawling SKU data.",
-    personality: "Creative and detail-oriented, excels at automating image production."
-  },
   "luna": {
     description: "Creates audiences and offers in Adobe Target using natural language.",
     personality: "Innovative and efficient, excels at automating marketing workflows."
