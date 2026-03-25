@@ -64,10 +64,6 @@ const crewProfiles: Record<string, {
     description: "Milo creates email content based on pre-designed layouts.",
     personality: "Detail-oriented and creative, excels at crafting email content."
   },
-  "clara": {
-    description: "Creates personalized images by crawling SKU data.",
-    personality: "Creative and detail-oriented, excels at automating image production."
-  },
   "luna": {
     description: "Creates audiences and offers in Adobe Target using natural language.",
     personality: "Innovative and efficient, excels at automating marketing workflows."
@@ -139,7 +135,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       teams: [{
         title: "Customer Experience Team",
         items: [
-          { name: "Clara", role: "Personalized Content Consultant", imageSrc: "/lovable-uploads/a4614e4b-7d0d-429f-8b4c-ddc8b85ee3ad.png", status: "inactive" },
+          
           { name: "Luna", role: "Personalized Marketing Expert", imageSrc: "/lovable-uploads/luna-profile.png", status: "inactive" },
         ],
       }],
