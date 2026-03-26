@@ -74,7 +74,7 @@ Verify the copyright guidelines for the generated background environments to ens
 
 *"I'm ready to design. Just hand me PDP URLs, and I'll create the perfect scene for you."*
 
-👉 [Start working with Anita](/zoe-lifestyle)`
+👉 [Start working with Anita](https://anita-twincrew.lovable.app/)`
   },
   {
     id: "2",
