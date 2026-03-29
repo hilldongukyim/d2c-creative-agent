@@ -7,7 +7,7 @@ import { AnalyticsProvider } from "@/hooks/useAnalytics";
 import CoverPage from "./pages/CoverPage";
 import TaskOverview from "./pages/TaskOverview";
 import PromotionalWorkflow from "./pages/PromotionalWorkflow";
-import PTOGallery from "./pages/PTOGallery";
+
 import PipQA from "./pages/PipQA";
 import AllenQA from "./pages/AllenQA";
 import NotFound from "./pages/NotFound";
@@ -29,7 +29,7 @@ const App = () => (
         <Routes>
           <Route path="/" element={<CoverPage />} />
           <Route path="/promotional" element={<PromotionalWorkflow />} />
-          <Route path="/pto-gallery" element={<PTOGallery />} />
+          
           <Route path="/tasks" element={<TaskOverview />} />
           <Route path="/pip-qa" element={<PipQA />} />
           <Route path="/allen-qa" element={<AllenQA />} />
