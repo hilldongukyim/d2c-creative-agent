@@ -15,11 +15,9 @@ verify_jwt = false
 [functions.maple-pdp-analyze]
 verify_jwt = false
 
-[functions.fotor-background-removal]
+
+[functions.send-crew-request-email]
 verify_jwt = false
-
-
-
 
 [functions.anita-extract-carousel]
 verify_jwt = false
@@ -42,8 +40,6 @@ verify_jwt = false
 [functions.anita-photo-composite]
 verify_jwt = false
 
-[functions.ben-feedback-email]
-verify_jwt = false
 
 [functions.yumi-figma-layers]
 verify_jwt = false
