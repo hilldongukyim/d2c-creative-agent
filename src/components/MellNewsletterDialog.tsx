@@ -107,7 +107,7 @@ Now Ben can identify each product's characteristics and arrange items like refri
 
 "Now, leave the size worries to me! Check out the perfectly improved bundle images right away."
 
-👉 [Start working with Ben](/pto-gallery)`
+👉 [Start working with Ben](https://ben-twincrew.lovable.app)`
   },
   {
     id: "1",
@@ -129,7 +129,7 @@ Deploy a variety of "Crew" members that handle repetitive tasks efficiently, all
 ---
 
 **#1. Meet Ben: The PTO Model Image Specialist**
-👉 [Work with Ben](https://twin-crew.lge.com/pto-gallery)
+👉 [Work with Ben](https://ben-twincrew.lovable.app)
 
 Ben is an AI agent dedicated to creating **PTO model images optimized for LG.COM**.
 

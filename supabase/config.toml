@@ -18,14 +18,8 @@ verify_jwt = false
 [functions.fotor-background-removal]
 verify_jwt = false
 
-[functions.ben-extract-images]
-verify_jwt = false
 
-[functions.ben-process-images]
-verify_jwt = false
 
-[functions.send-crew-request-email]
-verify_jwt = false
 
 [functions.anita-extract-carousel]
 verify_jwt = false
