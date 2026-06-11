@@ -100,11 +100,11 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         items: [
           {
             name: "Rex", role: "AI Commerce & Marketing Intelligence Reporter",
-            imageSrc: "/lovable-uploads/rex-profile.png", status: "active", isNew: true,
+            imageSrc: "/lovable-uploads/rex-profile.png", status: "active",
           },
           {
             name: "Vera", role: "Global D2C Market Intelligence Analyst",
-            imageSrc: "/lovable-uploads/vera-profile.png", status: "active", isNew: true,
+            imageSrc: "/lovable-uploads/vera-profile.png", status: "active",
           },
         ],
       }],
