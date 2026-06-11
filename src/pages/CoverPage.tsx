@@ -165,6 +165,7 @@ const CoverPage = () => {
         detailImage: profile.detailImage,
         description: profile.description,
         isComingSoon: profile.isComingSoon,
+        isUpgraded: profile.isUpgraded,
         ctaLabel: profile.ctaLabel,
         ctaAction: profile.ctaAction,
       });
@@ -360,6 +361,7 @@ const CoverPage = () => {
             crewDetailImage={selectedCrewProfile.detailImage}
             crewDescription={selectedCrewProfile.description}
             isComingSoon={selectedCrewProfile.isComingSoon}
+            isUpgraded={selectedCrewProfile.isUpgraded}
             ctaLabel={selectedCrewProfile.ctaLabel}
             onCtaClick={selectedCrewProfile.ctaAction}
           />
