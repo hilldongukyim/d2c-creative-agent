@@ -11,6 +11,7 @@ type ProfileItem = {
   imageSrc: string;
   status: "active" | "onboarding" | "inactive";
   isNew?: boolean;
+  isUpgraded?: boolean;
 };
 
 type Team = {
