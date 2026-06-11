@@ -11,6 +11,7 @@ type ProfileItem = {
   imageSrc: string;
   status: "active" | "onboarding" | "inactive";
   isNew?: boolean;
+  isUpgraded?: boolean;
 };
 
 type Team = {
@@ -115,7 +116,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       teams: [{
         title: "Creative Production Team",
         items: [
-          { name: "Ben", role: "PTO Image Creator", imageSrc: profiles.ben, status: "active" },
+          { name: "Ben", role: "PTO Image Creator", imageSrc: profiles.ben, status: "active", isUpgraded: true },
           
           { name: "Anita", role: "Lifestyle Artist", imageSrc: "/lovable-uploads/anita-profile.png", status: "active" },
           { name: "Yumi", role: "El-Form Designer", imageSrc: profiles.yumi, status: "inactive" },
@@ -199,6 +200,12 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       {item.isNew && (
         <span className="absolute -top-1 -right-1 z-20 px-1.5 py-0.5 text-[10px] font-bold text-white bg-red-500 rounded-full animate-pulse">
           NEW
+        </span>
+      )}
+      {/* Upgraded badge */}
+      {item.isUpgraded && (
+        <span className="absolute -top-1 -left-1 z-20 px-1.5 py-0.5 text-[10px] font-bold text-white bg-green-500 rounded-full">
+          Upgraded
         </span>
       )}
 
