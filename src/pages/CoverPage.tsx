@@ -35,6 +35,7 @@ const CoverPage = () => {
     name: string;
     role: string;
     description: string;
+    flowSteps?: import("@/data/crewData").FlowStep[];
     isComingSoon: boolean;
     isUpgraded?: boolean;
     ctaLabel?: string;
@@ -110,6 +111,7 @@ const CoverPage = () => {
         name,
         role: crew.role,
         description: crew.description,
+        flowSteps: crew.flowSteps,
         isComingSoon: crew.isComingSoon,
         isUpgraded: crew.isUpgraded,
         ctaLabel: crew.ctaLabel,
@@ -281,6 +283,7 @@ const CoverPage = () => {
             crewName={selectedCrewProfile.name}
             crewRole={selectedCrewProfile.role}
             crewDescription={selectedCrewProfile.description}
+            flowSteps={selectedCrewProfile.flowSteps}
             isComingSoon={selectedCrewProfile.isComingSoon}
             isUpgraded={selectedCrewProfile.isUpgraded}
             ctaLabel={selectedCrewProfile.ctaLabel}

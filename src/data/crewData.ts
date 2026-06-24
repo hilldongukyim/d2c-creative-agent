@@ -6,11 +6,18 @@ import rexImg from '@/assets/Rex-profile.png';
 import veraImg from '@/assets/Vera-profile.png';
 import yumiImg from '@/assets/Yumi-profile.png';
 
+export interface FlowStep {
+  step: number;
+  title: string;
+  desc: string;
+}
+
 export interface CrewData {
   role: string;
   image: string;
   description: string;
   personality?: string;
+  flowSteps?: FlowStep[];
   isComingSoon: boolean;
   isUpgraded?: boolean;
   ctaLabel?: string;
@@ -40,8 +47,14 @@ export const CREW_DATA: Record<string, CrewData> = {
   yumi: {
     role: "Promotional Banner Design",
     image: yumiImg,
-    description: "Yumi is an EI-Form designer for LG Electronics brand templates, creating clean and intuitive designs that comply with brand guidelines.",
+    description: "Yumi designs on-brand promotional banners for LG Electronics — web, email, and social formats — fully compliant with LG EI guidelines.",
     personality: "Executes requests immediately, interested in fast and efficient design.",
+    flowSteps: [
+      { step: 1, title: "Input Campaign Brief", desc: "Enter the campaign name, key message, product info, and any mandatory brand copy or disclaimers." },
+      { step: 2, title: "Select Format", desc: "Choose banner size and channel (web banner, email header, social card) and preferred layout style." },
+      { step: 3, title: "Generate Design", desc: "Yumi produces brand-compliant banner designs following LG EI typography, color, and spacing rules." },
+      { step: 4, title: "Review & Download", desc: "Preview all size variants, request tweaks, and download print-ready or web-optimized files." },
+    ],
     isComingSoon: false,
     ctaLabel: "Work with Yumi",
     ctaUrl: "https://yumi-twincrew.web.app/",
@@ -49,8 +62,14 @@ export const CREW_DATA: Record<string, CrewData> = {
   ben: {
     role: "PTO Product Thumbnail Image Generate",
     image: benImg,
-    description: "Ben creates dotcom PTO model gallery images. Generates images reflecting accurate information with consistent and stable quality.",
+    description: "Ben generates high-quality PTO (Product Thumbnail Only) images for LG's dotcom gallery. Accurate product data + consistent visual quality — no photo shoot required.",
     personality: "Very interested in dotcom gallery image domain and continuously learning.",
+    flowSteps: [
+      { step: 1, title: "Enter Model Info", desc: "Input the model number, category, and color variant. Ben automatically retrieves the relevant product spec." },
+      { step: 2, title: "Select Shot Type", desc: "Choose from hero shot, angle views, or all-in-one pack to match your dotcom page requirements." },
+      { step: 3, title: "Generate Image", desc: "Ben processes the request and returns high-resolution PTO thumbnail images within seconds." },
+      { step: 4, title: "Download", desc: "Review the output, request adjustments if needed, and download directly to your workspace." },
+    ],
     isComingSoon: false,
     isUpgraded: true,
     ctaLabel: "Work with Ben",
@@ -98,8 +117,14 @@ export const CREW_DATA: Record<string, CrewData> = {
   anita: {
     role: "Lifestyle Product Imagery Generate",
     image: anitaImg,
-    description: "Anita is a Lifestyle Photographer who creates compelling lifestyle content and visual storytelling for marketing campaigns.",
+    description: "Anita creates photorealistic lifestyle imagery that showcases LG products in natural, aspirational settings — no photographer or studio required.",
     personality: "Creative and artistic, excels at capturing lifestyle moments.",
+    flowSteps: [
+      { step: 1, title: "Describe the Scene", desc: "Input product name and lifestyle context — room type, mood, target consumer, and usage scenario." },
+      { step: 2, title: "Set Visual Style", desc: "Select tone (bright / warm / minimal) and composition preference to match your campaign direction." },
+      { step: 3, title: "Generate", desc: "Anita creates photorealistic lifestyle imagery with the product naturally integrated into the scene." },
+      { step: 4, title: "Refine & Export", desc: "Request variations or scene adjustments, then export in your preferred resolution and format." },
+    ],
     isComingSoon: false,
     ctaLabel: "Work with Anita",
     ctaUrl: "https://anita-twincrew.vercel.app/",
@@ -107,8 +132,14 @@ export const CREW_DATA: Record<string, CrewData> = {
   milo: {
     role: "CRM & Newsletter Content Generate",
     image: miloImg,
-    description: "Milo is an eCRM Designer who creates email content based on pre-designed layouts. He helps produce modular email components by customizing text, visuals, and formatting to match brand guidelines for customer communications.",
+    description: "Milo generates production-ready CRM email and newsletter content — structured in modular blocks, brand-compliant, and ready to send.",
     personality: "Detail-oriented and creative, excels at crafting email content.",
+    flowSteps: [
+      { step: 1, title: "Define Campaign", desc: "Input the campaign goal, product highlights, target audience segment, and key message to communicate." },
+      { step: 2, title: "Choose Template", desc: "Select a modular email layout that fits your content structure — hero, feature list, promo, or mixed." },
+      { step: 3, title: "Generate Content", desc: "Milo fills each module with optimized copy, visual placement, and CTA suggestions per brand guidelines." },
+      { step: 4, title: "Export HTML", desc: "Review the complete email in preview, make final edits, and export production-ready HTML for deployment." },
+    ],
     isComingSoon: false,
     ctaLabel: "Work with Milo",
     ctaUrl: "https://milo-twincrew.web.app/",
