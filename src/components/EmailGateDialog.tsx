@@ -18,6 +18,10 @@ const EmailGateDialog = ({ onSubmit }: Props) => {
       setError("Please enter a valid email address.");
       return;
     }
+    if (!/@(lge\.com|lgpartner\.com)$/.test(trimmed)) {
+      setError("Access is restricted to @lge.com or @lgpartner.com email addresses.");
+      return;
+    }
     onSubmit(trimmed);
   };
 
