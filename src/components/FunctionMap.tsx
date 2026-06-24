@@ -119,8 +119,8 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
           { name: "Ben", role: "PTO Image Creator", imageSrc: profiles.ben, status: "active", isUpgraded: true },
           
           { name: "Anita", role: "Lifestyle Artist", imageSrc: "/lovable-uploads/anita-profile.png", status: "active", isUpgraded: true },
-          { name: "Yumi", role: "El-Form Designer", imageSrc: profiles.yumi, status: "inactive", isNew: true },
-          { name: "Milo", role: "eCRM Designer", imageSrc: "/lovable-uploads/milo-profile.png", status: "inactive", isNew: true },
+          { name: "Yumi", role: "El-Form Designer", imageSrc: profiles.yumi, status: "active", isNew: true },
+          { name: "Milo", role: "eCRM Designer", imageSrc: "/lovable-uploads/milo-profile.png", status: "active", isNew: true },
         ],
       }, {
         title: "Content Infrastructure & Data Team",
@@ -198,7 +198,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     >
       {/* NEW badge */}
       {item.isNew && (
-        <span className="absolute -top-1 -right-1 z-20 px-1.5 py-0.5 text-[10px] font-bold text-white bg-red-500 rounded-full animate-pulse">
+        <span className="absolute -top-1 -left-1 z-20 px-1.5 py-0.5 text-[10px] font-bold text-white bg-red-500 rounded-full animate-pulse">
           NEW
         </span>
       )}
