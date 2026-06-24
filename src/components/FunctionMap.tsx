@@ -118,9 +118,9 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         items: [
           { name: "Ben", role: "PTO Image Creator", imageSrc: profiles.ben, status: "active", isUpgraded: true },
           
-          { name: "Anita", role: "Lifestyle Artist", imageSrc: "/lovable-uploads/anita-profile.png", status: "active" },
-          { name: "Yumi", role: "El-Form Designer", imageSrc: profiles.yumi, status: "inactive" },
-          { name: "Milo", role: "eCRM Designer", imageSrc: "/lovable-uploads/milo-profile.png", status: "inactive" },
+          { name: "Anita", role: "Lifestyle Artist", imageSrc: "/lovable-uploads/anita-profile.png", status: "active", isUpgraded: true },
+          { name: "Yumi", role: "El-Form Designer", imageSrc: profiles.yumi, status: "inactive", isNew: true },
+          { name: "Milo", role: "eCRM Designer", imageSrc: "/lovable-uploads/milo-profile.png", status: "inactive", isNew: true },
         ],
       }, {
         title: "Content Infrastructure & Data Team",
