@@ -890,17 +890,10 @@ const ChatInterface = () => {
           variant: "default",
         });
       } else if (data?.success) {
-        console.log("Figma text updated successfully:", data);
         toast({
           title: "성공",
           description: `${data.updatedCount}개의 텍스트가 Figma에 업데이트되었습니다.`,
         });
-      } else if (data?.error) {
-        console.log("Figma text update info:", data);
-        // Log available variables for debugging
-        if (data.availableStringVariables) {
-          console.log("Available STRING variables:", data.availableStringVariables);
-        }
       }
     } catch (error: any) {
       console.error("Error updating Figma text:", error);

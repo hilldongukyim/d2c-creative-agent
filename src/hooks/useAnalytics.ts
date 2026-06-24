@@ -44,7 +44,6 @@ export const useAnalytics = () => {
       };
 
       await supabase.from('analytics_events').insert(eventData);
-      console.log('[Analytics] ' + eventType + ':', eventData);
     } catch (error) {
       console.error('[Analytics] Tracking error:', error);
     }

@@ -133,7 +133,6 @@ export const RequestCheckForm = ({ open, onOpenChange, onComplete }: RequestChec
     setIsSubmitting(true);
     
     try {
-      console.log("Submitting form data:", data);
       
       // Save to analytics_events for tracking
       await supabase.from('analytics_events').insert({

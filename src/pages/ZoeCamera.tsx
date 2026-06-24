@@ -26,12 +26,10 @@ const AnitaCamera = () => {
     
     channel
       .on("broadcast", { event: "product-info" }, (payload) => {
-        console.log("Received product info:", payload);
         setProductImageUrl(payload.payload.productImageUrl);
         setProductName(payload.payload.productName || "product");
       })
       .subscribe((status) => {
-        console.log("Channel status:", status);
         if (status === "SUBSCRIBED") {
           // Request product info from PC
           channel.send({

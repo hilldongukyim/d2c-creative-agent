@@ -65,14 +65,6 @@ const crewProfiles: Record<string, {
     description: "Milo creates email content based on pre-designed layouts.",
     personality: "Detail-oriented and creative, excels at crafting email content."
   },
-  "luna": {
-    description: "Creates audiences and offers in Adobe Target using natural language.",
-    personality: "Innovative and efficient, excels at automating marketing workflows."
-  },
-  "candy": {
-    description: "Oversees DAM user guides, tutorials, and on-boarding.",
-    personality: "Organized and supportive, excels at managing digital assets."
-  },
   "rex": {
     description: "Automatically collects global AI commerce & marketing news and generates Daily/Weekly/Monthly reports.",
     personality: "AI Trend, Daily Feed, Auto Report"
@@ -126,18 +118,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         title: "Content Infrastructure & Data Team",
         items: [
           { name: "Noa", role: "Product Information Manager", imageSrc: "/lovable-uploads/noa-profile.png", status: "active" },
-        ],
-      }],
-    },
-    {
-      name: "Personalization & CX",
-      badgeLetter: "P",
-      accent: "#6B6B6B",
-      teams: [{
-        title: "Customer Experience Team",
-        items: [
-          
-          { name: "Luna", role: "Personalized Marketing Expert", imageSrc: "/lovable-uploads/luna-profile.png", status: "inactive" },
         ],
       }],
     },

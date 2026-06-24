@@ -2,17 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Search, UserPlus, ChevronDown } from "lucide-react";
+import { Search, ChevronDown } from "lucide-react";
 import Logo from '@/components/Logo';
 import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import FunctionMap from "../components/FunctionMap";
 import ContactOrder from "../components/ContactOrder";
-import CrewRequestForm, { CrewFormData } from "../components/CrewRequestForm";
-
 import CrewRequestNotification, { CrewRequest } from "../components/CrewRequestNotification";
 import FloatingSupportWidget from "../components/FloatingSupportWidget";
 import MochiRequestDialog, { MochiRequest } from "../components/MochiRequestDialog";
-import AdminRequestHistory from "../components/AdminRequestHistory";
 import MellNewsletterDialog from "../components/MellNewsletterDialog";
 import FionaAdminDialog from "../components/FionaAdminDialog";
 import CrewProfileDialog from "../components/CrewProfileDialog";
@@ -22,18 +19,15 @@ const benProfile = "/lovable-uploads/ben-profile-v2.png";
 
 const CoverPage = () => {
   const navigate = useNavigate();
-  const { trackCrewClick, trackButtonClick, trackFormSubmit } = useAnalytics();
+  const { trackCrewClick, trackFormSubmit } = useAnalytics();
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
   const [comingSoonOpen, setComingSoonOpen] = useState(false);
   const [selectedName, setSelectedName] = useState<string | null>(null);
-  const [highlightName, setHighlightName] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
-  const [crewFormOpen, setCrewFormOpen] = useState(false);
   
   const [isCrewVisible, setIsCrewVisible] = useState(false);
   const [submittedRequests, setSubmittedRequests] = useState<CrewRequest[]>([]);
   const [devRequestFormOpen, setDevRequestFormOpen] = useState(false);
-  const [adminHistoryOpen, setAdminHistoryOpen] = useState(false);
   const [mochiRequests, setMochiRequests] = useState<MochiRequest[]>([]);
   const [mellDialogOpen, setMellDialogOpen] = useState(false);
   const [fionaDialogOpen, setFionaDialogOpen] = useState(false);
@@ -118,14 +112,9 @@ const CoverPage = () => {
     
     "maple": { description: "Maple crawls live content from LG.COM. Currently, only homepage hero banners can be viewed.", role: "Content Crawler", image: "/lovable-uploads/maple-profile.png", detailImage: "/lovable-uploads/maple-detail-image.png", isComingSoon: false, ctaLabel: "Work with Maple", ctaAction: () => navigate("/maple-pdp") },
     "noa": { description: "Noa helps with practical work based on product information from PIM (Product Information Management).", role: "Product Information Manager", image: "/lovable-uploads/noa-profile.png", detailImage: "/lovable-uploads/noa-detail-image.png", isComingSoon: false, ctaLabel: "Work with Noa", ctaAction: () => window.open("https://aiagent.pimds.aws.lge.com/", "_blank") },
-    "luna": { description: "Creates audiences and offers in Adobe Target using natural language input.", role: "Personalized Marketing Expert", image: "/lovable-uploads/luna-profile.png", isComingSoon: false, ctaLabel: "Work with Luna", ctaAction: () => window.open("https://luna-marketing.lovable.app", "_blank") },
     
-    "candy": { description: "Oversees DAM user guides, tutorials, and on-boarding.", role: "DAM Tutor", image: "/lovable-uploads/candy-profile.png", isComingSoon: false, ctaLabel: "Work with Candy", ctaAction: () => window.open("https://candy-global-dam-product-owner.lovable.app/", "_blank") },
     "anita": { description: "Anita is a Lifestyle Photographer who creates compelling lifestyle content and visual storytelling for marketing campaigns.", role: "Lifestyle Photographer", image: "/lovable-uploads/anita-profile.png", detailImage: "/lovable-uploads/anita-detail-image.png", isComingSoon: false, ctaLabel: "Work with Anita", ctaAction: () => window.open("https://anita-twincrew.vercel.app/", "_blank") },
-    "zoe": { description: "Zoe is a Lifestyle Artist who creates compelling lifestyle content and visual storytelling for marketing campaigns.", role: "Lifestyle Artist", image: "/lovable-uploads/zoe-profile.png", isComingSoon: false, ctaLabel: "Work with Zoe", ctaAction: () => window.open("https://anita-twincrew.lovable.app/", "_blank") },
     "milo": { description: "Milo is an eCRM Designer who creates email content based on pre-designed layouts. He helps produce modular email components by customizing text, visuals, and formatting to match brand guidelines for customer communications.", role: "eCRM Designer", image: "/lovable-uploads/milo-profile.png", detailImage: "/lovable-uploads/milo-detail-image.png", isComingSoon: false, ctaLabel: "Work with Milo", ctaAction: () => window.open("https://milo-twincrew.web.app/", "_blank") },
-    "ava": { description: "Ava tracks and monitors PDP content across different regions and platforms.", role: "PDP Tracker", image: "/lovable-uploads/ava-profile.png", isComingSoon: false, ctaLabel: "Work with Ava", ctaAction: () => window.open("https://pdptracker.lovable.app", "_blank") },
-    "levi": { description: "Levi handles request management and workflow coordination for the team.", role: "Request Manager", image: "/lovable-uploads/levi-profile.png", isComingSoon: false, ctaLabel: "Work with Levi", ctaAction: () => window.open("https://request-page-craft.lovable.app/", "_blank") },
     "haruto": { description: "Haruto specializes in data analysis and insights generation.", role: "Data Analyst", image: "/lovable-uploads/haruto-profile.png", isComingSoon: true },
     "harvey": { description: "Harvey manages content distribution and publication workflows.", role: "Content Publisher", image: "/lovable-uploads/harvey-profile.png", isComingSoon: true },
     "carmen": { description: "Carmen coordinates cross-functional marketing initiatives.", role: "Marketing Coordinator", image: "/lovable-uploads/carmen-profile.png", isComingSoon: true },
@@ -176,7 +165,7 @@ const CoverPage = () => {
     }
   };
 
-  const handleCrewSubmitSuccess = (data: CrewFormData) => {
+  const handleCrewSubmitSuccess = (data: { crewName: string; [key: string]: unknown }) => {
     trackFormSubmit('CrewRequestForm', { crew_name: data.crewName });
     const newRequest: CrewRequest = {
       id: Date.now().toString(),
@@ -293,7 +282,7 @@ const CoverPage = () => {
             <FunctionMap 
               profiles={{ yumi: aliceProfile, ben: benProfile }} 
               onProfileClick={handleProfileClick} 
-              highlightName={searchTerm || highlightName || undefined}
+              highlightName={searchTerm || undefined}
             />
           </section>
         </div>
@@ -313,27 +302,12 @@ const CoverPage = () => {
           </AlertDialogContent>
         </AlertDialog>
 
-        {/* Crew Registration Form */}
-        <CrewRequestForm 
-          open={crewFormOpen} 
-          onOpenChange={setCrewFormOpen} 
-          onSubmitSuccess={handleCrewSubmitSuccess}
-        />
-
 
         {/* Mochi Request Dialog */}
         <MochiRequestDialog
           open={devRequestFormOpen}
           onOpenChange={setDevRequestFormOpen}
           onSubmitSuccess={handleMochiRequestSuccess}
-        />
-
-        {/* Admin Request History */}
-        <AdminRequestHistory
-          open={adminHistoryOpen}
-          onOpenChange={setAdminHistoryOpen}
-          requests={mochiRequests}
-          onDeleteRequest={handleDeleteMochiRequest}
         />
 
         {/* Mell Newsletter Dialog */}

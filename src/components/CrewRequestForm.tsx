@@ -81,7 +81,6 @@ const CrewRequestForm = ({ open, onOpenChange, onSubmitSuccess }: CrewRequestFor
           variant: "destructive"
         });
       } else {
-        console.log('Email sent successfully:', emailData);
         toast({
           title: "Request Submitted",
           description: "Your crew registration request has been sent and email notification delivered.",

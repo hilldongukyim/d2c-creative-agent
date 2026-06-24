@@ -74,7 +74,7 @@ Verify the copyright guidelines for the generated background environments to ens
 
 *"I'm ready to design. Just hand me PDP URLs, and I'll create the perfect scene for you."*
 
-👉 [Start working with Anita](https://anita-twincrew.lovable.app/)`
+👉 [Start working with Anita](https://anita-twincrew.vercel.app/)`
   },
   {
     id: "2",
@@ -107,7 +107,7 @@ Now Ben can identify each product's characteristics and arrange items like refri
 
 "Now, leave the size worries to me! Check out the perfectly improved bundle images right away."
 
-👉 [Start working with Ben](https://ben-twincrew.lovable.app)`
+👉 [Start working with Ben](https://ben-twincrew.web.app)`
   },
   {
     id: "1",
@@ -129,7 +129,7 @@ Deploy a variety of "Crew" members that handle repetitive tasks efficiently, all
 ---
 
 **#1. Meet Ben: The PTO Model Image Specialist**
-👉 [Work with Ben](https://ben-twincrew.lovable.app)
+👉 [Work with Ben](https://ben-twincrew.web.app)
 
 Ben is an AI agent dedicated to creating **PTO model images optimized for LG.COM**.
 
