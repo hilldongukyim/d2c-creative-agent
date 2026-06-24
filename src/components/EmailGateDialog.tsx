@@ -51,7 +51,7 @@ const EmailGateDialog = ({ onSubmit }: Props) => {
                 placeholder="donguk.yim@lge.com"
                 value={email}
                 onChange={(e) => { setEmail(e.target.value); setError(""); }}
-                className="h-10"
+                className="h-10 placeholder:text-muted-foreground/40"
               />
               {error && <p className="text-xs text-destructive">{error}</p>}
             </div>
