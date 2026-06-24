@@ -1,0 +1,244 @@
+import { useEffect, useState, useMemo } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Users, MousePointer, Eye, LogOut, Search, RefreshCw } from "lucide-react";
+import type { Json } from "@/integrations/supabase/types";
+
+interface AnalyticsEvent {
+  id: string;
+  created_at: string | null;
+  event_type: string;
+  page_path: string;
+  element_text: string | null;
+  element_type: string | null;
+  metadata: Json | null;
+  session_id: string | null;
+}
+
+const getEmail = (event: AnalyticsEvent): string => {
+  if (event.metadata && typeof event.metadata === "object" && !Array.isArray(event.metadata)) {
+    const m = event.metadata as Record<string, Json>;
+    if (typeof m.user_email === "string") return m.user_email;
+  }
+  return "anonymous";
+};
+
+const fmtDate = (iso: string | null) => {
+  if (!iso) return "—";
+  return new Date(iso).toLocaleString("ko-KR", { timeZone: "Asia/Seoul", hour12: false });
+};
+
+const AdminDashboard = () => {
+  const navigate = useNavigate();
+  const [events, setEvents] = useState<AnalyticsEvent[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [selectedEmail, setSelectedEmail] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!sessionStorage.getItem("admin_auth")) {
+      navigate("/admin");
+    }
+  }, [navigate]);
+
+  const fetchEvents = async () => {
+    setLoading(true);
+    const { data } = await supabase
+      .from("analytics_events")
+      .select("id, created_at, event_type, page_path, element_text, element_type, metadata, session_id")
+      .order("created_at", { ascending: false })
+      .limit(2000);
+    setEvents((data as AnalyticsEvent[]) || []);
+    setLoading(false);
+  };
+
+  useEffect(() => { fetchEvents(); }, []);
+
+  const userStats = useMemo(() => {
+    const map = new Map<string, { visits: number; clicks: number; first: string; last: string }>();
+    for (const e of events) {
+      const email = getEmail(e);
+      const existing = map.get(email) || { visits: 0, clicks: 0, first: e.created_at || "", last: e.created_at || "" };
+      if (e.event_type === "page_view") existing.visits++;
+      if (e.event_type === "click" || e.event_type === "button_click" || e.event_type === "crew_profile_click") existing.clicks++;
+      if (e.created_at && e.created_at < existing.first) existing.first = e.created_at;
+      if (e.created_at && e.created_at > existing.last) existing.last = e.created_at;
+      map.set(email, existing);
+    }
+    return Array.from(map.entries())
+      .map(([email, stats]) => ({ email, ...stats }))
+      .sort((a, b) => b.last.localeCompare(a.last));
+  }, [events]);
+
+  const filteredUsers = useMemo(
+    () => userStats.filter(u => u.email.includes(search.toLowerCase())),
+    [userStats, search]
+  );
+
+  const detailEvents = useMemo(() => {
+    if (!selectedEmail) return [];
+    return events.filter(e => getEmail(e) === selectedEmail);
+  }, [selectedEmail, events]);
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("admin_auth");
+    navigate("/admin");
+  };
+
+  const totalUsers = new Set(events.map(getEmail)).size;
+  const todayStr = new Date().toISOString().slice(0, 10);
+  const todayEvents = events.filter(e => e.created_at?.startsWith(todayStr)).length;
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Header */}
+      <header className="border-b border-border px-6 py-4 flex items-center justify-between">
+        <div>
+          <h1 className="text-xl font-bold text-foreground">Admin Dashboard</h1>
+          <p className="text-xs text-muted-foreground">Twin Crew Portal · Analytics</p>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={fetchEvents} disabled={loading}>
+            <RefreshCw className={`h-4 w-4 mr-1 ${loading ? "animate-spin" : ""}`} />
+            Refresh
+          </Button>
+          <Button variant="ghost" size="sm" onClick={handleLogout}>
+            <LogOut className="h-4 w-4 mr-1" />
+            Logout
+          </Button>
+        </div>
+      </header>
+
+      <main className="max-w-7xl mx-auto p-6 space-y-6">
+        {/* Stats */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <Card>
+            <CardContent className="pt-6 flex items-center gap-4">
+              <Users className="h-8 w-8 text-primary" />
+              <div>
+                <p className="text-2xl font-bold">{totalUsers}</p>
+                <p className="text-sm text-muted-foreground">Unique Users</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6 flex items-center gap-4">
+              <Eye className="h-8 w-8 text-primary" />
+              <div>
+                <p className="text-2xl font-bold">{events.filter(e => e.event_type === "page_view").length}</p>
+                <p className="text-sm text-muted-foreground">Total Page Views</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6 flex items-center gap-4">
+              <MousePointer className="h-8 w-8 text-primary" />
+              <div>
+                <p className="text-2xl font-bold">{todayEvents}</p>
+                <p className="text-sm text-muted-foreground">Events Today</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* User List */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">Users</CardTitle>
+              <div className="relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search email..."
+                  value={search}
+                  onChange={e => setSearch(e.target.value)}
+                  className="pl-9 h-8 text-sm"
+                />
+              </div>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="max-h-[480px] overflow-y-auto">
+                {loading ? (
+                  <p className="text-sm text-muted-foreground p-4">Loading...</p>
+                ) : filteredUsers.length === 0 ? (
+                  <p className="text-sm text-muted-foreground p-4">No users found.</p>
+                ) : (
+                  filteredUsers.map(user => (
+                    <div
+                      key={user.email}
+                      onClick={() => setSelectedEmail(user.email === selectedEmail ? null : user.email)}
+                      className={`px-4 py-3 border-b border-border cursor-pointer hover:bg-muted/40 transition-colors ${selectedEmail === user.email ? "bg-muted/60" : ""}`}
+                    >
+                      <div className="flex items-center justify-between mb-1">
+                        <span className="text-sm font-medium truncate max-w-[200px]">{user.email}</span>
+                        <div className="flex gap-1.5 shrink-0">
+                          <Badge variant="outline" className="text-xs px-1.5">
+                            <Eye className="h-3 w-3 mr-1" />{user.visits}
+                          </Badge>
+                          <Badge variant="outline" className="text-xs px-1.5">
+                            <MousePointer className="h-3 w-3 mr-1" />{user.clicks}
+                          </Badge>
+                        </div>
+                      </div>
+                      <p className="text-xs text-muted-foreground">
+                        Last: {fmtDate(user.last)}
+                      </p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Event Log */}
+          <Card>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base">
+                {selectedEmail ? (
+                  <span className="flex items-center gap-2">
+                    Activity Log
+                    <span className="text-xs font-normal text-muted-foreground truncate max-w-[200px]">
+                      — {selectedEmail}
+                    </span>
+                  </span>
+                ) : "Recent Activity"}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="p-0">
+              <div className="max-h-[480px] overflow-y-auto">
+                {(selectedEmail ? detailEvents : events.slice(0, 100)).map(event => (
+                  <div key={event.id} className="px-4 py-2.5 border-b border-border/50 hover:bg-muted/20">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <Badge
+                        variant={event.event_type === "page_view" ? "secondary" : "outline"}
+                        className="text-[10px] px-1.5 py-0"
+                      >
+                        {event.event_type}
+                      </Badge>
+                      {!selectedEmail && (
+                        <span className="text-xs text-muted-foreground truncate max-w-[160px]">
+                          {getEmail(event)}
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-foreground">{event.page_path}</p>
+                    {event.element_text && (
+                      <p className="text-xs text-muted-foreground">↳ {event.element_text}</p>
+                    )}
+                    <p className="text-[11px] text-muted-foreground/60 mt-0.5">{fmtDate(event.created_at)}</p>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </main>
+    </div>
+  );
+};
+
+export default AdminDashboard;

@@ -31,13 +31,14 @@ export const useAnalytics = () => {
     data: TrackEventData = {}
   ) => {
     try {
+      const userEmail = localStorage.getItem('user_email') || undefined;
       const eventData = {
         event_type: eventType,
         page_path: data.page_path || location.pathname,
         element_id: data.element_id || null,
         element_text: data.element_text || null,
         element_type: data.element_type || null,
-        metadata: (data.metadata || {}) as Json,
+        metadata: ({ ...(data.metadata || {}), ...(userEmail ? { user_email: userEmail } : {}) }) as Json,
         session_id: sessionId.current,
         user_agent: navigator.userAgent,
         referrer: data.referrer || document.referrer || null,
