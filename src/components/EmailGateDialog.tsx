@@ -60,7 +60,10 @@ const EmailGateDialog = ({ onSubmit }: Props) => {
         </div>
 
         <p className="text-xs text-muted-foreground/50">
-          © 2026 D2C Overseas Sales & Marketing Group
+          © 2026 D2C Overseas Sales &amp; Marketing Group
+          <br />
+          For access issues, contact{" "}
+          <a href="mailto:donguk.yim@lge.com" className="underline underline-offset-2 hover:text-muted-foreground transition-colors">donguk.yim@lge.com</a>
         </p>
       </div>
     </div>
