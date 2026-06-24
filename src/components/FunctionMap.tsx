@@ -43,11 +43,11 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         items: [
           {
             name: "Rex", role: "AI Commerce & Marketing Intelligence Reporter",
-            imageSrc: "/lovable-uploads/rex-profile.png", status: "active",
+            imageSrc: CREW_DATA.rex.image, status: "active",
           },
           {
             name: "Vera", role: "Global D2C Market Intelligence Analyst",
-            imageSrc: "/lovable-uploads/vera-profile.png", status: "active",
+            imageSrc: CREW_DATA.vera.image, status: "active",
           },
         ],
       }],
@@ -59,16 +59,16 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       teams: [{
         title: "Creative Production Team",
         items: [
-          { name: "Ben", role: "PTO Image Creator", imageSrc: CREW_DATA.ben.image, status: "active", isUpgraded: true },
+          { name: "Ben", role: CREW_DATA.ben.role, imageSrc: CREW_DATA.ben.image, status: "active", isUpgraded: true },
           
-          { name: "Anita", role: "Lifestyle Artist", imageSrc: "/lovable-uploads/anita-profile.png", status: "active", isUpgraded: true },
-          { name: "Yumi", role: "El-Form Designer", imageSrc: CREW_DATA.yumi.image, status: "active", isNew: true },
-          { name: "Milo", role: "eCRM Designer", imageSrc: "/lovable-uploads/milo-profile.png", status: "active", isNew: true },
+          { name: "Anita", role: CREW_DATA.anita.role, imageSrc: CREW_DATA.anita.image, status: "active", isUpgraded: true },
+          { name: "Yumi", role: CREW_DATA.yumi.role, imageSrc: CREW_DATA.yumi.image, status: "active", isNew: true },
+          { name: "Milo", role: CREW_DATA.milo.role, imageSrc: CREW_DATA.milo.image, status: "active", isNew: true },
         ],
       }, {
         title: "Content Infrastructure & Data Team",
         items: [
-          { name: "Noa", role: "Product Information Manager", imageSrc: "/lovable-uploads/noa-profile.png", status: "active" },
+          { name: "Noa", role: CREW_DATA.noa.role, imageSrc: CREW_DATA.noa.image, status: "active" },
         ],
       }],
     },
@@ -206,15 +206,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
           </div>
         </div>
 
-        {/* Footer */}
-        <div className="mt-8 pt-4 border-t border-border/30 text-center">
-          <p className="text-xs text-muted-foreground">
-            © 2026 D2C Overseas Sales & Marketing Group. All rights reserved.
-          </p>
-          <p className="text-[11px] text-muted-foreground/60 mt-1">
-            Last updated: March 5, 2026
-          </p>
-        </div>
+
       </div>
     </section>
   );
