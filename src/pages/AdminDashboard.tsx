@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Users, MousePointer, Eye, LogOut, Search, RefreshCw } from "lucide-react";
+import { Users, MousePointer, Eye, LogOut, Search, RefreshCw, Heart, MessageSquare } from "lucide-react";
 import type { Json } from "@/integrations/supabase/types";
 
 interface AnalyticsEvent {
@@ -17,6 +17,20 @@ interface AnalyticsEvent {
   element_type: string | null;
   metadata: Json | null;
   session_id: string | null;
+}
+
+interface CrewLike {
+  id: string;
+  crew_name: string;
+  created_at: string;
+}
+
+interface CrewReview {
+  id: string;
+  crew_name: string;
+  reviewer_name: string;
+  review_text: string;
+  created_at: string;
 }
 
 const getEmail = (event: AnalyticsEvent): string => {
@@ -32,12 +46,21 @@ const fmtDate = (iso: string | null) => {
   return new Date(iso).toLocaleString("ko-KR", { timeZone: "Asia/Seoul", hour12: false });
 };
 
+const parseLikeKey = (key: string) => {
+  const idx = key.indexOf("|");
+  if (idx === -1) return { crew: key, email: "unknown" };
+  return { crew: key.slice(0, idx), email: key.slice(idx + 1) };
+};
+
 const AdminDashboard = () => {
   const navigate = useNavigate();
   const [events, setEvents] = useState<AnalyticsEvent[]>([]);
+  const [likes, setLikes] = useState<CrewLike[]>([]);
+  const [reviews, setReviews] = useState<CrewReview[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedEmail, setSelectedEmail] = useState<string | null>(null);
+  const [feedbackTab, setFeedbackTab] = useState<"likes" | "reviews">("likes");
 
   useEffect(() => {
     if (!sessionStorage.getItem("admin_auth")) {
@@ -45,18 +68,30 @@ const AdminDashboard = () => {
     }
   }, [navigate]);
 
-  const fetchEvents = async () => {
+  const fetchAll = async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from("analytics_events")
-      .select("id, created_at, event_type, page_path, element_text, element_type, metadata, session_id")
-      .order("created_at", { ascending: false })
-      .limit(2000);
-    setEvents((data as AnalyticsEvent[]) || []);
+    const [eventsRes, likesRes, reviewsRes] = await Promise.all([
+      supabase
+        .from("analytics_events")
+        .select("id, created_at, event_type, page_path, element_text, element_type, metadata, session_id")
+        .order("created_at", { ascending: false })
+        .limit(2000),
+      supabase
+        .from("crew_likes")
+        .select("id, crew_name, created_at")
+        .order("created_at", { ascending: false }),
+      supabase
+        .from("crew_reviews")
+        .select("id, crew_name, reviewer_name, review_text, created_at")
+        .order("created_at", { ascending: false }),
+    ]);
+    setEvents((eventsRes.data as AnalyticsEvent[]) || []);
+    setLikes((likesRes.data as CrewLike[]) || []);
+    setReviews((reviewsRes.data as CrewReview[]) || []);
     setLoading(false);
   };
 
-  useEffect(() => { fetchEvents(); }, []);
+  useEffect(() => { fetchAll(); }, []);
 
   const userStats = useMemo(() => {
     const map = new Map<string, { visits: number; clicks: number; first: string; last: string }>();
@@ -84,6 +119,20 @@ const AdminDashboard = () => {
     return events.filter(e => getEmail(e) === selectedEmail);
   }, [selectedEmail, events]);
 
+  // Group likes by crew name (parse composite key crew|email)
+  const likesByCrew = useMemo(() => {
+    const map = new Map<string, { email: string; created_at: string }[]>();
+    for (const like of likes) {
+      const { crew, email } = parseLikeKey(like.crew_name);
+      const arr = map.get(crew) || [];
+      arr.push({ email, created_at: like.created_at });
+      map.set(crew, arr);
+    }
+    return Array.from(map.entries())
+      .map(([crew, items]) => ({ crew, count: items.length, items }))
+      .sort((a, b) => b.count - a.count);
+  }, [likes]);
+
   const handleLogout = () => {
     sessionStorage.removeItem("admin_auth");
     navigate("/admin");
@@ -102,7 +151,7 @@ const AdminDashboard = () => {
           <p className="text-xs text-muted-foreground">Twin Crew Portal · Analytics</p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" onClick={fetchEvents} disabled={loading}>
+          <Button variant="outline" size="sm" onClick={fetchAll} disabled={loading}>
             <RefreshCw className={`h-4 w-4 mr-1 ${loading ? "animate-spin" : ""}`} />
             Refresh
           </Button>
@@ -115,7 +164,7 @@ const AdminDashboard = () => {
 
       <main className="max-w-7xl mx-auto p-6 space-y-6">
         {/* Stats */}
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
           <Card>
             <CardContent className="pt-6 flex items-center gap-4">
               <Users className="h-8 w-8 text-primary" />
@@ -136,6 +185,15 @@ const AdminDashboard = () => {
           </Card>
           <Card>
             <CardContent className="pt-6 flex items-center gap-4">
+              <Heart className="h-8 w-8 text-primary" />
+              <div>
+                <p className="text-2xl font-bold">{likes.length}</p>
+                <p className="text-sm text-muted-foreground">Total Likes</p>
+              </div>
+            </CardContent>
+          </Card>
+          <Card>
+            <CardContent className="pt-6 flex items-center gap-4">
               <MousePointer className="h-8 w-8 text-primary" />
               <div>
                 <p className="text-2xl font-bold">{todayEvents}</p>
@@ -145,8 +203,8 @@ const AdminDashboard = () => {
           </Card>
         </div>
 
+        {/* Analytics: Users + Event Log */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* User List */}
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base">Users</CardTitle>
@@ -184,9 +242,7 @@ const AdminDashboard = () => {
                           </Badge>
                         </div>
                       </div>
-                      <p className="text-xs text-muted-foreground">
-                        Last: {fmtDate(user.last)}
-                      </p>
+                      <p className="text-xs text-muted-foreground">Last: {fmtDate(user.last)}</p>
                     </div>
                   ))
                 )}
@@ -194,7 +250,6 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
 
-          {/* Event Log */}
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base">
@@ -236,6 +291,79 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Crew Feedback */}
+        <Card>
+          <CardHeader className="pb-3">
+            <div className="flex items-center justify-between">
+              <CardTitle className="text-base">Crew Feedback</CardTitle>
+              <div className="flex gap-1">
+                <Button
+                  variant={feedbackTab === "likes" ? "default" : "outline"}
+                  size="sm"
+                  className="h-7 text-xs gap-1"
+                  onClick={() => setFeedbackTab("likes")}
+                >
+                  <Heart className="h-3 w-3" /> Likes ({likes.length})
+                </Button>
+                <Button
+                  variant={feedbackTab === "reviews" ? "default" : "outline"}
+                  size="sm"
+                  className="h-7 text-xs gap-1"
+                  onClick={() => setFeedbackTab("reviews")}
+                >
+                  <MessageSquare className="h-3 w-3" /> Reviews ({reviews.length})
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            {feedbackTab === "likes" ? (
+              <div className="max-h-[400px] overflow-y-auto">
+                {likesByCrew.length === 0 ? (
+                  <p className="text-sm text-muted-foreground p-4">No likes yet.</p>
+                ) : (
+                  likesByCrew.map(({ crew, count, items }) => (
+                    <div key={crew} className="px-4 py-3 border-b border-border">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-sm font-semibold capitalize">{crew}</span>
+                        <Badge variant="outline" className="text-xs gap-1">
+                          <Heart className="h-3 w-3 fill-red-500 text-red-500" /> {count}
+                        </Badge>
+                      </div>
+                      <div className="flex flex-wrap gap-1">
+                        {items.map((item, i) => (
+                          <span key={i} className="text-xs bg-muted px-2 py-0.5 rounded-full text-muted-foreground">
+                            {item.email}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  ))
+                )}
+              </div>
+            ) : (
+              <div className="max-h-[400px] overflow-y-auto">
+                {reviews.length === 0 ? (
+                  <p className="text-sm text-muted-foreground p-4">No reviews yet.</p>
+                ) : (
+                  reviews.map(review => (
+                    <div key={review.id} className="px-4 py-3 border-b border-border">
+                      <div className="flex items-center gap-2 mb-1 flex-wrap">
+                        <span className="text-xs font-semibold capitalize bg-primary/10 text-primary px-2 py-0.5 rounded">
+                          {review.crew_name}
+                        </span>
+                        <span className="text-xs font-medium text-foreground">{review.reviewer_name}</span>
+                        <span className="text-xs text-muted-foreground ml-auto">{fmtDate(review.created_at)}</span>
+                      </div>
+                      <p className="text-sm text-foreground/80">{review.review_text}</p>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
       </main>
     </div>
   );

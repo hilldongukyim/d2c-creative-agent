@@ -32,8 +32,6 @@ const CoverPage = () => {
   const [selectedCrewProfile, setSelectedCrewProfile] = useState<{
     name: string;
     role: string;
-    image: string;
-    detailImage?: string;
     description: string;
     isComingSoon: boolean;
     isUpgraded?: boolean;
@@ -109,8 +107,6 @@ const CoverPage = () => {
       setSelectedCrewProfile({
         name,
         role: crew.role,
-        image: crew.image,
-        detailImage: crew.detailImage,
         description: crew.description,
         isComingSoon: crew.isComingSoon,
         isUpgraded: crew.isUpgraded,
@@ -282,8 +278,6 @@ const CoverPage = () => {
             onOpenChange={setCrewProfileDialogOpen}
             crewName={selectedCrewProfile.name}
             crewRole={selectedCrewProfile.role}
-            crewImage={selectedCrewProfile.image}
-            crewDetailImage={selectedCrewProfile.detailImage}
             crewDescription={selectedCrewProfile.description}
             isComingSoon={selectedCrewProfile.isComingSoon}
             isUpgraded={selectedCrewProfile.isUpgraded}
