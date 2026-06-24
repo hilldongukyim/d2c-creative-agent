@@ -1,9 +1,5 @@
+import { CREW_DATA } from "@/data/crewData";
 import React, { useEffect, useRef } from "react";
-
-type ProfileMap = {
-  yumi: string;
-  ben: string;
-};
 
 type ProfileItem = {
   name: string;
@@ -27,56 +23,11 @@ type Division = {
 };
 
 type FunctionMapProps = {
-  profiles: ProfileMap;
   onProfileClick?: (name: string) => void;
   highlightName?: string;
 };
 
-// Crew member profiles with descriptions for search
-const crewProfiles: Record<string, {
-  description: string;
-  personality: string;
-}> = {
-  "yumi": {
-    description: "Yumi is an EI-Form designer for LG Electronics brand templates.",
-    personality: "Executes requests immediately, interested in fast and efficient design."
-  },
-  "ben": {
-    description: "Ben creates dotcom PTO model gallery images with consistent quality.",
-    personality: "Very interested in dotcom gallery image domain and continuously learning."
-  },
-  "maple": {
-    description: "Maple crawls live content from LG.COM.",
-    personality: "Meticulous and patient, excels at systematic data collection."
-  },
-  "mateo": {
-    description: "Mateo performs crawling based on models and retailers.",
-    personality: "Competitor Crawling, Product Crawling, Data DB, Trend Analysis."
-  },
-  "noa": {
-    description: "Noa helps with practical work based on product information from PIM.",
-    personality: "Organized and detail-oriented, excels at managing complex product data."
-  },
-  "anita": {
-    description: "Anita creates compelling lifestyle content and visual storytelling.",
-    personality: "Creative and artistic, excels at capturing lifestyle moments."
-  },
-  "milo": {
-    description: "Milo creates email content based on pre-designed layouts.",
-    personality: "Detail-oriented and creative, excels at crafting email content."
-  },
-  "rex": {
-    description: "Automatically collects global AI commerce & marketing news and generates Daily/Weekly/Monthly reports.",
-    personality: "AI Trend, Daily Feed, Auto Report"
-  },
-  "vera": {
-    description: "Monitors VOC, promotions, and Chinese brand trends across 16 countries, delivering key market insights.",
-    personality: "16-Country, VOC Sensing, China Watch"
-  },
-};
-
 const FunctionMap: React.FC<FunctionMapProps> = ({
-  profiles,
   onProfileClick,
   highlightName,
 }) => {
@@ -108,10 +59,10 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       teams: [{
         title: "Creative Production Team",
         items: [
-          { name: "Ben", role: "PTO Image Creator", imageSrc: profiles.ben, status: "active", isUpgraded: true },
+          { name: "Ben", role: "PTO Image Creator", imageSrc: CREW_DATA.ben.image, status: "active", isUpgraded: true },
           
           { name: "Anita", role: "Lifestyle Artist", imageSrc: "/lovable-uploads/anita-profile.png", status: "active", isUpgraded: true },
-          { name: "Yumi", role: "El-Form Designer", imageSrc: profiles.yumi, status: "active", isNew: true },
+          { name: "Yumi", role: "El-Form Designer", imageSrc: CREW_DATA.yumi.image, status: "active", isNew: true },
           { name: "Milo", role: "eCRM Designer", imageSrc: "/lovable-uploads/milo-profile.png", status: "active", isNew: true },
         ],
       }, {
@@ -137,7 +88,7 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
     profileElements?.forEach(el => {
       const profileName = el.getAttribute('data-profile-name') || '';
       const roleText = el.querySelector('.text-xs.text-muted-foreground')?.textContent?.toLowerCase() || '';
-      const crewData = crewProfiles[profileName];
+      const crewData = CREW_DATA[profileName];
       const description = crewData?.description?.toLowerCase() || '';
       const personality = crewData?.personality?.toLowerCase() || '';
       const isMatch = profileName.includes(searchTerm) || roleText.includes(searchTerm) || description.includes(searchTerm) || personality.includes(searchTerm);

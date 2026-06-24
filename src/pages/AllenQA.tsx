@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Button } from '@/components/ui/button';
 import Logo from '@/components/Logo';
 import { useNavigate } from 'react-router-dom';
@@ -6,20 +6,6 @@ import { Home } from 'lucide-react';
 import InteractiveWorldMap from '@/components/InteractiveWorldMap';
 const AllenQA = () => {
   const navigate = useNavigate();
-  useEffect(() => {
-    // Load ElevenLabs ConvAI widget script
-    const script = document.createElement('script');
-    script.src = 'https://unpkg.com/@elevenlabs/convai-widget-embed';
-    script.async = true;
-    script.type = 'text/javascript';
-    document.head.appendChild(script);
-    return () => {
-      // Cleanup script on unmount
-      if (script.parentNode) {
-        document.head.removeChild(script);
-      }
-    };
-  }, []);
   return <div className="min-h-screen bg-background">
       {/* Logo - reusing existing component */}
       <Logo />

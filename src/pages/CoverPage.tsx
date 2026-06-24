@@ -14,9 +14,7 @@ import MellNewsletterDialog from "../components/MellNewsletterDialog";
 import FionaAdminDialog from "../components/FionaAdminDialog";
 import CrewProfileDialog from "../components/CrewProfileDialog";
 import { useAnalytics } from "@/hooks/useAnalytics";
-const aliceProfile = "/lovable-uploads/d004c9d6-0491-459c-8639-7730374641aa.png";
-const benProfile = "/lovable-uploads/ben-profile-v2.png";
-
+import { CREW_DATA } from "@/data/crewData";
 const CoverPage = () => {
   const navigate = useNavigate();
   const { trackCrewClick, trackFormSubmit } = useAnalytics();
@@ -88,75 +86,37 @@ const CoverPage = () => {
     section?.scrollIntoView({ behavior: 'smooth' });
   };
 
-  // Crew profiles data for the profile dialog
-  type CrewProfile = { 
-    description: string; 
-    role: string; 
-    image: string; 
-    detailImage?: string;
-    isComingSoon: boolean;
-    isUpgraded?: boolean;
-    ctaLabel?: string;
-    ctaAction?: () => void;
-  };
-
-  const crewProfiles: Record<string, CrewProfile> = {
-    "vee": { description: "Vee serves as the central command center for all AI agents, coordinating complex workflows and optimizing collaboration between teams.", role: "Super Agent", image: "/lovable-uploads/vee-profile.png", isComingSoon: true },
-    "fiona": { description: "Fiona is dedicated to account deletion and cleanup tasks, ensuring safe account management through compliance with data security and privacy regulations.", role: "Account Manager", image: "/lovable-uploads/fiona-profile.png", isComingSoon: true },
-    "boris": { description: "Boris serves as the promotion team coordinator, assisting in marketing campaign planning and connecting specialized departments.", role: "Promotion Coordinator", image: "", isComingSoon: true },
-    "yumi": { description: "Yumi is an EI-Form designer for LG Electronics brand templates, creating clean and intuitive designs that comply with brand guidelines.", role: "El-Form Designer", image: aliceProfile, detailImage: "/lovable-uploads/yumi-detail-image.png", isComingSoon: false, ctaLabel: "Work with Yumi", ctaAction: () => window.open("https://yumi-twincrew.web.app/", "_blank") },
-    "ben": { description: "Ben creates dotcom PTO model gallery images. Generates images reflecting accurate information with consistent and stable quality.", role: "PTO Image Creator", image: benProfile, detailImage: "/lovable-uploads/ben-detail-image.png", isComingSoon: false, isUpgraded: true, ctaLabel: "Work with Ben", ctaAction: () => window.open("https://ben-twincrew.web.app", "_blank") },
-    "pip": { description: "Pip is a Content QA specialist who reviews whether content is created according to Content Creation Guidelines and Brand Guidelines.", role: "Content QA", image: "/lovable-uploads/76efa2dd-a233-469b-8c78-0957e563f8a4.png", isComingSoon: true },
-    "mateo": { description: "Mateo avoids repetitive manual tasks. Upload an Excel template to perform crawling based on models and retailers.", role: "Crawler", image: "/lovable-uploads/mateo-profile.png", isComingSoon: false, ctaLabel: "Work with Mateo", ctaAction: () => navigate("/crawling") },
-    "theo": { description: "Theo is the Content Operation manager who supports subsidiary/BU representatives with NPI product registration requests.", role: "NPI Operation Manager", image: "/lovable-uploads/theo-profile.png", isComingSoon: true },
-    
-    "maple": { description: "Maple crawls live content from LG.COM. Currently, only homepage hero banners can be viewed.", role: "Content Crawler", image: "/lovable-uploads/maple-profile.png", detailImage: "/lovable-uploads/maple-detail-image.png", isComingSoon: false, ctaLabel: "Work with Maple", ctaAction: () => navigate("/maple-pdp") },
-    "noa": { description: "Noa helps with practical work based on product information from PIM (Product Information Management).", role: "Product Information Manager", image: "/lovable-uploads/noa-profile.png", detailImage: "/lovable-uploads/noa-detail-image.png", isComingSoon: false, ctaLabel: "Work with Noa", ctaAction: () => window.open("https://aiagent.pimds.aws.lge.com/", "_blank") },
-    
-    "anita": { description: "Anita is a Lifestyle Photographer who creates compelling lifestyle content and visual storytelling for marketing campaigns.", role: "Lifestyle Photographer", image: "/lovable-uploads/anita-profile.png", detailImage: "/lovable-uploads/anita-detail-image.png", isComingSoon: false, ctaLabel: "Work with Anita", ctaAction: () => window.open("https://anita-twincrew.vercel.app/", "_blank") },
-    "milo": { description: "Milo is an eCRM Designer who creates email content based on pre-designed layouts. He helps produce modular email components by customizing text, visuals, and formatting to match brand guidelines for customer communications.", role: "eCRM Designer", image: "/lovable-uploads/milo-profile.png", detailImage: "/lovable-uploads/milo-detail-image.png", isComingSoon: false, ctaLabel: "Work with Milo", ctaAction: () => window.open("https://milo-twincrew.web.app/", "_blank") },
-    "haruto": { description: "Haruto specializes in data analysis and insights generation.", role: "Data Analyst", image: "/lovable-uploads/haruto-profile.png", isComingSoon: true },
-    "harvey": { description: "Harvey manages content distribution and publication workflows.", role: "Content Publisher", image: "/lovable-uploads/harvey-profile.png", isComingSoon: true },
-    "carmen": { description: "Carmen coordinates cross-functional marketing initiatives.", role: "Marketing Coordinator", image: "/lovable-uploads/carmen-profile.png", isComingSoon: true },
-    "dan": { description: "Dan handles technical integration and API management.", role: "Integration Specialist", image: "/lovable-uploads/dan-profile.png", isComingSoon: true },
-    "juno": { description: "Juno manages customer experience and feedback collection.", role: "CX Manager", image: "/lovable-uploads/juno-profile.png", isComingSoon: true },
-    "kofi": { description: "Kofi specializes in performance optimization and analytics.", role: "Performance Analyst", image: "/lovable-uploads/kofi-profile.png", isComingSoon: true },
-    "rosa": { description: "Rosa handles creative direction and brand consistency.", role: "Creative Director", image: "/lovable-uploads/rosa-profile.png", isComingSoon: true },
-    "tango": { description: "Tango manages automation workflows and process optimization.", role: "Automation Expert", image: "/lovable-uploads/tango-profile.png", isComingSoon: true },
-    "mochi": { description: "Mochi receives and manages development requests from the team. Submit your feature requests and track their progress.", role: "Development Request Manager", image: "/lovable-uploads/mochi-profile.png", isComingSoon: false, ctaLabel: "Submit Request", ctaAction: () => setDevRequestFormOpen(true) },
-    "mell": { description: "Mell manages newsletter subscriptions and communication preferences for the team.", role: "Newsletter Manager", image: "/lovable-uploads/mell-profile.png", isComingSoon: false, ctaLabel: "Subscribe", ctaAction: () => setMellDialogOpen(true) },
-    "fiona-admin": { description: "Fiona is the admin dashboard manager. Access crew requests, development requests, and crew popularity analytics.", role: "Admin Dashboard", image: "/lovable-uploads/fiona-admin-profile.png", isComingSoon: false, ctaLabel: "Access Dashboard", ctaAction: () => setFionaDialogOpen(true) },
-    "rex": { description: "Automatically collects the latest global AI commerce & marketing news and generates Daily/Weekly/Monthly reports.\n\nKey capabilities: AI Trend · Daily Feed · Auto Report", role: "AI Commerce & Marketing Intelligence Reporter", image: "/lovable-uploads/crew-image-28.png", detailImage: "/lovable-uploads/rex-detail-image.jpeg", isComingSoon: false, ctaLabel: "Open Report", ctaAction: () => window.open("https://suno7608.github.io/ai-trend-hub/", "_blank") },
-    "vera": { description: "Monitors VOC, promotions, and Chinese brand trends across 16 countries, delivering key market insights.\n\nKey capabilities: 16-Country · VOC Sensing · China Watch", role: "Global D2C Market Intelligence Analyst", image: "/lovable-uploads/crew-image-29.png", detailImage: "/lovable-uploads/vera-detail-image.jpeg", isComingSoon: false, ctaLabel: "Open Intel", ctaAction: () => window.open("https://suno7608.github.io/d2c-intel/", "_blank") },
-  };
-
   const handleProfileClick = (name: string) => {
     const lower = name.toLowerCase();
-    
-    // Track crew profile click
-    trackCrewClick(name, { is_coming_soon: crewProfiles[lower]?.isComingSoon ?? true });
-    
-    // Special case for Fiona admin (in support section)
+
+    trackCrewClick(name, { is_coming_soon: CREW_DATA[lower]?.isComingSoon ?? true });
+
     if (lower === "fiona-admin" || (lower === "fiona" && name.includes("Admin"))) {
       setFionaDialogOpen(true);
       return;
     }
-    
-    // Get crew profile data
-    const profile = crewProfiles[lower];
-    
-    // For all crew members, show the profile dialog first
-    if (profile) {
+
+    const crew = CREW_DATA[lower];
+    if (crew) {
+      const ctaAction = crew.ctaRoute
+        ? () => navigate(crew.ctaRoute!)
+        : crew.ctaUrl
+        ? () => window.open(crew.ctaUrl, "_blank")
+        : lower === "mochi" ? () => setDevRequestFormOpen(true)
+        : lower === "mell"  ? () => setMellDialogOpen(true)
+        : lower === "fiona-admin" ? () => setFionaDialogOpen(true)
+        : undefined;
+
       setSelectedCrewProfile({
-        name: name,
-        role: profile.role,
-        image: profile.image,
-        detailImage: profile.detailImage,
-        description: profile.description,
-        isComingSoon: profile.isComingSoon,
-        isUpgraded: profile.isUpgraded,
-        ctaLabel: profile.ctaLabel,
-        ctaAction: profile.ctaAction,
+        name,
+        role: crew.role,
+        image: crew.image,
+        detailImage: crew.detailImage,
+        description: crew.description,
+        isComingSoon: crew.isComingSoon,
+        isUpgraded: crew.isUpgraded,
+        ctaLabel: crew.ctaLabel,
+        ctaAction,
       });
       setCrewProfileDialogOpen(true);
     } else {
@@ -164,7 +124,6 @@ const CoverPage = () => {
       setComingSoonOpen(true);
     }
   };
-
   const handleCrewSubmitSuccess = (data: { crewName: string; [key: string]: unknown }) => {
     trackFormSubmit('CrewRequestForm', { crew_name: data.crewName });
     const newRequest: CrewRequest = {
@@ -274,13 +233,12 @@ const CoverPage = () => {
           <section className={`mt-12 transition-all duration-700 delay-400 ${isCrewVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
             <ContactOrder 
               agents={[
-                { name: "Yumi", image: aliceProfile },
-                { name: "Ben", image: benProfile }
+                { name: "Yumi", image: CREW_DATA.yumi.image },
+                { name: "Ben", image: CREW_DATA.ben.image }
               ]} 
               ariaLabel="Suggested contact order" 
             />
             <FunctionMap 
-              profiles={{ yumi: aliceProfile, ben: benProfile }} 
               onProfileClick={handleProfileClick} 
               highlightName={searchTerm || undefined}
             />
