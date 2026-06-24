@@ -14,6 +14,8 @@ import FionaAdminDialog from "../components/FionaAdminDialog";
 import CrewProfileDialog from "../components/CrewProfileDialog";
 import { useAnalytics } from "@/hooks/useAnalytics";
 import { CREW_DATA } from "@/data/crewData";
+
+declare const __BUILD_TIME__: string;
 const CoverPage = () => {
   const navigate = useNavigate();
   const { trackCrewClick, trackFormSubmit } = useAnalytics();
@@ -285,6 +287,31 @@ const CoverPage = () => {
             onCtaClick={selectedCrewProfile.ctaAction}
           />
         )}
+
+        {/* Footer */}
+        <footer className="py-6 px-6 text-center border-t border-border/30">
+          <p className="text-xs text-muted-foreground/60">
+            Last updated:{" "}
+            {new Date(__BUILD_TIME__).toLocaleString("ko-KR", {
+              timeZone: "Asia/Seoul",
+              year: "numeric",
+              month: "2-digit",
+              day: "2-digit",
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false,
+            })}
+          </p>
+          <p className="text-xs text-muted-foreground/60 mt-1">
+            Questions or issues?{" "}
+            <a
+              href="mailto:donguk.yim@lge.com"
+              className="underline underline-offset-2 hover:text-muted-foreground transition-colors"
+            >
+              donguk.yim@lge.com
+            </a>
+          </p>
+        </footer>
       </section>
     </div>
   );

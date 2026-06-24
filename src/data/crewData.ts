@@ -38,7 +38,7 @@ export const CREW_DATA: Record<string, CrewData> = {
     isComingSoon: true,
   },
   yumi: {
-    role: "El-Form Designer",
+    role: "Promotional Banner Design",
     image: yumiImg,
     description: "Yumi is an EI-Form designer for LG Electronics brand templates, creating clean and intuitive designs that comply with brand guidelines.",
     personality: "Executes requests immediately, interested in fast and efficient design.",
@@ -47,7 +47,7 @@ export const CREW_DATA: Record<string, CrewData> = {
     ctaUrl: "https://yumi-twincrew.web.app/",
   },
   ben: {
-    role: "PTO Image Creator",
+    role: "PTO Product Thumbnail Image Generate",
     image: benImg,
     description: "Ben creates dotcom PTO model gallery images. Generates images reflecting accurate information with consistent and stable quality.",
     personality: "Very interested in dotcom gallery image domain and continuously learning.",
@@ -96,7 +96,7 @@ export const CREW_DATA: Record<string, CrewData> = {
     ctaUrl: "https://aiagent.pimds.aws.lge.com/",
   },
   anita: {
-    role: "Lifestyle Photographer",
+    role: "Lifestyle Product Imagery Generate",
     image: anitaImg,
     description: "Anita is a Lifestyle Photographer who creates compelling lifestyle content and visual storytelling for marketing campaigns.",
     personality: "Creative and artistic, excels at capturing lifestyle moments.",
@@ -105,7 +105,7 @@ export const CREW_DATA: Record<string, CrewData> = {
     ctaUrl: "https://anita-twincrew.vercel.app/",
   },
   milo: {
-    role: "eCRM Designer",
+    role: "CRM & Newsletter Content Generate",
     image: miloImg,
     description: "Milo is an eCRM Designer who creates email content based on pre-designed layouts. He helps produce modular email components by customizing text, visuals, and formatting to match brand guidelines for customer communications.",
     personality: "Detail-oriented and creative, excels at crafting email content.",

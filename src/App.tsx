@@ -1,11 +1,10 @@
-import { useState } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AnalyticsProvider } from "@/hooks/useAnalytics";
-import EmailGateDialog from "@/components/EmailGateDialog";
+import EmailGatePage from "./pages/EmailGatePage";
 import CoverPage from "./pages/CoverPage";
 import TaskOverview from "./pages/TaskOverview";
 import PromotionalWorkflow from "./pages/PromotionalWorkflow";
@@ -22,41 +21,34 @@ import AdminDashboard from "./pages/AdminDashboard";
 
 const queryClient = new QueryClient();
 
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const email = localStorage.getItem("user_email");
+  if (!email) return <Navigate to="/" replace />;
+  return <>{children}</>;
+};
+
 const AppContent = () => {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith("/admin");
-  const [userEmail, setUserEmail] = useState<string | null>(
-    () => localStorage.getItem("user_email")
-  );
-
-  const handleEmailSubmit = (email: string) => {
-    localStorage.setItem("user_email", email);
-    setUserEmail(email);
-  };
-
-  if (!isAdminRoute && !userEmail) {
-    return <EmailGateDialog onSubmit={handleEmailSubmit} />;
-  }
 
   return (
-    <AnalyticsProvider>
-      <Routes>
-        <Route path="/" element={<CoverPage />} />
-        <Route path="/promotional" element={<PromotionalWorkflow />} />
-        <Route path="/tasks" element={<TaskOverview />} />
-        <Route path="/pip-qa" element={<PipQA />} />
-        <Route path="/allen-qa" element={<AllenQA />} />
-        <Route path="/crawling" element={<Crawling />} />
-        <Route path="/maple-pdp" element={<MaplePDP />} />
-        <Route path="/zoe-camera/:sessionId" element={<ZoeCamera />} />
-        <Route path="/milo-ecrm" element={<MiloECRM />} />
-        <Route path="/server-busy" element={<ServerBusy />} />
-        <Route path="/admin" element={<AdminLogin />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </AnalyticsProvider>
+    <Routes>
+      <Route path="/" element={<EmailGatePage />} />
+      <Route path="/admin" element={<AdminLogin />} />
+      <Route path="/admin/dashboard" element={<AdminDashboard />} />
+      <Route path="/home" element={<ProtectedRoute><AnalyticsProvider><CoverPage /></AnalyticsProvider></ProtectedRoute>} />
+      <Route path="/promotional" element={<ProtectedRoute><AnalyticsProvider><PromotionalWorkflow /></AnalyticsProvider></ProtectedRoute>} />
+      <Route path="/tasks" element={<ProtectedRoute><AnalyticsProvider><TaskOverview /></AnalyticsProvider></ProtectedRoute>} />
+      <Route path="/pip-qa" element={<ProtectedRoute><AnalyticsProvider><PipQA /></AnalyticsProvider></ProtectedRoute>} />
+      <Route path="/allen-qa" element={<ProtectedRoute><AnalyticsProvider><AllenQA /></AnalyticsProvider></ProtectedRoute>} />
+      <Route path="/crawling" element={<ProtectedRoute><AnalyticsProvider><Crawling /></AnalyticsProvider></ProtectedRoute>} />
+      <Route path="/maple-pdp" element={<ProtectedRoute><AnalyticsProvider><MaplePDP /></AnalyticsProvider></ProtectedRoute>} />
+      <Route path="/zoe-camera/:sessionId" element={<ProtectedRoute><AnalyticsProvider><ZoeCamera /></AnalyticsProvider></ProtectedRoute>} />
+      <Route path="/milo-ecrm" element={<ProtectedRoute><AnalyticsProvider><MiloECRM /></AnalyticsProvider></ProtectedRoute>} />
+      <Route path="/server-busy" element={<ServerBusy />} />
+      {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
   );
 };
 

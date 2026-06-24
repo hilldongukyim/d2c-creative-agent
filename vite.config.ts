@@ -4,6 +4,9 @@ import path from "path";
 
 export default defineConfig({
   base: "/d2c-creative-agent/",
+  define: {
+    __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+  },
   server: {
     host: "::",
     port: 8080,
