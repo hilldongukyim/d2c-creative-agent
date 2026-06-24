@@ -8,7 +8,6 @@ import { AlertDialog, AlertDialogAction, AlertDialogContent, AlertDialogDescript
 import FunctionMap from "../components/FunctionMap";
 import ContactOrder from "../components/ContactOrder";
 import CrewRequestNotification, { CrewRequest } from "../components/CrewRequestNotification";
-import FloatingSupportWidget from "../components/FloatingSupportWidget";
 import MochiRequestDialog, { MochiRequest } from "../components/MochiRequestDialog";
 import MellNewsletterDialog from "../components/MellNewsletterDialog";
 import FionaAdminDialog from "../components/FionaAdminDialog";
@@ -149,12 +148,6 @@ const CoverPage = () => {
 
   return (
     <div className="h-screen overflow-y-auto snap-y snap-mandatory">
-      {/* Floating Support Widget */}
-      <FloatingSupportWidget
-        onMochiClick={() => setDevRequestFormOpen(true)}
-        onMellClick={() => setMellDialogOpen(true)}
-        onFionaClick={() => setFionaDialogOpen(true)}
-      />
       {/* Notification Bell */}
       <CrewRequestNotification 
         requests={submittedRequests} 
