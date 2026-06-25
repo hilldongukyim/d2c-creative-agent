@@ -59,6 +59,10 @@ const TypingMessage = ({ message, onComplete }: { message: string; onComplete?: 
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
+const publicAsset = (path: string) => `${import.meta.env.BASE_URL}${path}`;
+const YUMI_PROFILE_IMAGE = publicAsset("lovable-uploads/1d0546ae-2d59-40cf-a231-60343eecc72a.png");
+const YUMI_BACKGROUND_IMAGE = publicAsset("lovable-uploads/bc537bc9-b912-4359-a294-eb543db318e3.png");
+
 // ==================== Translations ====================
 
 type LanguageCode = "en" | "ja" | "th" | "es" | "pt" | "de" | "fr";
@@ -1145,7 +1149,7 @@ const ChatInterface = () => {
           >
             <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
               <img
-                src="/lovable-uploads/1d0546ae-2d59-40cf-a231-60343eecc72a.png"
+                src={YUMI_PROFILE_IMAGE}
                 alt="Yumi"
                 className="w-full h-full object-cover"
               />
@@ -1167,7 +1171,7 @@ const ChatInterface = () => {
     <div className="flex items-start gap-4 mb-6 animate-fade-in">
       <div className="w-12 h-12 rounded-full overflow-hidden flex-shrink-0">
         <img
-          src="/lovable-uploads/1d0546ae-2d59-40cf-a231-60343eecc72a.png"
+          src={YUMI_PROFILE_IMAGE}
           alt="Yumi"
           className="w-full h-full object-cover"
         />
@@ -1689,7 +1693,7 @@ const ChatInterface = () => {
     <div
       className="min-h-screen relative overflow-hidden"
       style={{
-        backgroundImage: `url('/lovable-uploads/bc537bc9-b912-4359-a294-eb543db318e3.png')`,
+        backgroundImage: `url('${YUMI_BACKGROUND_IMAGE}')`,
         backgroundSize: "cover",
         backgroundPosition: "center",
         backgroundRepeat: "no-repeat",
@@ -1722,7 +1726,7 @@ const ChatInterface = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-full overflow-hidden">
-                  <img src="/lovable-uploads/1d0546ae-2d59-40cf-a231-60343eecc72a.png" alt="Yumi Profile" className="w-full h-full object-cover" />
+                  <img src={YUMI_PROFILE_IMAGE} alt="Yumi Profile" className="w-full h-full object-cover" />
                 </div>
                 <div>
                   <h2 className="text-lg font-semibold text-gray-900">Yumi</h2>
