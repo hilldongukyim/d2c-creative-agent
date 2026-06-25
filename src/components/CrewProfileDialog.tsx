@@ -130,13 +130,6 @@ const CrewProfileDialog: React.FC<CrewProfileDialogProps> = ({
         <div className="flex flex-col md:flex-row flex-1 overflow-hidden">
           {/* ── Left Panel ── */}
           <div className="md:w-52 shrink-0 flex flex-col items-center text-center px-6 py-6 border-b md:border-b-0 md:border-r border-border bg-muted/20">
-            {/* Avatar */}
-            <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-3">
-              <span className="text-2xl font-bold text-primary/60">
-                {crewName.charAt(0).toUpperCase()}
-              </span>
-            </div>
-
             <h2 className="text-base font-bold text-foreground">{crewName}</h2>
             <p className="text-xs text-muted-foreground mt-0.5 leading-snug">{crewRole}</p>
 
