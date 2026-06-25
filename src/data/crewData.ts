@@ -6,7 +6,7 @@ import miloImg from '@/assets/Milo-profile.png';
 import noaImg from '@/assets/Noa-profile.png';
 import rexImg from '@/assets/Rex-profile.png';
 import veraImg from '@/assets/Vera-profile.png';
-import yumiImg from '@/assets/Yumi-profile.png';
+import yumiImg from '@/assets/Yumi-profile-small.png';
 
 export interface FlowStep {
   step: number;
