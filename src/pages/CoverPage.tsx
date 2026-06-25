@@ -52,8 +52,8 @@ const CoverPage = () => {
   }, []);
 
   useEffect(() => {
-    const title = "Meet our AI Agents — Your Intelligent Work Partners";
-    const desc = "Intelligent AI agents that accelerate internal work through clear structure and collaboration, delivering faster, more accurate results.";
+    const title = "Meet Twin Crew — Your Intelligent Work Partners";
+    const desc = "A diverse range of AI agents are ready to resolve the pain points you experience in your OBS workflows. Work more efficiently and smartly with your AI colleagues.";
     document.title = title;
     let meta = document.querySelector('meta[name="description"]') as HTMLMetaElement | null;
     if (!meta) {
@@ -202,10 +202,10 @@ const CoverPage = () => {
         <div className={`max-w-6xl mx-auto relative z-10 transition-all duration-700 ${isCrewVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
           <header className="text-center mb-12 pt-8">
             <h2 className={`font-bold text-foreground mb-4 text-2xl transition-all duration-700 delay-100 ${isCrewVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
-              Meet<br className="sm:hidden" /> AI Twin Crew
+              Meet<br className="sm:hidden" /> Twin Crew
             </h2>
             <p className={`text-muted-foreground max-w-2xl mx-auto text-xs transition-all duration-700 delay-200 ${isCrewVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-5'}`}>
-              An intelligent agent team that helps and accelerates the work of internal employees. Through clear structure and collaboration, we deliver faster, more accurate results.
+              A diverse range of AI agents are ready to resolve the pain points you experience in your OBS workflows. Work more efficiently and smartly alongside your AI colleagues.
             </p>
           </header>
 
