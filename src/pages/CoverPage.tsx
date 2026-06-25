@@ -98,6 +98,12 @@ const CoverPage = () => {
 
     const crew = CREW_DATA[lower];
     if (crew) {
+      if (crew.isComingSoon && !crew.ctaRoute && !crew.ctaUrl && lower !== "mochi" && lower !== "mell" && lower !== "fiona-admin") {
+        setSelectedName(name);
+        setComingSoonOpen(true);
+        return;
+      }
+
       const ctaAction = crew.ctaRoute
         ? () => navigate(crew.ctaRoute!)
         : crew.ctaUrl

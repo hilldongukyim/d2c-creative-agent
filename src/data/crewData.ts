@@ -1,5 +1,7 @@
 import anitaImg from '@/assets/Anita_profile.jpeg';
 import benImg from '@/assets/Ben-profile.jpeg';
+import claraImg from '@/assets/Clara-profile.png';
+import lunaImg from '@/assets/Luna-profile.png';
 import miloImg from '@/assets/Milo-profile.png';
 import noaImg from '@/assets/Noa-profile.png';
 import rexImg from '@/assets/Rex-profile.png';
@@ -143,6 +145,18 @@ export const CREW_DATA: Record<string, CrewData> = {
     isComingSoon: false,
     ctaLabel: "Work with Milo",
     ctaUrl: "https://milo-twincrew.web.app/",
+  },
+  luna: {
+    role: "Personalized Marketing",
+    image: lunaImg,
+    description: "Luna will support personalized marketing workflows with tailored on-site experiences and audience-aware activation.",
+    isComingSoon: true,
+  },
+  clara: {
+    role: "CRM Operations",
+    image: claraImg,
+    description: "Clara will support CRM operations with lifecycle execution and customer communications coordination.",
+    isComingSoon: true,
   },
   haruto: {
     role: "Data Analyst",

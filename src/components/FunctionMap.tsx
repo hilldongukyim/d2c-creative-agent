@@ -72,6 +72,18 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
         ],
       }],
     },
+    {
+      name: "Personalization",
+      badgeLetter: "P",
+      accent: "#6B6B6B",
+      teams: [{
+        title: "Onsite Marketing Team",
+        items: [
+          { name: "Luna", role: CREW_DATA.luna.role, imageSrc: CREW_DATA.luna.image, status: "onboarding" },
+          { name: "Clara", role: CREW_DATA.clara.role, imageSrc: CREW_DATA.clara.image, status: "onboarding" },
+        ],
+      }],
+    },
   ];
 
   useEffect(() => {
