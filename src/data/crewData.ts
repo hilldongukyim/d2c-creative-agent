@@ -129,7 +129,7 @@ export const CREW_DATA: Record<string, CrewData> = {
     ],
     isComingSoon: false,
     ctaLabel: "Work with Anita",
-    ctaUrl: "https://anita-twincrew.vercel.app/",
+    ctaUrl: "https://anita-twincrew.web.app/",
   },
   milo: {
     role: "CRM & Newsletter Content Generate",
