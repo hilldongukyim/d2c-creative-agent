@@ -6,8 +6,6 @@ type ProfileItem = {
   role: string;
   imageSrc: string;
   status: "active" | "onboarding" | "inactive";
-  isNew?: boolean;
-  isUpgraded?: boolean;
 };
 
 type Team = {
@@ -59,11 +57,11 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       teams: [{
         title: "Creative Production Team",
         items: [
-          { name: "Ben", role: CREW_DATA.ben.role, imageSrc: CREW_DATA.ben.image, status: "active", isUpgraded: true },
+          { name: "Ben", role: CREW_DATA.ben.role, imageSrc: CREW_DATA.ben.image, status: "active" },
           
-          { name: "Anita", role: CREW_DATA.anita.role, imageSrc: CREW_DATA.anita.image, status: "active", isUpgraded: true },
-          { name: "Yumi", role: CREW_DATA.yumi.role, imageSrc: CREW_DATA.yumi.image, status: "active", isNew: true },
-          { name: "Milo", role: CREW_DATA.milo.role, imageSrc: CREW_DATA.milo.image, status: "active", isNew: true },
+          { name: "Anita", role: CREW_DATA.anita.role, imageSrc: CREW_DATA.anita.image, status: "active" },
+          { name: "Yumi", role: CREW_DATA.yumi.role, imageSrc: CREW_DATA.yumi.image, status: "active" },
+          { name: "Milo", role: CREW_DATA.milo.role, imageSrc: CREW_DATA.milo.image, status: "active" },
         ],
       }, {
         title: "Content Infrastructure & Data Team",
@@ -139,19 +137,6 @@ const FunctionMap: React.FC<FunctionMapProps> = ({
       role="button"
       tabIndex={0}
     >
-      {/* NEW badge */}
-      {item.isNew && (
-        <span className="absolute -top-1 -left-1 z-20 px-1.5 py-0.5 text-[10px] font-bold text-white bg-red-500 rounded-full animate-pulse">
-          NEW
-        </span>
-      )}
-      {/* Upgraded badge */}
-      {item.isUpgraded && (
-        <span className="absolute -top-1 -left-1 z-20 px-1.5 py-0.5 text-[10px] font-bold text-white bg-green-500 rounded-full">
-          Upgraded
-        </span>
-      )}
-
       <div className="relative">
         <div className="h-14 w-14 md:h-16 md:w-16 rounded-full overflow-hidden">
           <img

@@ -17,7 +17,6 @@ interface CrewProfileDialogProps {
   crewDescription: string;
   flowSteps?: FlowStep[];
   isComingSoon?: boolean;
-  isUpgraded?: boolean;
   ctaLabel?: string;
   onCtaClick?: () => void;
 }
@@ -37,7 +36,6 @@ const CrewProfileDialog: React.FC<CrewProfileDialogProps> = ({
   crewDescription,
   flowSteps,
   isComingSoon = false,
-  isUpgraded = false,
   ctaLabel,
   onCtaClick,
 }) => {
@@ -138,11 +136,6 @@ const CrewProfileDialog: React.FC<CrewProfileDialogProps> = ({
               {isComingSoon && (
                 <span className="bg-yellow-500 text-yellow-950 text-[10px] font-semibold px-2 py-0.5 rounded-full">
                   Coming Soon
-                </span>
-              )}
-              {isUpgraded && (
-                <span className="bg-green-500 text-white text-[10px] font-semibold px-2 py-0.5 rounded-full">
-                  Upgraded
                 </span>
               )}
             </div>

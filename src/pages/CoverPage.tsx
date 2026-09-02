@@ -37,7 +37,6 @@ const CoverPage = () => {
     description: string;
     flowSteps?: import("@/data/crewData").FlowStep[];
     isComingSoon: boolean;
-    isUpgraded?: boolean;
     ctaLabel?: string;
     ctaAction?: () => void;
   } | null>(null);
@@ -119,7 +118,6 @@ const CoverPage = () => {
         description: crew.description,
         flowSteps: crew.flowSteps,
         isComingSoon: crew.isComingSoon,
-        isUpgraded: crew.isUpgraded,
         ctaLabel: crew.ctaLabel,
         ctaAction,
       });
@@ -291,7 +289,6 @@ const CoverPage = () => {
             crewDescription={selectedCrewProfile.description}
             flowSteps={selectedCrewProfile.flowSteps}
             isComingSoon={selectedCrewProfile.isComingSoon}
-            isUpgraded={selectedCrewProfile.isUpgraded}
             ctaLabel={selectedCrewProfile.ctaLabel}
             onCtaClick={selectedCrewProfile.ctaAction}
           />

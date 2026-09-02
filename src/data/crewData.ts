@@ -21,7 +21,6 @@ export interface CrewData {
   personality?: string;
   flowSteps?: FlowStep[];
   isComingSoon: boolean;
-  isUpgraded?: boolean;
   ctaLabel?: string;
   ctaUrl?: string;
   ctaRoute?: string;
@@ -73,7 +72,6 @@ export const CREW_DATA: Record<string, CrewData> = {
       { step: 4, title: "Download", desc: "Review the output, request adjustments if needed, and download directly to your workspace." },
     ],
     isComingSoon: false,
-    isUpgraded: true,
     ctaLabel: "Work with Ben",
     ctaUrl: "https://ben-twincrew.web.app",
   },
